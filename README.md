@@ -32,7 +32,7 @@ arriba_platform/
 1. Crie um repositório no GitHub.
 2. Faça upload dos arquivos do projeto.
 3. Vá em **Settings > Pages**, selecione `main` como branch e `/ (root)` como diretório.
-4. O projeto ficará disponível em `https://jonathanmesquita.github.io/arriba_platform/`.
+4. O projeto ficará disponível em `[https://jonathanmesquita.github.io/arriba_platform[Link do Site](https://jonathanmesquita.github.io/arriba_platform/)]`.
 
 ## 🛠 Tecnologias Utilizadas
 

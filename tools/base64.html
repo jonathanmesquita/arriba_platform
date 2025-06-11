@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitor Base64 - Arriba</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <h1>Leitor Base64</h1>
+  <textarea id="inputBase64" placeholder="Digite aqui o texto codificado..."></textarea>
+  <button onclick="decodeBase64()">Decodificar</button>
+  <pre id="outputBase64"></pre>
+  <script>
+    function decodeBase64() {
+      const input = document.getElementById('inputBase64').value;
+      try {
+        const decoded = atob(input);
+        document.getElementById('outputBase64').innerText = decoded;
+      } catch (e) {
+        document.getElementById('outputBase64').innerText = 'Erro na decodificação';
+      }
+    }
+  </script>
+</body>
+</html>

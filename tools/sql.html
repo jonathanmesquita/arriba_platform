@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Editor - Arriba</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <h1>Editor SQL Simples</h1>
+  <textarea id="sqlInput" placeholder="Digite sua query SQL aqui..."></textarea>
+  <button onclick="simularSQL()">Executar</button>
+  <pre id="sqlOutput"></pre>
+  <script>
+    function simularSQL() {
+      const input = document.getElementById("sqlInput").value;
+      document.getElementById("sqlOutput").innerText = 'Executando SQL: ' + input;
+    }
+  </script>
+</body>
+</html>

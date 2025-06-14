@@ -1,36 +1,71 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  transition: background-color 0.3s, color 0.3s;
-  background-color: #f9f9fb;
-  color: #222;
+/* Style CSS  */
+.typing-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #6c757d; /* Cor do "digitando..." */
+    animation: blink 1s infinite steps(1, start);
+    margin: 0 2px;
 }
-body.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
+
+.typing-indicator:nth-child(2) {
+    animation-delay: 0.2s;
 }
-.chatbot-popup {
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 300px;
-  z-index: 1050;
+
+.typing-indicator:nth-child(3) {
+    animation-delay: 0.4s;
 }
-#chatbotBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1051;
-  width: 50px;
-  height: 50px;
-  font-size: 1.5rem;
+
+@keyframes blink {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
 
-/* Rodapé Fixado ao Final*/
-html, body {
-  height: 100%;
+
+/* Estilos para o Dark Mode dos mega-menus (já existia, mas incluído para contexto) */
+body.dark-mode .u30navw2 {
+    background-color: #1a1a1a; /* Fundo mais escuro no dark mode */
+    border-top: 1px solid rgba(255,255,255,0.05);
 }
 
-main {
-  flex: 1 0 auto;
+body.dark-mode .u30navitem:hover,
+body.dark-mode .u30navitem.active {
+    background-color: #333; /* Hover/active mais */
+}
+
+/* Novo CSS para o chatbot typing-indicator */
+.typing-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #6c757d; /* Cor do "digitando..." */
+    animation: blink 1s infinite steps(1, start);
+    margin: 0 2px;
+}
+
+.typing-indicator:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Estilos para o container do validador JSON no dark mode */
+body.dark-mode .json-editor-container {
+    background-color: #2b2b2b; /* Dark mode background */
+    border-color: #495057;
+}
+body.dark-mode .json-editor-container pre {
+    color: #e0e0e0; /* Dark mode text color */
 }

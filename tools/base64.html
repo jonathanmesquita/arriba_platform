@@ -1,26 +1,314 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leitor Base64 - Arriba</title>
-  <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validador JSON - Arriba Platform</title>
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon" /> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css" /> <style>
+        /* Estilos adicionais para o validador JSON, se necessário */
+        .json-editor-container {
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            background-color: #f8f9fa; /* Light background */
+        }
+        body.dark-mode .json-editor-container {
+            background-color: #2b2b2b; /* Dark mode background */
+            border-color: #495057;
+        }
+        body.dark-mode .json-editor-container pre {
+            color: #e0e0e0; /* Dark mode text color */
+        }
+    </style>
 </head>
-<body>
-  <h1>Leitor Base64</h1>
-  <textarea id="inputBase64" placeholder="Digite aqui o texto codificado..."></textarea>
-  <button onclick="decodeBase64()">Decodificar</button>
-  <pre id="outputBase64"></pre>
-  <script>
-    function decodeBase64() {
-      const input = document.getElementById('inputBase64').value;
-      try {
-        const decoded = atob(input);
-        document.getElementById('outputBase64').innerText = decoded;
-      } catch (e) {
-        document.getElementById('outputBase64').innerText = 'Erro na decodificação';
-      }
-    }
-  </script>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html">ARRIBA</a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto u30navul">
+                    <li class="nav-item u30navli">
+                        <button data-lbl="tools" data-navtarget="tools" aria-controls="toolsDropdownMenu"
+                            aria-expanded="false" class="nav-link u30navitem" id="toolsDropdownBtn">Ferramentas
+                            Produtividade</button>
+                        <div data-dropdown="tools" class="u30navw2" id="toolsDropdownMenu" role="region"
+                            aria-labelledby="toolsDropdownBtn">
+                            <div class="u30navw3 four-column-tworow-vertical">
+                                <div id="tools-nav" data-navcontent="tools" data-navtype="four-column-tworow-vertical">
+                                    <button class="closenav" aria-label="Fechar Menu">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24">
+                                            <path d="M7,7 L17,17"></path>
+                                            <path d="M17,7 L7,17"></path>
+                                        </svg>
+                                    </button>
+                                    <ul class="tworow">
+                                        <li>
+                                            <span class="u30t1">Ferramentas de Desenvolvimento</span>
+                                            <ul class="fourclm divider">
+                                                <li><a href="base64.html" target="_top">Leitor Base64</a></li> <li><a href="criptografia.html" target="_top">Criptografar Senha</a></li> <li><a href="sql.html" target="_top">SQL Editor</a></li> <li><a href="json_validator.html" target="_top">Validador JSON</a></li> </ul>
+                                        </li>
+                                        <li>
+                                            <span class="u30t1">Outras Ferramentas</span>
+                                            <ul class="fourclm">
+                                                <li><a href="#" target="_top">Em breve...</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item u30navli">
+                        <button data-lbl="apis" data-navtarget="apis" aria-controls="apisDropdownMenu"
+                            aria-expanded="false" class="nav-link u30navitem" id="apisDropdownBtn">APIs e Soluções</button>
+                        <div data-dropdown="apis" class="u30navw2" id="apisDropdownMenu" role="region"
+                            aria-labelledby="apisDropdownBtn">
+                            <div class="u30navw3 four-column-tworow-vertical">
+                                <div id="apis-nav" data-navcontent="apis" data-navtype="four-column-tworow-vertical">
+                                    <button class="closenav" aria-label="Fechar Menu">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24">
+                                            <path d="M7,7 L17,17"></path>
+                                            <path d="M17,7 L7,17"></path>
+                                        </svg>
+                                    </button>
+                                    <ul class="tworow">
+                                        <li>
+                                            <span class="u30t1">Integrações e Serviços</span>
+                                            <ul class="fourclm divider">
+                                                <li><a href="apis.html" target="_top">Visão Geral de APIs</a></li> <li><a href="#" target="_top">Serviços de Nuvem</a></li>
+                                                <li><a href="#" target="_top">Microserviços</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="u30t1">Soluções de Negócio</span>
+                                            <ul class="fourclm">
+                                                <li><a href="#" target="_top">CRM em Nuvem</a></li>
+                                                <li><a href="#" target="_top">ERP para PMEs</a></li>
+                                                <li><a href="#" target="_top">Análise de Dados</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item u30navli">
+                        <button data-lbl="datacoberrors" data-navtarget="datacoberrors"
+                            aria-controls="datacoberrorsDropdownMenu" aria-expanded="false"
+                            class="nav-link u30navitem" id="datacoberrorsDropdownBtn">Erros DataCob</button>
+                        <div data-dropdown="datacoberrors" class="u30navw2" id="datacoberrorsDropdownMenu"
+                            role="region" aria-labelledby="datacoberrorsDropdownBtn">
+                            <div class="u30navw3 four-column-tworow-vertical">
+                                <div id="datacoberrors-nav" data-navcontent="datacoberrors"
+                                    data-navtype="four-column-tworow-vertical">
+                                    <button class="closenav" aria-label="Fechar Menu">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24">
+                                            <path d="M7,7 L17,17"></path>
+                                            <path d="M17,7 L7,17"></path>
+                                        </svg>
+                                    </button>
+                                    <ul class="tworow">
+                                        <li>
+                                            <span class="u30t1">Erros Comuns</span>
+                                            <ul class="fourclm divider">
+                                                <li><a href="#" target="_top">Erros de Conexão</a></li>
+                                                <li><a href="#" target="_top">Erros de Processamento</a></li>
+                                                <li><a href="#" target="_top">Erros de Validação</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="u30t1">Soluções e Guias</span>
+                                            <ul class="fourclm">
+                                                <li><a href="#" target="_top">Guia de Debug</a></li>
+                                                <li><a href="#" target="_top">FAQ DataCob</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../sobre.html">Sobre Mim</a> </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item">
+                        <button id="toggleTheme" class="btn btn-link nav-link">
+                            <i id="themeIcon" class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <div id="searchBox" class="search-closed">
+                            <button id="searchToggleBtn" class="btn btn-link nav-link p-0" aria-label="Abrir Busca">
+                                <i class="fas fa-search text-white"></i>
+                            </button>
+                            <input type="text" class="form-control search-input" placeholder="Pesquisar..."
+                                aria-label="Campo de busca" />
+                            <button id="searchCloseBtn" class="btn btn-link nav-link p-0 search-close-btn"
+                                aria-label="Fechar Busca">
+                                <i class="fas fa-times text-white"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown d-flex align-items-center">
+                        <button class="btn btn-link nav-link p-0" id="openLanguageModalBtn" data-bs-toggle="modal"
+                            data-bs-target="#languageModal" aria-label="Selecionar Idioma">
+                            <img id="currentLanguageFlag" src="../img/bandeiras_idiomas/br.svg" alt="Bandeira do Brasil"
+                                width="30" height="30" class="rounded-circle border border-secondary" /> </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-fill container py-5">
+        <h1 class="text-center mb-4">Validador de JSON</h1>
+        <p class="text-center text-muted">Cole seu texto JSON na área abaixo para validar e formatar.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="mb-3">
+                    <label for="jsonInput" class="form-label">Insira o JSON aqui:</label>
+                    <textarea class="form-control" id="jsonInput" rows="10"
+                        placeholder='Ex: {"nome": "Jonathan", "idade": 29, "linguagens": ["JavaScript", "SQL"]}'
+                        aria-label="Área para inserir JSON"></textarea>
+                </div>
+                <button id="validateJsonBtn" class="btn btn-primary w-100 mb-3">Validar JSON</button>
+
+                <div id="jsonValidationResult" class="json-editor-container">
+                    <p class="text-muted text-center">O resultado aparecerá aqui.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        &copy; 2025 Jonathan Mesquita - Projeto 0001.03
+    </footer>
+
+    <div id="chatbot" class="chatbot-popup d-none">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Arriba Bot</strong>
+                <button class="btn-close" id="closeChat" aria-label="Fechar Chatbot"></button>
+            </div>
+            <div class="card-body">
+                <div id="chatWindow" style="height:200px; overflow-y:auto;"></div>
+                <input type="text" id="chatInput" class="form-control my-2" placeholder="Digite sua dúvida..."
+                    aria-label="Digite sua dúvida para o chatbot" />
+                <button id="sendChat" class="btn btn-primary w-100">Enviar</button>
+            </div>
+        </div>
+    </div>
+    <button id="chatbotBtn" class="btn btn-primary rounded-circle" aria-label="Abrir Chatbot">💬</button>
+
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="languageModalLabel">Escolha seu Idioma</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <h6>Américas</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="pt" data-flag="br"
+                                                data-country="Brasil">
+                                                <img src="../img/bandeiras_idiomas/br.svg" alt="Bandeira do Brasil"
+                                                    width="24" height="24"> Português (Brasil)
+                                            </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="us"
+                                                data-country="Estados Unidos">
+                                                <img src="../img/bandeiras_idiomas/us.svg" alt="Bandeira dos EUA"
+                                                    width="24" height="24"> English (US)
+                                            </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="mx"
+                                                data-country="México">
+                                                <img src="../img/bandeiras_idiomas/mx.svg" alt="Bandeira do México"
+                                                    width="24" height="24"> Español (LatAm)
+                                            </a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <h6>Europa</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="gb"
+                                                data-country="Reino Unido">
+                                                <img src="../img/bandeiras_idiomas/gb.svg" alt="Bandeira do Reino Unido"
+                                                    width="24" height="24"> English (UK)
+                                            </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="es"
+                                                data-country="Espanha">
+                                                <img src="../img/bandeiras_idiomas/es.svg" alt="Bandeira da Espanha"
+                                                    width="24" height="24"> Español (España)
+                                            </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="fr" data-flag="fr"
+                                                data-country="França">
+                                                <img src="../img/bandeiras_idiomas/fr.svg" alt="Bandeira da França"
+                                                    width="24" height="24"> Français
+                                            </a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <h6>Ásia e Pacífico</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="au"
+                                                data-country="Austrália">
+                                                <img src="../img/bandeiras_idiomas/au.svg" alt="Bandeira da Austrália"
+                                                    width="24" height="24"> English (Australia)
+                                            </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="ko" data-flag="kr"
+                                                data-country="Coréia do Sul">
+                                                <img src="../img/bandeiras_idiomas/kr.svg" alt="Bandeira da Coréia do Sul"
+                                                    width="24" height="24"> 한국어 (Coreano)
+                                            </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="in"
+                                                data-country="Índia">
+                                                <img src="../img/bandeiras_idiomas/in.svg" alt="Bandeira da Índia" width="24"
+                                                    height="24"> India
+                                            </a></li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <h6>Oriente Médio e África</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="za"
+                                                data-country="África do Sul">
+                                                <img src="../img/bandeiras_idiomas/za.svg" alt="Bandeira da África do Sul"
+                                                    width="24" height="24"> South Africa
+                                            </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../js/main.js"></script> <script src="json_validator.js"></script>
 </body>
+
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arriba Platform</title>
+    <title>Sobre Mim - Jonathan Mesquita</title>
     <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -15,8 +15,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">ARRIBA</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            <a class="navbar-brand" href="index.html">ARRIBA</a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -46,8 +45,7 @@
                                                 <li><a href="tools/criptografia.html" target="_top">Criptografar
                                                         Senha</a></li>
                                                 <li><a href="tools/sql.html" target="_top">SQL Editor</a></li>
-                                                <li><a href="tools/json_validator.html" target="_top">Validador JSON</a></li>
-                                            </ul>
+                                                <li><a href="tools/json_validator.html" target="_top">Validador JSON</a></li> </ul>
                                         </li>
                                         <li>
                                             <span class="u30t1">Outras Ferramentas</span>
@@ -171,13 +169,38 @@
         </div>
     </nav>
 
-    <main class="flex-fill container py-5 text-center">
-        <h1 id="welcomeText">Bem-vindo à Plataforma Arriba</h1>
-        <p id="selectToolText">Selecione uma ferramenta no menu para começar.</p>
+    <main class="flex-fill container py-5">
+        <section class="text-center my-5">
+            <img src="img/profile.png" alt="Foto de Perfil Jonathan Mesquita" class="img-fluid rounded-circle mb-4" style="max-width: 200px; border: 4px solid #00a0d1;">
+            <h1 class="display-4 mb-3">Jonathan Mesquita</h1>
+            <p class="lead text-muted">Analista de Suporte em transição para a área de Programação.</p>
+        </section>
+
+        <section class="mb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <p>Tenho 29 anos e estou focado em me tornar um desenvolvedor, com especial interesse em **banco de dados** e **front-end**. Minha formação em Análise e Desenvolvimento de Sistemas (ADS) e a segunda graduação em Banco de Dados me fornecem uma base sólida para construir soluções robustas e intuitivas.</p>
+                    <p>Meu grande objetivo é trabalhar remotamente para o exterior, o que me motiva a aprimorar minhas habilidades técnicas e linguísticas. Atualmente, estudo **inglês, espanhol, francês**, e comecei a aprender **coreano**, impulsionado pelo meu interesse em doramas.</p>
+                    <p>Estou dedicando meu tempo à criação de um portfólio que demonstre minha evolução na programação. Um dos projetos mais ambiciosos é um **jogo em pixel art estilo RPG**, inspirado em títulos como *Stardew Valley, Blasphemous, Dead Cells* e *Octopath Traveler*. Este projeto não é apenas um desafio técnico, mas também uma forma criativa de aplicar meus conhecimentos em design e lógica de programação.</p>
+                    <p>Fora do código, sou um entusiasta de **zumbis** e **jazz**. Adoro caminhar, correr e estou reaprendendo a tocar violão. Busco uma vida minimalista e simples, inspirada no filme *Dias Perfeitos*, e utilizo ferramentas como Notion e TickTick para manter tudo organizado.</p>
+                    <p>Sou pai do **Caetano (Caê)**, fruto de um casamento anterior, com quem mantenho uma excelente relação. Hoje, divido minha vida com a **Júlia Darc**, advogada que amo muito e com quem pretendo me casar em 2026. Inclusive, o jogo que estou desenvolvendo será uma surpresa para o pedido de casamento em 2025!</p>
+                    <p>Este site, a "Plataforma Arriba", é mais um passo nessa jornada, servindo como um hub para minhas ferramentas e projetos, e um reflexo do meu constante aprendizado e paixão por tecnologia. Você pode acompanhar minha trajetória como o "Sapo Pixelado" em meu canal dark de gamedev, onde compartilho minha evolução.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-5 text-center">
+            <h2 class="mb-4">Conecte-se Comigo</h2>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="https://linkedin.com/in/seulinkedin" target="_blank" class="btn btn-outline-primary btn-lg" aria-label="Meu LinkedIn"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                <a href="https://github.com/seugithub" target="_blank" class="btn btn-outline-secondary btn-lg" aria-label="Meu GitHub"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://youtube.com/canalSapoPixelado" target="_blank" class="btn btn-outline-danger btn-lg" aria-label="Canal Sapo Pixelado (YouTube)"><i class="fab fa-youtube"></i> Sapo Pixelado</a>
+            </div>
+        </section>
     </main>
 
     <footer class="bg-dark text-white text-center py-3 mt-auto">
-        © 2025 Jonathan Mesquita - Projeto 0001.04
+        © 2025 Jonathan Mesquita - Projeto 0001.03
     </footer>
 
     <div id="chatbot" class="chatbot-popup d-none">
@@ -283,7 +306,6 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="js/main.js"></script>
 </body>

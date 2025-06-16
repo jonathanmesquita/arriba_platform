@@ -1,31 +1,328 @@
-/* Style CSS  */
-.typing-indicator {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: #6c757d; /* Cor do "digitando..." */
-    animation: blink 1s infinite steps(1, start);
-    margin: 0 2px;
+/* Seu CSS base */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: #f9f9fb;
+    color: #222;
 }
 
-.typing-indicator:nth-child(2) {
-    animation-delay: 0.2s;
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
 }
 
-.typing-indicator:nth-child(3) {
-    animation-delay: 0.4s;
+/* Navbar personalizada */
+.navbar.bg-dark {
+    background-color: #2b2b2b !important; /* Cor de fundo da navbar (Oracle style) */
 }
 
-@keyframes blink {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { opacity: 0; }
+.navbar-brand {
+    color: #e0e0e0 !important; /* Cor do texto do ARRIBA */
+    font-weight: bold;
 }
 
+/* Estilos para os itens do menu principal (Ferramentas Produtividade, APIs, Erros DataCob) */
+.navbar-nav .nav-link,
+.u30navitem { /* Aplica-se aos botões dos mega-menus */
+    color: #e0e0e0 !important;
+    font-weight: 600; /* Mais encorpado como na Oracle */
+    padding: 0.5rem 1rem !important; /* Ajusta o padding */
+    border-radius: 0; /* Remove border-radius */
+    transition: background-color 0.3s, color 0.3s;
+    background-color: transparent; /* Garante que o botão não tenha fundo padrão */
+    border: none; /* Remove borda do botão */
+}
 
+.navbar-nav .nav-link:hover,
+.u30navitem:hover {
+    background-color: #333; /* Cor de fundo ao passar o mouse */
+    color: #fff !important;
+}
 
-/* Estilos para o Dark Mode dos mega-menus (já existia, mas incluído para contexto) */
+.u30navitem.active {
+    background-color: #555; /* Cor de fundo quando ativo */
+    color: #fff !important;
+}
+
+/* Esconde o ícone de toggle do Bootstrap por padrão (visível apenas em mobile) */
+.navbar-toggler {
+    display: none;
+}
+
+/* Desktop Navbar Collapse (nomeado para clareza) */
+.desktop-navbar-collapse {
+    display: flex; /* Visível por padrão em desktop */
+    flex-grow: 1; /* Ocupa o espaço disponível */
+    /* Garante que os links flutuam à direita em desktop, como antes */
+    justify-content: flex-end;
+}
+
+/* Icons de pesquisa, tema, idioma no desktop */
+.desktop-only-icons {
+    display: flex; /* Visível em desktop */
+    align-items: center;
+}
+.desktop-only-icons .nav-item {
+    /* Remova margin-left daqui se você quiser que o search-container gerencie sua própria margem */
+    /* margin-left: 10px; */
+}
+.desktop-only-icons .nav-link i {
+    font-size: 1.2rem;
+}
+
+/* --- NOVO: Estilos para o Menu Mobile em Overlay --- */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* Ocupa a altura total da tela */
+    background-color: #2b2b2b; /* Fundo escuro similar à navbar */
+    color: #e0e0e0;
+    z-index: 1040; /* Acima de outros elementos, mas abaixo do chatbot */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    transform: translateX(100%); /* Inicialmente fora da tela, à direita */
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease-out, opacity 0.3s ease, visibility 0.3s ease; /* Transição suave */
+    overflow-y: auto; /* Permite rolagem se o conteúdo for longo */
+}
+
+.mobile-menu-overlay.active {
+    transform: translateX(0); /* Desliza para dentro da tela */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Estilos para os itens principais do menu dentro do overlay mobile */
+.mobile-menu-overlay .u30navul-mobile {
+    width: 100%;
+    padding: 0;
+    margin-top: 20px; /* Espaço após o botão de fechar */
+    list-style: none; /* Remove marcadores de lista */
+}
+
+.mobile-menu-overlay .u30navli-mobile {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.mobile-menu-overlay .u30navitem-mobile {
+    font-size: 1.5rem; /* Fonte maior para os itens do menu mobile */
+    padding: 15px 0 !important;
+    display: block;
+    width: 100%;
+    color: #e0e0e0 !important;
+    background-color: transparent;
+    border: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.mobile-menu-overlay .u30navitem-mobile:hover {
+    background-color: #3d3d3d; /* Fundo ao passar o mouse nos itens mobile */
+}
+
+/* Estilos para os ícones de pesquisa, tema, idioma dentro do overlay mobile */
+.mobile-only-icons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separador visual */
+    padding-top: 20px;
+}
+.mobile-only-icons .nav-link {
+    font-size: 1.2rem;
+    padding: 10px 0 !important;
+    color: #e0e0e0 !important;
+}
+.mobile-only-icons .nav-item img {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* --- Media Queries para Responsividade --- */
+
+/* Esconde elementos desktop e mostra mobile abaixo de 992px (lg) */
+@media (max-width: 991.98px) {
+    .desktop-navbar-collapse {
+        display: none !important; /* Esconde o menu desktop */
+    }
+    .navbar-toggler {
+        display: block; /* Mostra o botão do hamburguer */
+    }
+    /* .mobile-menu-overlay já definido para mobile */
+    .desktop-only-icons {
+        display: none !important; /* Esconde ícones de desktop */
+    }
+    .mobile-only-icons {
+        display: flex !important; /* Mostra ícones mobile */
+    }
+}
+
+/* Esconde elementos mobile e mostra desktop acima de 992px (lg) */
+@media (min-width: 992px) {
+    .mobile-menu-overlay {
+        display: none !important; /* Esconde o overlay mobile */
+    }
+    .navbar-toggler {
+        display: none !important; /* Esconde o botão do hamburguer */
+    }
+    .desktop-navbar-collapse {
+        display: flex !important; /* Mostra o menu desktop */
+    }
+    .desktop-only-icons {
+        display: flex !important; /* Mostra ícones de desktop */
+    }
+    .mobile-only-icons {
+        display: none !important; /* Esconde ícones mobile */
+    }
+}
+
+/* Estilos para os Mega Menus (u30navw2) */
+.u30navw2 {
+    display: none; /* Escondido por padrão */
+    position: absolute; /* Ou fixed, dependendo do comportamento desejado */
+    left: 0;
+    width: 100%;
+    padding: 20px 0;
+    background-color: #333; /* Fundo do mega menu */
+    color: #fff;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1020; /* Abaixo da navbar mas acima do conteúdo */
+    top: 70px; /* Ajuste para a altura da sua navbar */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.u30navw2.active {
+    display: block; /* Mostra o mega menu quando ativo */
+    opacity: 1;
+    visibility: visible;
+}
+
+.u30navw2 .u30nav3-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.u30t1 {
+    margin-bottom: 20px;
+}
+
+.u30t1 h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #e0e0e0;
+}
+
+.u30t1 ul {
+    list-style: none;
+    padding: 0;
+}
+
+.u30t1 ul li a {
+    color: #ccc;
+    text-decoration: none;
+    display: block;
+    padding: 5px 0;
+    transition: color 0.2s;
+}
+
+.u30t1 ul li a:hover {
+    color: #fff;
+}
+
+/* Botão de fechar do Mega Menu (apenas para desktop, no estilo Oracle) */
+.closenav {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+    display: block; /* Visível por padrão em desktop */
+}
+
+.closenav img {
+    width: 20px;
+    height: 20px;
+    filter: invert(1); /* Para ícone branco em fundo escuro */
+}
+
+/* --- Ajustes para Mega Menus em Mobile (dentro do Overlay) --- */
+@media (max-width: 991.98px) {
+    .u30navw2 {
+        position: static; /* ESSENCIAL: Agora eles ficam no fluxo normal dentro do overlay */
+        width: auto; /* Deixa o flexbox controlar a largura */
+        padding: 0 10px; /* Reduz padding lateral */
+        background-color: transparent; /* Fundo transparente para se misturar ao overlay */
+        border: none; /* Sem borda */
+        box-shadow: none; /* Sem sombra */
+        z-index: auto;
+        top: auto;
+        opacity: 1; /* Visível quando ativo */
+        visibility: visible; /* Visível quando ativo */
+        transform: translateX(0); /* Sem transição de slide */
+    }
+
+    .u30navw2.active {
+        display: block; /* Mostra o mega menu */
+        margin-top: 15px; /* Espaçamento entre mega menus abertos */
+    }
+
+    .u30navw2 .u30nav3-inner {
+        width: 100%;
+        max-width: none; /* Remove max-width */
+        padding: 0;
+    }
+
+    .u30navw2 .closenav {
+        display: none; /* Esconde o botão de fechar do mega menu em mobile, pois o overlay tem seu próprio */
+    }
+
+    .u30navw2 .row.fourclm {
+        flex-direction: column; /* Colunas empilhadas em mobile */
+    }
+
+    .u30navw2 .col-md-3,
+    .u30navw2 .col-md-6 {
+        width: 100%; /* Ocupa largura total */
+    }
+
+    .u30t1 {
+        margin-bottom: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separador visual */
+        padding-top: 15px;
+        padding-bottom: 10px;
+    }
+    .u30t1:first-child {
+        border-top: none; /* Remove a borda superior do primeiro item de cada mega menu */
+    }
+
+    .u30t1 h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        text-align: left; /* Alinha títulos à esquerda */
+        padding-left: 10px;
+    }
+
+    .u30t1 ul {
+        padding-left: 20px; /* Recuo para listas */
+        margin-bottom: 10px;
+    }
+
+    .u30t1 ul li a {
+        font-size: 0.95rem;
+        padding: 5px 0;
+        text-align: left; /* Alinha links à esquerda */
+    }
+}
+
+/* Estilos para o Dark Mode dos mega-menus */
 body.dark-mode .u30navw2 {
     background-color: #1a1a1a; /* Fundo mais escuro no dark mode */
     border-top: 1px solid rgba(255,255,255,0.05);
@@ -33,39 +330,360 @@ body.dark-mode .u30navw2 {
 
 body.dark-mode .u30navitem:hover,
 body.dark-mode .u30navitem.active {
-    background-color: #333; /* Hover/active mais */
+    background-color: #333; /* Hover/active mais escuro */
 }
 
-/* Novo CSS para o chatbot typing-indicator */
-.typing-indicator {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
+body.dark-mode .u30navw2 .u30t1 h3 {
+    color: #f0f0f0;
+}
+
+body.dark-mode .u30navw2 .u30t1 ul li a {
+    color: #b0b0b0;
+}
+
+body.dark-mode .u30navw2 .u30t1 ul li a:hover {
+    color: #fff;
+}
+
+/* Estilos para o Botão do Chatbot */
+#chatbotBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1040; /* Acima de outros elementos, como o mega-menu (z-index 1020) e a navbar (z-index 1030) */
+    width: 60px; /* Tamanho do botão */
+    height: 60px;
     border-radius: 50%;
-    background-color: #6c757d; /* Cor do "digitando..." */
-    animation: blink 1s infinite steps(1, start);
-    margin: 0 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Cores ajustadas para dark/light mode se necessário */
 }
 
-.typing-indicator:nth-child(2) {
-    animation-delay: 0.2s;
+/* Estilos para o Popup do Chatbot */
+.chatbot-popup {
+    position: fixed;
+    bottom: 90px; /* Acima do botão */
+    right: 20px;
+    width: 350px; /* Largura padrão */
+    max-width: 90%; /* Responsividade */
+    z-index: 1050; /* Acima do botão do chatbot */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden; /* Para garantir que o card-body não vaze */
 }
 
-.typing-indicator:nth-child(3) {
-    animation-delay: 0.4s;
+/* Dark Mode para Chatbot */
+body.dark-mode #chatbotBtn {
+    background-color: #007bff; /* Ou uma cor escura */
+    color: #fff;
+}
+body.dark-mode .chatbot-popup .card-header {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+body.dark-mode .chatbot-popup .card-body {
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+}
+body.dark-mode .chatbot-popup .card-footer {
+    background-color: #1a1a1a;
+}
+body.dark-mode .chatbot-popup .form-control {
+    background-color: #3d3d3d;
+    color: #e0e0e0;
+    border-color: #555;
+}
+body.dark-mode .chatbot-popup .form-control::placeholder {
+    color: #aaa;
 }
 
-@keyframes blink {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { opacity: 0; }
+/* Mensagens do chat */
+.chat-window {
+    height: 300px;
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Estilos para o container do validador JSON no dark mode */
-body.dark-mode .json-editor-container {
-    background-color: #2b2b2b; /* Dark mode background */
-    border-color: #495057;
+.chat-message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 80%;
+    word-wrap: break-word;
 }
-body.dark-mode .json-editor-container pre {
-    color: #e0e0e0; /* Dark mode text color */
+
+.user-message {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.bot-message {
+    align-self: flex-start;
+    background-color: #e2e6ea;
+    color: #333;
+    border-bottom-left-radius: 2px;
+}
+body.dark-mode .bot-message {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+.chat-message strong {
+    display: block;
+    font-size: 0.8em;
+    margin-bottom: 3px;
+    color: rgba(255, 255, 255, 0.7); /* Para mensagens do usuário */
+}
+
+.bot-message strong {
+    color: #000; /* Para mensagens do bot em light mode */
+}
+body.dark-mode .bot-message strong {
+    color: #ccc; /* Para mensagens do bot em dark mode */
+}
+
+/* --- INÍCIO: NOVOS ESTILOS PARA A LUPA DE BUSCA E CAIXA DE PESQUISA (TRANSFORMAÇÃO) --- */
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative; /* Para posicionar a caixa de busca e o botão de lupa */
+    margin-left: 15px; /* Espaçamento entre os ícones da navbar */
+    height: 40px; /* Altura fixa para alinhar com a navbar, ajuste se necessário */
+    width: 40px; /* Largura inicial para a lupa */
+    transition: width 0.3s ease; /* Transição para a largura do container */
+}
+
+.search-icon-btn {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    position: absolute; /* Para que a caixa de busca possa sobrepor ou aparecer no lugar */
+    right: 0; /* Alinha à direita dentro do container */
+    z-index: 2; /* Garante que a lupa esteja acima da caixa de busca quando visível */
+    opacity: 1; /* Lupa visível por padrão */
+    transform: translateX(0); /* Posição inicial da lupa */
+    display: flex; /* Para centralizar o ícone */
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Largura da lupa */
+    height: 40px; /* Altura da lupa */
+}
+
+.search-icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Estado da lupa quando a caixa de busca está aberta */
+.search-container.search-active .search-icon-btn {
+    opacity: 0; /* Esconde a lupa */
+    pointer-events: none; /* Desabilita cliques na lupa escondida */
+    transform: translateX(20px); /* Move a lupa um pouco para fora enquanto esconde */
+}
+
+.search-box {
+    position: absolute; /* Para aparecer no lugar da lupa */
+    right: 0;
+    top: 0;
+    height: 100%; /* Ocupa a altura do container */
+    width: 40px; /* Largura inicial da caixa de busca (igual ao botão da lupa) */
+    background-color: #3b3b3b;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 0 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1; /* Abaixo da lupa quando a lupa está visível */
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Esconde o conteúdo extra (input e X) quando a largura é pequena */
+
+    /* Propriedades para a transição */
+    opacity: 0; /* Esconde a caixa de busca por padrão */
+    visibility: hidden;
+    transform: translateX(20px); /* Começa um pouco deslocado para o efeito */
+    transition: width 0.3s ease, opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.3s, border-color 0.3s;
+}
+
+/* Estado da caixa de busca quando ativa */
+.search-container.search-active {
+    width: 300px; /* Expande a largura do container */
+}
+.search-container.search-active .search-box {
+    opacity: 1;
+    visibility: visible;
+    width: 100%; /* Ocupa a largura total do container (300px) */
+    transform: translateX(0); /* Posição final da caixa de busca */
+}
+
+.search-input {
+    flex-grow: 1;
+    padding: 8px 0;
+    border: none;
+    background-color: transparent;
+    color: #e0e0e0;
+    outline: none;
+    font-size: 0.9rem;
+    width: 100%; /* Garante que o input preencha o espaço disponível */
+}
+
+.search-input::placeholder {
+    color: #aaa;
+}
+
+.search-close-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 3px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    flex-shrink: 0; /* Evita que o botão encolha */
+}
+
+.search-close-btn:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark Mode para a caixa de pesquisa */
+body.dark-mode .search-box {
+    background-color: #282828;
+    border: 1px solid #444;
+}
+
+body.dark-mode .search-input {
+    background-color: transparent;
+    color: #f0f0f0;
+}
+
+body.dark-mode .search-input::placeholder {
+    color: #bbb;
+}
+
+/* Media Queries para responsividade da busca */
+@media (max-width: 991.98px) {
+    /* No mobile (fora do overlay), a busca deve ser uma barra completa quando ativa */
+    .search-container {
+        margin-left: 0; /* Remove margem para ocupar mais espaço */
+        width: 100%; /* Ocupa a largura total na navbar mobile */
+        justify-content: flex-end; /* Alinha a lupa/caixa à direita */
+        padding-right: 0; /* Ajuste se necessário */
+        box-sizing: border-box; /* Inclui padding na largura */
+    }
+
+    .search-container.search-active {
+        width: 100%; /* Ocupa 100% da largura em mobile quando ativo */
+    }
+
+    .search-container.search-active .search-box {
+        width: 100%; /* Ocupa a largura total do container ativo */
+        right: 0;
+        left: 0; /* Ocupa todo o espaço */
+    }
+
+    /* Ajustes específicos para a busca dentro do mobile-menu-overlay */
+    .mobile-menu-overlay .search-container {
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 20px; /* Espaço abaixo */
+        height: auto; /* Altura flexível */
+    }
+
+    .mobile-menu-overlay .search-container.search-active-mobile-overlay { /* Usamos a nova classe aqui */
+        width: 100%;
+        /* Certifique-se de que a caixa de busca está visível aqui */
+        .search-box {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+    }
+
+    .mobile-menu-overlay .search-container .search-icon-btn {
+        display: none; /* A lupa é escondida no overlay mobile para dar lugar à barra de busca direta */
+        opacity: 0; /* Garante que não esteja visível */
+        pointer-events: none;
+    }
+
+    .mobile-menu-overlay .search-container .search-box {
+        position: static; /* Volta a ser estático dentro do fluxo do overlay */
+        transform: none; /* Remove transformações */
+        height: auto; /* Altura flexível */
+        opacity: 1; /* Sempre visível quando o overlay está aberto */
+        visibility: visible;
+        width: 100%; /* Ocupa a largura total */
+        background-color: #3d3d3d; /* Fundo visível */
+        border: 1px solid #555;
+        padding: 10px; /* Padding para o input */
+    }
+
+    /* Ajuste para alinhar os elementos dentro do mobile-only-icons */
+    .mobile-only-icons .nav-item {
+        width: 100%; /* Garante que itens mobile ocupem a largura total */
+    }
+
+    /* Ajuste para o search-input no mobile overlay para garantir que preencha */
+    .mobile-menu-overlay .search-input {
+        width: 100%;
+    }
+}
+/* --- FIM: NOVOS ESTILOS PARA A LUPA DE BUSCA E CAIXA DE PESQUISA (TRANSFORMAÇÃO) --- */
+
+/* Estilos para o Modal de Idiomas */
+.language-list li a {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.language-list li a:hover {
+    background-color: #f0f0f0;
+}
+
+body.dark-mode .language-list li a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .language-list li a:hover {
+    background-color: #333;
+}
+
+.language-list img {
+    margin-right: 10px;
+}
+
+/* Dark Mode para Modals */
+body.dark-mode .modal-content {
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: #444;
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: #444;
+}
+
+body.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%); /* Make close button white */
 }

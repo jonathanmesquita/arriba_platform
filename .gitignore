@@ -1,0 +1,23 @@
+# Binaries
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio specific files
+*.suo
+*.user
+*.vspscc
+*.vssscc
+*.bak
+*.vs/
+
+# NuGet packages
+packages/
+
+# Resharper
+*.DotSettings
+
+# Node.js (if you have front-end in the same repo)
+node_modules/
+
+# Temp files
+*.~

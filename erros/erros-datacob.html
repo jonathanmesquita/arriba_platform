@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arriba Platform</title>
+    <title>Documentação de Erros DataCob - Arriba Platform</title>
     <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -30,9 +30,8 @@
                         <button data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
                     </li>
                     <li class="nav-item u30navli">
-                        <button data-lbl="datacoberrors" class="nav-link u30navitem"
-                            data-navtarget="datacoberrors">Erros
-                            DataCob</button>
+                        <a href="erros-datacob.html" class="nav-link u30navitem active" data-lbl="datacoberrors">Erros
+                            DataCob</a>
                     </li>
                 </ul>
 
@@ -79,8 +78,8 @@
                 <button data-lbl="apis" class="nav-link u30navitem-mobile" data-navtarget="apis">APIs</button>
             </li>
             <li class="nav-item u30navli-mobile">
-                <button data-lbl="datacoberrors" class="nav-link u30navitem-mobile" data-navtarget="datacoberrors">Erros
-                    CRM</button>
+                <a href="erros-datacob.html" class="nav-link u30navitem-mobile" data-lbl="datacoberrors">Erros
+                    DataCob</a>
             </li>
         </ul>
 
@@ -104,11 +103,10 @@
             </li>
         </ul>
     </div>
+    
     <div class="u30navw2" id="toolsDropdownMenu" data-dropdown="tools">
         <div class="closenav">
-            <a href="#">
-                <img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" />
-            </a>
+            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
         </div>
         <div class="u30nav3-inner">
             <div class="container-fluid">
@@ -158,9 +156,7 @@
 
     <div class="u30navw2" id="apisDropdownMenu" data-dropdown="apis">
         <div class="closenav">
-            <a href="#">
-                <img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" />
-            </a>
+            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
         </div>
         <div class="u30nav3-inner">
             <div class="container-fluid">
@@ -207,16 +203,14 @@
 
     <div class="u30navw2" id="datacoberrorsDropdownMenu" data-dropdown="datacoberrors">
         <div class="closenav">
-            <a href="#">
-                <img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" />
-            </a>
+            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
         </div>
         <div class="u30nav3-inner">
             <div class="container-fluid">
                 <div class="row fourclm">
                     <div class="col-md-6">
                         <div class="u30t1">
-                            <h3><a href="erros/erros-datacob.html">Documentação de Erros Comuns</a></h3>
+                            <h3><a href="erros-datacob.html">Documentação de Erros Comuns</a></h3>
                             <ul>
                                 <li><a href="#">Erro DX001: Falha de Conexão</a></li>
                                 <li><a href="#">Erro LV005: Licença Inválida</a></li>
@@ -238,11 +232,61 @@
         </div>
     </div>
 
-    <main class="flex-grow-1">
-        <div class="container-fluid p-5 text-center">
-            <h1 id="welcomeText" class="display-4 text-primary">Bem-vindo à Plataforma Arriba!</h1>
-            <p id="selectToolText" class="lead">Selecione uma ferramenta no menu acima para começar.</p>
-        </div>
+    <main class="container my-5 flex-grow-1">
+        <h1 class="mb-4">Documentação de Erros DataCob</h1>
+
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm border-danger">
+                    <div class="card-header bg-danger text-white py-3">
+                        <h5 class="mb-0">Erro DC1003 – Conexão ao Banco de Dados Falhou</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Causa:</strong> Credenciais inválidas, banco de dados indisponível, ou firewall bloqueando a conexão.</p>
+                        <p class="card-text"><strong>Solução:</strong> Verifique a string de conexão ou reinicie o serviço DB.</p>
+                        <p class="card-text">
+                            <strong>Documentação Relacionada:</strong>
+                            <a href="erros/DC1003.html" class="text-decoration-none">Detalhes Completos</a> |
+                            <a href="ferramentas/configuracao-conexao.html" class="text-decoration-none">Configuração de Conexão DB</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm border-warning">
+                    <div class="card-header bg-warning text-dark py-3">
+                        <h5 class="mb-0">Aviso LV005 – Licença Próxima do Vencimento</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Causa:</strong> A licença de uso do sistema expira em menos de 30 dias.</p>
+                        <p class="card-text"><strong>Solução:</strong> Contate o departamento comercial para renovação da licença.</p>
+                        <p class="card-text">
+                            <strong>Documentação Relacionada:</strong>
+                            <a href="erros/LV005.html" class="text-decoration-none">Políticas de Licenciamento</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm border-info">
+                    <div class="card-header bg-info text-white py-3">
+                        <h5 class="mb-0">Info PR102 – Atualização de Processo Disponível</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Descrição:</strong> Uma nova versão do processo 'X' está disponível para download e instalação.</p>
+                        <p class="card-text"><strong>Ação:</strong> Recomenda-se atualizar para a versão mais recente para acessar novas funcionalidades e correções.</p>
+                        <p class="card-text">
+                            <strong>Documentação Relacionada:</strong>
+                            <a href="erros/PR102.html" class="text-decoration-none">Notas de Lançamento</a> |
+                            <a href="ferramentas/atualizacao.html" class="text-decoration-none">Guia de Atualização</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            </div>
     </main>
 
     <footer class="mt-auto py-3 bg-dark text-white-50">
@@ -253,8 +297,6 @@
             <small class="text-secondary">Versão: 1.10.0</small>
         </div>
     </footer>
-
-
 
     <button id="chatbotBtn" class="btn btn-primary shadow-lg">
         <i class="fas fa-comments"></i>

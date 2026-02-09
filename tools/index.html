@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gerador CSV - ARRIBA</title>
+  <style>
+    body{font-family:system-ui;margin:0;background:#0f1115;color:#e6e6e6}
+    .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+    .card{background:#171a21;border:1px solid #2a2f3a;border-radius:12px;padding:16px;margin-top:12px}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    label{display:grid;gap:6px;font-size:13px}
+    input{padding:10px;border-radius:10px;border:1px solid #2a2f3a;background:#0f1115;color:#e6e6e6}
+    button{padding:10px 14px;border-radius:10px;border:1px solid #2a2f3a;background:#222836;color:#fff;cursor:pointer}
+    button.primary{background:#2b6cff;border-color:#2b6cff}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    h2{margin:0 0 10px}
+    .hint{opacity:.8;font-size:13px}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Gerador CSV (Dock / ARRIBA) — separador ;</h1>
+    <p class="hint">Gera 60k linhas mantendo o layout e alterando apenas os campos em vermelho.</p>
+
+    <section class="card">
+      <h2>Config geral</h2>
+      <div class="grid">
+        <label>Qtd registros
+          <input id="n" type="number" class="tool-input" value="60000" min="1">
+        </label>
+        <label>Número inicial (base)
+          <input id="start" type="number" class="tool-input" value="30" min="0">
+        </label>
+        <label>Padding (zeros)
+          <input id="pad" type="number" class="tool-input" value="4" min="1" max="12">
+        </label>
+        <label>Sufixo
+          <input id="suffix" type="text" class="tool-input" value="-ARRIBA">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Campos vermelhos — CONTRATO</h2>
+      <div class="grid">
+        <label>Cliente
+          <input id="contrato_cliente" type="text" class="tool-input" value="1320">
+        </label>
+        <label>Fase (se quiser manter)
+          <input id="contrato_fase" type="text" class="tool-input" value="AM">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Campos vermelhos — FINANCIADO</h2>
+      <div class="grid">
+        <label>Cliente
+          <input id="fin_cliente" type="text" class="tool-input" value="1320">
+        </label>
+        <label>Nome (prefixo genérico)
+          <input id="fin_nome_prefix" type="text" class="tool-input" value="Cliente Generico">
+        </label>
+        <label>Tipo_Pessoa
+          <input id="fin_tipo_pessoa" type="text" class="tool-input" value="Fisica">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Campos vermelhos — PARCELA</h2>
+      <div class="grid">
+        <label>Dt_Vencimento (dd/mm/aaaa)
+          <input id="parc_dt_venc" type="text" class="tool-input" value="09/02/2026">
+        </label>
+        <label>Tipo_Parcela
+          <input id="parc_tipo" type="text" class="tool-input" value="0">
+        </label>
+        <label>Nr_Parcela (fixo)
+          <input id="parc_nr" type="number" value="1" min="1">
+        </label>
+        <label>Vl_Original (inicial)
+          <input id="parc_vl_ini" type="number" value="100" min="0">
+        </label>
+        <label>Incremento por linha
+          <input id="parc_vl_step" type="number" value="100" min="0">
+        </label>
+      </div>
+      <p class="hint">Obs: no template, Dt_Inclusao = Dt_Vencimento e Motivo = "Teste Pagamento". Mantive isso.</p>
+
+      <div class="btns">
+        <button id="btnContrato" >Baixar contrato.csv</button>
+        <button id="btnFinanciado">Baixar financiado.csv</button>
+        <button id="btnParcela">Baixar parcela.csv</button>
+        <button id="btnTodos" class="primary">Baixar TODOS</button>
+      </div>
+    </section>
+
+    <p class="hint">Depois você só commita e sobe no GitHub Pages. Rodando local com Live Server já dá pra testar.</p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

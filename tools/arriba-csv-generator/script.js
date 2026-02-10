@@ -27,6 +27,13 @@ function csv(headers, rows) {
   return [headers.join(SEP), ...rows.map(r => r.join(SEP))].join(NL);
 }
 
+function toMoney2(v) {
+  // Garante padrão 2 casas (100 => 100.00)
+  const num = Number(v);
+  if (!Number.isFinite(num)) return "";
+  return num.toFixed(2);
+}
+
 /* ========= CPF / CNPJ ========= */
 function randomDigit() {
   return Math.floor(Math.random() * 10);
@@ -61,12 +68,19 @@ function gerarCNPJ() {
 
 /* ========= Inputs ========= */
 function getInputs() {
+  const docFixedEl = document.getElementById("docFixed");
+  const vlSaldoModeEl = document.getElementById("parc_vl_saldo_mode");
+  const vlSaldoFixedEl = document.getElementById("parc_vl_saldo_fixed");
+
   return {
     n: +document.getElementById("n").value,
     start: +document.getElementById("start").value,
     pad: +document.getElementById("pad").value,
     suffix: document.getElementById("suffix").value || "-ARRIBA",
+
+    // Documento
     docType: document.getElementById("docType")?.value || "none",
+    docFixed: (docFixedEl?.value || "").trim(),
 
     contrato: {
       cliente: document.getElementById("contrato_cliente").value || "1320",
@@ -85,38 +99,52 @@ function getInputs() {
       nrParc: document.getElementById("parc_nr").value,
       vlIni: +document.getElementById("parc_vl_ini").value,
       vlStep: +document.getElementById("parc_vl_step").value,
+
+      // novo
+      vlSaldoMode: vlSaldoModeEl?.value || "igual",
+      vlSaldoFixed: vlSaldoFixedEl?.value ? +vlSaldoFixedEl.value : NaN,
     }
   };
 }
 
-function resolveDocumento(type) {
-  if (type === "cpf") return gerarCPF();
-  if (type === "cnpj") return gerarCNPJ();
-  if (type === "auto") return Math.random() > 0.5 ? gerarCPF() : gerarCNPJ();
+function resolveDocumento(docType, docFixed) {
+  // docFixed manda. Se veio preenchido, acabou a discussão.
+  if (docFixed && docFixed.length > 0) return docFixed;
+
+  if (docType === "cpf") return gerarCPF();
+  if (docType === "cnpj") return gerarCNPJ();
+  if (docType === "auto") return Math.random() > 0.5 ? gerarCPF() : gerarCNPJ();
   return "";
 }
 
 /* ========= Geradores ========= */
 function gerarContrato(n, start, pad, suffix, cfg) {
+  // Layout: CONTRATO obrigatório (Cliente, Nr_Contrato, Fase)
   const headers = ["Tipo_Registro","Cliente","Nr_Contrato","Fase"];
   const rows = [];
 
   for (let i = 0; i < n; i++) {
-    rows.push(["6", cfg.cliente, makeNrContrato(i,start,pad,suffix), cfg.fase]);
+    rows.push([
+      "6",
+      cfg.cliente,
+      makeNrContrato(i, start, pad, suffix),
+      cfg.fase
+    ]);
   }
   return csv(headers, rows);
 }
 
-function gerarFinanciado(n, start, pad, suffix, cfg, docType) {
+function gerarFinanciado(n, start, pad, suffix, cfg, docType, docFixed) {
+  // Layout: FINANCIADO obrigatório (Nr_Contrato, Nome, Cpf_Cnpj, Cliente, Tipo_Pessoa)
   const headers = ["Tipo_Registro","Nr_Contrato","Nome","Cpf_Cnpj","Cliente","Tipo_Pessoa"];
   const rows = [];
 
   for (let i = 0; i < n; i++) {
     rows.push([
       "2",
-      makeNrContrato(i,start,pad,suffix),
-      `${cfg.nomePrefix} ${padLeft(i+start,pad)}`,
-      resolveDocumento(docType),
+      makeNrContrato(i, start, pad, suffix),
+      `${cfg.nomePrefix} ${padLeft(i + start, pad)}`,
+      resolveDocumento(docType, docFixed),
       cfg.cliente,
       cfg.tipoPessoa
     ]);
@@ -125,43 +153,61 @@ function gerarFinanciado(n, start, pad, suffix, cfg, docType) {
 }
 
 function gerarParcela(n, start, pad, suffix, cfg) {
+  // Layout: PARCELA obrigatório (Nr_Contrato, Dt_Vencimento, Tipo_Parcela, Nr_Parcela, Vl_Original, Vl_Saldo)
   const headers = ["Tipo_Registro","Nr_Contrato","Dt_Vencimento","Tipo_Parcela","Nr_Parcela","Vl_Original","Vl_Saldo"];
   const rows = [];
 
   for (let i = 0; i < n; i++) {
-    const vl = cfg.vlIni + cfg.vlStep * i;
+    const vlOriginal = cfg.vlIni + cfg.vlStep * i;
+
+    let vlSaldo;
+    if (cfg.vlSaldoMode === "fixo") {
+      // se fixo estiver vazio/NaN, cai pro original (pra não gerar lixo)
+      vlSaldo = Number.isFinite(cfg.vlSaldoFixed) ? cfg.vlSaldoFixed : vlOriginal;
+    } else {
+      vlSaldo = vlOriginal;
+    }
+
     rows.push([
       "7",
-      makeNrContrato(i,start,pad,suffix),
+      makeNrContrato(i, start, pad, suffix),
       cfg.dtVenc,
       cfg.tipoParc,
       cfg.nrParc,
-      vl,
-      vl
+      toMoney2(vlOriginal),
+      toMoney2(vlSaldo)
     ]);
   }
   return csv(headers, rows);
 }
 
 /* ========= Eventos ========= */
-document.getElementById("btnContrato").onclick = () => {
-  const x = getInputs();
-  downloadText("contrato.csv", gerarContrato(x.n,x.start,x.pad,x.suffix,x.contrato));
-};
+function bindClick(id, fn) {
+  const el = document.getElementById(id);
+  if (el) el.onclick = fn;
+}
 
-document.getElementById("btnFinanciado").onclick = () => {
+bindClick("btnContrato", () => {
   const x = getInputs();
-  downloadText("financiado.csv", gerarFinanciado(x.n,x.start,x.pad,x.suffix,x.financiado,x.docType));
-};
+  downloadText("contrato.csv", gerarContrato(x.n, x.start, x.pad, x.suffix, x.contrato));
+});
 
-document.getElementById("btnParcela").onclick = () => {
+bindClick("btnFinanciado", () => {
   const x = getInputs();
-  downloadText("parcela.csv", gerarParcela(x.n,x.start,x.pad,x.suffix,x.parcela));
-};
+  downloadText(
+    "financiado.csv",
+    gerarFinanciado(x.n, x.start, x.pad, x.suffix, x.financiado, x.docType, x.docFixed)
+  );
+});
 
-document.getElementById("btnTodos").onclick = () => {
+bindClick("btnParcela", () => {
   const x = getInputs();
-  downloadText("contrato.csv", gerarContrato(x.n,x.start,x.pad,x.suffix,x.contrato));
-  downloadText("financiado.csv", gerarFinanciado(x.n,x.start,x.pad,x.suffix,x.financiado,x.docType));
-  downloadText("parcela.csv", gerarParcela(x.n,x.start,x.pad,x.suffix,x.parcela));
-};
+  downloadText("parcela.csv", gerarParcela(x.n, x.start, x.pad, x.suffix, x.parcela));
+});
+
+bindClick("btnTodos", () => {
+  const x = getInputs();
+  downloadText("contrato.csv", gerarContrato(x.n, x.start, x.pad, x.suffix, x.contrato));
+  downloadText("financiado.csv", gerarFinanciado(x.n, x.start, x.pad, x.suffix, x.financiado, x.docType, x.docFixed));
+  downloadText("parcela.csv", gerarParcela(x.n, x.start, x.pad, x.suffix, x.parcela));
+});

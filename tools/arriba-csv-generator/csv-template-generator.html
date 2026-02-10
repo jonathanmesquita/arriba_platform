@@ -5,57 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gerador de CSV — Layout Padrão | ARRIBA</title>
 
-  <!-- Bootstrap + FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-  <!-- CSS principal do ARRIBA -->
   <link rel="stylesheet" href="../../css/style.css" />
 
   <style>
-    .tool-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
-    .tool-card { border-radius: 12px; padding: 16px; margin-top: 12px; border: 1px solid rgba(0,0,0,.12); background: #fff; }
-    .tool-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-    .tool-card label { display: grid; gap: 6px; font-size: 13px; }
-    .tool-card input, .tool-card select {
-      padding: 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,.15);
-      background: #fff; color: #222;
+    .tool-wrap{max-width:1100px;margin:24px auto;padding:0 16px;}
+    .tool-card{border-radius:12px;padding:16px;margin-top:12px;border:1px solid rgba(0,0,0,.12);background:#fff;}
+    .tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+    .tool-card label{display:grid;gap:6px;font-size:13px;}
+    .tool-card input,.tool-card select,.tool-card textarea{
+      padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#fff;color:#222;
     }
-    .tool-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-    .tool-btn { padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(0,0,0,.15); background: #f5f5f7; color: #111; cursor: pointer; }
-    .tool-btn.primary { background: #0d6efd; border-color: #0d6efd; color: #fff; }
-    .tool-hint { opacity: .8; font-size: 13px; }
+    .tool-card textarea{min-height:110px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
+    .tool-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+    .tool-btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#f5f5f7;color:#111;cursor:pointer;}
+    .tool-btn.primary{background:#0d6efd;border-color:#0d6efd;color:#fff;}
+    .tool-hint{opacity:.85;font-size:13px}
 
-    /* Dark mode (segue seu body.dark-mode) */
-    body.dark-mode .tool-card { background: #171a21; border-color: #2a2f3a; }
-    body.dark-mode .tool-card input, body.dark-mode .tool-card select { background: #0f1115; border-color: #2a2f3a; color: #e6e6e6; }
-    body.dark-mode .tool-btn { background: #222836; border-color: #2a2f3a; color: #fff; }
-    body.dark-mode .tool-btn.primary { background: #2b6cff; border-color: #2b6cff; }
+    body.dark-mode .tool-card{background:#171a21;border-color:#2a2f3a;}
+    body.dark-mode .tool-card input,body.dark-mode .tool-card select,body.dark-mode .tool-card textarea{
+      background:#0f1115;border-color:#2a2f3a;color:#e6e6e6;
+    }
+    body.dark-mode .tool-btn{background:#222836;border-color:#2a2f3a;color:#fff;}
+    body.dark-mode .tool-btn.primary{background:#2b6cff;border-color:#2b6cff;}
 
-    /* Responsividade */
-    @media (max-width: 991.98px) { .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 575.98px) { .tool-grid { grid-template-columns: 1fr; } }
+    @media (max-width:991.98px){.tool-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width:575.98px){.tool-grid{grid-template-columns:1fr;}}
 
     /* Obrigatórios em vermelho */
-    .req label { color: #d93025; font-weight: 700; }
-    .req input, .req select { border-color: #d93025 !important; }
-    body.dark-mode .req label { color: #ff6b6b; }
-    body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !important; }
-
-    /* Accordion (campos pretos opcionais) */
-    body.dark-mode .accordion-item { background: transparent; border-color: #2a2f3a; }
-    body.dark-mode .accordion-button { background: #171a21; color: #e6e6e6; }
-    body.dark-mode .accordion-body { background: #0f1115; color: #e6e6e6; border-top: 1px solid #2a2f3a; }
+    .req label{color:#d93025;font-weight:700;}
+    .req input,.req select{border-color:#d93025!important;}
+    body.dark-mode .req label{color:#ff6b6b;}
+    body.dark-mode .req input,body.dark-mode .req select{border-color:#ff6b6b!important;}
   </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
-  <!-- NAVBAR (mesmo layout do index) -->
+  <!-- NAVBAR (igual index) -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="../../index.html">ARRIBA</a>
-
       <button class="navbar-toggler" type="button" id="mobileMenuToggle" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -63,35 +54,33 @@
       <div class="desktop-navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto u30navul">
           <li class="nav-item u30navli">
-            <button type="button" data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas Produtividade</button>
+            <button data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas Produtividade</button>
           </li>
           <li class="nav-item u30navli">
-            <button type="button" data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
+            <button data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
           </li>
           <li class="nav-item u30navli">
-            <button type="button" data-lbl="datacoberrors" class="nav-link u30navitem" data-navtarget="datacoberrors">Erros DataCob</button>
+            <button data-lbl="datacoberrors" class="nav-link u30navitem" data-navtarget="datacoberrors">Erros DataCob</button>
           </li>
         </ul>
 
         <ul class="navbar-nav ms-auto desktop-only-icons">
           <li class="nav-item search-container" id="searchContainer">
-            <button type="button" class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
+            <button class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
               <i class="fas fa-search"></i>
             </button>
             <div class="search-box">
               <input type="text" class="form-control search-input" id="searchInput" placeholder="Pesquisar...">
-              <button type="button" class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
+              <button class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
                 <i class="fas fa-times"></i>
               </button>
             </div>
           </li>
-
           <li class="nav-item">
             <a class="nav-link" href="#" id="toggleTheme" aria-label="Alternar tema">
               <i class="fas fa-moon" id="themeIcon"></i>
             </a>
           </li>
-
           <li class="nav-item">
             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar idioma">
               <img src="../../img/bandeiras_idiomas/br.svg" alt="Bandeira do Brasil" width="24" height="24" id="currentLanguageFlag">
@@ -101,10 +90,6 @@
       </div>
     </div>
   </nav>
-
-  <!-- (Mobile overlay + mega menus) -->
-  <!-- Mantive como você já tem: mobileOverlayMenu + toolsDropdownMenu + apisDropdownMenu + datacoberrorsDropdownMenu -->
-  <!-- Se você colar exatamente do seu arquivo atual aqui, funciona igual. -->
 
   <!-- BARRA DE VOLTAR -->
   <div class="border-bottom py-3">
@@ -118,8 +103,11 @@
 
   <main class="flex-grow-1">
     <div class="tool-wrap">
-      <h1 class="h3 mb-2">Gerador de CSV — Layout Padrão (ARRIBA)</h1>
-      <p class="tool-hint mb-3">Gera 60k linhas mantendo o layout e alterando apenas os campos em vermelho. Separador <strong>;</strong></p>
+      <h1 class="h3 mb-2">Gerador de CSV — Layout Padrão (Dock)</h1>
+      <p class="tool-hint mb-3">
+        Gera <strong>contrato.csv</strong>, <strong>financiado.csv</strong> e <strong>parcela.csv</strong> com
+        <strong>todas as colunas</strong>. Vermelho = obrigatório. Preto = opcional (vai vazio ou pelo “Defaults”).
+      </p>
 
       <!-- CONFIG GERAL -->
       <section class="tool-card">
@@ -127,208 +115,156 @@
         <div class="tool-grid">
           <div class="req">
             <label>Qtd registros
-              <input id="n" type="number" class="tool-input" value="60000" min="1" required>
+              <input id="n" type="number" value="60000" min="1" required>
             </label>
           </div>
-
           <div class="req">
             <label>Número inicial (base)
-              <input id="start" type="number" class="tool-input" value="30" min="0" required>
+              <input id="start" type="number" value="30" min="0" required>
             </label>
           </div>
-
           <div class="req">
             <label>Padding (zeros)
-              <input id="pad" type="number" class="tool-input" value="4" min="1" max="12" required>
+              <input id="pad" type="number" value="4" min="1" max="12" required>
             </label>
           </div>
-
           <div class="req">
-            <label>Sufixo
-              <input id="suffix" type="text" class="tool-input" value="-ARRIBA" required>
+            <label>Sufixo do contrato
+              <input id="suffix" type="text" value="-ARRIBA" required>
             </label>
           </div>
         </div>
       </section>
 
-      <!-- DOCUMENTOS (NOVO) -->
+      <!-- FINANCIADO: CPF/CNPJ -->
       <section class="tool-card">
-        <h2 class="h5 mb-3">Documentos (CPF/CNPJ) — FINANCIADO</h2>
+        <h2 class="h5 mb-3">CPF/CNPJ — FINANCIADO (opcional)</h2>
         <div class="tool-grid">
-          <label>Gerar documento (opcional)
-            <select id="docType" class="tool-input">
-              <option value="none" selected>Sem CPF/CNPJ</option>
+          <label>Gerar documento
+            <select id="docType">
+              <option value="none" selected>Deixar vazio</option>
               <option value="cpf">CPF válido</option>
               <option value="cnpj">CNPJ válido</option>
               <option value="auto">CPF ou CNPJ (aleatório)</option>
             </select>
           </label>
-
-          <label>Documento fixo (opcional)
-            <input id="docFixed" type="text" class="tool-input" placeholder="Deixe vazio para automático">
+          <label>Formatar com pontuação
+            <select id="docFormat">
+              <option value="raw" selected>Somente números</option>
+              <option value="pretty">Com pontos/traços</option>
+            </select>
           </label>
-
-          <div></div>
-          <div></div>
+          <div></div><div></div>
         </div>
-        <p class="tool-hint mt-2 mb-0">
-          Se “Sem CPF/CNPJ”, o campo <strong>Cpf_Cnpj</strong> sai vazio.
-          Se preencher “Documento fixo”, ele tem prioridade (e ignora o gerador).
-        </p>
       </section>
 
-      <!-- CONTRATO (OBRIGATÓRIOS) -->
+      <!-- CONTRATO -->
       <section class="tool-card">
-        <h2 class="h5 mb-3">Campos obrigatórios — CONTRATO</h2>
+        <h2 class="h5 mb-3">Obrigatórios — CONTRATO</h2>
         <div class="tool-grid">
           <div class="req">
             <label>Cliente
-              <input id="contrato_cliente" type="text" class="tool-input" value="1320" required>
+              <input id="contrato_cliente" type="text" value="1320" required>
             </label>
           </div>
-
           <div class="req">
             <label>Fase
-              <input id="contrato_fase" type="text" class="tool-input" value="AM" required>
+              <input id="contrato_fase" type="text" value="AM" required>
             </label>
           </div>
-
           <div></div><div></div>
         </div>
 
-        <!-- CAMPOS PRETOS (NÃO OBRIGATÓRIOS) -->
-        <div class="accordion mt-3" id="accContrato">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="accContratoH">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accContratoC">
-                Campos não obrigatórios (pretos) — CONTRATO
-              </button>
-            </h2>
-            <div id="accContratoC" class="accordion-collapse collapse" data-bs-parent="#accContrato">
-              <div class="accordion-body">
-                <p class="tool-hint mb-2">Aqui você pode adicionar campos extras do template (opcional).</p>
-                <div class="tool-grid" id="optContratoFields"></div>
-              </div>
-            </div>
-          </div>
+        <div class="mt-3">
+          <label>Defaults opcionais (pretos) — uma linha por coluna: <code>Coluna=Valor</code>
+            <textarea id="contrato_defaults" placeholder="Ex:
+Filial=
+Plano=
+Moeda=REAL"></textarea>
+          </label>
+          <p class="tool-hint mb-0">Qualquer coluna do header de contrato pode entrar aqui. Se não informar, sai vazio.</p>
         </div>
       </section>
 
-      <!-- FINANCIADO (OBRIGATÓRIOS) -->
+      <!-- FINANCIADO -->
       <section class="tool-card">
-        <h2 class="h5 mb-3">Campos obrigatórios — FINANCIADO</h2>
+        <h2 class="h5 mb-3">Obrigatórios — FINANCIADO</h2>
         <div class="tool-grid">
           <div class="req">
             <label>Cliente
-              <input id="fin_cliente" type="text" class="tool-input" value="1320" required>
+              <input id="fin_cliente" type="text" value="1320" required>
             </label>
           </div>
-
           <div class="req">
-            <label>Nome (prefixo genérico)
-              <input id="fin_nome_prefix" type="text" class="tool-input" value="Cliente Generico" required>
+            <label>Nome (prefixo)
+              <input id="fin_nome_prefix" type="text" value="Cliente Generico" required>
             </label>
           </div>
-
           <div class="req">
             <label>Tipo_Pessoa
-              <select id="fin_tipo_pessoa" class="tool-input" required>
+              <select id="fin_tipo_pessoa" required>
                 <option value="Fisica" selected>Fisica</option>
                 <option value="Juridica">Juridica</option>
               </select>
             </label>
           </div>
-
           <div></div>
         </div>
 
-        <!-- CAMPOS PRETOS -->
-        <div class="accordion mt-3" id="accFinanciado">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="accFinanciadoH">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accFinanciadoC">
-                Campos não obrigatórios (pretos) — FINANCIADO
-              </button>
-            </h2>
-            <div id="accFinanciadoC" class="accordion-collapse collapse" data-bs-parent="#accFinanciado">
-              <div class="accordion-body">
-                <p class="tool-hint mb-2">Campos extras do template entram aqui (opcional).</p>
-                <div class="tool-grid" id="optFinFields"></div>
-              </div>
-            </div>
-          </div>
+        <div class="mt-3">
+          <label>Defaults opcionais (pretos) — <code>Coluna=Valor</code>
+            <textarea id="fin_defaults" placeholder="Ex:
+Sexo=M
+Estado_Civil=Solteiro
+Profissao=DEV
+Renda=4500"></textarea>
+          </label>
+          <p class="tool-hint mb-0">Os obrigatórios sempre sobrescrevem defaults. O resto entra do jeito que você digitar.</p>
         </div>
       </section>
 
-      <!-- PARCELA (OBRIGATÓRIOS) -->
+      <!-- PARCELA -->
       <section class="tool-card">
-        <h2 class="h5 mb-3">Campos obrigatórios — PARCELA</h2>
-
+        <h2 class="h5 mb-3">Obrigatórios — PARCELA</h2>
         <div class="tool-grid">
           <div class="req">
             <label>Dt_Vencimento (dd/mm/aaaa)
-              <input id="parc_dt_venc" type="text" class="tool-input" value="09/02/2026" required>
+              <input id="parc_dt_venc" type="text" value="09/02/2026" required>
             </label>
           </div>
-
           <div class="req">
             <label>Tipo_Parcela
-              <input id="parc_tipo" type="text" class="tool-input" value="0" required>
+              <input id="parc_tipo" type="text" value="0" required>
             </label>
           </div>
-
           <div class="req">
             <label>Nr_Parcela
-              <input id="parc_nr" type="number" class="tool-input" value="1" min="1" required>
+              <input id="parc_nr" type="number" value="1" min="1" required>
             </label>
           </div>
-
           <div class="req">
             <label>Vl_Original (inicial)
-              <input id="parc_vl_ini" type="number" class="tool-input" value="100" min="0" step="0.01" required>
+              <input id="parc_vl_ini" type="number" value="100" min="0" required>
             </label>
           </div>
-
           <div class="req">
             <label>Incremento por linha
-              <input id="parc_vl_step" type="number" class="tool-input" value="100" min="0" step="0.01" required>
+              <input id="parc_vl_step" type="number" value="100" min="0" required>
             </label>
           </div>
+          <div></div><div></div><div></div>
+        </div>
 
-          <div class="req">
-            <label>Vl_Saldo (modo)
-              <select id="parc_vl_saldo_mode" class="tool-input" required>
-                <option value="igual" selected>Igual ao Vl_Original</option>
-                <option value="fixo">Fixo (usar campo abaixo)</option>
-              </select>
-            </label>
-          </div>
-
-          <label>Vl_Saldo (fixo opcional)
-            <input id="parc_vl_saldo_fixed" type="number" class="tool-input" value="" placeholder="Ex.: 100.00" step="0.01">
+        <div class="mt-3">
+          <label>Defaults opcionais (pretos) — <code>Coluna=Valor</code>
+            <textarea id="parc_defaults" placeholder="Ex:
+Motivo=Teste Pagamento
+Marcar_Dt_Lote=S
+Dt_Lote=21/01/2026
+Vl_Tarifa=0"></textarea>
           </label>
-
-          <div></div>
+          <p class="tool-hint mb-0">Vl_Saldo sempre sai igual ao Vl_Original (regra simples, bem estável).</p>
         </div>
-
-        <!-- CAMPOS PRETOS -->
-        <div class="accordion mt-3" id="accParcela">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="accParcelaH">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accParcelaC">
-                Campos não obrigatórios (pretos) — PARCELA
-              </button>
-            </h2>
-            <div id="accParcelaC" class="accordion-collapse collapse" data-bs-parent="#accParcela">
-              <div class="accordion-body">
-                <p class="tool-hint mb-2">Campos do template tipo Motivo, Dt_Lote, etc. (opcional).</p>
-                <div class="tool-grid" id="optParcFields"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p class="tool-hint mt-3 mb-0">Obs: se seu template força Dt_Inclusao = Dt_Vencimento e Motivo fixo, isso você controla no JS.</p>
 
         <div class="tool-btns mt-3">
           <button id="btnContrato" class="tool-btn">Baixar contrato.csv</button>
@@ -338,7 +274,7 @@
         </div>
       </section>
 
-      <p class="tool-hint mt-3">Versão: 1.10.0. Teste no GitHub Pages. Local com Live Server também funciona.</p>
+      <p class="tool-hint mt-3">Separador: <strong>;</strong> — Quebra de linha: <strong>Windows (CRLF)</strong></p>
     </div>
   </main>
 
@@ -349,7 +285,7 @@
     </div>
   </footer>
 
-  <!-- Modal de Idiomas (mínimo) -->
+  <!-- Modal idioma mínimo -->
   <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -358,13 +294,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p class="mb-2 text-muted small">Seleção visual (placeholder). Se quiser, copie o modal completo do index.</p>
+          <p class="mb-2 text-muted small">Placeholder. Se quiser, copie o modal completo do index.</p>
           <div class="d-grid gap-2">
             <a href="#" class="btn btn-outline-secondary select-lang" data-country="Brasil">
               <img src="../../img/bandeiras_idiomas/flg-br.svg" width="24" height="24" class="me-2" alt="BR"> Português (Brasil)
-            </a>
-            <a href="#" class="btn btn-outline-secondary select-lang" data-country="Estados Unidos">
-              <img src="../../img/bandeiras_idiomas/flg-us.svg" width="24" height="24" class="me-2" alt="US"> English (US)
             </a>
           </div>
         </div>

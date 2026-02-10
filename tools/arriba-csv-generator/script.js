@@ -1,6 +1,7 @@
 const SEP = ";";
 const NL = "\r\n";
 
+/* ========= Utils ========= */
 function padLeft(num, size) {
   const s = String(num);
   return s.length >= size ? s : "0".repeat(size - s.length) + s;
@@ -26,14 +27,46 @@ function csv(headers, rows) {
   return [headers.join(SEP), ...rows.map(r => r.join(SEP))].join(NL);
 }
 
-function getInputs() {
-  const n = parseInt(document.getElementById("n").value, 10);
-  const start = parseInt(document.getElementById("start").value, 10);
-  const pad = parseInt(document.getElementById("pad").value, 10);
-  const suffix = document.getElementById("suffix").value || "-ARRIBA";
+/* ========= CPF / CNPJ ========= */
+function randomDigit() {
+  return Math.floor(Math.random() * 10);
+}
 
+function gerarCPF() {
+  let nums = Array.from({ length: 9 }, randomDigit);
+
+  let d1 = nums.reduce((s, n, i) => s + n * (10 - i), 0) % 11;
+  d1 = d1 < 2 ? 0 : 11 - d1;
+
+  let d2 = [...nums, d1].reduce((s, n, i) => s + n * (11 - i), 0) % 11;
+  d2 = d2 < 2 ? 0 : 11 - d2;
+
+  return [...nums, d1, d2].join("");
+}
+
+function gerarCNPJ() {
+  let nums = Array.from({ length: 12 }, randomDigit);
+
+  const calc = (base, weights) =>
+    base.reduce((s, n, i) => s + n * weights[i], 0) % 11;
+
+  let d1 = calc(nums, [5,4,3,2,9,8,7,6,5,4,3,2]);
+  d1 = d1 < 2 ? 0 : 11 - d1;
+
+  let d2 = calc([...nums, d1], [6,5,4,3,2,9,8,7,6,5,4,3,2]);
+  d2 = d2 < 2 ? 0 : 11 - d2;
+
+  return [...nums, d1, d2].join("");
+}
+
+/* ========= Inputs ========= */
+function getInputs() {
   return {
-    n, start, pad, suffix,
+    n: +document.getElementById("n").value,
+    start: +document.getElementById("start").value,
+    pad: +document.getElementById("pad").value,
+    suffix: document.getElementById("suffix").value || "-ARRIBA",
+    docType: document.getElementById("docType")?.value || "none",
 
     contrato: {
       cliente: document.getElementById("contrato_cliente").value || "1320",
@@ -47,172 +80,88 @@ function getInputs() {
     },
 
     parcela: {
-      dtVenc: document.getElementById("parc_dt_venc").value || "09/02/2026",
-      tipoParc: document.getElementById("parc_tipo").value || "0",
-      nrParc: String(parseInt(document.getElementById("parc_nr").value, 10) || 1),
-      vlIni: parseFloat(document.getElementById("parc_vl_ini").value || "100"),
-      vlStep: parseFloat(document.getElementById("parc_vl_step").value || "0"),
+      dtVenc: document.getElementById("parc_dt_venc").value,
+      tipoParc: document.getElementById("parc_tipo").value,
+      nrParc: document.getElementById("parc_nr").value,
+      vlIni: +document.getElementById("parc_vl_ini").value,
+      vlStep: +document.getElementById("parc_vl_step").value,
     }
   };
 }
 
-/* =========================
-   CONTRATO (layout real)
-   Campos vermelhos: Cliente, Nr_Contrato
-   ========================= */
+function resolveDocumento(type) {
+  if (type === "cpf") return gerarCPF();
+  if (type === "cnpj") return gerarCNPJ();
+  if (type === "auto") return Math.random() > 0.5 ? gerarCPF() : gerarCNPJ();
+  return "";
+}
+
+/* ========= Geradores ========= */
 function gerarContrato(n, start, pad, suffix, cfg) {
-  const headers = [
-    "Tipo_Registro","Cliente","Nr_Contrato","Filial","Plano","Fase","Regional","Regua",
-    "Vl_Contrato","Dt_Contrato","Tx_Contrato","Dt_Para_Notificacao","Dt_Solicitacao_Documento",
-    "Dt_Ajuizamento","Cod_Loja","Grupo","Moeda","SubRegua","Cpf_Cnpj"
-  ];
-
+  const headers = ["Tipo_Registro","Cliente","Nr_Contrato","Fase"];
   const rows = [];
-  for (let i = 0; i < n; i++) {
-    const nr = makeNrContrato(i, start, pad, suffix);
-    rows.push([
-      "6",
-      cfg.cliente,     // vermelho
-      nr,              // vermelho
-      "",
-      "",
-      cfg.fase,        // no seu template está "AM"
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""               // Cpf_Cnpj vazio (como no seu exemplo)
-    ]);
-  }
 
+  for (let i = 0; i < n; i++) {
+    rows.push(["6", cfg.cliente, makeNrContrato(i,start,pad,suffix), cfg.fase]);
+  }
   return csv(headers, rows);
 }
 
-/* =========================
-   FINANCIADO (layout real)
-   Campos vermelhos: Nr_Contrato, Nome (e Cliente você também usou)
-   ========================= */
-function gerarFinanciado(n, start, pad, suffix, cfg) {
-  const headers = [
-    "Tipo_Registro","Nr_Contrato","Nome","Cpf_Cnpj","Cliente","Dt_Nascimento","Sexo","Tipo_Pessoa",
-    "Estado_Civil","Conjuge","Pai","Mae","Rg","Rg_Orgao_Emiss","Rg_Uf_Emiss","Rg_Dt_Emiss",
-    "Score_Serasa","Profissao","Renda","Score_Adicional"
-  ];
-
+function gerarFinanciado(n, start, pad, suffix, cfg, docType) {
+  const headers = ["Tipo_Registro","Nr_Contrato","Nome","Cpf_Cnpj","Cliente","Tipo_Pessoa"];
   const rows = [];
+
   for (let i = 0; i < n; i++) {
-    const nr = makeNrContrato(i, start, pad, suffix);
-
-    // CPF genérico “ok pra teste” (não valida dígito, mas mantém padrão)
-    const cpfBase = padLeft(((i + 1) % 99999999999), 11);
-    const cpfFmt = `${cpfBase.slice(0,3)}.${cpfBase.slice(3,6)}.${cpfBase.slice(6,9)}-${cpfBase.slice(9,11)}`;
-
     rows.push([
       "2",
-      nr,                                   // vermelho
-      `${cfg.nomePrefix} ${padLeft(i+start, pad)}`, // vermelho
-      cpfFmt,
-      cfg.cliente,                          // você também destacou
-      "",
-      "",
-      cfg.tipoPessoa,                       // "Fisica"
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
+      makeNrContrato(i,start,pad,suffix),
+      `${cfg.nomePrefix} ${padLeft(i+start,pad)}`,
+      resolveDocumento(docType),
+      cfg.cliente,
+      cfg.tipoPessoa
     ]);
   }
-
   return csv(headers, rows);
 }
 
-/* =========================
-   PARCELA (layout real)
-   Campos vermelhos: Nr_Contrato, Dt_Vencimento, Tipo_Parcela, Nr_Parcela, Vl_Original, Vl_Saldo
-   ========================= */
 function gerarParcela(n, start, pad, suffix, cfg) {
-  const headers = [
-    "Tipo_Registro","Nr_Contrato","Dt_Vencimento","Tipo_Parcela","Nr_Parcela","Vl_Original","Vl_Saldo",
-    "Vl_Tarifa","Cliente","Dt_Inclusao","Dt_Devolucao","Dt_Inibicao","Motivo","Dt_Notificacao",
-    "Marcar_Dt_Lote","Dt_Lote","Documento","Cpf_Cnpj","Plano"
-  ];
-
+  const headers = ["Tipo_Registro","Nr_Contrato","Dt_Vencimento","Tipo_Parcela","Nr_Parcela","Vl_Original","Vl_Saldo"];
   const rows = [];
-  for (let i = 0; i < n; i++) {
-    const nr = makeNrContrato(i, start, pad, suffix);
-    const vl = (cfg.vlIni + (cfg.vlStep * i));
 
+  for (let i = 0; i < n; i++) {
+    const vl = cfg.vlIni + cfg.vlStep * i;
     rows.push([
       "7",
-      nr,                 // vermelho
-      cfg.dtVenc,          // vermelho
-      cfg.tipoParc,        // vermelho
-      cfg.nrParc,          // vermelho
-      String(vl),          // vermelho
-      String(vl),          // vermelho (igual ao original, como no exemplo)
-      "",
-      "",
-      cfg.dtVenc,          // no seu template Dt_Inclusao = Dt_Vencimento
-      "",
-      "",
-      "Teste Pagamento",   // mantém padrão do seu template
-      "",
-      "S",                 // mantém
-      "21/01/2026",        // mantém padrão do seu template (se quiser, vira input depois)
-      "",
-      "",                  // Cpf_Cnpj (vazio ou gere igual ao financiado se quiser amarrar)
-      ""
+      makeNrContrato(i,start,pad,suffix),
+      cfg.dtVenc,
+      cfg.tipoParc,
+      cfg.nrParc,
+      vl,
+      vl
     ]);
   }
-
   return csv(headers, rows);
 }
 
-/* ======== Eventos ======== */
-document.getElementById("btnContrato").addEventListener("click", () => {
+/* ========= Eventos ========= */
+document.getElementById("btnContrato").onclick = () => {
   const x = getInputs();
-  const content = gerarContrato(x.n, x.start, x.pad, x.suffix, x.contrato);
-  downloadText("contrato.csv", content);
-});
+  downloadText("contrato.csv", gerarContrato(x.n,x.start,x.pad,x.suffix,x.contrato));
+};
 
-document.getElementById("btnFinanciado").addEventListener("click", () => {
+document.getElementById("btnFinanciado").onclick = () => {
   const x = getInputs();
-  const content = gerarFinanciado(x.n, x.start, x.pad, x.suffix, x.financiado);
-  downloadText("financiado.csv", content);
-});
+  downloadText("financiado.csv", gerarFinanciado(x.n,x.start,x.pad,x.suffix,x.financiado,x.docType));
+};
 
-document.getElementById("btnParcela").addEventListener("click", () => {
+document.getElementById("btnParcela").onclick = () => {
   const x = getInputs();
-  const content = gerarParcela(x.n, x.start, x.pad, x.suffix, x.parcela);
-  downloadText("parcela.csv", content);
-});
+  downloadText("parcela.csv", gerarParcela(x.n,x.start,x.pad,x.suffix,x.parcela));
+};
 
-document.getElementById("btnTodos").addEventListener("click", () => {
+document.getElementById("btnTodos").onclick = () => {
   const x = getInputs();
-  downloadText("contrato.csv", gerarContrato(x.n, x.start, x.pad, x.suffix, x.contrato));
-  downloadText("financiado.csv", gerarFinanciado(x.n, x.start, x.pad, x.suffix, x.financiado));
-  downloadText("parcela.csv", gerarParcela(x.n, x.start, x.pad, x.suffix, x.parcela));
-});
-
-<select id="docType">
-  <option value="none">Sem CPF/CNPJ</option>
-  <option value="cpf">CPF válido</option>
-  <option value="cnpj">CNPJ válido</option>
-  <option value="auto">CPF ou CNPJ</option>
-</select>
+  downloadText("contrato.csv", gerarContrato(x.n,x.start,x.pad,x.suffix,x.contrato));
+  downloadText("financiado.csv", gerarFinanciado(x.n,x.start,x.pad,x.suffix,x.financiado,x.docType));
+  downloadText("parcela.csv", gerarParcela(x.n,x.start,x.pad,x.suffix,x.parcela));
+};

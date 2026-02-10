@@ -1,381 +1,410 @@
-<main class="flex-grow-1">
-  <div class="tool-wrap">
-    <h1 class="h3 mb-2">Gerador de CSV — Layout Padrão (ARRIBA)</h1>
-    <p class="tool-hint mb-3">
-      Gera <strong>N</strong> linhas com separador <strong>;</strong>.
-      Campos em <span style="color:#d93025;font-weight:700;">vermelho</span> são obrigatórios.
-      Campos em preto são opcionais (default vazio).
-    </p>
+<!doctype html>
+<html lang="pt-br">
 
-    <!-- CONFIG GERAL (controle do gerador) -->
-    <section class="tool-card">
-      <h2 class="h5 mb-3">Configuração do gerador</h2>
-      <div class="tool-grid">
-        <div class="req">
-          <label>Qtd_Registro (N)
-            <input id="n" type="number" class="tool-input" value="60000" min="1" required>
-            <small class="tool-hint">Quantidade de linhas a gerar.</small>
-          </label>
-        </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <div class="req">
-          <label>Nr_Contrato (base inicial)
-            <input id="start" type="number" class="tool-input" value="30" min="0" required>
-            <small class="tool-hint">Ex: start=30, pad=4, sufixo=-ARRIBA → 0030-ARRIBA…</small>
-          </label>
-        </div>
+  <title>Gerador de CSV — Layout Padrão | ARRIBA</title>
 
-        <div class="req">
-          <label>Nr_Contrato (padding)
-            <input id="pad" type="number" class="tool-input" value="4" min="1" max="12" required>
-            <small class="tool-hint">Zeros à esquerda (0030).</small>
-          </label>
-        </div>
+  <!-- Bootstrap + FontAwesome (iguais ao projeto) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-        <div class="req">
-          <label>Nr_Contrato (sufixo)
-            <input id="suffix" type="text" class="tool-input" value="-ARRIBA" required>
-            <small class="tool-hint">Texto após o número (ex: -ARRIBA).</small>
-          </label>
-        </div>
+  <!-- CSS principal do ARRIBA (ajuste de caminho por estar em /tools/...) -->
+  <link rel="stylesheet" href="../../css/style.css" />
+
+  <!-- CSS local (somente da ferramenta) -->
+  <style>
+    /* Tool layout: respeita o tema do Arriba (light/dark) */
+    .tool-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    .tool-card { border-radius: 12px; padding: 16px; margin-top: 12px; border: 1px solid rgba(0,0,0,.12); background: #fff; }
+    .tool-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .tool-card label { display: grid; gap: 6px; font-size: 13px; }
+    .tool-card input, .tool-card select {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.15);
+      background: #fff;
+      color: #222;
+    }
+    .tool-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .tool-btn { padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(0,0,0,.15); background: #f5f5f7; color: #111; cursor: pointer; }
+    .tool-btn.primary { background: #0d6efd; border-color: #0d6efd; color: #fff; }
+    .tool-hint { opacity: .8; font-size: 13px; }
+
+    /* Dark mode (segue seu body.dark-mode) */
+    body.dark-mode .tool-card { background: #171a21; border-color: #2a2f3a; }
+    body.dark-mode .tool-card input, body.dark-mode .tool-card select { background: #0f1115; border-color: #2a2f3a; color: #e6e6e6; }
+    body.dark-mode .tool-btn { background: #222836; border-color: #2a2f3a; color: #fff; }
+    body.dark-mode .tool-btn.primary { background: #2b6cff; border-color: #2b6cff; }
+
+    /* Obrigatórios em vermelho (labels + borda do input) */
+    .req label { color: #d93025; font-weight: 600; }
+    .req input, .req select { border-color: #d93025 !important; }
+    body.dark-mode .req label { color: #ff6b6b; }
+    body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !important; }
+
+    /* Responsividade */
+    @media (max-width: 991.98px) {
+      .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 575.98px) {
+      .tool-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- NAVBAR (mesmo layout do index) -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../../index.html">ARRIBA</a>
+
+      <button class="navbar-toggler" type="button" id="mobileMenuToggle" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="desktop-navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto u30navul">
+          <li class="nav-item u30navli">
+            <button data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas Produtividade</button>
+          </li>
+          <li class="nav-item u30navli">
+            <button data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
+          </li>
+          <li class="nav-item u30navli">
+            <button data-lbl="datacoberrors" class="nav-link u30navitem" data-navtarget="datacoberrors">Erros DataCob</button>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ms-auto desktop-only-icons">
+          <li class="nav-item search-container" id="searchContainer">
+            <button class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="search-box">
+              <input type="text" class="form-control search-input" id="searchInput" placeholder="Pesquisar...">
+              <button class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" id="toggleTheme" aria-label="Alternar tema">
+              <i class="fas fa-moon" id="themeIcon"></i>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar idioma">
+              <img src="../../img/bandeiras_idiomas/br.svg" alt="Bandeira do Brasil" width="24" height="24" id="currentLanguageFlag">
+            </a>
+          </li>
+        </ul>
       </div>
-    </section>
+    </div>
+  </nav>
 
-    <!-- ========================= CONTRATO ========================= -->
-    <section class="tool-card">
-      <h2 class="h5 mb-3">Contrato (Tipo_Registro = 6)</h2>
+  <!-- MOBILE OVERLAY MENU (igual index, com paths ajustados) -->
+  <div class="mobile-menu-overlay" id="mobileOverlayMenu">
+    <div class="d-flex justify-content-end p-3">
+      <button class="btn-close btn-close-white" id="mobileMenuClose" aria-label="Fechar Menu"></button>
+    </div>
 
-      <div class="tool-grid">
-        <!-- obrigatórios -->
-        <div class="req">
-          <label>Cliente
-            <input id="contrato_cliente" type="text" class="tool-input" value="1320" required>
-            <small class="tool-hint">Id do cliente no sistema.</small>
-          </label>
-        </div>
+    <ul class="navbar-nav flex-column u30navul-mobile">
+      <li class="nav-item u30navli-mobile">
+        <button data-lbl="tools" class="nav-link u30navitem-mobile" data-navtarget="tools">Ferramentas Produtividade</button>
+      </li>
+      <li class="nav-item u30navli-mobile">
+        <button data-lbl="apis" class="nav-link u30navitem-mobile" data-navtarget="apis">APIs</button>
+      </li>
+      <li class="nav-item u30navli-mobile">
+        <button data-lbl="datacoberrors" class="nav-link u30navitem-mobile" data-navtarget="datacoberrors">Erros CRM</button>
+      </li>
+    </ul>
 
-        <div class="req">
-          <label>Fase
-            <input id="contrato_fase" type="text" class="tool-input" value="AM" required>
-            <small class="tool-hint">Código da fase do contrato.</small>
-          </label>
-        </div>
-
-        <!-- opcionais -->
-        <label>Filial
-          <input id="contrato_filial" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Id/descrição da filial.</small>
-        </label>
-
-        <label>Plano
-          <input id="contrato_plano" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Plano do contrato.</small>
-        </label>
-
-        <label>Regional
-          <input id="contrato_regional" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Código regional.</small>
-        </label>
-
-        <label>Regua
-          <input id="contrato_regua" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Código da régua.</small>
-        </label>
-
-        <label>Vl_Contrato
-          <input id="contrato_vl_contrato" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Valor total do contrato.</small>
-        </label>
-
-        <label>Dt_Contrato
-          <input id="contrato_dt_contrato" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Data do contrato (dd/mm/aaaa).</small>
-        </label>
-
-        <label>Tx_Contrato
-          <input id="contrato_tx_contrato" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Taxa (ex: 0.001).</small>
-        </label>
-
-        <label>Dt_Para_Notificacao
-          <input id="contrato_dt_para_notificacao" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Campo mantido para evitar quebra do layout.</small>
-        </label>
-
-        <label>Dt_Solicitacao_Documento
-          <input id="contrato_dt_solic_doc" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Data de prazo para solicitação.</small>
-        </label>
-
-        <label>Dt_Ajuizamento
-          <input id="contrato_dt_ajuizamento" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Data de prazo para ajuizamento.</small>
-        </label>
-
-        <label>Cod_Loja
-          <input id="contrato_cod_loja" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Código da loja.</small>
-        </label>
-
-        <label>Grupo
-          <input id="contrato_grupo" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Grupo do contrato.</small>
-        </label>
-
-        <label>Moeda
-          <input id="contrato_moeda" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Ex: REAL.</small>
-        </label>
-
-        <label>SubRegua
-          <input id="contrato_subregua" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Número/texto.</small>
-        </label>
-
-        <label>Cpf_Cnpj
-          <input id="contrato_cpf_cnpj" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. CPF/CNPJ do financiado do contrato.</small>
-        </label>
-      </div>
-    </section>
-
-    <!-- ========================= FINANCIADO ========================= -->
-    <section class="tool-card">
-      <h2 class="h5 mb-3">Financiado (Tipo_Registro = 2)</h2>
-
-      <div class="tool-grid">
-        <!-- obrigatórios -->
-        <div class="req">
-          <label>Cliente
-            <input id="fin_cliente" type="text" class="tool-input" value="1320" required>
-            <small class="tool-hint">Id do cliente no sistema.</small>
-          </label>
-        </div>
-
-        <div class="req">
-          <label>Nome
-            <input id="fin_nome" type="text" class="tool-input" value="Cliente Generico" required>
-            <small class="tool-hint">Nome completo. Vou gerar “Nome + número” por linha.</small>
-          </label>
-        </div>
-
-        <div class="req">
-          <label>Tipo_Pessoa
-            <select id="fin_tipo_pessoa" class="tool-input" required>
-              <option value="F" selected>F (Física)</option>
-              <option value="J">J (Jurídica)</option>
-            </select>
-            <small class="tool-hint">Somente 1 letra: F ou J (conforme doc).</small>
-          </label>
-        </div>
-
-        <div class="req">
-          <label>Cpf_Cnpj
-            <input id="fin_cpf_cnpj_manual" type="text" class="tool-input" value="" required>
-            <small class="tool-hint">Se vazio, pode gerar automático (abaixo). Se preencher, repete igual em todas as linhas.</small>
-          </label>
-        </div>
-
-        <!-- gerador (opcional) -->
-        <label>Gerar CPF/CNPJ automaticamente
-          <select id="docType" class="tool-input">
-            <option value="none">Não gerar (usa o que você digitou em Cpf_Cnpj)</option>
-            <option value="cpf">Gerar CPF válido</option>
-            <option value="cnpj">Gerar CNPJ válido</option>
-            <option value="auto" selected>Auto (Física=CPF / Jurídica=CNPJ)</option>
-          </select>
-          <small class="tool-hint">Se Cpf_Cnpj manual estiver vazio, gera por linha.</small>
-        </label>
-
-        <!-- opcionais -->
-        <label>Dt_Nascimento
-          <input id="fin_dt_nascimento" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. (dd/mm/aaaa)</small>
-        </label>
-
-        <label>Sexo
-          <input id="fin_sexo" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. 1 letra (F/M).</small>
-        </label>
-
-        <label>Estado_Civil
-          <input id="fin_estado_civil" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Ex: (S)olteiro, (C)asado…</small>
-        </label>
-
-        <label>Conjuge
-          <input id="fin_conjuge" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional.</small>
-        </label>
-
-        <label>Pai
-          <input id="fin_pai" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional.</small>
-        </label>
-
-        <label>Mae
-          <input id="fin_mae" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional.</small>
-        </label>
-
-        <label>Rg
-          <input id="fin_rg" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional.</small>
-        </label>
-
-        <label>Rg_Orgao_Emiss
-          <input id="fin_rg_orgao" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Ex: SSP.</small>
-        </label>
-
-        <label>Rg_Uf_Emiss
-          <input id="fin_rg_uf" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Ex: SP.</small>
-        </label>
-
-        <label>Rg_Dt_Emiss
-          <input id="fin_rg_dt" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. (dd/mm/aaaa)</small>
-        </label>
-
-        <label>Score_Serasa
-          <input id="fin_score_serasa" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Inteiro.</small>
-        </label>
-
-        <label>Profissao
-          <input id="fin_profissao" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional.</small>
-        </label>
-
-        <label>Renda
-          <input id="fin_renda" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Numérico.</small>
-        </label>
-
-        <label>Score_Adicional
-          <input id="fin_score_adicional" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Numérico.</small>
-        </label>
-      </div>
-    </section>
-
-    <!-- ========================= PARCELA ========================= -->
-    <section class="tool-card">
-      <h2 class="h5 mb-3">Parcela (Tipo_Registro = 7)</h2>
-
-      <div class="tool-grid">
-        <!-- obrigatórios -->
-        <div class="req">
-          <label>Dt_Vencimento
-            <input id="parc_dt_venc" type="text" class="tool-input" value="09/02/2026" required>
-            <small class="tool-hint">Data de vencimento (dd/mm/aaaa).</small>
-          </label>
-        </div>
-
-        <div class="req">
-          <label>Tipo_Parcela
-            <input id="parc_tipo" type="text" class="tool-input" value="0" required>
-            <small class="tool-hint">Código do tipo de parcela (ex: 0 = padrão).</small>
-          </label>
-        </div>
-
-        <div class="req">
-          <label>Nr_Parcela
-            <input id="parc_nr" type="number" class="tool-input" value="1" min="1" required>
-            <small class="tool-hint">Número identificador da parcela.</small>
-          </label>
-        </div>
-
-        <div class="req">
-          <label>Vl_Original
-            <input id="parc_vl_ini" type="text" class="tool-input" value="100" required>
-            <small class="tool-hint">Valor total da parcela (pode ser igual ao saldo).</small>
-          </label>
-        </div>
-
-        <div class="req">
-          <label>Vl_Saldo
-            <input id="parc_vl_saldo" type="text" class="tool-input" value="">
-            <small class="tool-hint">Se vazio, vou copiar o Vl_Original.</small>
-          </label>
-        </div>
-
-        <label>Incremento (gerador) — opcional
-          <input id="parc_vl_step" type="text" class="tool-input" value="">
-          <small class="tool-hint">Se preencher, soma por linha no Vl_Original e Vl_Saldo.</small>
-        </label>
-
-        <!-- opcionais -->
-        <label>Vl_Tarifa
-          <input id="parc_vl_tarifa" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Taxa adicional à parcela.</small>
-        </label>
-
-        <label>Cliente
-          <input id="parc_cliente" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Normalmente o sistema obtém do contrato.</small>
-        </label>
-
-        <label>Dt_Inclusao
-          <input id="parc_dt_inclusao" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Se vazio, fica vazio.</small>
-        </label>
-
-        <label>Dt_Devolucao
-          <input id="parc_dt_devolucao" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. (dd/mm/aaaa)</small>
-        </label>
-
-        <label>Dt_Inibicao
-          <input id="parc_dt_inibicao" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. (dd/mm/aaaa)</small>
-        </label>
-
-        <label>Motivo
-          <input id="parc_motivo" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional.</small>
-        </label>
-
-        <label>Dt_Notificacao
-          <input id="parc_dt_notificacao" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. (dd/mm/aaaa)</small>
-        </label>
-
-        <label>Marcar_Dt_Lote
-          <input id="parc_marcar_dt_lote" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. (ex: N)</small>
-        </label>
-
-        <label>Dt_Lote
-          <input id="parc_dt_lote" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Data do lote.</small>
-        </label>
-
-        <label>Documento
-          <input id="parc_documento" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Documento de uso livre.</small>
-        </label>
-
-        <label>Cpf_Cnpj
-          <input id="parc_cpf_cnpj" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. CPF/CNPJ do financiado (se precisar localizar).</small>
-        </label>
-
-        <label>Plano
-          <input id="parc_plano" type="text" class="tool-input" value="">
-          <small class="tool-hint">Opcional. Se vazio, considera o plano do layout do contrato.</small>
-        </label>
-      </div>
-
-      <div class="tool-btns mt-3">
-        <button id="btnContrato" class="tool-btn">Baixar contrato.csv</button>
-        <button id="btnFinanciado" class="tool-btn">Baixar financiado.csv</button>
-        <button id="btnParcela" class="tool-btn">Baixar parcela.csv</button>
-        <button id="btnTodos" class="tool-btn primary">Baixar TODOS</button>
-      </div>
-    </section>
-
-    <p class="tool-hint mt-3">Versão: 1.10.0</p>
+    <ul class="navbar-nav flex-column align-items-center mt-3 mobile-only-icons">
+      <li class="nav-item">
+        <button id="searchToggleBtnMobile" class="btn btn-link nav-link text-white">
+          <i class="fas fa-search me-2"></i> Pesquisar
+        </button>
+      </li>
+      <li class="nav-item">
+        <button id="toggleThemeMobile" class="btn btn-link nav-link text-white">
+          <i id="themeIconMobile" class="fas fa-moon me-2"></i> Tema
+        </button>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="#" id="languageDropdownMobile" role="button" data-bs-toggle="modal"
+          data-bs-target="#languageModal" aria-expanded="false">
+          <img id="currentLanguageFlagMobile" src="../../img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil"
+            width="24" height="24" class="me-2"> Idioma
+        </a>
+      </li>
+    </ul>
   </div>
-</main>
+
+  <!-- MEGA MENU: TOOLS -->
+  <div class="u30navw2" id="toolsDropdownMenu" data-dropdown="tools">
+    <div class="closenav">
+      <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
+    </div>
+
+    <div class="u30nav3-inner">
+      <div class="container-fluid">
+        <div class="row fourclm">
+
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">Ferramentas de Produtividade</a></h3>
+              <ul>
+                <li><a href="../../json_validator.html">Validador JSON</a></li>
+                <li><a href="#">Formatador de Código</a></li>
+                <li><a href="#">Gerador de Senhas</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">Utilitários de Dados</a></h3>
+              <ul>
+                <li><a href="#">Conversor CSV para JSON</a></li>
+                <li><a href="#">Comparador de Texto</a></li>
+                <li><a href="#">Calculadora de Hash</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">DevOps e Cloud</a></h3>
+              <ul>
+                <li><a href="#">Calculadora de Custo Cloud</a></li>
+                <li><a href="#">Gerador de .gitignore</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">Outras Ferramentas</a></h3>
+              <ul>
+                <li><a href="#">Analisador de Logs</a></li>
+                <li><a href="#">Gerador de Lorem Ipsum</a></li>
+                <!-- Link para ESTA ferramenta (sem target blank, pois agora ela faz parte da plataforma) -->
+                <li><a href="./index.html">Gerador CSV Dock v.1</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEGA MENU: APIS -->
+  <div class="u30navw2" id="apisDropdownMenu" data-dropdown="apis">
+    <div class="closenav">
+      <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
+    </div>
+
+    <div class="u30nav3-inner">
+      <div class="container-fluid">
+        <div class="row fourclm">
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">APIs de Dados</a></h3>
+              <ul>
+                <li><a href="#">API de Cotação de Moedas</a></li>
+                <li><a href="#">API de Clima</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">APIs de Integração</a></h3>
+              <ul>
+                <li><a href="#">API de Notificações</a></li>
+                <li><a href="#">API de Pagamentos (Mock)</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">APIs de Utilitários</a></h3>
+              <ul>
+                <li><a href="#">API de Validação de Email</a></li>
+                <li><a href="#">API de Geração de QR Code</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="u30t1">
+              <h3><a href="#">APIs Diversas</a></h3>
+              <ul>
+                <li><a href="#">API de Feriados Nacionais</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEGA MENU: ERROS -->
+  <div class="u30navw2" id="datacoberrorsDropdownMenu" data-dropdown="datacoberrors">
+    <div class="closenav">
+      <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
+    </div>
+
+    <div class="u30nav3-inner">
+      <div class="container-fluid">
+        <div class="row fourclm">
+          <div class="col-md-6">
+            <div class="u30t1">
+              <h3><a href="../../erros/erros-datacob.html">Documentação de Erros Comuns</a></h3>
+              <ul>
+                <li><a href="#">Erro DX001: Falha de Conexão</a></li>
+                <li><a href="#">Erro LV005: Licença Inválida</a></li>
+                <li><a href="#">Erro PR102: Processamento Interrompido</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="u30t1">
+              <h3><a href="#">Soluções e Workarounds</a></h3>
+              <ul>
+                <li><a href="#">Guia de Troubleshooting Avançado</a></li>
+                <li><a href="#">FAQs de Erros Críticos</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA DE VOLTAR (UX) -->
+  <div class="border-bottom py-3">
+    <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <a href="../../index.html" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-2"></i> Voltar para a Arriba Platform
+      </a>
+      <span class="text-muted small">
+        Ferramentas &gt; Gerador de CSV
+      </span>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO DA FERRAMENTA -->
+  <main class="flex-grow-1">
+    <div class="tool-wrap">
+
+      <h1 class="h3 mb-2">Gerador de CSV — Layout Padrão (ARRIBA)</h1>
+      <p class="tool-hint mb-3">Gera 60k linhas mantendo o layout e alterando apenas os campos em vermelho. Separador <strong>;</strong></p>
+
+      <section class="tool-card">
+        <h2 class="h5 mb-3">Config geral</h2>
+        <div class="tool-grid">
+          <label>Qtd registros
+            <input id="n" type="number" class="tool-input" value="60000" min="1">
+          </label>
+          <label>Número inicial (base)
+            <input id="start" type="number" class="tool-input" value="30" min="0">
+          </label>
+          <label>Padding (zeros)
+            <input id="pad" type="number" class="tool-input" value="4" min="1" max="12">
+          </label>
+          <label>Sufixo
+            <input id="suffix" type="text" class="tool-input" value="-ARRIBA">
+          </label>
+        </div>
+      </section>
+
+      <section class="tool-card">
+        <h2 class="h5 mb-3">Campos vermelhos — CONTRATO</h2>
+        <div class="tool-grid">
+          <label>Cliente
+            <input id="contrato_cliente" type="text" class="tool-input" value="1320">
+          </label>
+          <label>Fase (se quiser manter)
+            <input id="contrato_fase" type="text" class="tool-input" value="AM">
+          </label>
+        </div>
+      </section>
+
+      <section class="tool-card">
+        <h2 class="h5 mb-3">Campos vermelhos — FINANCIADO</h2>
+        <div class="tool-grid">
+          <label>Cliente
+            <input id="fin_cliente" type="text" class="tool-input" value="1320">
+          </label>
+          <label>Nome (prefixo genérico)
+            <input id="fin_nome_prefix" type="text" class="tool-input" value="Cliente Generico">
+          </label>
+          <label>Tipo_Pessoa
+            <input id="fin_tipo_pessoa" type="text" class="tool-input" value="Fisica">
+          </label>
+          <div></div>
+        </div>
+      </section>
+
+      <section class="tool-card">
+        <h2 class="h5 mb-3">Campos vermelhos — PARCELA</h2>
+        <div class="tool-grid">
+          <label>Dt_Vencimento (dd/mm/aaaa)
+            <input id="parc_dt_venc" type="text" class="tool-input" value="09/02/2026">
+          </label>
+          <label>Tipo_Parcela
+            <input id="parc_tipo" type="text" class="tool-input" value="0">
+          </label>
+          <label>Nr_Parcela (fixo)
+            <input id="parc_nr" type="number" value="1" min="1">
+          </label>
+          <label>Vl_Original (inicial)
+            <input id="parc_vl_ini" type="number" value="100" min="0">
+          </label>
+          <label>Incremento por linha
+            <input id="parc_vl_step" type="number" value="100" min="0">
+          </label>
+          <div></div><div></div><div></div>
+        </div>
+
+        <p class="tool-hint mt-3 mb-0">Obs: no template, Dt_Inclusao = Dt_Vencimento e Motivo = "Teste Pagamento". Mantive isso.</p>
+
+        <div class="tool-btns mt-3">
+          <button id="btnContrato" class="tool-btn">Baixar contrato.csv</button>
+          <button id="btnFinanciado" class="tool-btn">Baixar financiado.csv</button>
+          <button id="btnParcela" class="tool-btn">Baixar parcela.csv</button>
+          <button id="btnTodos" class="tool-btn primary">Baixar TODOS</button>
+        </div>
+      </section>
+
+      <p class="tool-hint mt-3">Versão: 1.10.0. Depois testar no GitHub Pages. Rodando local com Live Server já dá pra testar.</p>
+    </div>
+  </main>
+
+  <!-- FOOTER simples (opcional: se quiser idêntico ao index, copie o footer do index) -->
+  <footer class="mt-auto py-3 bg-dark text-white-50">
+    <div class="container text-center">
+      <p class="mb-0">&copy; 2025 Arriba Platform. Todos os direitos reservados.</p>
+      <small class="text-secondary">Ferramenta: Gerador CSV</small>
+    </div>
+  </footer>
+
+  <!-- Modal de Idiomas (se você quiser 100% igual ao index, copie o modal inteiro do index aqui) -->
+  <!-- Se o seu main.js depende do modal existir, aí sim: copie o bloco completo do #languageModal do index. -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script do ARRIBA (controla mega-menu, tema, overlay mobile etc.) -->
+  <script type="module" src="../../js/main.js"></script>
+
+  <!-- Script da ferramenta (mesma pasta) -->
+  <script src="./script.js"></script>
+</body>
+</html>

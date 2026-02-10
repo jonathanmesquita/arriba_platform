@@ -209,3 +209,10 @@ document.getElementById("btnTodos").addEventListener("click", () => {
   downloadText("financiado.csv", gerarFinanciado(x.n, x.start, x.pad, x.suffix, x.financiado));
   downloadText("parcela.csv", gerarParcela(x.n, x.start, x.pad, x.suffix, x.parcela));
 });
+
+<select id="docType">
+  <option value="none">Sem CPF/CNPJ</option>
+  <option value="cpf">CPF válido</option>
+  <option value="cnpj">CNPJ válido</option>
+  <option value="auto">CPF ou CNPJ</option>
+</select>

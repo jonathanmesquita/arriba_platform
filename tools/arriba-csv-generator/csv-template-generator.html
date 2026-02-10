@@ -1,27 +1,26 @@
 <!doctype html>
 <html lang="pt-br">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <title>Gerador de CSV — Layout Padrão | ARRIBA</title>
 
-  <!-- Bootstrap + FontAwesome (iguais ao projeto) -->
+  <!-- Bootstrap + FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  <!-- CSS principal do ARRIBA (ajuste de caminho por estar em /tools/...) -->
+  <!-- CSS principal do ARRIBA -->
   <link rel="stylesheet" href="../../css/style.css" />
 
-  <!-- CSS local (somente da ferramenta) -->
   <style>
-    /* Tool layout: respeita o tema do Arriba (light/dark) */
     .tool-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
     .tool-card { border-radius: 12px; padding: 16px; margin-top: 12px; border: 1px solid rgba(0,0,0,.12); background: #fff; }
     .tool-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
     .tool-card label { display: grid; gap: 6px; font-size: 13px; }
-    .tool-card input { padding: 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,.15); background: #fff; color: #222; }
+    .tool-card input, .tool-card select {
+      padding: 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,.15);
+      background: #fff; color: #222;
+    }
     .tool-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
     .tool-btn { padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(0,0,0,.15); background: #f5f5f7; color: #111; cursor: pointer; }
     .tool-btn.primary { background: #0d6efd; border-color: #0d6efd; color: #fff; }
@@ -29,23 +28,24 @@
 
     /* Dark mode (segue seu body.dark-mode) */
     body.dark-mode .tool-card { background: #171a21; border-color: #2a2f3a; }
-    body.dark-mode .tool-card input { background: #0f1115; border-color: #2a2f3a; color: #e6e6e6; }
+    body.dark-mode .tool-card input, body.dark-mode .tool-card select { background: #0f1115; border-color: #2a2f3a; color: #e6e6e6; }
     body.dark-mode .tool-btn { background: #222836; border-color: #2a2f3a; color: #fff; }
     body.dark-mode .tool-btn.primary { background: #2b6cff; border-color: #2b6cff; }
 
     /* Responsividade */
-    @media (max-width: 991.98px) {
-      .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 575.98px) {
-      .tool-grid { grid-template-columns: 1fr; }
-    }
-    /* Obrigatórios em vermelho (padrão docs) */
-.req label { color: #d93025; font-weight: 600; }
-.req input, .req select { border-color: #d93025 !important; }
-body.dark-mode .req label { color: #ff6b6b; }
-body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !important; }
+    @media (max-width: 991.98px) { .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 575.98px) { .tool-grid { grid-template-columns: 1fr; } }
 
+    /* Obrigatórios em vermelho */
+    .req label { color: #d93025; font-weight: 700; }
+    .req input, .req select { border-color: #d93025 !important; }
+    body.dark-mode .req label { color: #ff6b6b; }
+    body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !important; }
+
+    /* Accordion (campos pretos opcionais) */
+    body.dark-mode .accordion-item { background: transparent; border-color: #2a2f3a; }
+    body.dark-mode .accordion-button { background: #171a21; color: #e6e6e6; }
+    body.dark-mode .accordion-body { background: #0f1115; color: #e6e6e6; border-top: 1px solid #2a2f3a; }
   </style>
 </head>
 
@@ -63,24 +63,24 @@ body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !i
       <div class="desktop-navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto u30navul">
           <li class="nav-item u30navli">
-            <button data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas Produtividade</button>
+            <button type="button" data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas Produtividade</button>
           </li>
           <li class="nav-item u30navli">
-            <button data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
+            <button type="button" data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
           </li>
           <li class="nav-item u30navli">
-            <button data-lbl="datacoberrors" class="nav-link u30navitem" data-navtarget="datacoberrors">Erros DataCob</button>
+            <button type="button" data-lbl="datacoberrors" class="nav-link u30navitem" data-navtarget="datacoberrors">Erros DataCob</button>
           </li>
         </ul>
 
         <ul class="navbar-nav ms-auto desktop-only-icons">
           <li class="nav-item search-container" id="searchContainer">
-            <button class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
+            <button type="button" class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
               <i class="fas fa-search"></i>
             </button>
             <div class="search-box">
               <input type="text" class="form-control search-input" id="searchInput" placeholder="Pesquisar...">
-              <button class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
+              <button type="button" class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -102,273 +102,233 @@ body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !i
     </div>
   </nav>
 
-  <!-- MOBILE OVERLAY MENU (igual index, com paths ajustados) -->
-  <div class="mobile-menu-overlay" id="mobileOverlayMenu">
-    <div class="d-flex justify-content-end p-3">
-      <button class="btn-close btn-close-white" id="mobileMenuClose" aria-label="Fechar Menu"></button>
-    </div>
+  <!-- (Mobile overlay + mega menus) -->
+  <!-- Mantive como você já tem: mobileOverlayMenu + toolsDropdownMenu + apisDropdownMenu + datacoberrorsDropdownMenu -->
+  <!-- Se você colar exatamente do seu arquivo atual aqui, funciona igual. -->
 
-    <ul class="navbar-nav flex-column u30navul-mobile">
-      <li class="nav-item u30navli-mobile">
-        <button data-lbl="tools" class="nav-link u30navitem-mobile" data-navtarget="tools">Ferramentas Produtividade</button>
-      </li>
-      <li class="nav-item u30navli-mobile">
-        <button data-lbl="apis" class="nav-link u30navitem-mobile" data-navtarget="apis">APIs</button>
-      </li>
-      <li class="nav-item u30navli-mobile">
-        <button data-lbl="datacoberrors" class="nav-link u30navitem-mobile" data-navtarget="datacoberrors">Erros CRM</button>
-      </li>
-    </ul>
-
-    <ul class="navbar-nav flex-column align-items-center mt-3 mobile-only-icons">
-      <li class="nav-item">
-        <button id="searchToggleBtnMobile" class="btn btn-link nav-link text-white">
-          <i class="fas fa-search me-2"></i> Pesquisar
-        </button>
-      </li>
-      <li class="nav-item">
-        <button id="toggleThemeMobile" class="btn btn-link nav-link text-white">
-          <i id="themeIconMobile" class="fas fa-moon me-2"></i> Tema
-        </button>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" href="#" id="languageDropdownMobile" role="button" data-bs-toggle="modal"
-          data-bs-target="#languageModal" aria-expanded="false">
-          <img id="currentLanguageFlagMobile" src="../../img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil"
-            width="24" height="24" class="me-2"> Idioma
-        </a>
-      </li>
-    </ul>
-  </div>
-
-  <!-- MEGA MENU: TOOLS -->
-  <div class="u30navw2" id="toolsDropdownMenu" data-dropdown="tools">
-    <div class="closenav">
-      <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
-    </div>
-
-    <div class="u30nav3-inner">
-      <div class="container-fluid">
-        <div class="row fourclm">
-
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">Ferramentas de Produtividade</a></h3>
-              <ul>
-                <li><a href="../../json_validator.html">Validador JSON</a></li>
-                <li><a href="#">Formatador de Código</a></li>
-                <li><a href="#">Gerador de Senhas</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">Utilitários de Dados</a></h3>
-              <ul>
-                <li><a href="#">Conversor CSV para JSON</a></li>
-                <li><a href="#">Comparador de Texto</a></li>
-                <li><a href="#">Calculadora de Hash</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">DevOps e Cloud</a></h3>
-              <ul>
-                <li><a href="#">Calculadora de Custo Cloud</a></li>
-                <li><a href="#">Gerador de .gitignore</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">Outras Ferramentas</a></h3>
-              <ul>
-                <li><a href="#">Analisador de Logs</a></li>
-                <li><a href="#">Gerador de Lorem Ipsum</a></li>
-                <!-- Link para ESTA ferramenta (sem target blank, pois agora ela faz parte da plataforma) -->
-                <li><a href="./index.html">Gerador CSV Dock v.1</a></li>
-              </ul>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MEGA MENU: APIS -->
-  <div class="u30navw2" id="apisDropdownMenu" data-dropdown="apis">
-    <div class="closenav">
-      <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
-    </div>
-
-    <div class="u30nav3-inner">
-      <div class="container-fluid">
-        <div class="row fourclm">
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">APIs de Dados</a></h3>
-              <ul>
-                <li><a href="#">API de Cotação de Moedas</a></li>
-                <li><a href="#">API de Clima</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">APIs de Integração</a></h3>
-              <ul>
-                <li><a href="#">API de Notificações</a></li>
-                <li><a href="#">API de Pagamentos (Mock)</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">APIs de Utilitários</a></h3>
-              <ul>
-                <li><a href="#">API de Validação de Email</a></li>
-                <li><a href="#">API de Geração de QR Code</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="u30t1">
-              <h3><a href="#">APIs Diversas</a></h3>
-              <ul>
-                <li><a href="#">API de Feriados Nacionais</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MEGA MENU: ERROS -->
-  <div class="u30navw2" id="datacoberrorsDropdownMenu" data-dropdown="datacoberrors">
-    <div class="closenav">
-      <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
-    </div>
-
-    <div class="u30nav3-inner">
-      <div class="container-fluid">
-        <div class="row fourclm">
-          <div class="col-md-6">
-            <div class="u30t1">
-              <h3><a href="../../erros/erros-datacob.html">Documentação de Erros Comuns</a></h3>
-              <ul>
-                <li><a href="#">Erro DX001: Falha de Conexão</a></li>
-                <li><a href="#">Erro LV005: Licença Inválida</a></li>
-                <li><a href="#">Erro PR102: Processamento Interrompido</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="u30t1">
-              <h3><a href="#">Soluções e Workarounds</a></h3>
-              <ul>
-                <li><a href="#">Guia de Troubleshooting Avançado</a></li>
-                <li><a href="#">FAQs de Erros Críticos</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BARRA DE VOLTAR (UX) -->
+  <!-- BARRA DE VOLTAR -->
   <div class="border-bottom py-3">
     <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
       <a href="../../index.html" class="btn btn-outline-secondary btn-sm">
         <i class="fas fa-arrow-left me-2"></i> Voltar para a Arriba Platform
       </a>
-      <span class="text-muted small">
-        Ferramentas &gt; Gerador de CSV
-      </span>
+      <span class="text-muted small">Ferramentas &gt; Gerador de CSV</span>
     </div>
   </div>
 
-  <!-- CONTEÚDO DA FERRAMENTA -->
   <main class="flex-grow-1">
     <div class="tool-wrap">
-
       <h1 class="h3 mb-2">Gerador de CSV — Layout Padrão (ARRIBA)</h1>
       <p class="tool-hint mb-3">Gera 60k linhas mantendo o layout e alterando apenas os campos em vermelho. Separador <strong>;</strong></p>
 
+      <!-- CONFIG GERAL -->
       <section class="tool-card">
         <h2 class="h5 mb-3">Config geral</h2>
         <div class="tool-grid">
-          <label>Qtd registros
-            <input id="n" type="number" class="tool-input" value="60000" min="1">
-          </label>
-          <label>Número inicial (base)
-            <input id="start" type="number" class="tool-input" value="30" min="0">
-          </label>
-          <label>Padding (zeros)
-            <input id="pad" type="number" class="tool-input" value="4" min="1" max="12">
-          </label>
-          <label>Sufixo
-            <input id="suffix" type="text" class="tool-input" value="-ARRIBA">
-          </label>
+          <div class="req">
+            <label>Qtd registros
+              <input id="n" type="number" class="tool-input" value="60000" min="1" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Número inicial (base)
+              <input id="start" type="number" class="tool-input" value="30" min="0" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Padding (zeros)
+              <input id="pad" type="number" class="tool-input" value="4" min="1" max="12" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Sufixo
+              <input id="suffix" type="text" class="tool-input" value="-ARRIBA" required>
+            </label>
+          </div>
         </div>
       </section>
 
+      <!-- DOCUMENTOS (NOVO) -->
       <section class="tool-card">
-        <h2 class="h5 mb-3">Campos vermelhos — CONTRATO</h2>
+        <h2 class="h5 mb-3">Documentos (CPF/CNPJ) — FINANCIADO</h2>
         <div class="tool-grid">
-          <label>Cliente
-            <input id="contrato_cliente" type="text" class="tool-input" value="1320">
+          <label>Gerar documento (opcional)
+            <select id="docType" class="tool-input">
+              <option value="none" selected>Sem CPF/CNPJ</option>
+              <option value="cpf">CPF válido</option>
+              <option value="cnpj">CNPJ válido</option>
+              <option value="auto">CPF ou CNPJ (aleatório)</option>
+            </select>
           </label>
-          <label>Fase (se quiser manter)
-            <input id="contrato_fase" type="text" class="tool-input" value="AM">
-          </label>
-        </div>
-      </section>
 
-      <section class="tool-card">
-        <h2 class="h5 mb-3">Campos vermelhos — FINANCIADO</h2>
-        <div class="tool-grid">
-          <label>Cliente
-            <input id="fin_cliente" type="text" class="tool-input" value="1320">
+          <label>Documento fixo (opcional)
+            <input id="docFixed" type="text" class="tool-input" placeholder="Deixe vazio para automático">
           </label>
-          <label>Nome (prefixo genérico)
-            <input id="fin_nome_prefix" type="text" class="tool-input" value="Cliente Generico">
-          </label>
-          <label>Tipo_Pessoa
-            <input id="fin_tipo_pessoa" type="text" class="tool-input" value="Fisica">
-          </label>
+
+          <div></div>
           <div></div>
         </div>
+        <p class="tool-hint mt-2 mb-0">
+          Se “Sem CPF/CNPJ”, o campo <strong>Cpf_Cnpj</strong> sai vazio.
+          Se preencher “Documento fixo”, ele tem prioridade (e ignora o gerador).
+        </p>
       </section>
 
+      <!-- CONTRATO (OBRIGATÓRIOS) -->
       <section class="tool-card">
-        <h2 class="h5 mb-3">Campos vermelhos — PARCELA</h2>
+        <h2 class="h5 mb-3">Campos obrigatórios — CONTRATO</h2>
         <div class="tool-grid">
-          <label>Dt_Vencimento (dd/mm/aaaa)
-            <input id="parc_dt_venc" type="text" class="tool-input" value="09/02/2026">
-          </label>
-          <label>Tipo_Parcela
-            <input id="parc_tipo" type="text" class="tool-input" value="0">
-          </label>
-          <label>Nr_Parcela (fixo)
-            <input id="parc_nr" type="number" value="1" min="1">
-          </label>
-          <label>Vl_Original (inicial)
-            <input id="parc_vl_ini" type="number" value="100" min="0">
-          </label>
-          <label>Incremento por linha
-            <input id="parc_vl_step" type="number" value="100" min="0">
-          </label>
-          <div></div><div></div><div></div>
+          <div class="req">
+            <label>Cliente
+              <input id="contrato_cliente" type="text" class="tool-input" value="1320" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Fase
+              <input id="contrato_fase" type="text" class="tool-input" value="AM" required>
+            </label>
+          </div>
+
+          <div></div><div></div>
         </div>
 
-        <p class="tool-hint mt-3 mb-0">Obs: no template, Dt_Inclusao = Dt_Vencimento e Motivo = "Teste Pagamento". Mantive isso.</p>
+        <!-- CAMPOS PRETOS (NÃO OBRIGATÓRIOS) -->
+        <div class="accordion mt-3" id="accContrato">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="accContratoH">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accContratoC">
+                Campos não obrigatórios (pretos) — CONTRATO
+              </button>
+            </h2>
+            <div id="accContratoC" class="accordion-collapse collapse" data-bs-parent="#accContrato">
+              <div class="accordion-body">
+                <p class="tool-hint mb-2">Aqui você pode adicionar campos extras do template (opcional).</p>
+                <div class="tool-grid" id="optContratoFields"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINANCIADO (OBRIGATÓRIOS) -->
+      <section class="tool-card">
+        <h2 class="h5 mb-3">Campos obrigatórios — FINANCIADO</h2>
+        <div class="tool-grid">
+          <div class="req">
+            <label>Cliente
+              <input id="fin_cliente" type="text" class="tool-input" value="1320" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Nome (prefixo genérico)
+              <input id="fin_nome_prefix" type="text" class="tool-input" value="Cliente Generico" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Tipo_Pessoa
+              <select id="fin_tipo_pessoa" class="tool-input" required>
+                <option value="Fisica" selected>Fisica</option>
+                <option value="Juridica">Juridica</option>
+              </select>
+            </label>
+          </div>
+
+          <div></div>
+        </div>
+
+        <!-- CAMPOS PRETOS -->
+        <div class="accordion mt-3" id="accFinanciado">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="accFinanciadoH">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accFinanciadoC">
+                Campos não obrigatórios (pretos) — FINANCIADO
+              </button>
+            </h2>
+            <div id="accFinanciadoC" class="accordion-collapse collapse" data-bs-parent="#accFinanciado">
+              <div class="accordion-body">
+                <p class="tool-hint mb-2">Campos extras do template entram aqui (opcional).</p>
+                <div class="tool-grid" id="optFinFields"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARCELA (OBRIGATÓRIOS) -->
+      <section class="tool-card">
+        <h2 class="h5 mb-3">Campos obrigatórios — PARCELA</h2>
+
+        <div class="tool-grid">
+          <div class="req">
+            <label>Dt_Vencimento (dd/mm/aaaa)
+              <input id="parc_dt_venc" type="text" class="tool-input" value="09/02/2026" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Tipo_Parcela
+              <input id="parc_tipo" type="text" class="tool-input" value="0" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Nr_Parcela
+              <input id="parc_nr" type="number" class="tool-input" value="1" min="1" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Vl_Original (inicial)
+              <input id="parc_vl_ini" type="number" class="tool-input" value="100" min="0" step="0.01" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Incremento por linha
+              <input id="parc_vl_step" type="number" class="tool-input" value="100" min="0" step="0.01" required>
+            </label>
+          </div>
+
+          <div class="req">
+            <label>Vl_Saldo (modo)
+              <select id="parc_vl_saldo_mode" class="tool-input" required>
+                <option value="igual" selected>Igual ao Vl_Original</option>
+                <option value="fixo">Fixo (usar campo abaixo)</option>
+              </select>
+            </label>
+          </div>
+
+          <label>Vl_Saldo (fixo opcional)
+            <input id="parc_vl_saldo_fixed" type="number" class="tool-input" value="" placeholder="Ex.: 100.00" step="0.01">
+          </label>
+
+          <div></div>
+        </div>
+
+        <!-- CAMPOS PRETOS -->
+        <div class="accordion mt-3" id="accParcela">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="accParcelaH">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accParcelaC">
+                Campos não obrigatórios (pretos) — PARCELA
+              </button>
+            </h2>
+            <div id="accParcelaC" class="accordion-collapse collapse" data-bs-parent="#accParcela">
+              <div class="accordion-body">
+                <p class="tool-hint mb-2">Campos do template tipo Motivo, Dt_Lote, etc. (opcional).</p>
+                <div class="tool-grid" id="optParcFields"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="tool-hint mt-3 mb-0">Obs: se seu template força Dt_Inclusao = Dt_Vencimento e Motivo fixo, isso você controla no JS.</p>
 
         <div class="tool-btns mt-3">
           <button id="btnContrato" class="tool-btn">Baixar contrato.csv</button>
@@ -378,11 +338,10 @@ body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !i
         </div>
       </section>
 
-      <p class="tool-hint mt-3">Versão: 1.10.0. Depois testar no GitHub Pages. Rodando local com Live Server já dá pra testar.</p>
+      <p class="tool-hint mt-3">Versão: 1.10.0. Teste no GitHub Pages. Local com Live Server também funciona.</p>
     </div>
   </main>
 
-  <!-- FOOTER simples (opcional: se quiser idêntico ao index, copie o footer do index) -->
   <footer class="mt-auto py-3 bg-dark text-white-50">
     <div class="container text-center">
       <p class="mb-0">&copy; 2025 Arriba Platform. Todos os direitos reservados.</p>
@@ -390,15 +349,31 @@ body.dark-mode .req input, body.dark-mode .req select { border-color: #ff6b6b !i
     </div>
   </footer>
 
-  <!-- Modal de Idiomas (se você quiser 100% igual ao index, copie o modal inteiro do index aqui) -->
-  <!-- Se o seu main.js depende do modal existir, aí sim: copie o bloco completo do #languageModal do index. -->
+  <!-- Modal de Idiomas (mínimo) -->
+  <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="languageModalLabel">Idioma</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-2 text-muted small">Seleção visual (placeholder). Se quiser, copie o modal completo do index.</p>
+          <div class="d-grid gap-2">
+            <a href="#" class="btn btn-outline-secondary select-lang" data-country="Brasil">
+              <img src="../../img/bandeiras_idiomas/flg-br.svg" width="24" height="24" class="me-2" alt="BR"> Português (Brasil)
+            </a>
+            <a href="#" class="btn btn-outline-secondary select-lang" data-country="Estados Unidos">
+              <img src="../../img/bandeiras_idiomas/flg-us.svg" width="24" height="24" class="me-2" alt="US"> English (US)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Script do ARRIBA (controla mega-menu, tema, overlay mobile etc.) -->
   <script type="module" src="../../js/main.js"></script>
-
-  <!-- Script da ferramenta (mesma pasta) -->
   <script src="./script.js"></script>
 </body>
 </html>

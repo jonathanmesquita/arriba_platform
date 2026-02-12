@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Massa de Dados — Gerador Fictício | ARRIBA</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="../../css/style.css"/>
+
+  <style>
+    .tool-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    .tool-card { border-radius: 12px; padding: 20px; margin-top: 16px; border: 1px solid rgba(0,0,0,.1); background:#fff; }
+    .tool-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .tool-input { padding:10px; border-radius:8px; border:1px solid #ccc; }
+    .tool-btn { padding:10px 16px; border-radius:8px; border:none; cursor:pointer; }
+    .primary { background:#0d6efd; color:#fff; }
+    .req label { color:#d93025; font-weight:600; }
+
+    @media (max-width:768px){
+      .tool-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../../index.html">ARRIBA</a>
+  </div>
+</nav>
+
+<main class="flex-grow-1">
+  <div class="tool-wrap">
+    <h1 class="h3 mb-3">Massa de Dados — Gerador Fictício (CPF/CNPJ)</h1>
+    <p class="text-muted">
+      Gera nomes e sobrenomes em espanhol com CPF ou CNPJ válidos para massa de testes.
+    </p>
+
+    <section class="tool-card">
+      <div class="tool-grid">
+
+        <div class="req">
+          <label>Quantidade de registros</label>
+          <input id="quantidade" type="number" class="tool-input" value="100" min="1">
+        </div>
+
+        <div>
+          <label>Tipo de documento</label>
+          <select id="tipoDoc" class="tool-input">
+            <option value="auto">Automático</option>
+            <option value="cpf">Somente CPF</option>
+            <option value="cnpj">Somente CNPJ</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Formato do CSV</label>
+          <select id="formato" class="tool-input">
+            <option value=";>">Separador ;</option>
+            <option value=",">Separador ,</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="mt-4 d-flex gap-2 flex-wrap">
+        <button class="tool-btn primary" onclick="gerarCSV()">
+          <i class="fas fa-file-csv me-2"></i>Gerar CSV
+        </button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="mt-auto py-3 bg-dark text-white-50">
+  <div class="container text-center">
+    <small>Arriba Platform — Massa de Dados</small>
+  </div>
+</footer>
+
+<script>
+/* =========================
+   BASE DE NOMES ESPANHÓIS
+========================= */
+const nomes = ["Alejandro","Sofía","Miguel","Valentina","Diego","Camila","Juan","Isabella","Mateo","Lucía","Fernando","Daniela","Carlos","Martina","Javier","Mariana"];
+const sobrenomes = ["González","Rodríguez","Fernández","López","Martínez","Pérez","Sánchez","Ramírez","Torres","Flores","Vargas","Silva","Morales","Castro","Ortega"];
+
+/* =========================
+   UTILIDADES CPF
+========================= */
+function randomDigit() {
+  return Math.floor(Math.random() * 10);
+}
+
+function gerarCPF() {
+  let nums = Array.from({length:9}, randomDigit);
+
+  let d1 = nums.reduce((s,n,i)=> s + n*(10-i),0)%11;
+  d1 = d1<2?0:11-d1;
+
+  let d2 = [...nums,d1].reduce((s,n,i)=> s + n*(11-i),0)%11;
+  d2 = d2<2?0:11-d2;
+
+  return [...nums,d1,d2].join("");
+}
+
+function gerarCNPJ(){
+  let nums = Array.from({length:12}, randomDigit);
+  const calc = (base,weights)=> base.reduce((s,n,i)=> s+n*weights[i],0)%11;
+
+  let d1 = calc(nums,[5,4,3,2,9,8,7,6,5,4,3,2]);
+  d1 = d1<2?0:11-d1;
+
+  let d2 = calc([...nums,d1],[6,5,4,3,2,9,8,7,6,5,4,3,2]);
+  d2 = d2<2?0:11-d2;
+
+  return [...nums,d1,d2].join("");
+}
+
+/* =========================
+   GERADOR
+========================= */
+function gerarNome(){
+  const nome = nomes[Math.floor(Math.random()*nomes.length)];
+  const sobrenome = sobrenomes[Math.floor(Math.random()*sobrenomes.length)];
+  return nome + " " + sobrenome;
+}
+
+function gerarCSV(){
+  const qtd = parseInt(document.getElementById("quantidade").value);
+  const tipoDoc = document.getElementById("tipoDoc").value;
+  const sep = document.getElementById("formato").value === "," ? "," : ";";
+
+  let linhas = [];
+  linhas.push(["Nome","Documento","Tipo_Pessoa"].join(sep));
+
+  for(let i=0;i<qtd;i++){
+    let nome = gerarNome();
+    let doc;
+    let tipo;
+
+    if(tipoDoc === "cpf"){
+      doc = gerarCPF();
+      tipo = "F";
+    } else if(tipoDoc === "cnpj"){
+      doc = gerarCNPJ();
+      tipo = "J";
+    } else {
+      if(Math.random()>0.5){
+        doc = gerarCPF();
+        tipo = "F";
+      } else {
+        doc = gerarCNPJ();
+        tipo = "J";
+      }
+    }
+
+    linhas.push([nome,doc,tipo].join(sep));
+  }
+
+  const blob = new Blob([linhas.join("\n")], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "massa_dados.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>

@@ -687,3 +687,4 @@ body.dark-mode .modal-footer {
 body.dark-mode .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%); /* Make close button white */
 }
+

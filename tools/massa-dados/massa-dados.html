@@ -1,330 +1,348 @@
-<!-- ===== CONTEÚDO DA FERRAMENTA ===== -->
-<main class="flex-grow-1">
-  <div class="tool-wrap">
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Massa de Dados — Gerador Fictício (MX + CPF/CNPJ) | ARRIBA</title>
 
-    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
-      <div>
-        <h1 class="h3 mb-1">Gerador de CSV — Layout Padrão (ARRIBA)</h1>
-        <div class="text-muted small">
-          Preview em tela (poucos registros) + exportação CSV. Campos <span class="req-badge">vermelhos</span> são obrigatórios.
-        </div>
-      </div>
+  <!-- Bootstrap + FontAwesome (iguais ao projeto) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-      <div class="d-flex gap-2 flex-wrap">
-        <button id="btnPreview" class="btn btn-outline-primary">
-          <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Gerar preview
-        </button>
-        <button id="btnCopyCsv" class="btn btn-outline-secondary">
-          <i class="fa-solid fa-copy me-2"></i> Copiar CSV (preview)
-        </button>
-        <button id="btnCopyJson" class="btn btn-outline-secondary">
-          <i class="fa-solid fa-code me-2"></i> Copiar JSON (preview)
-        </button>
-        <button id="btnDownloadAll" class="btn btn-primary">
-          <i class="fa-solid fa-download me-2"></i> Baixar TODOS (CSV)
-        </button>
-      </div>
-    </div>
+  <!-- CSS principal do ARRIBA (ajuste de caminho por estar em /tools/...) -->
+  <link rel="stylesheet" href="../../css/style.css" />
 
-    <!-- ===== CHIPS / RESUMO ===== -->
-    <div class="summary-bar mb-3">
-      <div class="chip"><i class="fa-regular fa-clipboard me-2"></i>Registros: <strong id="sumN">—</strong></div>
-      <div class="chip"><i class="fa-regular fa-user me-2"></i>Cliente: <strong id="sumCliente">—</strong></div>
-      <div class="chip"><i class="fa-regular fa-flag me-2"></i>Fase: <strong id="sumFase">—</strong></div>
-      <div class="chip"><i class="fa-regular fa-calendar me-2"></i>Data: <strong id="sumDtVenc">—</strong></div>
-      <div class="chip"><i class="fa-regular fa-money-bill-1 me-2"></i>Valor: <strong id="sumValor">—</strong></div>
-    </div>
+  <!-- CSS local (garante layout “bonito” mesmo se o style.css não tiver essas classes) -->
+  <style>
+    .tool-wrap { max-width: 1200px; margin: 28px auto; padding: 0 16px; }
+    .tool-hint { opacity: .85; }
+    .chipbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .chip { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; background:#f3f6fb; border:1px solid rgba(0,0,0,.08); min-width: 170px; }
+    .chip i { color:#0d6efd; }
+    .chip strong { font-weight: 700; }
+    .tool-card { border-radius: 14px; border: 1px solid rgba(0,0,0,.12); background: #fff; padding: 16px; }
+    .tool-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+    .tool-card label { display:grid; gap:6px; font-size: 13px; }
+    .tool-input { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,.15); background:#fff; }
+    .tool-btn { padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(0,0,0,.15); background:#f5f5f7; cursor:pointer; }
+    .tool-btn.primary { background:#0d6efd; color:#fff; border-color:#0d6efd; }
+    .outbox { width:100%; min-height:180px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
+    .table-wrap { max-height: 420px; overflow:auto; border-radius: 12px; border:1px solid rgba(0,0,0,.10); }
+    .req label { color:#d93025; font-weight:700; }
+    .req input, .req select { border-color:#d93025 !important; }
 
-    <!-- ===== TABS ===== -->
-    <div class="card shadow-sm">
-      <div class="card-header bg-white">
-        <ul class="nav nav-tabs card-header-tabs" id="tabs" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-geral" type="button" role="tab">Geral</button>
+    /* Dark mode (segue seu body.dark-mode) */
+    body.dark-mode .tool-card { background: #171a21; border-color:#2a2f3a; }
+    body.dark-mode .tool-input { background:#0f1115; border-color:#2a2f3a; color:#e6e6e6; }
+    body.dark-mode .chip { background:#0f1115; border-color:#2a2f3a; }
+    body.dark-mode .table { color:#e6e6e6; }
+    body.dark-mode .table-wrap { border-color:#2a2f3a; }
+    body.dark-mode .tool-btn { background:#222836; border-color:#2a2f3a; color:#fff; }
+    body.dark-mode .tool-btn.primary { background:#2b6cff; border-color:#2b6cff; }
+    body.dark-mode .req label { color:#ff6b6b; }
+    body.dark-mode .req input, body.dark-mode .req select { border-color:#ff6b6b !important; }
+
+    @media (max-width: 992px) { .tool-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 576px) { .tool-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- NAVBAR (copiada do index, com paths ajustados) -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../../index.html">ARRIBA</a>
+
+      <button class="navbar-toggler" type="button" id="mobileMenuToggle" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="desktop-navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto u30navul">
+          <li class="nav-item u30navli">
+            <button data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas Produtividade</button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-contrato" type="button" role="tab">Contrato</button>
+          <li class="nav-item u30navli">
+            <button data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-financiado" type="button" role="tab">Financiado</button>
+          <li class="nav-item u30navli">
+            <button data-lbl="datacoberrors" class="nav-link u30navitem" data-navtarget="datacoberrors">Erros DataCob</button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-parcela" type="button" role="tab">Parcela</button>
+        </ul>
+
+        <ul class="navbar-nav ms-auto desktop-only-icons">
+          <li class="nav-item search-container" id="searchContainer">
+            <button class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="search-box">
+              <input type="text" class="form-control search-input" id="searchInput" placeholder="Pesquisar...">
+              <button class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" id="toggleTheme" aria-label="Alternar tema">
+              <i class="fas fa-moon" id="themeIcon"></i>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar idioma">
+              <img src="../../img/bandeiras_idiomas/br.svg" alt="Bandeira do Brasil" width="24" height="24" id="currentLanguageFlag">
+            </a>
           </li>
         </ul>
       </div>
-
-      <div class="card-body">
-        <div class="tab-content">
-
-          <!-- ===== GERAL ===== -->
-          <div class="tab-pane fade show active" id="tab-geral" role="tabpanel">
-            <div class="row g-3">
-              <div class="col-lg-3">
-                <label class="form-label">Qtd registros (CSV)</label>
-                <input id="n" type="number" class="form-control" value="60000" min="1">
-                <div class="form-text">Quantos registros serão gerados no arquivo CSV.</div>
-              </div>
-
-              <div class="col-lg-3">
-                <label class="form-label">Preview em tela</label>
-                <select id="previewN" class="form-select">
-                  <option value="10" selected>10 linhas</option>
-                  <option value="50">50 linhas</option>
-                  <option value="200">200 linhas</option>
-                </select>
-                <div class="form-text">Apenas para visualizar e copiar.</div>
-              </div>
-
-              <div class="col-lg-3">
-                <label class="form-label">Nr_Contrato (base inicial)</label>
-                <input id="start" type="number" class="form-control" value="30" min="0">
-                <div class="form-text">Ex: 30</div>
-              </div>
-
-              <div class="col-lg-3">
-                <label class="form-label">Padding</label>
-                <input id="pad" type="number" class="form-control" value="4" min="1" max="12">
-                <div class="form-text">Ex: 4 → 0030</div>
-              </div>
-
-              <div class="col-lg-4">
-                <label class="form-label">Sufixo</label>
-                <input id="suffix" type="text" class="form-control" value="-ARRIBA">
-              </div>
-            </div>
-          </div>
-
-          <!-- ===== CONTRATO ===== -->
-          <div class="tab-pane fade" id="tab-contrato" role="tabpanel">
-            <div class="row g-3">
-              <div class="col-md-4 req">
-                <label class="form-label">Cliente</label>
-                <input id="contrato_cliente" type="text" class="form-control" value="1320">
-                <div class="form-text">Obrigatório.</div>
-              </div>
-              <div class="col-md-4 req">
-                <label class="form-label">Fase</label>
-                <input id="contrato_fase" type="text" class="form-control" value="AM">
-                <div class="form-text">Obrigatório.</div>
-              </div>
-
-              <!-- opcionais (ficam no layout, default vazio) -->
-              <div class="col-md-4">
-                <label class="form-label">Filial</label>
-                <input id="contrato_filial" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Plano</label>
-                <input id="contrato_plano" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Regional</label>
-                <input id="contrato_regional" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Regua</label>
-                <input id="contrato_regua" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Vl_Contrato</label>
-                <input id="contrato_vl_contrato" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Dt_Contrato</label>
-                <input id="contrato_dt_contrato" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Tx_Contrato</label>
-                <input id="contrato_tx_contrato" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Dt_Para_Notificacao</label>
-                <input id="contrato_dt_para_notificacao" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Dt_Solicitacao_Documento</label>
-                <input id="contrato_dt_solic_doc" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Dt_Ajuizamento</label>
-                <input id="contrato_dt_ajuizamento" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Cod_Loja</label>
-                <input id="contrato_cod_loja" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Grupo</label>
-                <input id="contrato_grupo" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Moeda</label>
-                <input id="contrato_moeda" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">SubRegua</label>
-                <input id="contrato_subregua" type="text" class="form-control" value="">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Cpf_Cnpj</label>
-                <input id="contrato_cpf_cnpj" type="text" class="form-control" value="">
-              </div>
-            </div>
-          </div>
-
-          <!-- ===== FINANCIADO ===== -->
-          <div class="tab-pane fade" id="tab-financiado" role="tabpanel">
-            <div class="row g-3">
-              <div class="col-md-4 req">
-                <label class="form-label">Cliente</label>
-                <input id="fin_cliente" type="text" class="form-control" value="1320">
-              </div>
-
-              <div class="col-md-4 req">
-                <label class="form-label">Nome (prefixo)</label>
-                <input id="fin_nome_prefix" type="text" class="form-control" value="Cliente Generico">
-              </div>
-
-              <div class="col-md-4 req">
-                <label class="form-label">Tipo_Pessoa</label>
-                <select id="fin_tipo_pessoa" class="form-select">
-                  <option value="F" selected>F (Física)</option>
-                  <option value="J">J (Jurídica)</option>
-                </select>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Cpf_Cnpj (manual)</label>
-                <input id="fin_cpf_cnpj_manual" type="text" class="form-control" value="">
-                <div class="form-text">Se preencher, repete igual. Se vazio, gera por linha.</div>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Gerar CPF/CNPJ automaticamente</label>
-                <select id="docType" class="form-select">
-                  <option value="none">Não gerar</option>
-                  <option value="cpf">Gerar CPF válido</option>
-                  <option value="cnpj">Gerar CNPJ válido</option>
-                  <option value="auto" selected>Auto (F→CPF / J→CNPJ)</option>
-                </select>
-              </div>
-
-              <!-- opcionais -->
-              <div class="col-md-3"><label class="form-label">Dt_Nascimento</label><input id="fin_dt_nascimento" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Sexo</label><input id="fin_sexo" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Estado_Civil</label><input id="fin_estado_civil" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Conjuge</label><input id="fin_conjuge" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Pai</label><input id="fin_pai" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Mae</label><input id="fin_mae" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Rg</label><input id="fin_rg" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Rg_Orgao_Emiss</label><input id="fin_rg_orgao" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Rg_Uf_Emiss</label><input id="fin_rg_uf" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Rg_Dt_Emiss</label><input id="fin_rg_dt" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Score_Serasa</label><input id="fin_score_serasa" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Profissao</label><input id="fin_profissao" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Renda</label><input id="fin_renda" class="form-control" value=""></div>
-              <div class="col-md-3"><label class="form-label">Score_Adicional</label><input id="fin_score_adicional" class="form-control" value=""></div>
-            </div>
-          </div>
-
-          <!-- ===== PARCELA ===== -->
-          <div class="tab-pane fade" id="tab-parcela" role="tabpanel">
-            <div class="row g-3">
-              <div class="col-md-4 req">
-                <label class="form-label">Dt_Vencimento</label>
-                <input id="parc_dt_venc" type="text" class="form-control" value="09/02/2026">
-              </div>
-              <div class="col-md-4 req">
-                <label class="form-label">Tipo_Parcela</label>
-                <input id="parc_tipo" type="text" class="form-control" value="0">
-              </div>
-              <div class="col-md-4 req">
-                <label class="form-label">Nr_Parcela</label>
-                <input id="parc_nr" type="number" class="form-control" value="1" min="1">
-              </div>
-
-              <div class="col-md-4 req">
-                <label class="form-label">Vl_Original</label>
-                <input id="parc_vl_ini" type="text" class="form-control" value="100">
-              </div>
-
-              <!-- ✅ FALTOU ANTES — agora está aqui e é obrigatório -->
-              <div class="col-md-4 req">
-                <label class="form-label">Vl_Saldo</label>
-                <input id="parc_vl_saldo" type="text" class="form-control" value="">
-                <div class="form-text">Se vazio, copia o Vl_Original.</div>
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label">Incremento por linha</label>
-                <input id="parc_vl_step" type="text" class="form-control" value="">
-                <div class="form-text">Opcional (soma no Original/Saldo por linha).</div>
-              </div>
-
-              <!-- opcionais -->
-              <div class="col-md-4"><label class="form-label">Vl_Tarifa</label><input id="parc_vl_tarifa" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Cliente</label><input id="parc_cliente" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Dt_Inclusao</label><input id="parc_dt_inclusao" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Dt_Devolucao</label><input id="parc_dt_devolucao" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Dt_Inibicao</label><input id="parc_dt_inibicao" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Motivo</label><input id="parc_motivo" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Dt_Notificacao</label><input id="parc_dt_notificacao" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Marcar_Dt_Lote</label><input id="parc_marcar_dt_lote" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Dt_Lote</label><input id="parc_dt_lote" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Documento</label><input id="parc_documento" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Cpf_Cnpj</label><input id="parc_cpf_cnpj" class="form-control" value=""></div>
-              <div class="col-md-4"><label class="form-label">Plano</label><input id="parc_plano" class="form-control" value=""></div>
-            </div>
-          </div>
-
-        </div>
-      </div>
     </div>
+  </nav>
 
-    <!-- ===== PREVIEW TABLE ===== -->
-    <div class="card shadow-sm mt-3">
-      <div class="card-header bg-white d-flex align-items-center justify-content-between flex-wrap gap-2">
-        <div class="fw-semibold">Preview (Financiado + Parcela por contrato)</div>
-        <div class="text-muted small" id="previewMeta">—</div>
-      </div>
-
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-sm table-hover mb-0 align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>Nr_Contrato</th>
-                <th>Nome</th>
-                <th>Cpf_Cnpj</th>
-                <th>Tipo_Pessoa</th>
-                <th>Cliente</th>
-                <th>Dt_Vencimento</th>
-                <th>Tipo_Parcela</th>
-                <th>Nr_Parcela</th>
-                <th>Vl_Original</th>
-                <th>Vl_Saldo</th>
-              </tr>
-            </thead>
-            <tbody id="previewTbody">
-              <tr><td colspan="10" class="text-muted p-3">Clique em <strong>Gerar preview</strong> pra visualizar aqui.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card-footer bg-white d-flex gap-2 flex-wrap justify-content-between align-items-center">
-        <div class="d-flex gap-2 flex-wrap">
-          <button id="btnDownloadContrato" class="btn btn-outline-secondary btn-sm">Baixar contrato.csv</button>
-          <button id="btnDownloadFinanciado" class="btn btn-outline-secondary btn-sm">Baixar financiado.csv</button>
-          <button id="btnDownloadParcela" class="btn btn-outline-secondary btn-sm">Baixar parcela.csv</button>
-        </div>
-
-        <div class="text-muted small">
-          Dica: preview é leve; CSV pode ser grande.
-        </div>
-      </div>
+  <!-- BARRA DE VOLTAR -->
+  <div class="border-bottom py-3">
+    <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <a href="../../index.html" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-2"></i> Voltar
+      </a>
+      <span class="text-muted small">Outras Ferramentas &gt; Massa de Dados</span>
     </div>
-
   </div>
-</main>
+
+  <!-- CONTEÚDO -->
+  <main class="flex-grow-1">
+    <div class="tool-wrap">
+
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-3">
+        <div>
+          <h1 class="h3 mb-1">Massa de Dados — Gerador Fictício (MX + CPF/CNPJ)</h1>
+          <div class="tool-hint">Gera dados mexicanos (nome/endereço/telefone) + documento BR válido (CPF/CNPJ) para testes. Preview em tela + copiar + baixar CSV/JSON.</div>
+        </div>
+
+        <button id="btnBaixarCSV" class="tool-btn primary">
+          <i class="fa-solid fa-download me-2"></i> Baixar CSV
+        </button>
+      </div>
+
+      <!-- CHIP BAR (estilo da sua print) -->
+      <div class="tool-card mb-3">
+        <div class="chipbar">
+          <div class="chip">
+            <i class="fa-solid fa-list-check"></i>
+            <div><div class="small text-muted">Preview</div><strong><span id="chipPreviewN">10</span></strong></div>
+          </div>
+          <div class="chip">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <div><div class="small text-muted">Export</div><strong><span id="chipExportN">100</span></strong></div>
+          </div>
+          <div class="chip">
+            <i class="fa-solid fa-id-card"></i>
+            <div><div class="small text-muted">Documento</div><strong><span id="chipDocMode">auto</span></strong></div>
+          </div>
+          <div class="chip">
+            <i class="fa-solid fa-building"></i>
+            <div><div class="small text-muted">Cliente Arriba</div><strong><span id="chipCliente">1320</span></strong></div>
+          </div>
+
+          <div class="ms-auto d-flex gap-2 flex-wrap">
+            <button id="btnGerarPreview" class="tool-btn">
+              <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Gerar preview
+            </button>
+            <button id="btnBaixarJSON" class="tool-btn primary">
+              <i class="fa-solid fa-download me-2"></i> Baixar JSON
+            </button>
+            <button id="btnBaixarArribaFinanciado" class="tool-btn">
+              <i class="fa-solid fa-file-csv me-2"></i> Arriba Financiado (CSV)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS (visual parecido) -->
+      <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-geral" type="button" role="tab">Geral</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-preview" type="button" role="tab">Preview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-json" type="button" role="tab">JSON</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-csv" type="button" role="tab">CSV</button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- ===== Geral ===== -->
+        <div class="tab-pane fade show active" id="tab-geral" role="tabpanel">
+          <div class="tool-card">
+            <div class="tool-grid">
+              <div class="req">
+                <label>Qtd preview (tela)
+                  <input id="n_preview" type="number" class="tool-input" value="10" min="1" max="200" />
+                  <small class="tool-hint">Quantos casos mostrar na tabela.</small>
+                </label>
+              </div>
+
+              <div class="req">
+                <label>Qtd export (arquivo)
+                  <input id="n_export" type="number" class="tool-input" value="100" min="1" />
+                  <small class="tool-hint">Quantos casos gerar ao baixar CSV/JSON.</small>
+                </label>
+              </div>
+
+              <div class="req">
+                <label>Documento (BR)
+                  <select id="doc_mode" class="tool-input">
+                    <option value="auto" selected>auto (CPF/CNPJ)</option>
+                    <option value="cpf">cpf (BR válido)</option>
+                    <option value="cnpj">cnpj (BR válido)</option>
+                  </select>
+                  <small class="tool-hint">Documento válido para massa de teste.</small>
+                </label>
+              </div>
+
+              <label>Domínio de e-mail
+                <input id="email_domain" type="text" class="tool-input" value="example.mx" />
+                <small class="tool-hint">Ex: empresa.mx / test.mx / example.mx</small>
+              </label>
+
+              <div class="req">
+                <label>Cliente (Arriba)
+                  <input id="seed_cliente" type="text" class="tool-input" value="1320" />
+                  <small class="tool-hint">Usado no export Arriba (Financiado).</small>
+                </label>
+              </div>
+
+              <label>Prefixo opcional no nome
+                <input id="seed_nome_prefix" type="text" class="tool-input" value="" placeholder="Ex: Cliente" />
+                <small class="tool-hint">Se vazio, gera nome normal.</small>
+              </label>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap mt-3">
+              <button id="btnCopiarJSON" class="tool-btn">
+                <i class="fa-regular fa-copy me-2"></i> Copiar JSON (preview)
+              </button>
+              <button id="btnCopiarCSV" class="tool-btn">
+                <i class="fa-regular fa-copy me-2"></i> Copiar CSV (preview)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Preview ===== -->
+        <div class="tab-pane fade" id="tab-preview" role="tabpanel">
+          <div class="tool-card">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+              <div class="tool-hint">Tabela com os registros do preview (não explode a página).</div>
+              <button class="tool-btn" id="btnGerarPreview2">
+                <i class="fa-solid fa-rotate me-2"></i> Regerar
+              </button>
+            </div>
+
+            <div class="table-wrap">
+              <table class="table table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Nome</th>
+                    <th>Doc</th>
+                    <th>CPF/CNPJ</th>
+                    <th>Nascimento</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Endereço</th>
+                  </tr>
+                </thead>
+                <tbody id="previewTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== JSON ===== -->
+        <div class="tab-pane fade" id="tab-json" role="tabpanel">
+          <div class="tool-card">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+              <div class="tool-hint">Saída do preview em JSON (copiável).</div>
+              <button class="tool-btn" id="btnCopiarJSON2"><i class="fa-regular fa-copy me-2"></i> Copiar</button>
+            </div>
+            <textarea id="outJSON" class="tool-input outbox" spellcheck="false"></textarea>
+          </div>
+        </div>
+
+        <!-- ===== CSV ===== -->
+        <div class="tab-pane fade" id="tab-csv" role="tabpanel">
+          <div class="tool-card">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+              <div class="tool-hint">Saída do preview em CSV (separador ;).</div>
+              <button class="tool-btn" id="btnCopiarCSV2"><i class="fa-regular fa-copy me-2"></i> Copiar</button>
+            </div>
+            <textarea id="outCSV" class="tool-input outbox" spellcheck="false"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-hint mt-3">Versão: 1.0.0 • “Fake data” pra teste (não é pra produção, pelo amor do caos).</div>
+    </div>
+  </main>
+
+  <footer class="mt-auto py-3 bg-dark text-white-50">
+    <div class="container text-center">
+      <p class="mb-0">&copy; 2026 Arriba Platform. Todos os direitos reservados.</p>
+      <small class="text-secondary">Ferramenta: Massa de Dados</small>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script do ARRIBA (tema, mega-menu, etc.) -->
+  <script type="module" src="../../js/main.js"></script>
+
+  <!-- Seu script da ferramenta -->
+  <script src="./script.js"></script>
+
+  <!-- Glue: botões duplicados e chips -->
+  <script>
+    // espelha botões duplicados pra não dar “nada acontece”
+    document.addEventListener("DOMContentLoaded", () => {
+      const b1 = document.getElementById("btnGerarPreview");
+      const b2 = document.getElementById("btnGerarPreview2");
+      if (b2 && b1) b2.addEventListener("click", () => b1.click());
+
+      const cJ1 = document.getElementById("btnCopiarJSON");
+      const cJ2 = document.getElementById("btnCopiarJSON2");
+      if (cJ2 && cJ1) cJ2.addEventListener("click", () => cJ1.click());
+
+      const cC1 = document.getElementById("btnCopiarCSV");
+      const cC2 = document.getElementById("btnCopiarCSV2");
+      if (cC2 && cC1) cC2.addEventListener("click", () => cC1.click());
+
+      // chips
+      const syncChips = () => {
+        const pv = document.getElementById("n_preview")?.value || "10";
+        const ex = document.getElementById("n_export")?.value || "100";
+        const dm = document.getElementById("doc_mode")?.value || "auto";
+        const cl = document.getElementById("seed_cliente")?.value || "1320";
+        document.getElementById("chipPreviewN").textContent = pv;
+        document.getElementById("chipExportN").textContent = ex;
+        document.getElementById("chipDocMode").textContent = dm;
+        document.getElementById("chipCliente").textContent = cl;
+      };
+      ["n_preview","n_export","doc_mode","seed_cliente"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", syncChips);
+      });
+      syncChips();
+    });
+  </script>
+
+  <!-- Se seu main.js exigir #languageModal, você precisa copiar o modal do index aqui.
+       Se não exigir, pode deixar sem. -->
+</body>
+</html>

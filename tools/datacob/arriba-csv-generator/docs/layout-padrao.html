@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentação - Layout Recepção de Contratos</title>
+<style>
+:root{--bg:#f7f5f2;--card:#fff;--ink:#161513;--muted:#625c56;--line:#ddd6cf;--red:#c74634;--gold:#f0cc71}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#fff;border-bottom:1px solid var(--line);padding:18px 28px;display:flex;gap:18px;align-items:center}
+header a{color:var(--red);font-weight:900;text-decoration:none}
+main{width:min(980px,calc(100% - 32px));margin:0 auto;padding:48px 0}
+.kicker{color:var(--red);letter-spacing:.16em;text-transform:uppercase;font-size:.76rem;font-weight:900}
+h1{font-size:clamp(2.5rem,7vw,5rem);line-height:.95;font-weight:300;letter-spacing:-.06em;margin:14px 0 24px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:28px;margin:20px 0;box-shadow:0 10px 28px rgba(0,0,0,.05)}
+h2::after{content:"";display:block;width:44px;height:4px;background:var(--gold);margin-top:14px}
+li{margin:8px 0}.downloads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.download-card{border:1px solid var(--line);border-radius:8px;padding:18px;background:#fff}.download-card a{color:var(--red);font-weight:900}
+@media(max-width:760px){.downloads{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><a href="../csv-template-generator.html">ARRIBA</a><span>Documentação do Layout</span></header>
+<main>
+<span class="kicker">DataCob · Layout padrão</span>
+<h1>Layout Recepção de Contratos</h1>
+<p>Documentação rápida para apoiar o uso do Gerador CSV DataCob beta.</p>
+<section><h2>Como usar</h2><ol><li>Escolha o layout <strong>01-Layout Recepção de Contratos - Avançado</strong>.</li><li>Selecione as tabelas: <strong>Contrato</strong>, <strong>Financiado</strong> e/ou <strong>Parcela</strong>.</li><li>Preencha os dados obrigatórios.</li><li>Use campos avançados apenas quando necessário.</li><li>Valide, confira o preview e baixe o CSV.</li></ol></section>
+<section><h2>Campos obrigatórios da tela beta</h2><ul><li>Quantidade de registros</li><li>Cliente</li><li>Contrato inicial</li><li>Sufixo do contrato</li><li>Fase</li><li>Documento</li><li>Vencimento</li><li>Valor original</li><li>Tipo parcela</li><li>Número da parcela</li></ul></section>
+<section><h2>Downloads</h2><div class="downloads"><div class="download-card"><h3>Layout oficial</h3><a href="Layout%20Recepcao%20de%20Contratos.xlsx" download>Baixar XLSX</a></div><div class="download-card"><h3>Modelo XLS</h3><a href="yyyy.MM.dd_NOME_nnn.xls" download>Baixar XLS</a></div><div class="download-card"><h3>Markdown editável</h3><a href="layout-padrao.md" download>Baixar MD</a></div></div></section>
+<section><h2>Futuro da ferramenta</h2><p>Em uma próxima versão, o cliente poderá subir dados crus. A ferramenta fará a leitura, separação e transformação automática para o layout padrão em CSV.</p></section>
+</main>
+</body>
+</html>

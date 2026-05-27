@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-auth-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="/assets/css/login.css" />
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-left" aria-label="Login Arriba Platform">
+      <header class="auth-brand">
+        <a href="/login.html" class="ph3a-mark" aria-label="PH3A Arriba Login">
+          <span class="ph3a-icon"><i class="fa-solid fa-circle-nodes"></i></span>
+          <span><strong>PH</strong><span>3A</span></span>
+        </a>
+        <button type="button" class="auth-theme-toggle" id="loginThemeToggle" aria-label="Alternar tema">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </header>
+
+      <div class="login-card-wrap">
+        <form class="login-card" id="loginForm" autocomplete="on">
+          <h1>Bem-vindo de volta</h1>
+          <p class="subtitle">Acesse sua conta para continuar</p>
+
+          <div class="login-field">
+            <label for="username">Usuário</label>
+            <div class="input-wrap">
+              <i class="fa-regular fa-user"></i>
+              <input id="username" name="username" type="text" autocomplete="username" placeholder="Digite seu usuário" required />
+            </div>
+          </div>
+
+          <div class="login-field">
+            <label for="password">Senha</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-lock"></i>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required />
+            </div>
+          </div>
+
+          <a class="forgot-link" href="mailto:suporte@ph3a.com.br?subject=Acesso%20Arriba%20Platform">Esqueci minha senha</a>
+
+          <button class="login-submit" id="loginSubmit" type="submit">
+            <span>Entrar</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+
+          <p class="login-message" id="loginMessage" hidden></p>
+        </form>
+      </div>
+
+      <div class="auth-left-wave" aria-hidden="true"></div>
+    </section>
+
+    <section class="auth-right" aria-label="Mensagem institucional">
+      <div class="hero-copy">
+        <span class="kicker">Arriba Platform · Suporte · Dados · IA</span>
+        <h2>Transformando <strong>dados</strong> em decisões inteligentes</h2>
+        <div class="line" aria-hidden="true"></div>
+        <p>Centralize suporte, base de conhecimento e automações em uma experiência segura, elegante e pronta para operação.</p>
+      </div>
+      <footer class="auth-footer">© <span id="loginYear"></span> PH3A · Arriba Platform</footer>
+    </section>
+  </main>
+
+  <script type="module" src="/assets/js/login.js"></script>
+</body>
+</html>

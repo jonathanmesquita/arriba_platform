@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro Nova Carteira DataCob | Arriba Help Center</title>
+  <meta name="description" content="Guia local do Arriba Platform para orientar cadastro de nova carteira de cobrança no DataCob: grupo, cliente, fase, régua, conta, boleto, ocorrência, cálculo, acordo e recibo." />
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/article.css" />
+</head>
+<body class="kb-article-page">
+  <header class="kb-topbar">
+    <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <a href="/index.html" class="brand-link">ARRIBA</a>
+        <span class="topbar-divider"></span>
+        <span class="small text-secondary">Help Center / DataCob / Carteira</span>
+      </div>
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <a class="btn btn-sm btn-outline-light" href="/tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-robot me-1"></i> Support Copilot</a>
+        <a class="btn btn-sm btn-outline-light" href="/pages/docs/help-center/index.html"><i class="fa-solid fa-magnifying-glass me-1"></i> Help Center</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="kb-hero">
+      <div class="container-fluid">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <span class="eyebrow">DataCob • Carteira / Cadastro</span>
+            <h1>Cadastro Nova Carteira DataCob.</h1>
+            <p class="hero-copy">Guia operacional para configurar uma nova carteira de cobrança no DataCob, cobrindo Grupo/Cliente/Fase, régua, conta bancária, modelo de carta, boleto, feriado, ocorrência, políticas de cálculo, acordo e recibo.</p>
+            <div class="hero-actions">
+              <a class="btn btn-danger btn-lg" href="#passo-a-passo"><i class="fa-solid fa-list-check me-2"></i>Ver passo a passo</a>
+              <a class="btn btn-outline-light btn-lg" href="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/Cadastro%20Nova%20Carteira%20DataCob.pdf" target="_blank" rel="noopener"><i class="fa-regular fa-file-pdf me-2"></i>Manual PDF</a>
+              <button class="btn btn-outline-light btn-lg" type="button" data-copy-template="checklist"><i class="fa-regular fa-copy me-2"></i>Copiar checklist</button>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="hero-card">
+              <img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/capa-nova-carteira.jpg" alt="Capa do manual DataCob Nova Carteira de Cobrança" />
+              <div>
+                <span>Fonte local</span>
+                <strong>Manual DataCob - Nova Carteira de Cobrança</strong>
+                <small>Base offline usada pelo Support Copilot quando o ticket mencionar nova carteira, Grupo/Cliente/Fase, régua, conta, boleto, ocorrência, cálculo, acordo ou recibo.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-fluid py-4">
+      <div class="row g-3">
+        <div class="col-md-3"><div class="metric-card"><span>Produto</span><strong>DataCob</strong><small>Carteira de cobrança</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Tipo</span><strong>Dúvida</strong><small>Implantação / Parametrização</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Rotina</span><strong>Grupo/Cliente/Fase</strong><small>Pré-cadastro obrigatório</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Atenção</span><strong>Layout padrão</strong><small>IDs devem estar vinculados</small></div></div>
+      </div>
+    </section>
+
+    <section class="container-fluid pb-4">
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <aside class="article-sidebar">
+            <h2>Índice</h2>
+            <nav>
+              <a href="#quando-usar">Quando usar</a>
+              <a href="#visao-geral">Fluxo da carteira</a>
+              <a href="#passo-a-passo">Passo a passo</a>
+              <a href="#checklist">Checklist do analista</a>
+              <a href="#resposta">Resposta sugerida</a>
+              <a href="#copilot">Uso no Support Copilot</a>
+            </nav>
+            <div class="note-card mt-3">
+              <strong>Tipo Freshdesk sugerido</strong>
+              <p>Dúvida / Treinamento / Recepção de Arquivo</p>
+              <strong>Manual relacionado</strong>
+              <p>Manual DataCob - Nova Carteira de Cobrança</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="col-xl-8">
+          <article class="article-panel" id="quando-usar">
+            <span class="eyebrow small">Triagem</span>
+            <h2>Quando usar este artigo</h2>
+            <p>Use este guia quando o ticket mencionar criação de carteira, implantação de carteira, cadastro de grupo, cliente, fase, régua, sub-régua, conta bancária, boleto, modelo de carta, ocorrência, feriado, política de cálculo, parâmetro de acordo ou recibo no DataCob.</p>
+            <div class="keyword-grid">
+              <span>nova carteira</span><span>grupo cliente fase</span><span>régua</span><span>sub-régua</span><span>conta bancária</span><span>boleto</span><span>modelo de carta</span><span>ocorrência</span><span>feriado</span><span>política de cálculo</span><span>parâmetro de acordo</span><span>recibo</span><span>layout padrão</span>
+            </div>
+          </article>
+
+          <article class="article-panel" id="visao-geral">
+            <span class="eyebrow small">Fluxo</span>
+            <h2>Fluxo de configuração da carteira</h2>
+            <p>O manual apresenta a nova carteira como um conjunto de cadastros que precisam estar prontos antes da carga pelo layout padrão. O fluxo principal é: Grupo/Cliente/Fase, conta bancária, modelo de carta, ocorrência, feriado, políticas de cálculo, políticas de acordo e recibo.</p>
+            <div class="image-grid">
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/fluxo-cobranca.jpg" alt="Fluxo de cobrança do manual Nova Carteira DataCob" /><figcaption>Visão geral do fluxo de cobrança e cadastros envolvidos.</figcaption></figure>
+            </div>
+          </article>
+
+          <article class="article-panel" id="passo-a-passo">
+            <span class="eyebrow small">Operação</span>
+            <h2>Passo a passo da nova carteira</h2>
+            <ol class="step-list">
+              <li><strong>Cadastrar Grupo/Cliente/Fase.</strong> Acesse <strong>Parâmetros &gt; Cadastro &gt; Grupo/Cliente/Fase</strong>. A fase segmenta os contratos e o grupo identifica a carteira.</li>
+              <li><strong>Cadastrar régua e sub-régua.</strong> Acesse <strong>Parâmetros &gt; Réguas</strong>. A régua organiza as etapas e ações de cobrança, podendo ser vinculada à carteira.</li>
+              <li><strong>Cadastrar conta bancária.</strong> Acesse <strong>Parâmetros &gt; Contas</strong> para emissão de boleto no DataCob.</li>
+              <li><strong>Configurar WebService de registro de boleto.</strong> Quando houver registro online, acesse <strong>Parâmetros &gt; Cadastros &gt; WebService</strong> e use a rotina <strong>Registro Boleto</strong>.</li>
+              <li><strong>Vincular banco/conta à carteira.</strong> Em <strong>Parâmetros &gt; Visualização de Parâmetros &gt; Opções &gt; Boleto &gt; Conta</strong>, cadastre e vincule ao grupo/cliente.</li>
+              <li><strong>Cadastrar modelo de carta.</strong> Configure Carta Boleto, Carta Acordo ou Carta Word, conforme necessidade da carteira.</li>
+              <li><strong>Configurar emissão e envio de boleto.</strong> Parametrize impressão local, e-mail, SMS ou WhatsApp, se contratado.</li>
+              <li><strong>Cadastrar feriados e permissões.</strong> Defina se a carteira deve alertar/bloquear cobrança em feriados e configure permissões especiais quando necessário.</li>
+              <li><strong>Cadastrar ocorrências.</strong> Configure Ocorrência Sistema, Ocorrência Cliente e vincule a tabela de ocorrência à carteira.</li>
+              <li><strong>Configurar políticas de cálculo.</strong> Defina regras de juros, multa, mora, honorários, faixas, régua, acordo e prestação de contas.</li>
+              <li><strong>Configurar parâmetro de acordo.</strong> Defina regras para acordos à vista, a prazo, cancelamento, projeção de vencimento e permissões complementares.</li>
+              <li><strong>Configurar recibo.</strong> Cadastre e vincule a configuração de recibo à carteira de cobrança.</li>
+            </ol>
+            <div class="image-grid">
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/grupo-cliente-fase.jpg" alt="Cadastro Grupo Cliente Fase no DataCob" /><figcaption>Início do cadastro em Parâmetros &gt; Cadastro &gt; Grupo/Cliente/Fase.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/regua-sub-regua.jpg" alt="Cadastro de Régua e Sub-régua no DataCob" /><figcaption>Cadastro opcional de régua e sub-régua para organizar a cobrança.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/cadastro-conta.jpg" alt="Cadastro da Conta no DataCob" /><figcaption>Cadastro de banco/conta para emissão de boleto.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/webservice-boleto.jpg" alt="Cadastro WebService para registro automático dos boletos" /><figcaption>WebService de registro automático deve ser configurado quando o banco exigir registro online.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/modelo-carta.jpg" alt="Cadastro do Modelo de Carta DataCob" /><figcaption>Modelo de carta para boleto, acordo ou Word.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/envio-boleto.jpg" alt="Configuração de Emissão e Envio de Boleto" /><figcaption>Configuração de envio de boleto por impressão local, e-mail, SMS ou WhatsApp.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/feriados.jpg" alt="Cadastro de Feriados no DataCob" /><figcaption>Feriados podem alertar ou bloquear negociações/históricos conforme parametrização.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/ocorrencias.jpg" alt="Cadastro de Ocorrências no DataCob" /><figcaption>Ocorrências do sistema e do cliente controlam histórico e prestação de contas.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/politicas-calculo.jpg" alt="Cadastro das Políticas de Cálculo" /><figcaption>Políticas de cálculo definem juros, multa, mora, honorários, descontos e faixas.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/parametro-acordo.jpg" alt="Parâmetro de Acordo DataCob" /><figcaption>Parâmetro de acordo controla parcelamento, cancelamento, vencimento e regras de acordo.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/assets/configuracao-recibo.jpg" alt="Configuração Recibo no DataCob" /><figcaption>Recibo deve ser configurado e vinculado para identificação de pagamentos.</figcaption></figure>
+            </div>
+          </article>
+
+          <article class="article-panel" id="checklist">
+            <span class="eyebrow small">Checklist</span>
+            <h2>Checklist do analista</h2>
+            <ul class="check-list">
+              <li>Confirmar se a solicitação é de implantação/cadastro de nova carteira ou ajuste em carteira existente.</li>
+              <li>Validar se o Grupo, Cliente e Fase já existem e se os IDs serão usados no layout padrão.</li>
+              <li>Confirmar se a carteira terá régua/sub-régua e se haverá vínculo em Visualização de Parâmetros.</li>
+              <li>Validar banco/conta, registro automático e WebService quando houver emissão de boleto.</li>
+              <li>Confirmar se existe modelo de carta boleto, carta acordo ou carta Word para a operação.</li>
+              <li>Validar feriados, permissões especiais e serviço automático de feriado quando aplicável.</li>
+              <li>Confirmar tabela de ocorrências e vínculo com a carteira.</li>
+              <li>Validar política de cálculo, política de acordo, prestação de contas e recibo.</li>
+              <li>Se houver carga, solicitar layout, arquivo, logs de recepção e IDs utilizados.</li>
+              <li>Se for implantação completa, tratar como checklist operacional e não como bug de Desenvolvimento.</li>
+            </ul>
+            <div class="copy-box" id="checklistCopy">Checklist para o analista:
+- Confirmar se é cadastro de nova carteira ou ajuste em carteira existente;
+- Validar Grupo/Cliente/Fase e IDs usados no layout padrão;
+- Confirmar régua/sub-régua e vínculo em Visualização de Parâmetros;
+- Validar banco/conta, boleto, WebService e modelo de carta;
+- Conferir feriados, ocorrências, políticas de cálculo, acordo e recibo;
+- Solicitar arquivo/layout/logs se houver carga;
+- Tratar como parametrização/implantação, salvo evidência de erro sistêmico.</div>
+          </article>
+
+          <article class="article-panel" id="resposta">
+            <span class="eyebrow small">Freshdesk</span>
+            <h2>Resposta sugerida</h2>
+            <div class="template-card">
+              <h3>Orientação - Cadastro Nova Carteira DataCob</h3>
+              <p>Use quando o cliente solicitar apoio para criação, validação ou parametrização de uma nova carteira de cobrança.</p>
+              <pre id="templateNovaCarteira">Olá,
+
+Para a configuração de uma nova carteira de cobrança no DataCob, é necessário validar o fluxo de parametrização antes da importação/carga dos contratos.
+
+O processo envolve, principalmente:
+- Cadastro de Grupo/Cliente/Fase;
+- Régua e Sub-régua, quando aplicável;
+- Banco/Conta e configuração de boleto;
+- Modelo de carta;
+- Feriados e ocorrências;
+- Políticas de cálculo e acordo;
+- Configuração de recibo;
+- Vínculos em Visualização de Parâmetros.
+
+Caso a solicitação envolva carga de contratos, por gentileza encaminhe o arquivo utilizado, o layout preenchido, os IDs informados e o log de recepção, para validarmos se a parametrização está aderente ao layout padrão.
+
+Se a demanda for uma implantação completa, podemos seguir com o checklist de parametrização da carteira.
+
+Obrigado.</pre>
+              <button class="btn btn-sm btn-outline-light" type="button" data-copy-template="templateNovaCarteira"><i class="fa-regular fa-copy me-1"></i>Copiar resposta</button>
+            </div>
+          </article>
+
+          <article class="article-panel" id="copilot">
+            <span class="eyebrow small">Support Copilot</span>
+            <h2>Como o Copilot deve usar este artigo</h2>
+            <ul class="check-list">
+              <li>Classificar tickets de criação de carteira como <strong>Tipo Freshdesk: Dúvida</strong>, <strong>Treinamento</strong> ou <strong>Recepção de Arquivo</strong>, conforme contexto.</li>
+              <li>Evitar encaminhar para Desenvolvimento quando a solicitação for claramente parametrização ou implantação.</li>
+              <li>Sugerir este artigo quando houver termos como nova carteira, Grupo/Cliente/Fase, régua, conta, boleto, ocorrência, cálculo, acordo ou recibo.</li>
+              <li>Usar checklist operacional antes de pedir evidências técnicas ou acionar DEV.</li>
+              <li>Quando o ticket mencionar erro em carga, cruzar este manual com o layout padrão e com o De/Para de pacotes DataCob.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast align-items-center text-bg-dark border-0 position-fixed bottom-0 end-0 m-3" role="status" aria-live="polite" aria-atomic="true" id="copyToast">
+    <div class="d-flex"><div class="toast-body">Conteúdo copiado.</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById('copyToast');
+      const body = toast.querySelector('.toast-body');
+      body.textContent = message || 'Conteúdo copiado.';
+      bootstrap.Toast.getOrCreateInstance(toast).show();
+    }
+    document.querySelectorAll('[data-copy-template]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const key = button.getAttribute('data-copy-template');
+        const target = key === 'checklist' ? document.getElementById('checklistCopy') : document.getElementById(key);
+        await navigator.clipboard.writeText(target ? target.textContent.trim() : '');
+        showToast('Texto copiado para colar no Freshdesk.');
+      });
+    });
+  </script>
+</body>
+</html>

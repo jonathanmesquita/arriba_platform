@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendamento Automático de Versão | Arriba Help Center</title>
+  <meta name="description" content="Guia local do Arriba Platform para orientar clientes sobre checklist, agendamento e atualização de versão do DataCob." />
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/article.css" />
+</head>
+<body class="kb-article-page">
+  <header class="kb-topbar">
+    <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <a href="/index.html" class="brand-link">ARRIBA</a>
+        <span class="topbar-divider"></span>
+        <span class="small text-secondary">Help Center / DataCob / Versão</span>
+      </div>
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <a class="btn btn-sm btn-outline-light" href="/tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-robot me-1"></i> Support Copilot</a>
+        <a class="btn btn-sm btn-outline-light" href="/pages/docs/help-center/index.html"><i class="fa-solid fa-magnifying-glass me-1"></i> Help Center</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="kb-hero">
+      <div class="container-fluid">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <span class="eyebrow">DataCob • Versão</span>
+            <h1>Agendamento automático de versão.</h1>
+            <p class="hero-copy">Guia rápido para orientar clientes sobre atualização de versão do DataCob em Homologação/Produção, checklist de versão, regras de horário e exceções que exigem atuação do suporte.</p>
+            <div class="hero-actions">
+              <a class="btn btn-danger btn-lg" href="#passo-a-passo"><i class="fa-solid fa-list-check me-2"></i>Ver passo a passo</a>
+              <button class="btn btn-outline-light btn-lg" type="button" data-copy-template="checklist"><i class="fa-regular fa-copy me-2"></i>Copiar checklist</button>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="hero-card">
+              <img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/capa-agendamento-versao.jpg" alt="Capa do manual de agendamento de versão PH3A" />
+              <div>
+                <span>Fonte local</span>
+                <strong>Manual - Agendamento automático de versão</strong>
+                <small>Base offline usada pelo Support Copilot quando o ticket menciona versão, checklist, homologação ou virada de versão.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-fluid py-4">
+      <div class="row g-3">
+        <div class="col-md-3"><div class="metric-card"><span>Produto</span><strong>DataCob</strong><small>Atualização / virada de versão</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Ambiente</span><strong>Homologação</strong><small>Cliente valida antes da produção</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Horário</span><strong>20h às 00h</strong><small>Segunda a quinta-feira</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Atenção</span><strong>17h</strong><small>Limite para mesmo dia</small></div></div>
+      </div>
+    </section>
+
+    <section class="container-fluid pb-4">
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <aside class="article-sidebar">
+            <h2>Índice</h2>
+            <nav>
+              <a href="#quando-usar">Quando usar</a>
+              <a href="#passo-a-passo">Passo a passo</a>
+              <a href="#regras">Regras do agendamento</a>
+              <a href="#cancelamento">Cancelamento</a>
+              <a href="#respostas">Respostas predefinidas</a>
+              <a href="#copilot">Uso no Support Copilot</a>
+            </nav>
+            <div class="note-card mt-3">
+              <strong>Tipo Freshdesk sugerido</strong>
+              <p>Versão</p>
+              <strong>Resposta recomendada</strong>
+              <p>@Respostas para o cliente atualizar versão - (Checklist Versão)</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="col-xl-8">
+          <article class="article-panel" id="quando-usar">
+            <span class="eyebrow small">Triagem</span>
+            <h2>Quando usar este artigo</h2>
+            <p>Use este guia quando o ticket mencionar atualização de versão, checklist versão, virada de versão, ambiente de homologação, produção, agendamento automático ou dúvidas sobre o procedimento de atualização do DataCob.</p>
+            <div class="keyword-grid">
+              <span>versão</span><span>atualização</span><span>checklist versão</span><span>homologação</span><span>produção</span><span>virada de versão</span><span>agendamento automático</span><span>DataCob 230.4</span>
+            </div>
+          </article>
+
+          <article class="article-panel" id="passo-a-passo">
+            <span class="eyebrow small">Operação</span>
+            <h2>Passo a passo para o cliente</h2>
+            <ol class="step-list">
+              <li><strong>Acessar a base de Homologação.</strong> O fluxo começa na base de homologação do DataCob.</li>
+              <li><strong>Abrir o menu de ajuda.</strong> Na tela inicial, clicar no ícone de ajuda <strong>(?)</strong> e selecionar <strong>Checklist versão</strong>.</li>
+              <li><strong>Validar os itens do checklist.</strong> O cliente deve conferir se os itens estão funcionando corretamente.</li>
+              <li><strong>Finalizar checklist.</strong> Depois de validar, clicar em <strong>Finalizar Checklist</strong>.</li>
+              <li><strong>Escolher data e hora da virada.</strong> Na tela de aprovação, selecionar a data/hora para a virada de versão e confirmar em <strong>Sim</strong>.</li>
+              <li><strong>Confirmar mensagem de sucesso.</strong> Após o agendamento, o sistema exibe mensagem de checklist finalizado e agendamento realizado com sucesso.</li>
+            </ol>
+            <div class="image-grid">
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/passo-1-checklist-versao.jpg" alt="Tela inicial do DataCob com acesso ao Checklist versão" /><figcaption>Acesso ao Checklist versão pela ajuda do sistema.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/passo-2-aprovar-versao.jpg" alt="Tela de aprovação de versão com data e hora de virada" /><figcaption>Cliente escolhe data e horário da virada.</figcaption></figure>
+            </div>
+          </article>
+
+          <article class="article-panel" id="regras">
+            <span class="eyebrow small">Regras principais</span>
+            <h2>Regras do agendamento automático</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><strong>Mesmo dia</strong><p>Para agendar no mesmo dia, o checklist deve ser finalizado até as <strong>17h</strong>. Depois disso, fica pendente para aprovação/atuação do suporte.</p></div>
+              <div class="rule-card"><strong>Dias permitidos</strong><p>O agendamento automático deve ocorrer de <strong>segunda a quinta-feira</strong>, entre <strong>20h e 00h</strong>.</p></div>
+              <div class="rule-card"><strong>Sexta, sábado e domingo</strong><p>Se a data cair nesses dias, o sistema alerta e o suporte deve orientar/agendar no próximo dia útil.</p></div>
+              <div class="rule-card"><strong>Horário operacional</strong><p>Antes das 20h é considerado horário operacional e pode impactar a cobrança; o agendamento fica pendente para atuação do suporte.</p></div>
+            </div>
+            <div class="image-grid">
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/regra-mesmo-dia-17h.jpg" alt="Regra de checklist finalizado até 17h" /><figcaption>Agendamento no mesmo dia exige checklist finalizado até 17h.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/regra-sexta-sabado-domingo.jpg" alt="Regra de agendamento para sexta, sábado e domingo" /><figcaption>Sexta, sábado e domingo exigem tratativa do suporte.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/regra-horario-operacional.jpg" alt="Regra de agendamento antes das 20h e após 00h" /><figcaption>Horário permitido: segunda a quinta, das 20h às 00h.</figcaption></figure>
+            </div>
+          </article>
+
+          <article class="article-panel" id="cancelamento">
+            <span class="eyebrow small">Atenção</span>
+            <h2>Cancelamento de agendamento</h2>
+            <p>Se o cliente cancelar o agendamento, ele não conseguirá realizar o agendamento automático novamente até que uma nova atualização/versão seja enviada. Nesse caso, deve entrar em contato com o suporte PH3A para nova tratativa.</p>
+            <div class="image-grid">
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/cancelamento-agendamento.jpg" alt="Tela de cancelamento de agendamento" /><figcaption>Cancelamento deve ser feito na área de Agendamento do checklist.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/assets/confirmacao-cancelamento.jpg" alt="Mensagem de confirmação de cancelamento" /><figcaption>Após cancelar, a agenda é cancelada e o suporte precisa orientar nova tratativa.</figcaption></figure>
+            </div>
+          </article>
+
+          <article class="article-panel" id="respostas">
+            <span class="eyebrow small">Freshdesk</span>
+            <h2>Respostas predefinidas relacionadas</h2>
+            <div class="template-card">
+              <h3>@Respostas para o cliente atualizar versão - (Checklist Versão)</h3>
+              <p>Use quando o cliente precisar ser orientado a executar o checklist e agendar a atualização.</p>
+              <pre id="templateChecklist">Informamos que a versão do DataCob em seu ambiente de produção está DESATUALIZADA.
+
+Solicitamos que efetue o checklist e agende o mais breve possível a atualização do sistema, pois assim mantemos o sistema sempre apto para executar todas as suas atribuições.
+
+Nessas atualizações podem conter:
+- Melhorias de usabilidade;
+- Correção de falhas e melhor confiabilidade;
+- Novas funcionalidades.
+
+Lembrando que os itens da versão estão disponíveis no Histórico de Versões no menu de ajuda do DataCob. Não se esqueça de efetuar o Checklist da Versão para realizar o agendamento da atualização.
+
+CHECKLIST VERSÃO
+
+Passo 1: Na tela inicial, clicar no ícone (?) e depois Checklist versão.
+Passo 2: Na tela do checklist, após validar que todos os itens estão funcionando corretamente, clicar em Finalizar Checklist.
+Passo 3: Escolher a melhor data e hora para realizar a virada de versão e confirmar em Sim.
+
+Se não conseguir realizar o agendamento, informe a data e horário desejados para que possamos apoiar a atualização do ambiente.</pre>
+              <button class="btn btn-sm btn-outline-light" type="button" data-copy-template="templateChecklist"><i class="fa-regular fa-copy me-1"></i>Copiar resposta</button>
+            </div>
+            <div class="template-card">
+              <h3>@Respostas para o cliente quer atualizar versão - (Resposta do agendamento)</h3>
+              <p>Use quando a data/horário já estiverem definidos e o suporte for confirmar o agendamento.</p>
+              <pre id="templateAgendamento">Boa tarde, a todos,
+
+A atualização da versão [VERSÃO] do DATACOB foi agendada para [DATA] às [HORÁRIO]. (Ambiente de Produção)</pre>
+              <button class="btn btn-sm btn-outline-light" type="button" data-copy-template="templateAgendamento"><i class="fa-regular fa-copy me-1"></i>Copiar resposta</button>
+            </div>
+          </article>
+
+          <article class="article-panel" id="copilot">
+            <span class="eyebrow small">Support Copilot</span>
+            <h2>Como o Copilot deve usar este artigo</h2>
+            <ul class="check-list">
+              <li>Classificar tickets com palavras-chave de versão como <strong>Tipo Freshdesk: Versão</strong>.</li>
+              <li>Recomendar <strong>DataCob</strong> como produto quando o contexto mencionar checklist, homologação ou virada de versão.</li>
+              <li>Sugerir a resposta predefinida de checklist quando o cliente ainda não agendou.</li>
+              <li>Sugerir a resposta de agendamento quando a data e o horário já estiverem definidos.</li>
+              <li>Adicionar este artigo na aba <strong>Base</strong> para o analista abrir, copiar e validar.</li>
+            </ul>
+            <div class="copy-box" id="checklistCopy">Checklist para o analista:
+- Confirmar se o cliente está no ambiente de homologação;
+- Orientar acesso ao ícone de ajuda (?) e à opção Checklist versão;
+- Confirmar se o checklist foi finalizado com sucesso;
+- Validar data e horário pretendidos para a virada;
+- Se for mesmo dia, confirmar se o checklist foi finalizado até 17h;
+- Se for sexta, sábado ou domingo, orientar que o suporte deverá atuar para efetivar no próximo dia útil;
+- Se o agendamento foi cancelado, orientar que será necessário contato com o suporte para nova tratativa.</div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast align-items-center text-bg-dark border-0 position-fixed bottom-0 end-0 m-3" role="status" aria-live="polite" aria-atomic="true" id="copyToast">
+    <div class="d-flex"><div class="toast-body">Conteúdo copiado.</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById('copyToast');
+      const body = toast.querySelector('.toast-body');
+      body.textContent = message || 'Conteúdo copiado.';
+      bootstrap.Toast.getOrCreateInstance(toast).show();
+    }
+    document.querySelectorAll('[data-copy-template]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const key = button.getAttribute('data-copy-template');
+        const target = key === 'checklist' ? document.getElementById('checklistCopy') : document.getElementById(key);
+        await navigator.clipboard.writeText(target ? target.textContent.trim() : '');
+        showToast('Texto copiado para colar no Freshdesk.');
+      });
+    });
+  </script>
+</body>
+</html>

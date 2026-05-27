@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentação de Erros DataCob - Arriba Platform</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">ARRIBA</a>
+            <button class="navbar-toggler" type="button" id="mobileMenuToggle" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="desktop-navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto u30navul">
+                    <li class="nav-item u30navli">
+                        <button data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas
+                            Produtividade</button>
+                    </li>
+                    <li class="nav-item u30navli">
+                        <button data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
+                    </li>
+                    <li class="nav-item u30navli">
+                        <a href="erros-datacob.html" class="nav-link u30navitem active" data-lbl="datacoberrors">Erros
+                            DataCob</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto desktop-only-icons">
+                    <li class="nav-item search-container" id="searchContainer">
+                        <button class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <div class="search-box">
+                            <input type="text" class="form-control search-input" id="searchInput"
+                                placeholder="Pesquisar...">
+                            <button class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="toggleTheme" aria-label="Alternar tema">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#languageModal"
+                            aria-label="Selecionar idioma">
+                            <img src="img/bandeiras_idiomas/br.svg" alt="Bandeira do Brasil" width="24" height="24"
+                                id="currentLanguageFlag">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" id="mobileOverlayMenu">
+        <div class="d-flex justify-content-end p-3">
+            <button class="btn-close btn-close-white" id="mobileMenuClose" aria-label="Fechar Menu"></button>
+        </div>
+        <ul class="navbar-nav flex-column u30navul-mobile">
+            <li class="nav-item u30navli-mobile">
+                <button data-lbl="tools" class="nav-link u30navitem-mobile" data-navtarget="tools">Ferramentas
+                    Produtividade</button>
+            </li>
+            <li class="nav-item u30navli-mobile">
+                <button data-lbl="apis" class="nav-link u30navitem-mobile" data-navtarget="apis">APIs</button>
+            </li>
+            <li class="nav-item u30navli-mobile">
+                <a href="erros-datacob.html" class="nav-link u30navitem-mobile" data-lbl="datacoberrors">Erros
+                    DataCob</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav flex-column align-items-center mt-3 mobile-only-icons">
+            <li class="nav-item">
+                <button id="searchToggleBtnMobile" class="btn btn-link nav-link text-white">
+                    <i class="fas fa-search me-2"></i> Pesquisar
+                </button>
+            </li>
+            <li class="nav-item">
+                <button id="toggleThemeMobile" class="btn btn-link nav-link text-white">
+                    <i id="themeIconMobile" class="fas fa-moon me-2"></i> Tema
+                </button>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#" id="languageDropdownMobile" role="button" data-bs-toggle="modal"
+                    data-bs-target="#languageModal" aria-expanded="false">
+                    <img id="currentLanguageFlagMobile" src="img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil"
+                        width="24" height="24" class="me-2"> Idioma
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="u30navw2" id="toolsDropdownMenu" data-dropdown="tools">
+        <div class="closenav">
+            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
+        </div>
+        <div class="u30nav3-inner">
+            <div class="container-fluid">
+                <div class="row fourclm">
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">Ferramentas de Produtividade</a></h3>
+                            <ul>
+                                <li><a href="json_validator.html">Validador JSON</a></li>
+                                <li><a href="#">Formatador de Código</a></li>
+                                <li><a href="#">Gerador de Senhas</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">Utilitários de Dados</a></h3>
+                            <ul>
+                                <li><a href="#">Conversor CSV para JSON</a></li>
+                                <li><a href="#">Comparador de Texto</a></li>
+                                <li><a href="#">Calculadora de Hash</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">DevOps e Cloud</a></h3>
+                            <ul>
+                                <li><a href="#">Calculadora de Custo Cloud</a></li>
+                                <li><a href="#">Gerador de .gitignore</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">Outras Ferramentas</a></h3>
+                            <ul>
+                                <li><a href="#">Analisador de Logs</a></li>
+                                <li><a href="#">Gerador de Lorem Ipsum</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="u30navw2" id="apisDropdownMenu" data-dropdown="apis">
+        <div class="closenav">
+            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
+        </div>
+        <div class="u30nav3-inner">
+            <div class="container-fluid">
+                <div class="row fourclm">
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">APIs de Dados</a></h3>
+                            <ul>
+                                <li><a href="#">API de Cotação de Moedas</a></li>
+                                <li><a href="#">API de Clima</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">APIs de Integração</a></h3>
+                            <ul>
+                                <li><a href="#">API de Notificações</a></li>
+                                <li><a href="#">API de Pagamentos (Mock)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">APIs de Utilitários</a></h3>
+                            <ul>
+                                <li><a href="#">API de Validação de Email</a></li>
+                                <li><a href="#">API de Geração de QR Code</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="u30t1">
+                            <h3><a href="#">APIs Diversas</a></h3>
+                            <ul>
+                                <li><a href="#">API de Feriados Nacionais</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="u30navw2" id="datacoberrorsDropdownMenu" data-dropdown="datacoberrors">
+        <div class="closenav">
+            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
+        </div>
+        <div class="u30nav3-inner">
+            <div class="container-fluid">
+                <div class="row fourclm">
+                    <div class="col-md-6">
+                        <div class="u30t1">
+                            <h3><a href="erros-datacob.html">Documentação de Erros Comuns</a></h3>
+                            <ul>
+                                <li><a href="#">Erro DX001: Falha de Conexão</a></li>
+                                <li><a href="#">Erro LV005: Licença Inválida</a></li>
+                                <li><a href="#">Erro PR102: Processamento Interrompido</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="u30t1">
+                            <h3><a href="#">Soluções e Workarounds</a></h3>
+                            <ul>
+                                <li><a href="#">Guia de Troubleshooting Avançado</a></li>
+                                <li><a href="#">FAQs de Erros Críticos</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container my-5 flex-grow-1">
+        <h1 class="mb-4">Documentação de Erros DataCob</h1>
+
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm border-danger">
+                    <div class="card-header bg-danger text-white py-3">
+                        <h5 class="mb-0">Erro DC1003 – Conexão ao Banco de Dados Falhou</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Causa:</strong> Credenciais inválidas, banco de dados indisponível, ou firewall bloqueando a conexão.</p>
+                        <p class="card-text"><strong>Solução:</strong> Verifique a string de conexão ou reinicie o serviço DB.</p>
+                        <p class="card-text">
+                            <strong>Documentação Relacionada:</strong>
+                            <a href="erros/DC1003.html" class="text-decoration-none">Detalhes Completos</a> |
+                            <a href="ferramentas/configuracao-conexao.html" class="text-decoration-none">Configuração de Conexão DB</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm border-warning">
+                    <div class="card-header bg-warning text-dark py-3">
+                        <h5 class="mb-0">Aviso LV005 – Licença Próxima do Vencimento</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Causa:</strong> A licença de uso do sistema expira em menos de 30 dias.</p>
+                        <p class="card-text"><strong>Solução:</strong> Contate o departamento comercial para renovação da licença.</p>
+                        <p class="card-text">
+                            <strong>Documentação Relacionada:</strong>
+                            <a href="erros/LV005.html" class="text-decoration-none">Políticas de Licenciamento</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm border-info">
+                    <div class="card-header bg-info text-white py-3">
+                        <h5 class="mb-0">Info PR102 – Atualização de Processo Disponível</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Descrição:</strong> Uma nova versão do processo 'X' está disponível para download e instalação.</p>
+                        <p class="card-text"><strong>Ação:</strong> Recomenda-se atualizar para a versão mais recente para acessar novas funcionalidades e correções.</p>
+                        <p class="card-text">
+                            <strong>Documentação Relacionada:</strong>
+                            <a href="erros/PR102.html" class="text-decoration-none">Notas de Lançamento</a> |
+                            <a href="ferramentas/atualizacao.html" class="text-decoration-none">Guia de Atualização</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+    </main>
+
+    <footer class="mt-auto py-3 bg-dark text-white-50">
+        <div class="container text-center">
+            <p class="mb-0">
+                &copy; 2025 Arriba Platform. Todos os direitos reservados.
+            </p>
+            <small class="text-secondary">Versão: 1.10.0</small>
+        </div>
+    </footer>
+
+    <button id="chatbotBtn" class="btn btn-primary shadow-lg">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <div id="chatbot" class="chatbot-popup card d-none">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            Arriba Bot
+            <button id="closeChat" class="btn-close btn-close-white" aria-label="Close"></button>
+        </div>
+        <div class="card-body chat-window" id="chatWindow">
+        </div>
+        <div class="card-footer d-flex">
+            <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem...">
+            <button id="sendChat" class="btn btn-primary ms-2">Enviar</button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="languageModalLabel">Selecione o Idioma</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-3 mb-4">
+                                <h6>Europa</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="gb"
+                                            data-country="Reino Unido">
+                                            <img src="img/bandeiras_idiomas/flg-gb.svg" alt="Bandeira do Reino Unido"
+                                                width="24" height="24"> English (UK)
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="us"
+                                            data-country="Estados Unidos">
+                                            <img src="img/bandeiras_idiomas/flg-us.svg" alt="Bandeira dos EUA"
+                                                width="24" height="24"> English (US)
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="es"
+                                            data-country="Espanha">
+                                            <img src="img/bandeiras_idiomas/flg-es.svg" alt="Bandeira da Espanha"
+                                                width="24" height="24"> Español
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="fr" data-flag="fr"
+                                            data-country="França">
+                                            <img src="img/bandeiras_idiomas/flg-fr.svg" alt="Bandeira da França"
+                                                width="24" height="24"> Français
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="de" data-flag="de"
+                                            data-country="Alemanha">
+                                            <img src="img/bandeiras_idiomas/flg-de.svg" alt="Bandeira da Alemanha"
+                                                width="24" height="24"> Alemanha (Deutsch)
+                                        </a></li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <h6>Américas</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="pt" data-flag="br"
+                                            data-country="Brasil">
+                                            <img src="img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil"
+                                                width="24" height="24"> Português (Brasil)
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="mx"
+                                            data-country="México">
+                                            <img src="img/bandeiras_idiomas/flg-mx.svg" alt="Bandeira do México"
+                                                width="24" height="24"> Español (México)
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="ca"
+                                            data-country="Canadá">
+                                            <img src="img/bandeiras_idiomas/flg-ca.svg" alt="Bandeira do Canadá"
+                                                width="24" height="24"> Canada
+                                        </a></li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <h6>Ásia e Oceania</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="ko" data-flag="kr"
+                                            data-country="Coreia do Sul">
+                                            <img src="img/bandeiras_idiomas/flg-kr.svg" alt="Bandeira da Coreia do Sul"
+                                                width="24" height="24"> 한국어 (Coreia do Sul)
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="au"
+                                            data-country="Austrália">
+                                            <img src="img/bandeiras_idiomas/flg-au.svg" alt="Bandeira da Austrália"
+                                                width="24" height="24"> Australia
+                                        </a></li>
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="in"
+                                            data-country="Índia">
+                                            <img src="img/bandeiras_idiomas/flg-in.svg" alt="Bandeira da Índia"
+                                                width="24" height="24"> India
+                                        </a></li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <h6>Oriente Médio e África</h6>
+                                <ul class="list-unstyled language-list">
+                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="za"
+                                            data-country="África do Sul">
+                                            <img src="img/bandeiras_idiomas/flg-za.svg" alt="Bandeira da África do Sul"
+                                                width="24" height="24"> South Africa
+                                        </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Arriba Platform: plataforma de produtividade técnica, suporte inteligente, base de conhecimento e automação de dados." />
+  <title>Arriba Platform | Suporte, Dados e IA</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:wght@500;600;700&display=swap");
+
+    :root {
+      --ap-bg: #f7f4ef;
+      --ap-bg-soft: #efe9e2;
+      --ap-surface: #ffffff;
+      --ap-surface-2: #fbf9f6;
+      --ap-text: #1f1d1b;
+      --ap-muted: #675f58;
+      --ap-border: #d8d0c7;
+      --ap-nav: #1f1a17;
+      --ap-accent: #c74634;
+      --ap-accent-2: #f2c15b;
+      --ap-blue: #12344d;
+      --ap-teal: #1f5663;
+      --ap-shadow: 0 18px 44px rgba(31, 29, 27, .10);
+      --ap-radius: 6px;
+    }
+
+    body.theme-dark {
+      --ap-bg: #11100f;
+      --ap-bg-soft: #191716;
+      --ap-surface: #1f1c1a;
+      --ap-surface-2: #171514;
+      --ap-text: #f7f4ef;
+      --ap-muted: #c5bbb1;
+      --ap-border: #3d3732;
+      --ap-nav: #070707;
+      --ap-shadow: 0 18px 44px rgba(0, 0, 0, .35);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--ap-bg);
+      color: var(--ap-text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .ap-topbar {
+      background: var(--ap-surface);
+      border-bottom: 1px solid var(--ap-border);
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+    }
+    .ap-topbar-inner {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .ap-menu-btn, .ap-icon-btn {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      background: transparent;
+      color: var(--ap-text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .ap-menu-btn:hover, .ap-icon-btn:hover { background: var(--ap-bg-soft); }
+    .ap-brand {
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      font-size: 1.7rem;
+      color: var(--ap-accent);
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .ap-brand small {
+      color: var(--ap-muted);
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      margin-left: .5rem;
+      border: 1px solid rgba(199,70,52,.28);
+      border-radius: 999px;
+      padding: .22rem .5rem;
+      vertical-align: middle;
+    }
+    .ap-search {
+      flex: 1;
+      max-width: 840px;
+      position: relative;
+    }
+    .ap-search i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ap-muted);
+    }
+    .ap-search input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--ap-border);
+      border-radius: var(--ap-radius);
+      background: var(--ap-surface-2);
+      color: var(--ap-text);
+      padding: 0 1rem 0 2.75rem;
+      outline: none;
+    }
+    .ap-search input:focus { border-color: var(--ap-accent); box-shadow: 0 0 0 .18rem rgba(199,70,52,.12); }
+    .ap-actions { margin-left: auto; display: flex; align-items: center; gap: .5rem; }
+    .ap-flag { width: 25px; height: 18px; object-fit: cover; border-radius: 2px; }
+    .ap-lang-menu { min-width: 9rem; }
+
+    .ap-subnav {
+      background: var(--ap-nav);
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .ap-subnav .container-fluid {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .ap-subnav a {
+      display: inline-flex;
+      padding: 1rem 0 .88rem;
+      font-weight: 700;
+      font-size: .93rem;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      opacity: .95;
+    }
+    .ap-subnav a:hover, .ap-subnav a.active { border-color: var(--ap-accent); color: #fff; }
+
+    .ap-mobile-menu {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: min(360px, 86vw);
+      background: var(--ap-surface);
+      border-right: 1px solid var(--ap-border);
+      z-index: 1060;
+      transform: translateX(-102%);
+      transition: transform .22s ease;
+      box-shadow: var(--ap-shadow);
+      padding: 1.2rem;
+    }
+    .ap-mobile-menu.open { transform: translateX(0); }
+    .ap-mobile-menu a { display: block; padding: .9rem .25rem; color: var(--ap-text); border-bottom: 1px solid var(--ap-border); font-weight: 700; }
+    .ap-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1050; display: none; }
+    .ap-backdrop.show { display: block; }
+
+    .hero {
+      position: relative;
+      min-height: 610px;
+      background:
+        linear-gradient(90deg, rgba(18,52,77,.94) 0%, rgba(18,52,77,.86) 44%, rgba(31,86,99,.70) 100%),
+        radial-gradient(circle at 82% 30%, rgba(242,193,91,.24), transparent 28%),
+        linear-gradient(135deg, #12344d, #1f5663);
+      color: #fff;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(115deg, transparent 0 55%, rgba(255,255,255,.08) 55% 56%, transparent 56% 100%);
+      background-size: 38px 100%;
+      opacity: .42;
+      pointer-events: none;
+    }
+    .hero .container-fluid { position: relative; z-index: 1; }
+    .hero-content { padding: 6.2rem 0 5rem; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      color: #f2c15b;
+      font-weight: 900;
+      font-size: .78rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .eyebrow::before { content: ""; width: 38px; height: 2px; background: #f2c15b; }
+    .hero h1 {
+      max-width: 860px;
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: clamp(3.1rem, 7vw, 7.2rem);
+      line-height: .94;
+      letter-spacing: -.055em;
+      margin: 0 0 1.5rem;
+    }
+    .hero p { max-width: 720px; font-size: clamp(1.05rem, 1.5vw, 1.28rem); line-height: 1.75; color: rgba(255,255,255,.86); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .9rem; margin-top: 2.2rem; }
+    .ap-btn-primary, .ap-btn-secondary {
+      min-height: 50px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      border-radius: var(--ap-radius);
+      padding: .86rem 1.25rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+    .ap-btn-primary { background: var(--ap-accent); color: #fff; }
+    .ap-btn-primary:hover { background: #aa3829; color: #fff; }
+    .ap-btn-secondary { background: rgba(255,255,255,.95); color: #1f1d1b; border-color: rgba(255,255,255,.32); }
+    .ap-btn-secondary:hover { background: #fff; color: #1f1d1b; }
+
+    .hero-showcase {
+      position: relative;
+      margin-top: 3.5rem;
+      background: rgba(255,255,255,.11);
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 18px;
+      padding: 1rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 28px 60px rgba(0,0,0,.18);
+    }
+    .showcase-frame {
+      min-height: 310px;
+      border-radius: 14px;
+      background: var(--ap-surface);
+      color: var(--ap-text);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .showcase-copy { padding: 2.2rem; display: flex; flex-direction: column; justify-content: center; }
+    .showcase-copy span { color: var(--ap-accent); font-weight: 900; letter-spacing: .14em; text-transform: uppercase; font-size: .75rem; }
+    .showcase-copy h2 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.05; margin: .75rem 0 1rem; letter-spacing: -.04em; }
+    .showcase-visual { position: relative; background: linear-gradient(135deg, #f7f4ef, #d7e4e7); display: flex; align-items: center; justify-content: center; }
+    .showcase-visual .mock-card { width: min(420px, 86%); border-radius: 16px; background: rgba(255,255,255,.82); border: 1px solid rgba(0,0,0,.08); box-shadow: var(--ap-shadow); padding: 1.35rem; }
+    .mock-line { height: 12px; border-radius: 999px; background: #d8d0c7; margin: .65rem 0; }
+    .mock-line:nth-child(2) { width: 68%; background: var(--ap-accent); }
+    .mock-line:nth-child(3) { width: 82%; }
+    .mock-line:nth-child(4) { width: 54%; }
+    .slide-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 54px;
+      border: 0;
+      background: rgba(0,0,0,.52);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .slide-nav.prev { left: -12px; }
+    .slide-nav.next { right: -12px; }
+    .slide-dots { display: flex; justify-content: center; gap: .45rem; margin-top: .8rem; }
+    .slide-dot { width: 9px; height: 9px; border-radius: 50%; border: 0; background: rgba(255,255,255,.45); }
+    .slide-dot.active { background: var(--ap-accent-2); }
+
+    .solution-strip {
+      background: var(--ap-surface);
+      border-bottom: 1px solid var(--ap-border);
+      padding: 2.5rem 0;
+    }
+    .solution-card {
+      height: 100%;
+      border: 1px solid var(--ap-border);
+      background: var(--ap-surface-2);
+      border-radius: var(--ap-radius);
+      padding: 1.45rem;
+      box-shadow: 0 10px 28px rgba(31,29,27,.05);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .solution-card:hover { transform: translateY(-3px); box-shadow: var(--ap-shadow); }
+    .solution-card i { color: var(--ap-accent); font-size: 1.35rem; margin-bottom: .8rem; }
+    .solution-card h3 { font-size: 1.1rem; font-weight: 850; margin-bottom: .65rem; }
+    .solution-card p { color: var(--ap-muted); margin: 0; line-height: 1.65; }
+
+    .section-block { padding: 4.8rem 0; }
+    .section-kicker { color: var(--ap-accent); font-weight: 900; letter-spacing: .16em; text-transform: uppercase; font-size: .78rem; }
+    .section-title { font-family: "Source Serif 4", Georgia, serif; letter-spacing: -.04em; font-size: clamp(2.2rem, 4vw, 4.4rem); line-height: 1.02; margin: .8rem 0 1rem; }
+    .section-text { color: var(--ap-muted); line-height: 1.75; max-width: 780px; }
+    .module-card {
+      height: 100%;
+      border: 1px solid var(--ap-border);
+      background: var(--ap-surface);
+      border-radius: var(--ap-radius);
+      padding: 1.55rem;
+      box-shadow: 0 10px 26px rgba(31,29,27,.04);
+    }
+    .module-tag { color: var(--ap-accent); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 900; }
+    .module-icon { margin: 1rem 0 .8rem; width: 44px; height: 44px; border-radius: 10px; background: rgba(199,70,52,.10); color: var(--ap-accent); display: flex; align-items: center; justify-content: center; }
+    .module-card h3 { font-size: 1.28rem; font-weight: 850; }
+    .module-card p { color: var(--ap-muted); line-height: 1.68; }
+    .module-link { color: var(--ap-accent); font-weight: 850; }
+    .module-link:hover { color: #aa3829; }
+
+    .knowledge-band { background: var(--ap-bg-soft); border-top: 1px solid var(--ap-border); border-bottom: 1px solid var(--ap-border); }
+    .kb-search-panel { background: var(--ap-surface); border: 1px solid var(--ap-border); border-radius: var(--ap-radius); padding: 1.4rem; box-shadow: var(--ap-shadow); }
+    .kb-search-panel input { height: 50px; border: 1px solid var(--ap-border); border-radius: var(--ap-radius); background: var(--ap-surface-2); color: var(--ap-text); padding: 0 1rem; }
+    .footer { padding: 2rem 0; border-top: 1px solid var(--ap-border); background: var(--ap-surface); color: var(--ap-muted); }
+
+    @media (max-width: 991px) {
+      .ap-search { max-width: none; }
+      .ap-subnav .container-fluid { gap: 1rem; }
+      .hero-content { padding-top: 4.2rem; }
+      .showcase-frame { grid-template-columns: 1fr; }
+      .showcase-visual { min-height: 230px; }
+    }
+    @media (max-width: 767px) {
+      .ap-topbar-inner { flex-wrap: wrap; gap: .8rem; padding: .8rem 0; }
+      .ap-brand small { display: none; }
+      .ap-search { order: 3; flex-basis: 100%; }
+      .hero { min-height: auto; }
+      .hero-actions .ap-btn-primary, .hero-actions .ap-btn-secondary { width: 100%; }
+      .slide-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ap-backdrop" id="menuBackdrop"></div>
+  <aside class="ap-mobile-menu" id="mobileMenu" aria-label="Menu lateral">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <strong class="ap-brand">ARRIBA</strong>
+      <button class="ap-icon-btn" id="closeMenu" type="button" aria-label="Fechar menu"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <a href="#visao-geral">Visão geral</a>
+    <a href="#solucoes">Soluções</a>
+    <a href="#datacob">Módulos DataCob</a>
+    <a href="#copilot">IA Copilot</a>
+    <a href="pages/docs/help-center/index.html">Help Center</a>
+    <a href="pages/case-study/index.html">Case Study</a>
+    <a href="pages/lab/index.html">Lab</a>
+  </aside>
+
+  <header class="ap-topbar">
+    <div class="container-fluid px-4 ap-topbar-inner">
+      <button class="ap-menu-btn" id="openMenu" type="button" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button>
+      <a class="ap-brand" href="index.html">ARRIBA <small>v4</small></a>
+      <form class="ap-search" id="globalSearchForm" role="search">
+        <i class="fa-solid fa-search"></i>
+        <input id="globalSearchInput" type="search" placeholder="Pesquisar ferramentas, manuais, DataCob, API, Freshdesk..." />
+      </form>
+      <div class="ap-actions">
+        <a class="ap-icon-btn" href="index.html" aria-label="Home"><i class="fa-solid fa-house"></i></a>
+        <div class="dropdown">
+          <button class="ap-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Idioma">
+            <img class="ap-flag" id="currentFlag" src="assets/img/bandeiras_idiomas/flg-br.svg" alt="Brasil" />
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end ap-lang-menu">
+            <li><button class="dropdown-item" type="button" data-lang="pt-BR">Português</button></li>
+            <li><button class="dropdown-item" type="button" data-lang="en-US">English</button></li>
+            <li><button class="dropdown-item" type="button" data-lang="es-ES">Español</button></li>
+          </ul>
+        </div>
+        <button class="ap-icon-btn" id="themeToggle" type="button" aria-label="Alternar tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
+        <a class="ap-icon-btn" href="tools/datacob/support-copilot/support-copilot.html" aria-label="Support Copilot"><i class="fa-regular fa-comment"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="ap-subnav" aria-label="Navegação principal">
+    <div class="container-fluid px-4">
+      <a class="active" href="#visao-geral">Visão geral</a>
+      <a href="#solucoes">Soluções</a>
+      <a href="#datacob">Módulos DataCob</a>
+      <a href="#dados">Utilitários de Dados</a>
+      <a href="#copilot">IA Copilot</a>
+      <a href="pages/docs/help-center/index.html">Help Center</a>
+      <a href="pages/case-study/index.html">Case Study</a>
+      <a href="pages/docs/blog/index.html">Blog técnico</a>
+      <a href="pages/lab/index.html">Lab</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="visao-geral">
+      <div class="container-fluid px-4">
+        <div class="hero-content">
+          <span class="eyebrow">Suporte · Dados · IA · DataCob</span>
+          <h1 data-i18n="heroTitle">Atendimento mais rápido começa com conhecimento melhor.</h1>
+          <p data-i18n="heroText">Uma plataforma simples para consultar manuais, analisar chamados do Freshdesk, sugerir respostas e acelerar rotinas de suporte sem acessar banco de dados.</p>
+          <div class="hero-actions">
+            <a class="ap-btn-primary" href="tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-headset"></i> Abrir Support Copilot</a>
+            <a class="ap-btn-secondary" href="pages/docs/help-center/index.html"><i class="fa-solid fa-book-open"></i> Pesquisar Help Center</a>
+          </div>
+
+          <div class="hero-showcase" aria-label="Destaques da plataforma">
+            <button class="slide-nav prev" type="button" id="slidePrev" aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="showcase-frame" id="showcaseFrame">
+              <div class="showcase-copy">
+                <span id="slideKicker">IA Copilot</span>
+                <h2 id="slideTitle">Resumo, resposta e checklist em poucos segundos.</h2>
+                <p id="slideText">Cole o chamado ou busque o ticket. O Copilot organiza contexto, prioridade, base sugerida e encaminhamento.</p>
+                <a class="module-link mt-2" id="slideLink" href="tools/datacob/support-copilot/support-copilot.html">Acessar módulo →</a>
+              </div>
+              <div class="showcase-visual">
+                <div class="mock-card" id="slideMock">
+                  <strong id="slideMockTitle">Diagnóstico do Copilot</strong>
+                  <div class="mock-line"></div><div class="mock-line"></div><div class="mock-line"></div><div class="mock-line"></div>
+                </div>
+              </div>
+            </div>
+            <button class="slide-nav next" type="button" id="slideNext" aria-label="Próximo slide"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="slide-dots" id="slideDots"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="solution-strip" id="solucoes">
+      <div class="container-fluid px-4">
+        <div class="row g-4">
+          <div class="col-md-6 col-xl-3"><article class="solution-card"><i class="fa-solid fa-magnifying-glass-chart"></i><h3>Busca de conhecimento</h3><p>Base local com manuais, erros conhecidos e links para Freshdesk quando disponível.</p></article></div>
+          <div class="col-md-6 col-xl-3"><article class="solution-card"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Triagem com IA</h3><p>Resumo, tipo Freshdesk, prioridade, resposta e checklist para o analista revisar.</p></article></div>
+          <div class="col-md-6 col-xl-3"><article class="solution-card"><i class="fa-solid fa-file-csv"></i><h3>Ferramentas DataCob</h3><p>CSV, massa de dados, Base64, modelo carta e rotinas de apoio operacional.</p></article></div>
+          <div class="col-md-6 col-xl-3"><article class="solution-card"><i class="fa-solid fa-chart-line"></i><h3>Recorrência</h3><p>Primeira camada para identificar temas repetidos, clientes impactados e oportunidades de melhoria.</p></article></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" id="datacob">
+      <div class="container-fluid px-4">
+        <span class="section-kicker">Módulos principais</span>
+        <h2 class="section-title">Ferramentas organizadas para suporte e dados.</h2>
+        <p class="section-text">O Arriba concentra utilitários que reduzem retrabalho e transformam conhecimento operacional em uma experiência pesquisável e reaproveitável.</p>
+        <div class="row g-4 mt-2">
+          <div class="col-md-6 col-xl-3"><article class="module-card"><span class="module-tag">DataCob</span><div class="module-icon"><i class="fa-solid fa-table-list"></i></div><h3>Gerador CSV DataCob</h3><p>Criação de arquivos estruturados seguindo layout oficial, validação de obrigatórios e exportação.</p><a href="tools/datacob/arriba-csv-generator/csv-template-generator.html" class="module-link">Abrir ferramenta →</a></article></div>
+          <div class="col-md-6 col-xl-3"><article class="module-card"><span class="module-tag">Dados</span><div class="module-icon"><i class="fa-solid fa-database"></i></div><h3>Massa de Dados</h3><p>Gerador de dados fictícios para testes, validações e massa operacional.</p><a href="tools/datacob/massa-dados/massa-dados.html" class="module-link">Gerar massa →</a></article></div>
+          <div class="col-md-6 col-xl-3"><article class="module-card"><span class="module-tag">Modelo Carta</span><div class="module-icon"><i class="fa-solid fa-file-code"></i></div><h3>Conversor Modelo Carta</h3><p>Decoder e builder para modelos compactados usados nas rotinas DataCob.</p><a href="tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html" class="module-link">Converter modelo →</a></article></div>
+          <div class="col-md-6 col-xl-3" id="dados"><article class="module-card"><span class="module-tag">Utilitários</span><div class="module-icon"><i class="fa-solid fa-file-pdf"></i></div><h3>Base64 para PDF</h3><p>Converte payloads Base64 recebidos via JSON em PDF para análise rápida.</p><a href="tools/dados/base64/base64.html" class="module-link">Converter PDF →</a></article></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block knowledge-band" id="copilot">
+      <div class="container-fluid px-4">
+        <div class="row g-5 align-items-center">
+          <div class="col-lg-6">
+            <span class="section-kicker">IA aplicada ao suporte</span>
+            <h2 class="section-title">Copiloto para atendimento com contexto.</h2>
+            <p class="section-text">Busque um ticket, consulte a base, gere resumo, resposta, checklist e especificação para DEV quando necessário. O modo seguro mantém tudo somente leitura.</p>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+              <a class="ap-btn-primary" href="tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-play"></i> Analisar chamado</a>
+              <a class="ap-btn-secondary" href="pages/case-study/support-copilot.html"><i class="fa-solid fa-diagram-project"></i> Ver case</a>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="kb-search-panel">
+              <span class="section-kicker">Knowledge Search</span>
+              <h3 class="mt-2">Procure em toda a base</h3>
+              <p class="text-secondary">Manuais locais, pacotes, artigos e Freshdesk Solutions quando a API estiver disponível.</p>
+              <form id="kbSearchForm" class="d-flex gap-2 flex-column flex-sm-row">
+                <input id="kbSearchInput" type="search" class="form-control" placeholder="Ex: versão, negativação, API token, CNAB..." />
+                <button class="ap-btn-primary border-0" type="submit"><i class="fa-solid fa-search"></i> Buscar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" id="case-studies">
+      <div class="container-fluid px-4">
+        <span class="section-kicker">Arquitetura</span>
+        <h2 class="section-title">Frontend simples, backend seguro e fallback local.</h2>
+        <div class="row g-4 mt-2">
+          <div class="col-md-4"><article class="module-card"><span class="module-tag">Frontend</span><h3>Vercel + Bootstrap</h3><p>Interface responsiva inspirada em Oracle, simples para apresentação e operação.</p></article></div>
+          <div class="col-md-4"><article class="module-card"><span class="module-tag">Backend</span><h3>Render + Node API</h3><p>Proxy para Freshdesk, OpenAI e rotas de análise sem expor chaves no navegador.</p></article></div>
+          <div class="col-md-4"><article class="module-card"><span class="module-tag">Fallback</span><h3>Base local versionada</h3><p>Mesmo sem Freshdesk ou IA, a ferramenta continua consultando manuais e regras locais.</p></article></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container-fluid px-4 d-flex flex-column flex-md-row justify-content-between gap-2">
+      <div><strong>Arriba Platform</strong> <span>© 2026</span></div>
+      <div><span id="apiLabel">API: https://api.arriba.jm.dev.br</span></div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const translations = {
+      "pt-BR": {
+        heroTitle: "Atendimento mais rápido começa com conhecimento melhor.",
+        heroText: "Uma plataforma simples para consultar manuais, analisar chamados do Freshdesk, sugerir respostas e acelerar rotinas de suporte sem acessar banco de dados."
+      },
+      "en-US": {
+        heroTitle: "Faster support starts with better knowledge.",
+        heroText: "A simple platform to search manuals, analyze Freshdesk tickets, suggest replies and speed up support workflows without database access."
+      },
+      "es-ES": {
+        heroTitle: "La atención más rápida empieza con mejor conocimiento.",
+        heroText: "Una plataforma simple para consultar manuales, analizar tickets de Freshdesk, sugerir respuestas y acelerar soporte sin acceder a la base de datos."
+      }
+    };
+
+    const slides = [
+      { kicker: "IA Copilot", title: "Resumo, resposta e checklist em poucos segundos.", text: "Cole o chamado ou busque o ticket. O Copilot organiza contexto, prioridade, base sugerida e encaminhamento.", link: "tools/datacob/support-copilot/support-copilot.html", mock: "Diagnóstico do Copilot", visual: "linear-gradient(135deg, #f7f4ef, #d7e4e7)" },
+      { kicker: "Help Center", title: "Conhecimento local, Freshdesk e manuais no mesmo lugar.", text: "Pesquise por erro, rotina, pacote, cliente ou versão e encontre o artigo certo para orientar o atendimento.", link: "pages/docs/help-center/index.html", mock: "Knowledge Router", visual: "linear-gradient(135deg, #fff4dd, #f1d3c6)" },
+      { kicker: "DataCob", title: "Ferramentas para arquivos, massa e produtividade.", text: "Gere CSV, valide campos, converta modelos e acelere tarefas repetitivas sem abrir banco de dados.", link: "tools/datacob/arriba-csv-generator/csv-template-generator.html", mock: "Layout CSV", visual: "linear-gradient(135deg, #e8f0f2, #c9d7c9)" }
+    ];
+
+    let currentSlide = 0;
+    const qs = (sel) => document.querySelector(sel);
+    const qsa = (sel) => [...document.querySelectorAll(sel)];
+
+    function applyLang(lang) {
+      const dict = translations[lang] || translations["pt-BR"];
+      document.documentElement.lang = lang;
+      Object.entries(dict).forEach(([key, value]) => {
+        const node = document.querySelector(`[data-i18n="${key}"]`);
+        if (node) node.textContent = value;
+      });
+      localStorage.setItem("arribaLang", lang);
+      const flag = qs("#currentFlag");
+      if (flag) flag.src = lang === "pt-BR" ? "assets/img/bandeiras_idiomas/flg-br.svg" : "assets/img/bandeiras_idiomas/flg-us.svg";
+    }
+
+    function applyTheme(theme) {
+      document.body.classList.toggle("theme-dark", theme === "dark");
+      localStorage.setItem("arribaTheme", theme);
+    }
+
+    function renderSlide() {
+      const slide = slides[currentSlide];
+      qs("#slideKicker").textContent = slide.kicker;
+      qs("#slideTitle").textContent = slide.title;
+      qs("#slideText").textContent = slide.text;
+      qs("#slideLink").href = slide.link;
+      qs("#slideMockTitle").textContent = slide.mock;
+      qs(".showcase-visual").style.background = slide.visual;
+      qs("#slideDots").innerHTML = slides.map((_, idx) => `<button class="slide-dot ${idx === currentSlide ? "active" : ""}" type="button" data-slide="${idx}" aria-label="Ir para slide ${idx + 1}"></button>`).join("");
+      qsa("[data-slide]").forEach((btn) => btn.addEventListener("click", () => { currentSlide = Number(btn.dataset.slide); renderSlide(); }));
+    }
+
+    function openMenu() { qs("#mobileMenu")?.classList.add("open"); qs("#menuBackdrop")?.classList.add("show"); }
+    function closeMenu() { qs("#mobileMenu")?.classList.remove("open"); qs("#menuBackdrop")?.classList.remove("show"); }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyTheme(localStorage.getItem("arribaTheme") || "light");
+      applyLang(localStorage.getItem("arribaLang") || "pt-BR");
+      renderSlide();
+      qs("#themeToggle")?.addEventListener("click", () => applyTheme(document.body.classList.contains("theme-dark") ? "light" : "dark"));
+      qsa("[data-lang]").forEach((btn) => btn.addEventListener("click", () => applyLang(btn.dataset.lang)));
+      qs("#openMenu")?.addEventListener("click", openMenu);
+      qs("#closeMenu")?.addEventListener("click", closeMenu);
+      qs("#menuBackdrop")?.addEventListener("click", closeMenu);
+      qs("#slidePrev")?.addEventListener("click", () => { currentSlide = (currentSlide - 1 + slides.length) % slides.length; renderSlide(); });
+      qs("#slideNext")?.addEventListener("click", () => { currentSlide = (currentSlide + 1) % slides.length; renderSlide(); });
+      qs("#globalSearchForm")?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const term = encodeURIComponent(qs("#globalSearchInput")?.value || "");
+        location.href = `pages/docs/help-center/index.html?q=${term}`;
+      });
+      qs("#kbSearchForm")?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const term = encodeURIComponent(qs("#kbSearchInput")?.value || "");
+        location.href = `pages/docs/help-center/index.html?q=${term}`;
+      });
+    });
+  </script>
+</body>
+</html>

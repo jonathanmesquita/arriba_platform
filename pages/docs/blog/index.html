@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Técnico - Arriba Platform</title>
+</head>
+<body>
+
+<main>
+    <section class="rw-page-hero">
+        <div class="rw-container">
+            <span class="rw-kicker">Blog técnico</span>
+            <h1>Erros, tópicos e troubleshooting.</h1>
+            <p>Pesquise a documentação como um blog: erro, causa provável, checklist e encaminhamento.</p>
+
+            <label class="rw-help-search mt-4">
+                <i class="fas fa-search"></i>
+                <input type="search" id="blogSearchInput" placeholder="Pesquisar erro: DX001, LV005, PR102, conexão, licença...">
+            </label>
+        </div>
+    </section>
+
+    <section class="rw-section rw-section-light">
+        <div class="rw-container">
+            <div class="rw-blog-grid" id="blogResults">
+                <article class="rw-blog-card" id="dx001" data-blog-keywords="dx001 falha conexão crm datacob api rede endpoint">
+                    <div class="rw-blog-icon"><i class="fas fa-plug-circle-xmark"></i></div>
+                    <div>
+                        <span class="rw-kicker">Erro DX001</span>
+                        <h2>Falha de conexão</h2>
+                        <p>Validar rede, ambiente, endpoint, autenticação e evidências antes de escalar.</p>
+                        <ul>
+                            <li>Confirmar URL/ambiente.</li>
+                            <li>Testar conexão e horário da falha.</li>
+                            <li>Anexar print, payload e log.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="rw-blog-card" id="lv005" data-blog-keywords="lv005 licença inválida usuário permissão credencial">
+                    <div class="rw-blog-icon"><i class="fas fa-id-card"></i></div>
+                    <div>
+                        <span class="rw-kicker">Erro LV005</span>
+                        <h2>Licença inválida</h2>
+                        <p>Conferir usuário, permissão, credencial, vigência e vínculo operacional.</p>
+                        <ul>
+                            <li>Validar usuário afetado.</li>
+                            <li>Conferir perfil de acesso.</li>
+                            <li>Registrar rotina e evidências.</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="rw-blog-card" id="pr102" data-blog-keywords="pr102 processamento interrompido lote csv parcela contrato carga">
+                    <div class="rw-blog-icon"><i class="fas fa-file-circle-exclamation"></i></div>
+                    <div>
+                        <span class="rw-kicker">Erro PR102</span>
+                        <h2>Processamento interrompido</h2>
+                        <p>Revisar lote, CSV, obrigatórios, separador, duplicidade e batimento de contrato/parcela.</p>
+                        <ul>
+                            <li>Conferir cabeçalhos.</li>
+                            <li>Validar campos obrigatórios.</li>
+                            <li>Testar com massa reduzida.</li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

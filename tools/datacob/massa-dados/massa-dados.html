@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Massa de Dados DataCob - Arriba Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      --bg: #f7f5f2;
+      --surface: #ffffff;
+      --surface-soft: #efede9;
+      --ink: #171412;
+      --muted: #625c56;
+      --line: #d9d2cc;
+      --red: #c74634;
+      --gold: #f0c75e;
+      --dark: #1f1b19;
+      --ok: #198754;
+      --danger: #dc3545;
+      --blue: #28708a;
+      --shadow: 0 18px 46px rgba(0, 0, 0, .08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand {
+      color: var(--red);
+      font-size: 1.35rem;
+      font-weight: 900;
+      text-decoration: none;
+      letter-spacing: -.04em;
+    }
+
+    .back-link {
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      font-size: .95rem;
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at 90% 10%, rgba(199, 70, 52, .08), transparent 28%),
+        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 48px 0 34px;
+    }
+
+    .container-page {
+      width: min(1180px, calc(100% - 44px));
+      margin-inline: auto;
+    }
+
+    .kicker {
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 900;
+      font-size: .78rem;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(2.7rem, 6vw, 5.5rem);
+      line-height: .95;
+      letter-spacing: -.07em;
+      font-weight: 300;
+      margin: 0 0 20px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.65;
+      max-width: 850px;
+      margin: 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 24px;
+      padding: 28px 0 60px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 86px;
+      height: fit-content;
+      padding: 18px;
+    }
+
+    .sidebar-title {
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 900;
+      font-size: .76rem;
+      margin: 0 0 12px;
+    }
+
+    .generator-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .generator-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 13px 12px;
+      border-radius: 9px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-weight: 850;
+      cursor: pointer;
+      transition: background-color .18s ease, transform .18s ease, color .18s ease;
+    }
+
+    .generator-btn:hover {
+      background: #f3f1ee;
+      color: var(--ink);
+      transform: translateX(2px);
+    }
+
+    .generator-btn.active {
+      background: #dcebea;
+      color: var(--ink);
+    }
+
+    .generator-btn .generator-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      display: grid;
+      place-items: center;
+      color: var(--dark);
+      font-size: .8rem;
+    }
+
+    .generator-btn.active .generator-icon {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .generator-btn .chevron {
+      opacity: .45;
+    }
+
+    .sidebar-note {
+      border-left: 4px solid var(--gold);
+      background: #fff8df;
+      border-radius: 9px;
+      padding: 12px 14px;
+      color: #3a332b;
+      margin-top: 18px;
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .main-stack {
+      display: grid;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .summary-item {
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      min-height: 62px;
+    }
+
+    .summary-item i {
+      font-size: 1.15rem;
+      color: var(--ink);
+    }
+
+    .summary-item span {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .summary-item strong {
+      display: block;
+      font-size: 1.02rem;
+      line-height: 1.1;
+    }
+
+    .card-section {
+      padding: 24px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -.055em;
+      font-weight: 650;
+      margin: 0 0 10px;
+    }
+
+    .section-title.small {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    .section-description {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .oracle-divider {
+      width: 46px;
+      height: 4px;
+      background: var(--gold);
+      margin: 16px 0 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+    .field.double { grid-column: span 2; }
+
+    label {
+      display: block;
+      font-weight: 850;
+      margin-bottom: 6px;
+      font-size: .94rem;
+    }
+
+    label .required {
+      color: var(--red);
+    }
+
+    .form-control,
+    .form-select {
+      min-height: 43px;
+      border-radius: 6px;
+      border-color: #cfc8c1;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 .22rem rgba(199, 70, 52, .14);
+    }
+
+    .form-text {
+      color: var(--muted);
+    }
+
+    .options-box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 18px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 10px 14px;
+      align-items: center;
+    }
+
+    .result-grid label {
+      margin: 0;
+      font-weight: 900;
+    }
+
+    .generated-output,
+    textarea.generated-output {
+      background: #e8ffe9;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-arriba {
+      min-height: 43px;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      padding: 9px 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .btn-dark-arriba {
+      background: var(--dark);
+      color: #fff;
+    }
+
+    .btn-dark-arriba:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .btn-light-arriba {
+      background: var(--surface-soft);
+      color: var(--ink);
+    }
+
+    .btn-outline-arriba {
+      background: transparent;
+      border-color: var(--dark);
+      color: var(--dark);
+    }
+
+    .btn-red-arriba {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-red-arriba:hover {
+      background: #a93225;
+      color: #fff;
+    }
+
+    .preview-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .preview-tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .preview-tab.active {
+      background: var(--dark);
+      color: #fff;
+      border-color: var(--dark);
+    }
+
+    .preview-box {
+      background: #101010;
+      color: #f3f3f3;
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 260px;
+      overflow: auto;
+      font-family: Consolas, Monaco, monospace;
+      font-size: .86rem;
+      white-space: pre;
+      max-width: 100%;
+    }
+
+    .validation-msg {
+      border-left: 4px solid var(--ok);
+      background: rgba(25, 135, 84, .08);
+      padding: 12px 14px;
+      border-radius: 7px;
+      line-height: 1.45;
+      margin-top: 14px;
+    }
+
+    .validation-msg.warn {
+      border-left-color: var(--gold);
+      background: #fff8df;
+    }
+
+    .validation-msg.error {
+      border-left-color: var(--danger);
+      background: rgba(220, 53, 69, .08);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .summary-grid,
+      .form-grid,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.double {
+        grid-column: auto;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para plataforma</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">DataCob · Geradores fictícios · Beta</span>
+      <h1>Massa de Dados</h1>
+      <p>
+        Gere dados fictícios para testes: CPF, CNPJ, nomes, telefones, e-mails, CEP, endereço, pessoa,
+        empresa e Lorem Ipsum. Escolha a quantidade, visualize o preview e baixe o CSV.
+      </p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn-arriba btn-dark-arriba" id="btnHeroGenerate">
+          <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Gerar dados
+        </button>
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnHeroPreview">
+          <i class="fa-regular fa-eye me-2"></i>Ver preview
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-page layout">
+    <aside class="panel sidebar" aria-label="Tipos de geradores">
+      <p class="sidebar-title">Geradores</p>
+
+      <div class="generator-list" id="generatorMenu">
+        <button type="button" class="generator-btn active" data-generator="nomes">
+          <span class="generator-icon"><i class="fa-solid fa-user"></i></span>
+          <span>Gerador de nomes</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="cpf">
+          <span class="generator-icon"><i class="fa-solid fa-id-card"></i></span>
+          <span>Gerador de CPF válido</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="cnpj">
+          <span class="generator-icon"><i class="fa-solid fa-building"></i></span>
+          <span>Gerador de CNPJ válido</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="telefone">
+          <span class="generator-icon"><i class="fa-solid fa-phone"></i></span>
+          <span>Gerador de telefone</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="email">
+          <span class="generator-icon"><i class="fa-solid fa-envelope"></i></span>
+          <span>Gerador de e-mail</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="cep">
+          <span class="generator-icon"><i class="fa-solid fa-map-location-dot"></i></span>
+          <span>Gerador de CEP</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="endereco">
+          <span class="generator-icon"><i class="fa-solid fa-location-dot"></i></span>
+          <span>Gerador de endereço</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="pessoa">
+          <span class="generator-icon"><i class="fa-solid fa-users"></i></span>
+          <span>Pessoa completa</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="empresa">
+          <span class="generator-icon"><i class="fa-solid fa-city"></i></span>
+          <span>Empresa completa</span>
+          <span class="chevron">›</span>
+        </button>
+
+        <button type="button" class="generator-btn" data-generator="lorem">
+          <span class="generator-icon"><i class="fa-solid fa-align-left"></i></span>
+          <span>Lorem Ipsum</span>
+          <span class="chevron">›</span>
+        </button>
+      </div>
+
+      <div class="sidebar-note">
+        <strong>Beta:</strong> até 1 milhão de registros. O preview mostra apenas as primeiras linhas para não transformar o navegador em churrasquinho.
+      </div>
+    </aside>
+
+    <main class="main-stack">
+      <div class="summary-grid" aria-label="Resumo do gerador">
+        <div class="summary-item">
+          <i class="fa-solid fa-database"></i>
+          <div><span>Gerador</span><strong id="chipGenerator">Nomes</strong></div>
+        </div>
+
+        <div class="summary-item">
+          <i class="fa-solid fa-list-ol"></i>
+          <div><span>Quantidade</span><strong id="chipQuantity">10</strong></div>
+        </div>
+
+        <div class="summary-item">
+          <i class="fa-solid fa-file-csv"></i>
+          <div><span>Formato</span><strong id="chipFormat">CSV</strong></div>
+        </div>
+
+        <div class="summary-item">
+          <i class="fa-solid fa-circle-check"></i>
+          <div><span>Status</span><strong id="chipStatus">Pronto</strong></div>
+        </div>
+      </div>
+
+      <section class="panel card-section" id="generatorSection">
+        <span class="kicker">Gerador</span>
+        <h2 class="section-title small" id="generatorTitle">Gerador de nomes</h2>
+        <p class="section-description" id="generatorDescription">
+          Use nosso gerador de nomes para gerar dados fictícios de teste.
+        </p>
+
+        <div class="oracle-divider"></div>
+
+        <div class="options-box">
+          <div class="form-grid">
+            <div class="field">
+              <label for="quantity">Quantidade <span class="required">*</span></label>
+              <input type="number" id="quantity" class="form-control" min="1" max="1000000" value="10">
+              <div class="form-text">Máximo: 1.000.000 registros. Preview limitado às primeiras 100 linhas.</div>
+            </div>
+
+            <div class="field">
+              <label for="outputFormat">Formato de saída</label>
+              <select id="outputFormat" class="form-select">
+                <option value="csv" selected>CSV</option>
+                <option value="txt">TXT</option>
+              </select>
+            </div>
+
+            <div class="field" id="punctuationField">
+              <label for="punctuationMode">Pontuação</label>
+              <select id="punctuationMode" class="form-select">
+                <option value="pontuado" selected>Com pontuação</option>
+                <option value="limpo">Somente números</option>
+              </select>
+            </div>
+
+            <div class="field hidden" id="cnpjFormatField">
+              <label for="cnpjFormat">Formato do CNPJ</label>
+              <select id="cnpjFormat" class="form-select">
+                <option value="numerico" selected>Numérico atual</option>
+                <option value="alfanumerico">Alfanumérico novo</option>
+              </select>
+            </div>
+
+            <div class="field hidden" id="genderField">
+              <label for="genderMode">Gênero</label>
+              <select id="genderMode" class="form-select">
+                <option value="aleatorio" selected>Aleatório</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+              </select>
+            </div>
+
+            <div class="field hidden" id="stateField">
+              <label for="stateMode">Estado</label>
+              <select id="stateMode" class="form-select">
+                <option value="" selected>Indiferente</option>
+                <option value="SP">SP</option>
+                <option value="RJ">RJ</option>
+                <option value="MG">MG</option>
+                <option value="RS">RS</option>
+                <option value="PR">PR</option>
+                <option value="SC">SC</option>
+                <option value="BA">BA</option>
+                <option value="PE">PE</option>
+              </select>
+            </div>
+
+            <div class="field hidden" id="loremTypeField">
+              <label for="loremType">Tipo de texto</label>
+              <select id="loremType" class="form-select">
+                <option value="paragrafos" selected>Parágrafos</option>
+                <option value="palavras">Palavras</option>
+                <option value="html">HTML</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn-arriba btn-red-arriba" id="btnGenerate">
+              <i class="fa-solid fa-rotate me-2"></i>Gerar preview
+            </button>
+            <button type="button" class="btn-arriba btn-dark-arriba" id="btnDownload">
+              <i class="fa-solid fa-download me-2"></i>Baixar arquivo
+            </button>
+            <button type="button" class="btn-arriba btn-light-arriba" id="btnCopy">
+              <i class="fa-regular fa-copy me-2"></i>Copiar preview
+            </button>
+            <button type="button" class="btn-arriba btn-light-arriba" id="btnClear">
+              Limpar
+            </button>
+          </div>
+        </div>
+
+        <div class="validation-msg warn" id="messageBox">
+          Configure as opções e clique em gerar preview.
+        </div>
+      </section>
+
+      <section class="panel card-section" id="previewSection">
+        <span class="kicker">Preview</span>
+        <h2 class="section-title small">Dados que serão gerados</h2>
+        <p class="section-description">
+          O preview mostra uma amostra do arquivo final. Para grandes volumes, o download é gerado em streaming no navegador em blocos.
+        </p>
+
+        <div class="preview-tabs">
+          <button type="button" class="preview-tab active" id="previewTab">Preview CSV</button>
+        </div>
+
+        <pre class="preview-box" id="previewBox">Nenhum dado gerado ainda.</pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

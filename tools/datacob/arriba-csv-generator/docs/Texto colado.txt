@@ -1,0 +1,203 @@
+Nome da Aba	Garantia			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	10	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Tipo_Garantia	C	7		0 = Outros, 1 = Veiculo, 2 = Imóvel ou 3 = Móvel.    Pode-se informar pelo descritivo ou pelo número correspondente.
+Marca	A	80		Para os Tipo_Garantia Veículo ou Móvel. Entende-se como Móvel, aparelhos eletro domésticos, celulares e móveis propriamente ditos. No caso de um móvel não dispor de uma marca no momento do cadastro, utilize o tipo de garantia Outros e o campo Descricao.
+Modelo	A	80		Descrição do modelo. Exemplos: para Veículos: GLS, GTI, TS, Rocam, etc. Celulares: 13 Pro, G50, G60, A50, etc. O uso deste campo é livre.
+Descricao	A	80		Descrição resumida. Para o Tipo_Garantia Imóvel ou Outros, é obrigatório. Exemplos: Apartamento n dormitórios, Terreno 1500m² lote A, Casa 300m², etc. No caso de Móvel este campo é indispensável se não for preenchido o campo Marca. É uma maneira de identificar o bem.
+Dt_Aquisicao	D			Data de aquisição o bem.
+Observacao	A	500		Descrição detalhada sobre a garantia. Pode ser uma descrição completa do campo bem, complementando o campo Descrição.
+				
+Combustivel	C	25	0	"GASOLINA", "ALCOOL", "DIESEL", "GNV", "BI-COMBUSTIVEL", "TOTAL FLEX (GAS/ALCOOL)", "TOTAL FLEX (GAS/ALCOOL/GN" OU "GASOLINA/GNV"
+Ano_Fabricacao	N	4		Formato: yyyy. Este campo pode ser informado para qualquer tipo de garantia, porém, não é obrigatório.
+Ano_Modelo	N	4		Formato: yyyy. Este campo pode ser informado para qualquer tipo de garantia, porém, não é obrigatório.
+Chassi	A	30		Este campo é obrigatório, juntamente com o campo Placa. Esse campo não pode ser atualizado, ser for diferente irá gerar um novo registro. 
+Placa	A	7		Este campo é obrigatório, juntamente com o campo Chassi. Esse campo não pode ser atualizado, ser for diferente irá gerar um novo registro. 
+Renavam	A	10		Este campo não é obrigatório, porém, é uma informação relevante para a identificação do veículo.
+Cor	C	10		Descritivo literal, exemplos: "AZUL","BRANCO","VERDE","PRATA","PRETO", etc.
+Alienado	B	1	N	Indica se possui alienação fiduciária. S ou N, na ausência de informação, o sistema assumirá o valor padrão.
+Portas	N	2		Quantidade de portas no veículo, caso houver.
+				
+Vl_Garantia	N	15,2		Valor original do bem disponibilizado como garantia.
+Vl_Corrigido	N	15,2		Valor original do bem, corrigido até o momento em que foi disponibilizado como  garantia ou até o momento atual.
+Nr_DUT_CRV	N	15		Número do Documento Único de Transferência, no caso de transferência do veículo, após a venda por outrem.
+Cod_Seg_DUT_CRV	N	15		Número de segurança do DUT, para o caso de consultas nos sites do(s) Detran(s).
+CpfCnpj	A	20		Cpf ou Cnpj do financiado do contrato para que, nos casos de números de contratos idênticos, localizar o financiado correto. Em caso de omissão, serão atualizadas as garantias do primeiro contrato informado, se houver coincidência do número do contrato.
+				
+				
+Nome da Aba	Avalista			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	11	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Nome	C	150		Nome completo do avalista
+Cpf_Cnpj	A	20		Pode ser formatado com pontos e traço. Atenção com zeros a esquerda, para que o excel não remova.
+Dt_Nascimento	D			
+Sexo	C	1		Somente a 1ª letra - (F)eminino ou (M)asculino; 
+Tipo_Pessoa	C	1		Somente a 1ª letra - (F)isica ou (J)uridica;
+Estado_Civil	C	1		Somente a letra entre parênteses ou o nome literal - (S)olteiro, (C)asado, (D)ivorciado, des(Q)uitado, (V)iuvo, (O)utros;
+Conjuge	C	50		Nome completo do conjuge
+Pai	C	50		Nome completo do pai
+Mae	C	50		Nome completo da mãe
+Rg	A	12		Pode ser formatado com pontos e traço. Exemplo: XX.XXX.XXX-X
+Rg_Orgao_Emiss	C	10		Exemplo: SSP
+Rg_Uf_Emiss	C	2		Sigla do estado. Exemplo: SP, RJ ou ES.
+Rg_Dt_Emiss	D			
+Tipo_Cadastro	C	1		Somente a 1ª letra - (A)valista ou (T)erceiro ou (S)ócio ou (C)onjuge. Na ausência de preenchimento o sistema assumirá (A)valista.
+				
+Tipo_Telefone_1	N		0	1 - Residencial, 2 - Celular, 3 - Outros, 4 - Fax, 5 - Avalista, 6 - Pesquisado, 7 - Comercial, 8 - Contato, 9 - Digitado, 10 - Pager, 11 - BINA, 12 - Telefone do Contato, 13 - Vizinho, 14 - Celular do Contato, 15 - Comercial Fax, 16 - Fax do Contato, 17 - Indefinido ou 21 - Insucesso
+DDD_1	N	2		Ddd da área da unidade da federação a que pertence o telefone.
+Fone_1	A	9		Número do telefone com 8 ou  9 dígitos, pode conter hífen: 9nnnn-nnnn ou 9nnnnnnnn. Primeiro dígito é 9 em caso de telefone móvel.
+Ramal_1	N	4		
+Tipo_Telefone_2	N	4	0	1 - Residencial, 2 - Celular, 3 - Outros, 4 - Fax, 5 - Avalista, 6 - Pesquisado, 7 - Comercial, 8 - Contato, 9 - Digitado, 10 - Pager, 11 - BINA, 12 - Telefone do Contato, 13 - Vizinho, 14 - Celular do Contato, 15 - Comercial Fax, 16 - Fax do Contato, 17 - Indefinido ou 21 - Insucesso
+DDD_2	N	2		Ddd da área da unidade da federação a que pertence o telefone.
+Fone_2	A	9		Número do telefone com 8 ou  9 dígitos, pode conter hífen: 9nnnn-nnnn ou 9nnnnnnnn. Primeiro dígito é 9 em caso de telefone móvel.
+Ramal_2	N	4		
+				
+Tipo_Endereco	N			0 - Residencial, 1 - Comercial, 2 - Outros  ou 3 - Pesquisado
+Logradouro	A	60		Exemplo: 'Rua três irmãos' ou 'Avenida Brigadeiro Faria Lima'
+Numero	N	8		
+Complemento	A	20		
+Bairro	C	25		
+Cidade	C	25		
+UF	C	2		Sigla do estado. Exemplo: SP, RJ ou ES.
+CEP	A	8		Pode ser formatado com o hífen - XXXXX-XXX ou XXXXXXXX
+				
+				
+Nome da Aba	Dados Auxiliares			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	12	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Descrição	C	50		Descrição da informação auxiliar relacionado ao contrato
+Valor	A	100		Valor da informação auxiliar
+Cpf_Cnpj	A	14		Cpf ou Cnpj do financiado do contrato para que, nos casos de transferência de dívida, localizar o financiado correto. Em caso de omissão, será atualizado o primeiro contrato informado, se houver coincidência do número do contrato.
+				
+				
+Nome da Aba	Processo			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	13	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Nr_Processo	A	30		Número do processo
+Nr_Protocolo	A	30		Número do protocolo
+Tipo_Acao	A	50		ID ou a descrição de um tipo ação já cadastrado  (ver config. do sistema)
+Fase_Processo	A	50		ID ou a descrição de uma fase processo já cadastrado  (ver config. do sistema)
+Advogado	A	50		ID ou Nome do advogado já cadastrado  (ver config. do sistema)
+Processo_Pai	A	30		Número do processo pai
+Estagiario	A	50		ID ou Nome do estagiário já cadastrado  (ver config. do sistema)
+Comarca	A	30		ID ou descrição da comarca já cadastrada  (ver config. do sistema)
+Forum	A	50		ID ou descrição do fórum já cadastrada  (ver config. do sistema)
+Vara	A	20		ID ou descrição da vara já cadastrada  (ver config. do sistema)
+Oficial_Justica	A	50		ID ou nome do oficial de justiça já cadastrada  (ver config. do sistema)
+Dt_Ajuizamento	D			
+Vl_Acao	R			
+Ano_Processo	N			
+Acao_Contraria	B			
+Instancia	A	10		
+Dt_Transito_Julgado	D			
+Dt_Encerramento	D			
+Dt_Sentença	D			
+Descritivo	A	500		Descritivo do processo
+Nr_Controle	A	30		
+Local_Arquivamento	A	15		
+Dt_Juntada	D			
+Status_Sentenca	A	50		"Número ou extenso como segue: Procedente_Parcial = 0, Procedente_Total = 1, Improcedente = 2, Julgou_Extinto = 3. 
+Também é valido preencher sem o (_) traço.  Por exemplo: Procedente_Total como ProcedenteTotal."
+Processo_Antigo	A	50		Número do processo antigo
+Id_Processo	N	9		Id do Processo gerado pelo DataCob para interfaces que geram andamentos e os retornam no mesmo processo.
+UF_Comarca	A	2		Unidade da Federação da Comarca. Existe a possibilidade de haver o mesmo nome da Comarca em estados diferentes. Se este campo estiver vazio o sistema irá utilizar a primeira ocorrência da Comarca que estiver no cadastro.
+Processo_Digital	B			Indica se é processo digital, caso preenchido com S ou processo físico, caso preenchido com N, na ausência de preenchimento o processo é físico.
+				
+				
+Nome da Aba	Processo Andamento			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	14	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Nr_Processo	A	30		Número do processo
+Ocorrencia_Sistema	A	10		Código da ocorrência do sistema (ver config. do sistema)
+Tipo_Publicacao	A	40		Código com 3 dígitos ou a descrição do tipo publicação
+Dt_Andamento	D			A data em que o Andamento do processo foi adicionando
+Complemento	A	100		Opcional, informe um valor de complemento
+Observacao	A	5000		Opcional, informe uma observação sobre o registro do Processo Andamento
+Id_Processo	N	9		Id do Processo gerado pelo DataCob para interfaces que geram andamentos e os retornam no mesmo processo.
+Status_Andamento	A	17		Deve ser informado por código ou descrição, sendo : 0 ou Novo, 1 ou Agendado, 2 ou Enviado_Protocolo, 3 ou Protocolado, 4 ou Cancelado, 5 ou Descartado, 6 ou Cumprido, 7 ou Aguardando_Providencia.
+Id_Processo_Andamento	N	9		Id do Andamento do Processo gerado pelo DataCob para interfaces que geram andamentos nos processos e os retornam para alterar estes dados.
+Dt_Limite	D			A data limite do processo
+UsuarioAdvogado	A	50		Login do advogado no sistema 
+				
+				
+Nome da Aba	Processo Data			
+Campo	Tipo	Tamanho 	Valor padrão	Descricao
+Tipo_Registro	N	2	15	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Nr_Processo	A	30		Número do processo
+Dt_Base	D			
+Dt_Prazo	D			
+Dt_Prazo_Cumprido	D			
+Tipo_Dia_Util	A	10		Valor 0 ou 1 ou com a descrição antecipa ou posterga (Antecipa = 0, Posterga = 1)
+Evento_Processo	A	30		ID do evento ou a descrição (ver config. do sistema)
+Observacao	A	30		
+Id_Processo	N	9		Id do Processo gerado pelo DataCob para interfaces que geram datas de acompanhamentos e os retornam no mesmo processo.
+				
+				
+Nome da Aba	Processo Localizador			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	16	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Nr_Processo	A	30		Número do processo
+Dt_Inicio	D			Data do início do processo de localização.
+Dt_Localizacao	D			Data da conclusão do processo de localização, que deverá se justificado pelo último campo, Tipo_Retorno. Esta data é obrigatória quando Tipo_Retorno for 2 ou 3.
+Localizador	A	50		ID ou nome do localizador (ver config. do sistema)
+Tipo_Retorno	N	1		Código da conclusão do processo de localização:   1 - Pendente, 2 - Negativo ou 3 - Positivo
+Id_Processo	N	9		Id do Processo gerado pelo DataCob para interfaces que geram localizadores e os retornam no mesmo processo.
+				
+				
+Nome da Aba	Despesa			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	17	Identifica o registro na rotina (só permite este valor)
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Cod_Despesa_Sistema	A	10		Código da despesa do sistema
+Tipo_Comprovante	C	5		Valores permitidos ("NF", "RECIB", "CUPOM")
+Nr_Comprovante	A	20		Número do comprovante da despesa
+Dt_Despesa	D			Data da despesa
+Vl_Despesa	R	15,2		Valor da despesa
+Vl_Saldo	R	15,2		Valor do saldo da despesa
+Impugnado	B	1		Marca se a despesa foi impugnada
+Cobrar_Financiado_Financeira	N	1		Identifica quem deve ser cobrado, 0: Só financiado, 1: Só financeira e 2: Financiado e Financeira
+Cobrado_Cliente	B	1		Marca se a despesa já foi cobrada do cliente.
+Nr_Parcela	N	8		Vincular despesa a parcela. Caso não esteja preenchido, o sistema irá colocar a primeira parcela do contrato.
+Dt_Comprovante	D			Data do comprovante da despesa
+Motivo	A	1000		Motivo ou descrição da despesa
+Dt_Dev	D			Data de devolução da despesa. Quando a data estiver preenchida a despesa não será cobrada do financiado. Quando estiver vazio (nulo) será cobrada do financiado
+Motivo_Dev	N	3		Motivo de devolução. Lista de motivos na tabela Par.Motivo_Devolucao
+Dt_Reat	D			Data que a despesa voltou para cobrança. Para voltar a cobrança, a data de devolução deve estar vazia(nula).
+Id_Cartorio	N	5		Identifica o cartório de envio de acordo com a tabela Par.Cartorio
+Nr_Notificacao	N	18		Número da Notificação
+Dt_Retorno_Notificacao	D			Data de retorno da notificação
+Notificacao_Positiva	B	1		Identifica se a notificação teve retorno positivo ou negativo
+Id_Cartorio_Retorno	N	5		Motivo do retorno negativo da notificação de acordo com a tabela Par.Cartorio_Retorno
+Nr_Registro_Cartorio	N	18		Número da Notificação no cartório
+Tipo_Notificacao	N	1		Opções: Cartorio = 0, Correio = 1, Eletronico = 2, Nenhum = 3
+Vl_Orcamento_Notificacao	R	15,2		Valor de orçamento da notificação.
+Cpf_Cnpj	A	14		Cpf ou Cnpj do financiado do contrato para que, nos casos de transferência de dívida, localizar o financiado correto. Em caso de omissão, será atualizado o primeiro contrato informado, se houver coincidência do número do contrato.
+Codigo_Rastreio_Correio	A	13		Código fornecido pelos correios, para rastreamento de correspondências.
+				
+Nome da Aba	Mensagem_Operacao			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	2	18	Identifica o registro na rotina (só permite este valor)
+Cpf_Cnpj	A	14		Cpf ou Cnpj do financiado, pode ser deixando em branco
+Nr_Contrato	A	30		Número do contrato já formatado (será a chave para todos os registros). Obs.: 1.00.3-4 e 10034 são contratos diferentes.
+Mensagem	C	1000		Pode ser a própria mensagem ou o código da mensagem da tabela Par.Mensagem_Operacao
+Status_Msg	A	10		Por padrão será inclusão que pode ser considerado 'Incluir', 'I' ou 1 para exclusão pode ser as seguintes opções 'Excluir', 'E' ou 0
+				
+Nome da Aba	Configuracao			
+Campo	Tipo	Tamanho 	Valor padrão	Descrição
+Tipo_Registro	N	1	0	Identifica o registro na rotina (só permite este valor)
+Devolucao_Geral	B		N	(Rotina de Batimento) Indica que todos os contratos e parcelas que não estiverem no arquivo da carga, deverão ser devolvidos. Conforme a configuração do campo Batimento_Geral_Por_Cliente.
+Devolucao_Por_Contrato	B		N	Se positivo, opção S, ao preencher a data de devolução de uma parcela do contrato, todas as demais parcelas deste mesmo contrato, serão devolvidas. Do contrário, opção N, só devolverá a parcela com a data devolução preenchida.
+Redefinir_Agrupamento	B		N	Se positivo, opção S, redefine o valor do Id_Agrupamento indicando os contrato que devem ser cobrados em conjunto.
+Cadastra_CPF_CNPJ_Invalido	B		N	Se positivo, opção S, inclui Cpf e Cnpj com DV inválidos. Gerando log, porém, não impedindo o cadastro com os dados incorretos. Do contrário, opção N, será gerado o log e não cadastrará os  Cpf e Cnpj Inválidos.
+Batimento_Geral_Por_Cliente	B		N	Se positivo, opção S, devolve todos os contratos e parcelas que não estiverem no arquivo da carga, baseado nas carteiras informadas no arquivo da carga. Do contrário, opção N, devolve todos os contratos e parcelas dentro do grupo, não importando a carteira. Esta opção é exclusiva para configuração de Devolucao_Geral, quando positiva, opção S.
+NOTA SOBRE DEVOLUÇÕES	ooo	ooo	ooo	Se as duas opções, Devolucao_Geral e Devolucao_Por_Contrato forem positivas, opção S, o sistema não devolverá nenhum contrato/parcela e emitirá um log de alerta. Deve-se optar por uma delas por carga. Se as duas opções forem negativas, opção N, o sistema devolverá somente a parcela que estiver com data de devolução preenchida.
+				
+				
+Data: 31/08/2022	Este arquivo descreve o layout modelo para a recepção de registro do sistema web, DataCob.			

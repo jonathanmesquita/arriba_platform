@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador CSV DataCob - Arriba Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg: #f7f5f2;
+      --surface: #ffffff;
+      --surface-soft: #efede9;
+      --ink: #171412;
+      --muted: #625c56;
+      --line: #d9d2cc;
+      --red: #c74634;
+      --gold: #f0c75e;
+      --dark: #1f1b19;
+      --ok: #198754;
+      --warn: #b58100;
+      --danger: #dc3545;
+      --shadow: 0 18px 46px rgba(0,0,0,.08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand {
+      color: var(--red);
+      font-size: 1.35rem;
+      font-weight: 900;
+      text-decoration: none;
+      letter-spacing: -.04em;
+    }
+
+    .back-link {
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      font-size: .95rem;
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at 90% 10%, rgba(199,70,52,.08), transparent 28%),
+        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 48px 0 34px;
+    }
+
+    .container-page {
+      width: min(1180px, calc(100% - 44px));
+      margin-inline: auto;
+    }
+
+    .kicker {
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 900;
+      font-size: .78rem;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(2.7rem, 6vw, 5.5rem);
+      line-height: .95;
+      letter-spacing: -.07em;
+      font-weight: 300;
+      margin: 0 0 20px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.65;
+      max-width: 850px;
+      margin: 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 24px;
+      padding: 28px 0 60px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 86px;
+      height: fit-content;
+      padding: 18px;
+    }
+
+    .step {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 14px 12px;
+      border-radius: 9px;
+      text-align: left;
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      color: var(--muted);
+      font-weight: 800;
+      cursor: pointer;
+      transition: background-color .18s ease, transform .18s ease;
+    }
+
+    .step:hover { background: #f3f1ee; transform: translateX(2px); }
+    .step.active { background: #dcebea; color: var(--ink); }
+
+    .step-number {
+      width: 27px;
+      height: 27px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      display: grid;
+      place-items: center;
+      font-size: .8rem;
+      flex: 0 0 auto;
+    }
+
+    .step.active .step-number { background: var(--red); color: #fff; }
+
+    .main-stack { display: grid; gap: 20px; }
+    .card-section { padding: 24px; }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -.055em;
+      font-weight: 650;
+      margin: 0 0 10px;
+    }
+
+    .section-title.small {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    .section-description {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .oracle-divider {
+      width: 46px;
+      height: 4px;
+      background: var(--gold);
+      margin: 16px 0 24px;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .choice-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: left;
+      min-height: 142px;
+      cursor: pointer;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    .choice-btn:hover,
+    .choice-btn.active {
+      border-color: var(--red);
+      box-shadow: 0 14px 32px rgba(199,70,52,.12);
+      transform: translateY(-2px);
+    }
+
+    .choice-btn strong { display: block; font-size: 1.16rem; margin-bottom: 8px; }
+    .choice-btn span { color: var(--muted); line-height: 1.45; font-size: .92rem; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .summary-item {
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      min-height: 62px;
+    }
+
+    .summary-item i { font-size: 1.15rem; color: var(--ink); }
+    .summary-item span { display: block; color: var(--muted); font-size: .82rem; }
+    .summary-item strong { display: block; font-size: 1.02rem; line-height: 1.1; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+    .field.double { grid-column: span 2; }
+
+    label {
+      display: block;
+      font-weight: 850;
+      margin-bottom: 6px;
+      font-size: .94rem;
+    }
+
+    label .required { color: var(--red); }
+
+    .form-control,
+    .form-select {
+      min-height: 43px;
+      border-radius: 6px;
+      border-color: #cfc8c1;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 .22rem rgba(199,70,52,.14);
+    }
+
+    .form-text { color: var(--muted); }
+
+    details.advanced {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 16px;
+    }
+
+    details.advanced summary {
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-arriba {
+      min-height: 43px;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      padding: 9px 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .btn-dark-arriba { background: var(--dark); color: #fff; }
+    .btn-dark-arriba:hover { background: #000; color: #fff; }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
+    .btn-outline-arriba { background: transparent; border-color: var(--dark); color: var(--dark); }
+
+    .validation-list { display: grid; gap: 10px; }
+
+    .validation-msg {
+      border-left: 4px solid var(--danger);
+      background: rgba(220,53,69,.08);
+      padding: 12px 14px;
+      border-radius: 7px;
+      line-height: 1.45;
+    }
+
+    .validation-msg.ok { border-left-color: var(--ok); background: rgba(25,135,84,.08); }
+    .validation-msg.warn { border-left-color: var(--warn); background: rgba(181,129,0,.09); }
+
+    .preview-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+    .preview-tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .preview-tab.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+    .preview-box {
+      background: #101010;
+      color: #f3f3f3;
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 230px;
+      overflow: auto;
+      font-family: Consolas, Monaco, monospace;
+      font-size: .86rem;
+      white-space: pre;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .choice-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .topbar { padding: 0 16px; }
+      .summary-grid,
+      .form-grid { grid-template-columns: 1fr; }
+      .field.double { grid-column: auto; }
+      h1 { font-size: 2.8rem; }
+    }
+  
+/* ===== Layout fix - evita estouro horizontal ===== */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 0;
+}
+
+.dc-container,
+.rw-container {
+    width: min(1180px, calc(100% - 32px)) !important;
+    max-width: 1180px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.dc-layout,
+.generator-layout,
+.csv-generator-layout,
+main .layout,
+.page-layout {
+    display: grid !important;
+    grid-template-columns: minmax(190px, 220px) minmax(0, 1fr) !important;
+    gap: 20px !important;
+    align-items: start !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.dc-main,
+.generator-main,
+.csv-generator-main,
+.content-area,
+main {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.dc-panel,
+.dc-card,
+.card,
+section,
+form {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.dc-sidebar,
+.steps-sidebar,
+.sidebar {
+    max-width: 220px !important;
+    width: 100% !important;
+}
+
+.dc-form-grid,
+.form-grid,
+.required-grid,
+.advanced-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.dc-field,
+.form-field,
+.form-group {
+    min-width: 0 !important;
+}
+
+input,
+select,
+textarea,
+.form-control,
+.form-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+.dc-choice-grid,
+.choice-grid,
+.file-type-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.dc-choice,
+.choice-card {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.dc-summary,
+.summary-grid,
+.metrics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.dc-preview,
+.preview-box,
+pre,
+.table-responsive {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    white-space: pre !important;
+}
+
+details,
+details > div {
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+.dc-topbar,
+.topbar {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+@media (max-width: 1200px) {
+    .dc-form-grid,
+    .form-grid,
+    .required-grid,
+    .advanced-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .dc-choice-grid,
+    .choice-grid,
+    .file-type-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .dc-summary,
+    .summary-grid,
+    .metrics-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .dc-layout,
+    .generator-layout,
+    .csv-generator-layout,
+    main .layout,
+    .page-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .dc-sidebar,
+    .steps-sidebar,
+    .sidebar {
+        position: static !important;
+        max-width: 100% !important;
+    }
+
+    .dc-summary,
+    .summary-grid,
+    .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .dc-container,
+    .rw-container {
+        width: min(100% - 24px, 1180px) !important;
+    }
+
+    .dc-form-grid,
+    .form-grid,
+    .required-grid,
+    .advanced-grid,
+    .dc-choice-grid,
+    .choice-grid,
+    .file-type-grid,
+    .dc-summary,
+    .summary-grid,
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .dc-hero h1,
+    h1 {
+        font-size: clamp(2.4rem, 14vw, 3.4rem) !important;
+        word-break: normal !important;
+    }
+}
+
+
+/* ===== UX Help + validação suave ===== */
+.required-error,.form-control.required-error,.form-select.required-error,input.required-error,select.required-error{border-color:#c74634!important;background:#fff6f4!important;box-shadow:0 0 0 3px rgba(199,70,52,.10)!important}
+.required-error-message{display:block;color:#9f2d20;font-size:.78rem;font-weight:800;margin-top:5px}
+.field-ok,.form-control.field-ok,.form-select.field-ok,input.field-ok,select.field-ok{border-color:#74a77b!important}
+.help-action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.help-button{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:8px 13px;border-radius:999px;border:1px solid #d8d2cc;background:#fff;color:#161513;font-weight:900;text-decoration:none;cursor:help}
+.help-button:hover,.help-button:focus{border-color:#c74634;color:#c74634}
+.help-button .help-tooltip{position:absolute;left:0;top:calc(100% + 10px);width:min(360px,86vw);background:#1f1b19;color:#fff;padding:14px 16px;border-radius:8px;box-shadow:0 18px 48px rgba(0,0,0,.22);opacity:0;visibility:hidden;transform:translateY(-4px);transition:.18s ease;z-index:50;font-weight:500;line-height:1.45}
+.help-button:hover .help-tooltip,.help-button:focus .help-tooltip{opacity:1;visibility:visible;transform:translateY(0)}
+.help-button .help-tooltip strong{display:block;margin-bottom:6px}
+.doc-link-button{display:inline-flex;align-items:center;min-height:38px;padding:8px 13px;border-radius:999px;background:#1f1b19;color:#fff!important;font-weight:900;text-decoration:none}
+.doc-link-button:hover{background:#000}
+.future-import-note{border-left:4px solid #f0cc71;background:#fff8df;padding:14px 16px;border-radius:8px;margin-top:16px;color:#3a332b}.download-all-label{white-space:nowrap}
+@media(max-width:640px){.help-action-row{align-items:stretch}.help-button,.doc-link-button{justify-content:center;width:100%}}
+
+
+/* ===== Patch UX: Tipo_Registro, Step 2/3 por layout e preview selecionável ===== */
+.record-help {
+  border-left: 4px solid var(--gold);
+  background: #fff8df;
+  border-radius: 9px;
+  padding: 14px 16px;
+  color: #3a332b;
+  margin: 18px 0;
+}
+
+.tipo-registro-toolbar,
+.record-edit-toolbar,
+.preview-helper {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+.tipo-registro-toolbar p,
+.record-edit-toolbar p,
+.preview-helper p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.btn-pill {
+  border: 0;
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 10px 16px;
+  font-weight: 900;
+  background: var(--dark);
+  color: #fff;
+  white-space: nowrap;
+}
+
+.tipo-registro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.tipo-registro-card {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 13px;
+  background: #fff;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.tipo-registro-card:hover,
+.tipo-registro-card.selected {
+  border-color: var(--red);
+  box-shadow: 0 8px 22px rgba(199,70,52,.12);
+  transform: translateY(-1px);
+}
+
+.tipo-registro-card.primary {
+  background: #fffaf0;
+}
+
+.tipo-registro-card input {
+  margin-top: 4px;
+}
+
+.tipo-registro-number {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  font-weight: 900;
+  color: var(--dark);
+  font-size: .84rem;
+}
+
+.tipo-registro-card.selected .tipo-registro-number {
+  background: var(--red);
+  color: #fff;
+}
+
+.tipo-registro-card strong,
+.tipo-registro-card small {
+  display: block;
+}
+
+.tipo-registro-card small {
+  color: var(--muted);
+  line-height: 1.35;
+  margin-top: 4px;
+}
+
+.record-edit-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 22px;
+}
+
+.record-edit-tab {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.record-edit-tab.active {
+  background: var(--dark);
+  color: #fff;
+  border-color: var(--dark);
+}
+
+.record-context {
+  background: #f5f1ec;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+
+.record-context strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.field.required-missing input,
+.field.required-missing select,
+.field.required-missing textarea,
+input.required-missing,
+select.required-missing {
+  border-color: var(--red) !important;
+  background: #fff6f4 !important;
+  box-shadow: 0 0 0 3px rgba(199,70,52,.10) !important;
+}
+
+.required-message {
+  display: block;
+  margin-top: 5px;
+  color: #a23628;
+  font-weight: 800;
+  font-size: .78rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.preview-tabs {
+  align-items: center;
+}
+
+.preview-tab.invalid {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.preview-tab.valid {
+  border-color: var(--ok);
+}
+
+.preview-selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.preview-selected-list span {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: 800;
+  font-size: .82rem;
+}
+
+@media (max-width: 980px) {
+  .tipo-registro-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .tipo-registro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-pill {
+    width: 100%;
+  }
+}
+
+</style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para plataforma</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">DataCob · 01-Layout Recepção de Contratos · Avançado</span>
+      <h1>Gerador CSV DataCob</h1>
+      <p>
+        Gere arquivos CSV de <strong>Contrato</strong>, <strong>Financiado</strong> ou <strong>Parcela</strong>
+        seguindo o layout padrão. O usuário comum preenche só os dados obrigatórios;
+        o restante fica recolhido em campos avançados.
+      </p>
+<div class="help-action-row">
+  <a class="doc-link-button" href="docs/layout-padrao.html" target="_blank" rel="noopener">📘 Documentação do layout padrão</a>
+  <button type="button" class="help-button" aria-label="Ajuda sobre o layout">❔ Ajuda
+    <span class="help-tooltip"><strong>Como preencher?</strong> Comece pelos dados obrigatórios. Os campos avançados ficam recolhidos para evitar ruído. O preview mostra o CSV final antes do download.</span>
+  </button>
+</div>
+<div class="future-import-note"><strong>Futuro beta:</strong> o cliente poderá subir dados crus; a ferramenta fará a separação e transformação automática em Contrato, Financiado e Parcela no layout padrão CSV.</div>
+
+    </div>
+  </section>
+
+  <div class="container-page layout">
+    <aside class="panel sidebar" aria-label="Etapas do gerador">
+      <button type="button" class="step active" data-scroll-to="step-layout"><span class="step-number">1</span><span>Layout e tipo<br><small>Escolha o arquivo</small></span></button>
+      <button type="button" class="step" data-scroll-to="step-required"><span class="step-number">2</span><span>Obrigatórios<br><small>Dados do usuário</small></span></button>
+      <button type="button" class="step" data-scroll-to="step-advanced"><span class="step-number">3</span><span>Avançados<br><small>Campos opcionais</small></span></button>
+      <button type="button" class="step" data-scroll-to="step-preview"><span class="step-number">4</span><span>Preview e exportação<br><small>Validar e baixar</small></span></button>
+    </aside>
+
+    <main class="main-stack">
+      <div class="summary-grid" aria-label="Resumo da carga">
+        <div class="summary-item"><i class="fa-solid fa-users"></i><div><span>Registros</span><strong id="chipRecords">100</strong></div></div>
+        <div class="summary-item"><i class="fa-solid fa-building-user"></i><div><span>Cliente</span><strong id="chipClient">1320</strong></div></div>
+        <div class="summary-item"><i class="fa-solid fa-flag"></i><div><span>Fase</span><strong id="chipPhase">AM</strong></div></div>
+        <div class="summary-item"><i class="fa-solid fa-calendar-day"></i><div><span>Vencimento</span><strong id="chipDueDate">09/02/2026</strong></div></div>
+        <div class="summary-item"><i class="fa-solid fa-dollar-sign"></i><div><span>Valor</span><strong id="chipValue">100</strong></div></div>
+      </div>
+
+      <section class="panel card-section" id="step-layout">
+        <span class="kicker">Passo 1</span>
+        <h2 class="section-title small">Layout e tipo de arquivo</h2>
+        <p class="section-description">
+          Selecione o layout padrão e marque quais registros deseja gerar. A tela mostra os campos obrigatórios do registro em edição.
+        </p>
+        <div class="oracle-divider"></div>
+
+        <div class="form-grid mb-3">
+          <div class="field double">
+            <label for="layoutSelect">Tipo de carga / layout <span class="required">*</span></label>
+            <select id="layoutSelect" class="form-select">
+              <option value="recepcao-contratos-avancado" selected>01-Layout Recepção de Contratos - Avançado</option>
+            </select>
+            <div class="form-text">Sequência oficial do layout por Tipo_Registro.</div>
+          </div>
+
+          <div class="field">
+            <label for="generationMode">Modo de geração <span class="required">*</span></label>
+            <select id="generationMode" class="form-select">
+              <option value="auto" selected>Gerar dados fictícios</option>
+              <option value="manual">Preenchimento manual</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="record-help">
+          <strong>Primeira recepção recomendada:</strong>
+          para o primeiro envio, use <strong>Financiado + Contrato + Parcela</strong>. Os demais registros ficam disponíveis para evolução do layout.
+        </div>
+
+        <div class="tipo-registro-toolbar">
+          <div>
+            <strong>Sequência oficial por Tipo_Registro</strong>
+            <p>Marque os registros que serão exportados. Depois, no Passo 2, edite um registro por vez.</p>
+          </div>
+          <button type="button" class="btn-pill" id="btnPrimeiraRecepcao">Usar primeira recepção recomendada</button>
+        </div>
+
+        <div class="tipo-registro-grid" id="tipoRegistroGrid" aria-label="Selecionar Tipo_Registro"></div>
+      </section>
+
+      <section class="panel card-section" id="step-required">
+        <span class="kicker">Passo 2</span>
+        <h2 class="section-title">Dados obrigatórios</h2>
+        <p class="section-description">
+          Preencha os campos do registro em edição. Ao trocar o Tipo_Registro, a tela mostra apenas os campos necessários daquele layout.
+        </p>
+        <div class="oracle-divider"></div>
+
+        <div class="record-edit-toolbar">
+          <div>
+            <strong>Registro em edição</strong>
+            <p>Use as abas abaixo para preencher cada registro selecionado no Passo 1.</p>
+          </div>
+        </div>
+
+        <div class="record-edit-tabs" id="recordEditTabs"></div>
+
+        <div class="record-context" id="recordContext">
+          <strong>Contrato</strong>
+          <span>Dados obrigatórios do layout selecionado.</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="recordCount">Quantidade de registros <span class="required">*</span></label>
+            <input id="recordCount" type="number" min="1" max="60000" class="form-control" value="100" />
+            <div class="form-text">Use 10/100 para teste antes de gerar massa grande.</div>
+          </div>
+
+          <div class="field" data-applies="loja contrato financiado parcela email telefone endereco historico garantia avalista dados_auxiliares processo processo_andamento processo_data processo_localizador despesa mensagem_operacao">
+            <label for="cliente">Cliente <span class="required">*</span></label>
+            <input id="cliente" type="text" class="form-control" value="1320" />
+          </div>
+
+          <div class="field" data-applies="contrato financiado parcela email telefone endereco historico garantia avalista dados_auxiliares processo processo_andamento processo_data processo_localizador despesa mensagem_operacao">
+            <label for="contratoInicial">Contrato inicial <span class="required">*</span></label>
+            <input id="contratoInicial" type="number" min="0" class="form-control" value="30" />
+          </div>
+
+          <div class="field" data-applies="contrato financiado parcela email telefone endereco historico garantia avalista dados_auxiliares processo processo_andamento processo_data processo_localizador despesa mensagem_operacao">
+            <label for="contratoSufixo">Sufixo do contrato <span class="required">*</span></label>
+            <input id="contratoSufixo" type="text" class="form-control" value="-ARRIBA" />
+          </div>
+
+          <div class="field" data-applies="contrato">
+            <label for="fase">Fase <span class="required">*</span></label>
+            <input id="fase" type="text" maxlength="2" class="form-control" value="AM" />
+          </div>
+
+          <div class="field" data-applies="financiado">
+            <label for="nomeBase">Nome base do financiado <span class="required">*</span></label>
+            <input id="nomeBase" type="text" class="form-control" value="Cliente Generico" />
+          </div>
+
+          <div class="field" data-applies="financiado avalista">
+            <label for="tipoPessoa">Tipo pessoa <span class="required">*</span></label>
+            <select id="tipoPessoa" class="form-select">
+              <option value="F" selected>Física (F)</option>
+              <option value="J">Jurídica (J)</option>
+            </select>
+          </div>
+
+          <div class="field" data-applies="financiado contrato parcela email telefone endereco avalista garantia dados_auxiliares despesa mensagem_operacao">
+            <label for="documentMode">Documento <span class="required">*</span></label>
+            <select id="documentMode" class="form-select">
+              <option value="auto" selected>Gerar CPF/CNPJ automático</option>
+              <option value="manual">Informar manualmente</option>
+            </select>
+          </div>
+
+          <div class="field hidden" id="manualDocField" data-applies="financiado contrato parcela email telefone endereco avalista garantia dados_auxiliares despesa mensagem_operacao">
+            <label for="documentoManual">CPF/CNPJ manual <span class="required">*</span></label>
+            <input id="documentoManual" type="text" maxlength="20" class="form-control" placeholder="Somente números ou formatado" />
+          </div>
+
+          <div class="field" data-applies="parcela">
+            <label for="dataVencimento">Data de vencimento <span class="required">*</span></label>
+            <input id="dataVencimento" type="text" class="form-control" value="09/02/2026" placeholder="dd/mm/aaaa" />
+          </div>
+
+          <div class="field" data-applies="parcela">
+            <label for="valorOriginal">Valor original <span class="required">*</span></label>
+            <input id="valorOriginal" type="text" class="form-control" value="100" />
+          </div>
+
+          <div class="field" data-applies="parcela">
+            <label for="tipoParcela">Tipo parcela <span class="required">*</span></label>
+            <input id="tipoParcela" type="text" class="form-control" value="0" />
+          </div>
+
+          <div class="field" data-applies="parcela">
+            <label for="numeroParcela">Número da parcela <span class="required">*</span></label>
+            <input id="numeroParcela" type="number" min="1" class="form-control" value="1" />
+          </div>
+
+          <div class="field" data-applies="configuracao">
+            <label for="devolucaoGeral">Devolução geral <span class="required">*</span></label>
+            <select id="devolucaoGeral" class="form-select">
+              <option value="N" selected>Não</option>
+              <option value="S">Sim</option>
+            </select>
+          </div>
+
+          <div class="field" data-applies="loja">
+            <label for="lojaCodLoja">Código da loja <span class="required">*</span></label>
+            <input id="lojaCodLoja" class="form-control" placeholder="Ex.: 001" />
+          </div>
+
+          <div class="field" data-applies="loja">
+            <label for="lojaNome">Nome da loja <span class="required">*</span></label>
+            <input id="lojaNome" class="form-control" value="Loja Arriba" />
+          </div>
+
+          <div class="field" data-applies="email">
+            <label for="emailValor">E-mail <span class="required">*</span></label>
+            <input id="emailValor" type="email" class="form-control" value="cliente.arriba@email.com" />
+          </div>
+
+          <div class="field" data-applies="telefone">
+            <label for="dddTelefone">DDD <span class="required">*</span></label>
+            <input id="dddTelefone" maxlength="2" class="form-control" value="11" />
+          </div>
+
+          <div class="field" data-applies="telefone">
+            <label for="telefoneNumero">Telefone <span class="required">*</span></label>
+            <input id="telefoneNumero" class="form-control" value="999999999" />
+          </div>
+
+          <div class="field" data-applies="endereco">
+            <label for="logradouro">Logradouro <span class="required">*</span></label>
+            <input id="logradouro" class="form-control" value="Rua Arriba" />
+          </div>
+
+          <div class="field" data-applies="endereco">
+            <label for="cidade">Cidade <span class="required">*</span></label>
+            <input id="cidade" class="form-control" value="São Paulo" />
+          </div>
+
+          <div class="field" data-applies="endereco">
+            <label for="uf">UF <span class="required">*</span></label>
+            <input id="uf" maxlength="2" class="form-control" value="SP" />
+          </div>
+
+          <div class="field" data-applies="historico">
+            <label for="historicoTexto">Histórico <span class="required">*</span></label>
+            <input id="historicoTexto" class="form-control" value="Histórico gerado pela Arriba Platform" />
+          </div>
+
+          <div class="field" data-applies="garantia">
+            <label for="tipoGarantia">Tipo garantia <span class="required">*</span></label>
+            <select id="tipoGarantia" class="form-select">
+              <option value="I">Imóvel</option>
+              <option value="V" selected>Veículo</option>
+              <option value="O">Outros</option>
+            </select>
+          </div>
+
+          <div class="field" data-applies="garantia">
+            <label for="descricaoGarantia">Descrição da garantia <span class="required">*</span></label>
+            <input id="descricaoGarantia" class="form-control" value="Garantia gerada pela Arriba Platform" />
+          </div>
+
+          <div class="field" data-applies="avalista">
+            <label for="avalistaNome">Nome do avalista <span class="required">*</span></label>
+            <input id="avalistaNome" class="form-control" value="Avalista Generico" />
+          </div>
+
+          <div class="field" data-applies="dados_auxiliares">
+            <label for="dadosAuxDescricao">Descrição auxiliar <span class="required">*</span></label>
+            <input id="dadosAuxDescricao" class="form-control" value="Campo auxiliar" />
+          </div>
+
+          <div class="field" data-applies="dados_auxiliares">
+            <label for="dadosAuxValor">Valor auxiliar <span class="required">*</span></label>
+            <input id="dadosAuxValor" class="form-control" value="Valor auxiliar" />
+          </div>
+
+          <div class="field" data-applies="processo processo_andamento processo_data processo_localizador">
+            <label for="numeroProcesso">Número do processo <span class="required">*</span></label>
+            <input id="numeroProcesso" class="form-control" value="0000000-00.2026.8.26.0000" />
+          </div>
+
+          <div class="field" data-applies="processo_andamento">
+            <label for="andamentoDescricao">Andamento <span class="required">*</span></label>
+            <input id="andamentoDescricao" class="form-control" value="Andamento gerado pela Arriba Platform" />
+          </div>
+
+          <div class="field" data-applies="processo_data">
+            <label for="dataPrazo">Data do prazo <span class="required">*</span></label>
+            <input id="dataPrazo" class="form-control" value="09/02/2026" />
+          </div>
+
+          <div class="field" data-applies="processo_localizador">
+            <label for="localizador">Localizador <span class="required">*</span></label>
+            <input id="localizador" class="form-control" value="Localizador padrão" />
+          </div>
+
+          <div class="field" data-applies="despesa">
+            <label for="despesaCodigo">Código da despesa <span class="required">*</span></label>
+            <input id="despesaCodigo" class="form-control" value="DESP001" />
+          </div>
+
+          <div class="field" data-applies="despesa">
+            <label for="despesaValor">Valor da despesa <span class="required">*</span></label>
+            <input id="despesaValor" class="form-control" value="10" />
+          </div>
+
+          <div class="field" data-applies="mensagem_operacao">
+            <label for="mensagemOperacao">Mensagem <span class="required">*</span></label>
+            <input id="mensagemOperacao" class="form-control" value="Mensagem operacional gerada pela Arriba Platform" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-arriba btn-dark-arriba" id="btnValidateTop">Validar dados</button>
+          <button type="button" class="btn-arriba btn-light-arriba" id="btnFillExample">Preencher exemplo</button>
+          <button type="button" class="btn-arriba btn-light-arriba" id="btnClear">Limpar</button>
+        </div>
+      </section>
+
+      <section class="panel card-section" id="step-advanced">
+        <span class="kicker">Passo 3</span>
+        <h2 class="section-title small">Campos complementares</h2>
+        <p class="section-description">Campos do layout oficial do registro em edição. Use apenas quando o cliente ou o credor exigir.</p>
+
+        <details class="advanced" data-applies-box="configuracao" open>
+          <summary><i class="fa-solid fa-gear"></i> Complementar · Configuração</summary>
+          <div class="form-grid mt-3">
+            <div class="field"><label for="devolucaoPorContrato">Devolução por contrato</label><select id="devolucaoPorContrato" class="form-select"><option value="N" selected>Não</option><option value="S">Sim</option></select></div>
+            <div class="field"><label for="redefinirAgrupamento">Redefinir agrupamento</label><select id="redefinirAgrupamento" class="form-select"><option value="N" selected>Não</option><option value="S">Sim</option></select></div>
+            <div class="field"><label for="cadastrarCpfCnpjInvalido">Cadastrar CPF/CNPJ inválido</label><select id="cadastrarCpfCnpjInvalido" class="form-select"><option value="N" selected>Não</option><option value="S">Sim</option></select></div>
+          </div>
+        </details>
+
+        <details class="advanced mt-3" data-applies-box="loja">
+          <summary><i class="fa-solid fa-store"></i> Complementar · Loja</summary>
+          <div class="form-grid mt-3">
+            <div class="field"><label for="lojaCnpj">CNPJ loja</label><input id="lojaCnpj" class="form-control" /></div>
+            <div class="field"><label for="lojaRegional">Regional</label><input id="lojaRegional" class="form-control" /></div>
+          </div>
+        </details>
+
+        <details class="advanced mt-3" data-applies-box="contrato" open>
+          <summary><i class="fa-solid fa-file-contract"></i> Complementar · Contrato</summary>
+          <div class="form-grid mt-3">
+            <div class="field"><label for="filial">Filial</label><input id="filial" class="form-control" /></div>
+            <div class="field"><label for="planoContrato">Plano</label><input id="planoContrato" class="form-control" /></div>
+            <div class="field"><label for="regional">Regional</label><input id="regional" class="form-control" /></div>
+            <div class="field"><label for="regua">Régua</label><input id="regua" class="form-control" /></div>
+            <div class="field"><label for="valorContrato">Vl_Contrato</label><input id="valorContrato" class="form-control" /></div>
+            <div class="field"><label for="dataContrato">Dt_Contrato</label><input id="dataContrato" class="form-control" placeholder="dd/mm/aaaa" /></div>
+            <div class="field"><label for="taxaContrato">Tx_Contrato</label><input id="taxaContrato" class="form-control" /></div>
+            <div class="field"><label for="dataParaNotificacao">Dt_Para_Notificacao</label><input id="dataParaNotificacao" class="form-control" placeholder="manter vazio" /></div>
+            <div class="field"><label for="dataSolicitacaoDocumento">Dt_Solicitacao_Documento</label><input id="dataSolicitacaoDocumento" class="form-control" /></div>
+            <div class="field"><label for="dataAjuizamento">Dt_Ajuizamento</label><input id="dataAjuizamento" class="form-control" /></div>
+            <div class="field"><label for="codLoja">Cod_Loja</label><input id="codLoja" class="form-control" /></div>
+            <div class="field"><label for="grupo">Grupo</label><input id="grupo" class="form-control" /></div>
+            <div class="field"><label for="moeda">Moeda</label><input id="moeda" class="form-control" /></div>
+            <div class="field"><label for="subRegua">SubRegua</label><input id="subRegua" class="form-control" /></div>
+          </div>
+        </details>
+
+        <details class="advanced mt-3" data-applies-box="financiado">
+          <summary><i class="fa-solid fa-user"></i> Complementar · Financiado</summary>
+          <div class="form-grid mt-3">
+            <div class="field"><label for="dataNascimento">Dt_Nascimento</label><input id="dataNascimento" class="form-control" placeholder="dd/mm/aaaa" /></div>
+            <div class="field"><label for="sexo">Sexo</label><select id="sexo" class="form-select"><option value="">Vazio</option><option value="M">M</option><option value="F">F</option></select></div>
+            <div class="field"><label for="estadoCivil">Estado_Civil</label><input id="estadoCivil" class="form-control" /></div>
+            <div class="field"><label for="conjuge">Conjuge</label><input id="conjuge" class="form-control" /></div>
+            <div class="field"><label for="pai">Pai</label><input id="pai" class="form-control" /></div>
+            <div class="field"><label for="mae">Mae</label><input id="mae" class="form-control" /></div>
+            <div class="field"><label for="rg">Rg</label><input id="rg" class="form-control" /></div>
+            <div class="field"><label for="rgOrgao">Rg_Orgao_Emiss</label><input id="rgOrgao" class="form-control" /></div>
+            <div class="field"><label for="rgUf">Rg_Uf_Emiss</label><input id="rgUf" maxlength="2" class="form-control" /></div>
+            <div class="field"><label for="rgData">Rg_Dt_Emiss</label><input id="rgData" class="form-control" /></div>
+            <div class="field"><label for="scoreSerasa">Score_Serasa</label><input id="scoreSerasa" class="form-control" /></div>
+            <div class="field"><label for="profissao">Profissao</label><input id="profissao" class="form-control" /></div>
+            <div class="field"><label for="renda">Renda</label><input id="renda" class="form-control" /></div>
+            <div class="field"><label for="scoreAdicional">Score_Adicional</label><input id="scoreAdicional" class="form-control" /></div>
+          </div>
+        </details>
+
+        <details class="advanced mt-3" data-applies-box="parcela">
+          <summary><i class="fa-solid fa-money-check-dollar"></i> Complementar · Parcela</summary>
+          <div class="form-grid mt-3">
+            <div class="field"><label for="valorSaldo">Vl_Saldo</label><input id="valorSaldo" class="form-control" placeholder="se vazio, copia Vl_Original" /></div>
+            <div class="field"><label for="valorTarifa">Vl_Tarifa</label><input id="valorTarifa" class="form-control" /></div>
+            <div class="field"><label for="clienteParcela">Cliente</label><input id="clienteParcela" class="form-control" placeholder="opcional" /></div>
+            <div class="field"><label for="dataInclusao">Dt_Inclusao</label><input id="dataInclusao" class="form-control" /></div>
+            <div class="field"><label for="dataDevolucao">Dt_Devolucao</label><input id="dataDevolucao" class="form-control" /></div>
+            <div class="field"><label for="dataInibicao">Dt_Inibicao</label><input id="dataInibicao" class="form-control" /></div>
+            <div class="field"><label for="motivo">Motivo</label><input id="motivo" class="form-control" value="Teste Pagamento" /></div>
+            <div class="field"><label for="dataNotificacao">Dt_Notificacao</label><input id="dataNotificacao" class="form-control" /></div>
+            <div class="field"><label for="marcarDataLote">Marcar_Dt_Lote</label><select id="marcarDataLote" class="form-select"><option value="">Vazio</option><option value="S">S</option><option value="N">N</option></select></div>
+            <div class="field"><label for="dataLote">Dt_Lote</label><input id="dataLote" class="form-control" /></div>
+            <div class="field"><label for="documentoParcela">Documento</label><input id="documentoParcela" class="form-control" /></div>
+            <div class="field"><label for="planoParcela">Plano</label><input id="planoParcela" class="form-control" /></div>
+          </div>
+        </details>
+
+        <details class="advanced mt-3" data-applies-box="email telefone endereco historico garantia avalista dados_auxiliares processo processo_andamento processo_data processo_localizador despesa mensagem_operacao">
+          <summary><i class="fa-solid fa-layer-group"></i> Complementares · Registro selecionado</summary>
+          <div class="form-grid mt-3">
+            <div class="field" data-applies="telefone"><label for="tipoTelefone">Tipo telefone</label><input id="tipoTelefone" class="form-control" value="1" /></div>
+            <div class="field" data-applies="telefone"><label for="ramalTelefone">Ramal</label><input id="ramalTelefone" class="form-control" /></div>
+            <div class="field" data-applies="endereco"><label for="enderecoNumero">Número</label><input id="enderecoNumero" class="form-control" value="100" /></div>
+            <div class="field" data-applies="endereco"><label for="bairro">Bairro</label><input id="bairro" class="form-control" value="Centro" /></div>
+            <div class="field" data-applies="endereco"><label for="cep">CEP</label><input id="cep" class="form-control" value="01000000" /></div>
+            <div class="field" data-applies="garantia"><label for="marcaGarantia">Marca</label><input id="marcaGarantia" class="form-control" /></div>
+            <div class="field" data-applies="garantia"><label for="modeloGarantia">Modelo</label><input id="modeloGarantia" class="form-control" /></div>
+            <div class="field" data-applies="processo"><label for="tipoProcesso">Tipo processo</label><input id="tipoProcesso" class="form-control" /></div>
+            <div class="field" data-applies="processo"><label for="comarca">Comarca</label><input id="comarca" class="form-control" /></div>
+            <div class="field" data-applies="processo"><label for="vara">Vara</label><input id="vara" class="form-control" /></div>
+            <div class="field" data-applies="processo"><label for="ufProcesso">UF</label><input id="ufProcesso" maxlength="2" class="form-control" /></div>
+            <div class="field" data-applies="despesa"><label for="despesaData">Data despesa</label><input id="despesaData" class="form-control" placeholder="dd/mm/aaaa" /></div>
+            <div class="field" data-applies="mensagem_operacao"><label for="statusMsg">Status_Msg</label><input id="statusMsg" class="form-control" /></div>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel card-section" id="step-preview">
+        <span class="kicker">Passo 4</span>
+        <h2 class="section-title small">Preview, validação e exportação</h2>
+        <p class="section-description">Confira como cada registro selecionado será exportado. As abas abaixo seguem a sequência oficial por Tipo_Registro.</p>
+
+        <div class="preview-helper">
+          <div>
+            <strong>Registros selecionados para exportação</strong>
+            <p>Use os botões de preview para revisar Contrato, Parcela, Financiado, Telefone, E-mail e demais registros antes de baixar.</p>
+            <div class="preview-selected-list" id="selectedExportList"></div>
+          </div>
+        </div>
+
+        <div class="validation-list mb-4" id="validationList"></div>
+
+        <div class="preview-tabs" id="previewTabs"></div>
+        <pre class="preview-box" id="csvPreview">Preencha os dados e clique em validar.</pre>
+
+        <div class="actions">
+          <button type="button" class="btn-arriba btn-dark-arriba" id="btnDownloadCurrent"><i class="fa-solid fa-download me-2"></i>Baixar CSV selecionado</button>
+          <button type="button" class="btn-arriba btn-outline-arriba" id="btnDownloadAll"><i class="fa-solid fa-file-arrow-down me-2"></i>Baixar selecionados</button>
+          <button type="button" class="btn-arriba btn-light-arriba" id="btnCopyPreview"><i class="fa-regular fa-copy me-2"></i>Copiar preview</button>
+        </div>
+      </section>
+
+      
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

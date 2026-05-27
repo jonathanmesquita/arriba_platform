@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Modelo Carta DataCob - Arriba Platform</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{--bg:#f7f5f2;--surface:#fff;--soft:#efede9;--ink:#171412;--muted:#625c56;--line:#d9d2cc;--red:#c74634;--gold:#f0c75e;--dark:#1f1b19;--ok:#198754;--warn:#b58100;--danger:#dc3545;--shadow:0 18px 46px rgba(0,0,0,.08);--radius:12px}*{box-sizing:border-box}html,body{width:100%;max-width:100%;overflow-x:hidden}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.topbar{min-height:64px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:22px;padding:0 28px;position:sticky;top:0;z-index:30}.brand{color:var(--red);font-size:1.35rem;font-weight:900;text-decoration:none;letter-spacing:-.04em}.back-link{color:var(--ink);font-weight:800;text-decoration:none;font-size:.95rem}.hero{background:radial-gradient(circle at 90% 10%,rgba(199,70,52,.08),transparent 28%),linear-gradient(90deg,#f7f5f2 0%,#fff 100%);border-bottom:1px solid var(--line);padding:48px 0 34px}.container-page{width:min(1180px,calc(100% - 44px));margin-inline:auto}.kicker{color:var(--red);text-transform:uppercase;letter-spacing:.18em;font-weight:900;font-size:.78rem;display:inline-block;margin-bottom:12px}h1{font-size:clamp(2.7rem,6vw,5.5rem);line-height:.95;letter-spacing:-.07em;font-weight:300;margin:0 0 20px}.hero p{color:var(--muted);font-size:1.08rem;line-height:1.65;max-width:880px;margin:0}.layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;padding:28px 0 60px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}.sidebar{position:sticky;top:86px;height:fit-content;padding:18px}.step{width:100%;border:0;background:transparent;padding:14px 12px;border-radius:9px;text-align:left;display:flex;align-items:flex-start;gap:11px;color:var(--muted);font-weight:800;cursor:pointer;transition:.18s ease}.step:hover{background:#f3f1ee;transform:translateX(2px)}.step.active{background:#dcebea;color:var(--ink)}.step-number{width:27px;height:27px;border-radius:999px;background:var(--soft);display:grid;place-items:center;font-size:.8rem;flex:0 0 auto}.step.active .step-number{background:var(--red);color:#fff}.sidebar-note{border-left:4px solid var(--gold);background:#fff8df;border-radius:9px;padding:12px 14px;color:#3a332b;margin-top:18px;font-size:.9rem;line-height:1.45}.main-stack{display:grid;gap:20px;min-width:0}.card-section{padding:24px}.section-title{font-size:clamp(2rem,4vw,3rem);line-height:1;letter-spacing:-.055em;font-weight:650;margin:0 0 10px}.section-title.small{font-size:clamp(1.8rem,3vw,2.4rem)}.section-description{color:var(--muted);line-height:1.6;margin-bottom:20px}.oracle-divider{width:46px;height:4px;background:var(--gold);margin:16px 0 24px}.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}.summary-item{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:center;min-height:62px}.summary-item i{font-size:1.15rem;color:var(--ink)}.summary-item span{display:block;color:var(--muted);font-size:.82rem}.summary-item strong{display:block;font-size:1.02rem;line-height:1.1}label{display:block;font-weight:850;margin-bottom:6px;font-size:.94rem}.form-control,.form-select{min-height:43px;border-radius:6px;border-color:#cfc8c1;width:100%;max-width:100%;min-width:0}textarea.form-control{min-height:260px;font-family:Consolas,Monaco,monospace;font-size:.86rem;line-height:1.55}.form-control:focus,.form-select:focus{border-color:var(--red);box-shadow:0 0 0 .22rem rgba(199,70,52,.14)}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.btn-arriba{min-height:43px;border-radius:5px;border:1px solid transparent;padding:9px 16px;font-weight:900;cursor:pointer}.btn-dark-arriba{background:var(--dark);color:#fff}.btn-dark-arriba:hover{background:#000;color:#fff}.btn-light-arriba{background:var(--soft);color:var(--ink)}.btn-outline-arriba{background:transparent;border-color:var(--dark);color:var(--dark)}.btn-red-arriba{background:var(--red);color:#fff}.btn-red-arriba:hover{background:#a93225;color:#fff}.validation-msg{border-left:4px solid var(--warn);background:rgba(181,129,0,.09);padding:12px 14px;border-radius:7px;line-height:1.45;margin-top:14px}.validation-msg.ok{border-left-color:var(--ok);background:rgba(25,135,84,.08)}.validation-msg.error{border-left-color:var(--danger);background:rgba(220,53,69,.08)}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.tab-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:900;cursor:pointer}.tab-btn.active{background:var(--dark);color:#fff;border-color:var(--dark)}.output-box{background:#101010;color:#f3f3f3;border-radius:8px;padding:16px;min-height:260px;overflow:auto;font-family:Consolas,Monaco,monospace;font-size:.86rem;white-space:pre;max-width:100%}.render-frame{width:100%;min-height:420px;border:1px solid var(--line);border-radius:8px;background:#fff}.placeholder-grid{display:grid;gap:10px}.placeholder-item{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff;display:grid;grid-template-columns:1.2fr 1.2fr .6fr;gap:10px;align-items:start}.placeholder-item span{display:block;color:var(--muted);font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.placeholder-item strong{display:block;word-break:break-word}.meta-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.meta-card{border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:14px}.meta-card span{color:var(--muted);font-size:.82rem;display:block}.meta-card strong{display:block;font-size:1.05rem}.hidden{display:none!important}@media(max-width:1080px){.layout{grid-template-columns:1fr}.sidebar{position:static}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.meta-list{grid-template-columns:1fr}}@media(max-width:640px){.topbar{padding:0 16px}.summary-grid{grid-template-columns:1fr}.placeholder-item{grid-template-columns:1fr}h1{font-size:2.8rem}}
+
+.editor-toolbar{border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;background:#f4f1ed;padding:10px;display:flex;flex-wrap:wrap;gap:7px}.tool-btn{border:1px solid #cfc8c1;background:#fff;border-radius:6px;min-width:36px;min-height:34px;padding:6px 10px;font-weight:800;cursor:pointer}.tool-btn:hover{background:#fff8df}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field.full{grid-column:1/-1}.editor-shell{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}.wysiwyg-editor{border:1px solid var(--line);border-radius:0 0 10px 10px;background:#fff;min-height:460px;padding:28px;line-height:1.6;overflow:auto;outline:none}.wysiwyg-editor:focus{border-color:var(--red);box-shadow:0 0 0 .22rem rgba(199,70,52,.12)}.placeholder-palette{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}.placeholder-token{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;cursor:pointer;font-size:.85rem;font-weight:800}.placeholder-token:hover{background:#dcebea}.editor-preview{border:1px solid var(--line);border-radius:10px;background:#fff;padding:24px;min-height:420px;overflow:auto}@media(max-width:1080px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+
+</style>
+</head>
+<body>
+<header class="topbar"><a href="../../../index.html" class="brand">ARRIBA</a><a href="../../../index.html" class="back-link">← Voltar para plataforma</a></header>
+<section class="hero"><div class="container-page"><span class="kicker">DataCob · Modelo Carta · HTML + GZIP</span><h1>Modelo Carta DataCob</h1><p>Converta modelos existentes em Hex/GZIP para HTML, valide placeholders e crie novos modelos de carta em um editor simples. Depois gere HTML, PDF por impressão e o código <strong>0x1F8B...</strong> para uso técnico.</p></div></section>
+<div class="container-page layout"><aside class="panel sidebar" aria-label="Etapas do conversor"><button type="button" class="step active" data-scroll-to="step-input"><span class="step-number">1</span><span>Entrada<br><small>Hex ou SQL</small></span></button><button type="button" class="step" data-scroll-to="step-result"><span class="step-number">2</span><span>Resultado<br><small>HTML decodificado</small></span></button><button type="button" class="step" data-scroll-to="step-placeholders"><span class="step-number">3</span><span>Placeholders<br><small>Campos dinâmicos</small></span></button><button type="button" class="step" data-scroll-to="step-builder"><span class="step-number">4</span><span>Criar modelo<br><small>Editor simples</small></span></button><div class="sidebar-note"><strong>Nota:</strong> isso não é descriptografia. É conversão de <strong>Hexadecimal ⇄ GZIP ⇄ HTML</strong>.</div></aside>
+<main class="main-stack"><div class="summary-grid" aria-label="Resumo do arquivo"><div class="summary-item"><i class="fa-solid fa-fingerprint"></i><div><span>Assinatura</span><strong id="chipSignature">-</strong></div></div><div class="summary-item"><i class="fa-solid fa-file-zipper"></i><div><span>Formato</span><strong id="chipFormat">-</strong></div></div><div class="summary-item"><i class="fa-solid fa-code"></i><div><span>HTML</span><strong id="chipHtml">-</strong></div></div><div class="summary-item"><i class="fa-solid fa-tags"></i><div><span>Placeholders</span><strong id="chipPlaceholders">-</strong></div></div></div>
+<section class="panel card-section" id="step-input"><span class="kicker">Passo 1</span><h2 class="section-title small">Entrada do código</h2><p class="section-description">Cole somente o valor <code>0x1F8B...</code> ou cole a linha completa retornada pelo SQL. A ferramenta tenta localizar automaticamente o primeiro bloco GZIP hexadecimal.</p><div class="oracle-divider"></div><label for="hexInput">Código hexadecimal / linha SQL</label><textarea id="hexInput" class="form-control" placeholder="Cole aqui o 0x1F8B... ou a linha SQL com o campo Arquivo"></textarea><div class="actions"><button type="button" class="btn-arriba btn-red-arriba" id="btnDecode"><i class="fa-solid fa-code me-2"></i>Converter código</button><button type="button" class="btn-arriba btn-dark-arriba" id="btnUseExample"><i class="fa-solid fa-flask me-2"></i>Usar exemplo</button><button type="button" class="btn-arriba btn-light-arriba" id="btnClear">Limpar</button></div><div class="validation-msg" id="messageBox">Aguardando código para conversão.</div></section>
+<section class="panel card-section" id="step-result"><span class="kicker">Passo 2</span><h2 class="section-title small">HTML decodificado</h2><p class="section-description">Alterne entre o código-fonte, a prévia renderizada e os metadados técnicos do binário.</p><div class="tabs"><button type="button" class="tab-btn active" data-tab="source">Código-fonte</button><button type="button" class="tab-btn" data-tab="preview">Prévia HTML</button><button type="button" class="tab-btn" data-tab="meta">Metadados</button></div><pre class="output-box" id="sourceOutput">Nenhum HTML decodificado ainda.</pre><iframe id="previewFrame" class="render-frame hidden" sandbox=""></iframe><div id="metaOutput" class="meta-list hidden"></div><div class="actions"><button type="button" class="btn-arriba btn-dark-arriba" id="btnCopyHtml"><i class="fa-regular fa-copy me-2"></i>Copiar HTML</button><button type="button" class="btn-arriba btn-outline-arriba" id="btnDownloadHtml"><i class="fa-solid fa-download me-2"></i>Baixar HTML</button><button type="button" class="btn-arriba btn-light-arriba" id="btnLoadDecodedToBuilder"><i class="fa-solid fa-pen-to-square me-2"></i>Editar este modelo</button></div></section>
+<section class="panel card-section" id="step-placeholders"><span class="kicker">Passo 3</span><h2 class="section-title small">Placeholders encontrados</h2><p class="section-description">Lista dos campos dinâmicos no padrão <code>¿Tabela*Campo*Índice¿</code>, usados pelo DataCob para montar carta, Word ou PDF.</p><div id="placeholderOutput" class="placeholder-grid"><div class="validation-msg">Nenhum placeholder processado ainda.</div></div><div class="actions"><button type="button" class="btn-arriba btn-light-arriba" id="btnCopyPlaceholders"><i class="fa-regular fa-copy me-2"></i>Copiar placeholders</button></div></section>
+<section class="panel card-section" id="step-builder">
+  <span class="kicker">Passo 4</span>
+  <h2 class="section-title small">Criar modelo de carta</h2>
+  <p class="section-description">Editor simples para montar uma carta em HTML sem depender do editor antigo. Use placeholders, imagem/logo, prévia, exportação HTML, PDF por impressão e geração do binário GZIP em hexadecimal.</p>
+  <div class="oracle-divider"></div>
+
+  <div class="form-grid">
+    <div class="field">
+      <label for="builderTitle">Nome do modelo</label>
+      <input id="builderTitle" class="form-control" value="Carta Acordo PIX">
+    </div>
+    <div class="field">
+      <label for="builderLogoUrl">Imagem / logo por URL</label>
+      <input id="builderLogoUrl" class="form-control" value="https://neocob.com.br/wp-content/uploads/2021/03/Logo-do-Site.svg">
+    </div>
+    <div class="field">
+      <label for="builderImageFile">Ou carregar imagem local</label>
+      <input id="builderImageFile" class="form-control" type="file" accept="image/*">
+    </div>
+    <div class="field">
+      <label for="builderFontSize">Tamanho base da fonte</label>
+      <select id="builderFontSize" class="form-select">
+        <option value="12px">12px</option>
+        <option value="14px" selected>14px</option>
+        <option value="16px">16px</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="placeholder-palette" aria-label="Placeholders rápidos">
+    <button type="button" class="placeholder-token" data-insert="¿Financiado*Nome*2¿">Financiado Nome</button>
+    <button type="button" class="placeholder-token" data-insert="¿Acordo*Nr_Acordo*2¿">Nº Acordo</button>
+    <button type="button" class="placeholder-token" data-insert="¿Cliente*Nome_Res*2¿">Cliente</button>
+    <button type="button" class="placeholder-token" data-insert="¿Funcoes_Carta*QrCode_Pix*2¿">QR Code PIX</button>
+    <button type="button" class="placeholder-token" data-insert="¿Funcoes_Carta*Pix_CopiaCola*2¿">PIX Copia e Cola</button>
+  </div>
+
+  <div class="editor-shell mt-3">
+    <div>
+      <div class="editor-toolbar" aria-label="Barra do editor">
+        <button type="button" class="tool-btn" data-command="bold"><strong>B</strong></button>
+        <button type="button" class="tool-btn" data-command="italic"><em>I</em></button>
+        <button type="button" class="tool-btn" data-command="underline"><u>U</u></button>
+        <button type="button" class="tool-btn" data-command="insertUnorderedList"><i class="fa-solid fa-list-ul"></i></button>
+        <button type="button" class="tool-btn" data-command="insertOrderedList"><i class="fa-solid fa-list-ol"></i></button>
+        <button type="button" class="tool-btn" data-command="justifyLeft"><i class="fa-solid fa-align-left"></i></button>
+        <button type="button" class="tool-btn" data-command="justifyCenter"><i class="fa-solid fa-align-center"></i></button>
+        <button type="button" class="tool-btn" data-command="justifyRight"><i class="fa-solid fa-align-right"></i></button>
+        <button type="button" class="tool-btn" id="btnInsertLogo"><i class="fa-regular fa-image"></i> Logo</button>
+        <button type="button" class="tool-btn" id="btnInsertLink"><i class="fa-solid fa-link"></i> Link</button>
+        <button type="button" class="tool-btn" id="btnSyncCode"><i class="fa-solid fa-code"></i> Ver código</button>
+      </div>
+      <div id="builderEditor" class="wysiwyg-editor" contenteditable="true" aria-label="Editor de carta"></div>
+    </div>
+
+    <div id="builderCodeWrap" class="hidden">
+      <label for="builderCode">Código HTML do modelo</label>
+      <textarea id="builderCode" class="form-control"></textarea>
+    </div>
+
+    <div>
+      <label>Prévia do modelo</label>
+      <div id="builderPreview" class="editor-preview"></div>
+    </div>
+
+    <div>
+      <label for="builderHexOutput">Código para SQL Server / campo Arquivo</label>
+      <textarea id="builderHexOutput" class="form-control" placeholder="Clique em Gerar Hex/GZIP para criar o código 0x1F8B..."></textarea>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn-arriba btn-red-arriba" id="btnBuildTemplate"><i class="fa-solid fa-file-lines me-2"></i>Gerar modelo base</button>
+    <button type="button" class="btn-arriba btn-dark-arriba" id="btnRefreshBuilderPreview"><i class="fa-regular fa-eye me-2"></i>Atualizar prévia</button>
+    <button type="button" class="btn-arriba btn-outline-arriba" id="btnPrintBuilderPdf"><i class="fa-solid fa-file-pdf me-2"></i>Gerar PDF</button>
+    <button type="button" class="btn-arriba btn-light-arriba" id="btnDownloadBuilderHtml"><i class="fa-solid fa-download me-2"></i>Baixar HTML</button>
+    <button type="button" class="btn-arriba btn-dark-arriba" id="btnGenerateBuilderHex"><i class="fa-solid fa-file-zipper me-2"></i>Gerar Hex/GZIP</button>
+    <button type="button" class="btn-arriba btn-light-arriba" id="btnCopyBuilderHex"><i class="fa-regular fa-copy me-2"></i>Copiar Hex</button>
+  </div>
+
+  <div class="validation-msg ok" id="builderMessage">Pronto para criar modelo. Comece pelo botão “Gerar modelo base”.</div>
+</section></main></div><script src="script.js"></script></body></html>

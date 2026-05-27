@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Arriba Platform</title>
+    <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/oracle-inspired.css">
+    <link rel="stylesheet" href="/pages/docs/help-center/assets/manual-router.css">
+</head>
+<body class="d-flex flex-column min-vh-100 rw-body dark-mode">
+    <header class="rw-topbar" role="banner">
+        <div class="rw-topbar-inner">
+            <button class="rw-icon-btn" type="button" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="rw-brand" href="/index.html" aria-label="Arriba Platform Home">ARRIBA</a>
+            <a class="rw-search-trigger text-decoration-none" href="#help-search" aria-label="Pesquisar no Help Center">
+                <i class="fas fa-search"></i>
+                <span>Pesquisar</span>
+            </a>
+            <div class="rw-topbar-actions">
+                <a class="rw-icon-btn text-decoration-none" href="/index.html" aria-label="Voltar para a plataforma">
+                    <i class="fas fa-home"></i>
+                </a>
+                <button type="button" class="rw-icon-btn" id="toggleTheme" aria-label="Alternar tema claro ou escuro">
+                    <i class="fas fa-sun" id="themeIcon"></i>
+                </button>
+                <div class="rw-language-wrap">
+                    <button type="button" class="rw-flag-btn" id="languageToggle" aria-label="Selecionar idioma" aria-expanded="false">
+                        <img id="currentLanguageFlag" src="/assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil" width="24" height="24">
+                    </button>
+                    <div class="rw-language-menu" id="languageMenu" hidden>
+                        <button type="button" data-lang-code="pt-BR" data-lang-label="Português" data-lang-flag="/assets/img/bandeiras_idiomas/flg-br.svg">🇧🇷 Português</button>
+                        <button type="button" data-lang-code="en-US" data-lang-label="English" data-lang-flag="/assets/img/bandeiras_idiomas/flg-us.svg">🇺🇸 English</button>
+                        <button type="button" data-lang-code="es-ES" data-lang-label="Español" data-lang-flag="/assets/img/bandeiras_idiomas/flg-es.svg">🇪🇸 Español</button>
+                    </div>
+                </div>
+                <a class="rw-icon-btn text-decoration-none" href="/tools/datacob/support-copilot/support-copilot.html" aria-label="Abrir Support Copilot">
+                    <i class="far fa-comment"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="rw-subnav" aria-label="Navegação secundária">
+        <div class="rw-subnav-inner">
+            <a href="/index.html">Visão geral</a>
+            <a href="/index.html#tools-section">Ferramentas</a>
+            <a href="/index.html#architecture-section">Arquitetura</a>
+            <a href="/pages/docs/help-center/index.html" class="active">Help Center</a>
+            <a href="/pages/docs/downloads/index.html">Downloads</a>
+            <a href="/pages/docs/blog/index.html">Blog técnico</a>
+            <a href="/pages/case-study/index.html">Case Study</a>
+            <a href="/pages/lab/index.html">Lab</a>
+        </div>
+    </nav>
+
+    <main id="appContent" class="flex-grow-1">
+        <section class="rw-breadcrumb">
+            <div class="rw-container">
+                <a href="/index.html">ARRIBA</a>
+                <span>›</span>
+                <span>Help Center</span>
+            </div>
+        </section>
+
+        <section class="rw-help-hero rw-help-hero-knowledge" id="help-search">
+            <div class="rw-container">
+                <span class="knowledge-kicker">Arriba Knowledge Advanced</span>
+                <h1>O que podemos ajudar você a encontrar?</h1>
+                <p class="knowledge-hero-copy">Pesquise em manuais locais, pacotes DataCob, artigos rápidos, base Freshdesk e erros conhecidos. Uma única busca para suporte, delivery e triagem com IA.</p>
+                <label class="rw-help-search knowledge-global-search">
+                    <i class="fas fa-search"></i>
+                    <input type="search" id="docSearchInput" placeholder="Busque por erro, cliente, pacote, carga, versão, API, CNAB, DataCob 4.0..." autocomplete="off">
+                    <button type="button" id="knowledgeSearchButton" aria-label="Buscar na base de conhecimento">Buscar</button>
+                </label>
+                <div class="knowledge-quick-actions" aria-label="Sugestões de busca">
+                    <button type="button" data-knowledge-query="versão checklist homologação">Versão</button>
+                    <button type="button" data-knowledge-query="negativação serasa bureau retorno">Negativação</button>
+                    <button type="button" data-knowledge-query="api token usuários datacob">API Token</button>
+                    <button type="button" data-knowledge-query="cnab boleto baixa retorno">CNAB / Baixa</button>
+                    <button type="button" data-knowledge-query="datacob 4.0 erro migração">DataCob 4.0</button>
+                </div>
+                <div class="knowledge-hero-results" id="knowledgeHeroResults" hidden></div>
+            </div>
+        </section>
+
+        <section class="knowledge-search-console" id="knowledge-console" aria-labelledby="knowledge-console-title">
+            <div class="knowledge-console-inner">
+                <div class="knowledge-console-header">
+                    <div>
+                        <span class="manual-eyebrow">Busca federada</span>
+                        <h2 id="knowledge-console-title">Procurar em toda a base de conhecimento.</h2>
+                        <p>Resultado unificado com fonte, relevância, tipo de material e ação rápida para abrir artigo, manual ou pacote.</p>
+                    </div>
+                    <div class="knowledge-source-status" id="knowledgeSourceStatus">
+                        <span><i class="fa-solid fa-database"></i> Base local pronta</span>
+                        <span><i class="fa-solid fa-cloud"></i> Freshdesk sob demanda</span>
+                    </div>
+                </div>
+
+                <div class="knowledge-filter-tabs" role="tablist" aria-label="Filtrar resultados da base">
+                    <button type="button" class="active" data-knowledge-filter="all">Todos</button>
+                    <button type="button" data-knowledge-filter="manual">Manuais</button>
+                    <button type="button" data-knowledge-filter="package">Pacotes</button>
+                    <button type="button" data-knowledge-filter="article">Artigos</button>
+                    <button type="button" data-knowledge-filter="freshdesk">Freshdesk</button>
+                </div>
+
+                <div class="knowledge-result-layout">
+                    <aside class="knowledge-insight-panel">
+                        <h3>Leitura rápida</h3>
+                        <div class="knowledge-insight-grid" id="knowledgeInsights">
+                            <div><span>Resultados</span><strong>0</strong></div>
+                            <div><span>Fonte principal</span><strong>Local</strong></div>
+                            <div><span>Termo</span><strong>-</strong></div>
+                        </div>
+                        <div class="knowledge-guided-box">
+                            <strong>Como usar</strong>
+                            <p>Pesquise pelo erro do cliente, rotina, ID de pacote, banco, módulo ou palavra-chave do ticket. O Copilot usa essa mesma lógica para sugerir manuais.</p>
+                        </div>
+                    </aside>
+                    <div class="knowledge-results-panel">
+                        <div class="knowledge-results-title">
+                            <h3>Resultados encontrados</h3>
+                            <span id="knowledgeResultsCount">Digite para pesquisar</span>
+                        </div>
+                        <div id="knowledgeGlobalResults" class="knowledge-global-results">
+                            <div class="knowledge-empty-state">
+                                <i class="fa-regular fa-lightbulb"></i>
+                                <strong>Comece pesquisando um problema real.</strong>
+                                <p>Exemplo: “BTG encerramento ticket”, “versão homologação”, “pacote 186”, “negativação retorno” ou “DataCob 4.0 API”.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="arriba-manual-router" id="manual-router">
+            <div class="manual-router-header">
+                <div>
+                    <span class="manual-eyebrow">Knowledge Router v2.7</span>
+                    <h2>Rotinas DataCob por módulo e cliente.</h2>
+                    <p>Busque manuais por rotina, cliente, módulo ou erro. A base local ajuda o Support Copilot a sugerir o material certo antes de consultar o Freshdesk.</p>
+                </div>
+                <div class="manual-search-panel">
+                    <label for="manualSearchInput">Buscar manual</label>
+                    <div class="manual-search-row">
+                        <input id="manualSearchInput" type="search" placeholder="Ex: MoneyPlus, BMP, recepção, AD, CNAB444...">
+                    </div>
+                    <div class="manual-filter-grid">
+                        <select id="manualCategoryFilter" aria-label="Filtrar categoria"></select>
+                        <select id="manualClientFilter" aria-label="Filtrar cliente"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="manual-router-body">
+                <aside class="manual-sidebar">
+                    <h3>Categorias</h3>
+                    <div class="manual-chip-list" id="manualCategoryList"></div>
+                    <div class="manual-stat-grid" id="manualStats"></div>
+                </aside>
+                <div class="manual-results">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="mb-0">Manuais sugeridos</h3>
+                        <span class="manual-tag" id="manualResultsCount">0 manual(is)</span>
+                    </div>
+                    <div id="manualResults"></div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="arriba-manual-router package-router-section" id="pacotes-datacob">
+            <div class="manual-router-header">
+                <div>
+                    <span class="manual-eyebrow">Manual Builder Integration v2.7</span>
+                    <h2>De/Para de pacotes e recepções DataCob.</h2>
+                    <p>Consulte o ID do pacote, cliente/origem, rotina sugerida e categoria operacional. Essa base alimenta o Support Copilot e ajuda o analista a encontrar o manual certo para cada recepção.</p>
+                </div>
+                <div class="manual-search-panel">
+                    <label for="packageSearchInput">Buscar pacote</label>
+                    <div class="manual-search-row">
+                        <input id="packageSearchInput" type="search" placeholder="Ex: 186, BMP, Itau, Rodobens, Boleto Original...">
+                    </div>
+                    <div class="manual-filter-grid">
+                        <select id="packageCategoryFilter" aria-label="Filtrar rotina"></select>
+                        <select id="packageClientFilter" aria-label="Filtrar cliente"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="manual-router-body">
+                <aside class="manual-sidebar">
+                    <h3>Resumo do de/para</h3>
+                    <div class="manual-stat-grid" id="packageStats"></div>
+                    <div class="manual-note mt-3">
+                        <strong>Regra de uso</strong>
+                        <p>Quando o ticket mencionar recepção, carga, CNAB, boleto, atualização ou cliente específico, o Copilot cruza o texto com este de/para e sugere pacote + manual relacionado.</p>
+                    </div>
+                </aside>
+                <div class="manual-results">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="mb-0">Pacotes encontrados</h3>
+                        <span class="manual-tag" id="packageResultsCount">0 pacote(s)</span>
+                    </div>
+                    <div id="packageResults"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="rw-section rw-section-light">
+            <div class="rw-container">
+                <div class="rw-section-header">
+                    <span>Base rápida</span>
+                    <h2>Atalhos de documentação e operação.</h2>
+                </div>
+
+                <div class="rw-doc-grid" id="docSearchCards">
+                    <article class="rw-doc-card" data-doc-keywords="datacob carga titular contrato parcela csv massa ficticia validações">
+                        <h2>DataCob</h2>
+                        <p>Cargas, CSV, titular, contrato, parcela, massa fictícia e validações.</p>
+                        <a href="/pages/docs/datacob/erros-datacob.html">Ver documentação</a>
+                    </article>
+
+                    <article class="rw-doc-card" data-doc-keywords="datacob versao versão atualização atualizacao agendamento automatico automático checklist homologacao homologação producao produção virada manual">
+                        <h2>Agendamento de Versão DataCob</h2>
+                        <p>Passo a passo local com checklist, regras de horário, cancelamento e respostas predefinidas para atualização de versão.</p>
+                        <a href="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/">Abrir artigo</a>
+                    </article>
+
+
+                    <article class="rw-doc-card" data-doc-keywords="datacob nova carteira carteira cobrança cobranca grupo cliente fase régua regua sub-regua conta boleto ocorrencia feriado calculo acordo recibo layout padrao">
+                        <h2>Cadastro Nova Carteira DataCob</h2>
+                        <p>Checklist operacional para parametrizar Grupo/Cliente/Fase, régua, conta, boleto, ocorrência, cálculo, acordo e recibo.</p>
+                        <a href="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/">Abrir artigo</a>
+                    </article>
+
+                    <article class="rw-doc-card" data-doc-keywords="erro troubleshooting dx001 lv005 pr102 crm suporte">
+                        <h2>Erros e troubleshooting</h2>
+                        <p>Pesquise erros comuns e veja tópicos em formato de blog técnico.</p>
+                        <a href="/pages/docs/blog/index.html">Abrir blog técnico</a>
+                    </article>
+
+                    <article class="rw-doc-card" data-doc-keywords="download layout modelo xlsx csv exemplo">
+                        <h2>Downloads</h2>
+                        <p>Baixe modelos e acesse os geradores de arquivos do projeto.</p>
+                        <a href="/pages/docs/downloads/index.html">Central de downloads</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="rw-section">
+            <div class="rw-container">
+                <div class="rw-section-header">
+                    <span>Guias rápidos</span>
+                    <h2>Documentação pensada para suporte técnico.</h2>
+                </div>
+
+                <div class="rw-card-grid rw-card-grid-3">
+                    <a class="rw-product-card" href="/tools/datacob/arriba-csv-generator/csv-template-generator.html">
+                        <span>CSV</span><h3>Gerar carga DataCob</h3><p>Preencha dados obrigatórios e exporte CSV validado.</p>
+                    </a>
+                    <a class="rw-product-card" href="/tools/datacob/massa-dados/massa-dados.html">
+                        <span>Teste</span><h3>Gerar massa fictícia</h3><p>Crie dados de teste compatíveis com titular, contrato e parcela.</p>
+                    </a>
+                    <a class="rw-product-card" href="/tools/datacob/support-copilot/support-copilot.html">
+                        <span>IA</span><h3>Support Copilot</h3><p>Analise tickets e encontre manuais sugeridos por rotina.</p>
+                    </a>
+
+                    <a class="rw-product-card" href="/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/">
+                        <span>Carteira</span><h3>Cadastro Nova Carteira</h3><p>Fluxo de parametrização DataCob para implantação de carteira de cobrança.</p>
+                    </a>
+
+                    <a class="rw-product-card" href="/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/">
+                        <span>Versão</span><h3>Agendamento automático DataCob</h3><p>Guia de suporte para checklist, homologação, produção e regras de agendamento.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/pages/docs/help-center/assets/manuals-index.js"></script>
+    <script src="/pages/docs/help-center/assets/packages-index.js"></script>
+    <script src="/pages/docs/help-center/assets/global-knowledge-search.js"></script>
+    <script src="/pages/docs/help-center/assets/manual-router.js"></script>
+    <script src="/pages/docs/help-center/assets/package-router.js"></script>
+    <script>
+        (function () {
+            const body = document.body;
+            const toggleTheme = document.getElementById("toggleTheme");
+            const themeIcon = document.getElementById("themeIcon");
+            const languageToggle = document.getElementById("languageToggle");
+            const languageMenu = document.getElementById("languageMenu");
+            const currentLanguageFlag = document.getElementById("currentLanguageFlag");
+
+            function applyTheme(theme) {
+                const isDark = theme !== "light";
+                body.classList.toggle("dark-mode", isDark);
+                body.classList.toggle("light-mode", !isDark);
+                if (themeIcon) {
+                    themeIcon.className = isDark ? "fas fa-sun" : "fas fa-moon";
+                }
+                localStorage.setItem("arribaTheme", isDark ? "dark" : "light");
+            }
+
+            applyTheme(localStorage.getItem("arribaTheme") || "dark");
+            toggleTheme?.addEventListener("click", () => {
+                applyTheme(body.classList.contains("dark-mode") ? "light" : "dark");
+            });
+
+            function closeLanguageMenu() {
+                if (languageMenu) languageMenu.hidden = true;
+                languageToggle?.setAttribute("aria-expanded", "false");
+            }
+
+            languageToggle?.addEventListener("click", (event) => {
+                event.stopPropagation();
+                if (!languageMenu) return;
+                languageMenu.hidden = !languageMenu.hidden;
+                languageToggle.setAttribute("aria-expanded", String(!languageMenu.hidden));
+            });
+
+            languageMenu?.querySelectorAll("[data-lang-code]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const lang = button.dataset.langCode || "pt-BR";
+                    const flag = button.dataset.langFlag || "/assets/img/bandeiras_idiomas/flg-br.svg";
+                    document.documentElement.lang = lang;
+                    if (currentLanguageFlag) {
+                        currentLanguageFlag.src = flag;
+                        currentLanguageFlag.alt = button.dataset.langLabel || lang;
+                    }
+                    localStorage.setItem("arribaLanguage", lang);
+                    localStorage.setItem("arribaLanguageFlag", flag);
+                    closeLanguageMenu();
+                });
+            });
+
+            const savedFlag = localStorage.getItem("arribaLanguageFlag");
+            const savedLang = localStorage.getItem("arribaLanguage");
+            if (savedLang) document.documentElement.lang = savedLang;
+            if (savedFlag && currentLanguageFlag) currentLanguageFlag.src = savedFlag;
+
+            document.addEventListener("click", closeLanguageMenu);
+        })();
+    </script>
+  <script type="module" src="/assets/js/auth-guard.js"></script>
+</body>
+</html>

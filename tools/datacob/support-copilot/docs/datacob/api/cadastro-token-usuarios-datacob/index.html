@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API DataCob - Token de Usuários | Arriba Help Center</title>
+  <meta name="description" content="Guia local do Arriba Platform para configurar e gerar token de usuários API DataCob, consultar Swagger, obter API Key, realizar login e ativar/desativar usuário." />
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/article.css" />
+</head>
+<body class="kb-article-page">
+  <header class="kb-topbar">
+    <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <a href="/index.html" class="brand-link">ARRIBA</a>
+        <span class="topbar-divider"></span>
+        <span class="small text-secondary">Help Center / DataCob / API</span>
+      </div>
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <a class="btn btn-sm btn-outline-light" href="/tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-robot me-1"></i> Support Copilot</a>
+        <a class="btn btn-sm btn-outline-light" href="/pages/docs/help-center/index.html"><i class="fa-solid fa-magnifying-glass me-1"></i> Help Center</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="kb-hero">
+      <div class="container-fluid">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <span class="eyebrow">DataCob • API / Usuários</span>
+            <h1>Cadastro de token para usuários API.</h1>
+            <p class="hero-copy">Guia operacional para orientar acesso às documentações da API DataCob via Swagger, geração de token por usuário, obtenção de API Key, login e ativação/desativação de usuários.</p>
+            <div class="hero-actions">
+              <a class="btn btn-danger btn-lg" href="#passo-a-passo"><i class="fa-solid fa-list-check me-2"></i>Ver passo a passo</a>
+              <a class="btn btn-outline-light btn-lg" href="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/API%20DataCob%20-%20DataCob%20-%20Cadastro%20Token%20Usuarios%20DataCob.pdf" target="_blank" rel="noopener"><i class="fa-regular fa-file-pdf me-2"></i>Manual PDF</a>
+              <button class="btn btn-outline-light btn-lg" type="button" data-copy-template="checklist"><i class="fa-regular fa-copy me-2"></i>Copiar checklist</button>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="hero-card">
+              <img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/capa-api-token.jpg" alt="Capa do manual DataCob API Swagger Cadastro Token Usuarios DataCob" />
+              <div>
+                <span>Fonte local</span>
+                <strong>DataCob - API Swagger / Cadastro Token Usuários</strong>
+                <small>Base offline usada pelo Support Copilot quando o ticket mencionar API, Swagger, token, API Key, login ou ativação/desativação de usuários.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-fluid py-4">
+      <div class="row g-3">
+        <div class="col-md-3"><div class="metric-card"><span>Produto</span><strong>DataCob</strong><small>API / Swagger</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Tipo</span><strong>Integração</strong><small>Token e autenticação</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Rotina</span><strong>Usuários API</strong><small>Controle de usuários</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Atenção</span><strong>1 ano</strong><small>Validade máxima do token</small></div></div>
+      </div>
+    </section>
+
+    <section class="container-fluid pb-4">
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <aside class="article-sidebar">
+            <h2>Índice</h2>
+            <nav>
+              <a href="#quando-usar">Quando usar</a>
+              <a href="#visao-geral">Visão geral</a>
+              <a href="#passo-a-passo">Passo a passo</a>
+              <a href="#swagger">Swagger e endpoints</a>
+              <a href="#checklist">Checklist</a>
+              <a href="#resposta">Resposta sugerida</a>
+              <a href="#copilot">Uso no Support Copilot</a>
+            </nav>
+            <div class="note-card mt-3">
+              <strong>Tipo Freshdesk sugerido</strong>
+              <p>Integração / Token/TAG / Reset Senha</p>
+              <strong>Manual relacionado</strong>
+              <p>DataCob - API Swagger / Cadastro Token Usuários</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="col-xl-8">
+          <article class="article-panel" id="quando-usar">
+            <span class="eyebrow small">Triagem</span>
+            <h2>Quando usar este artigo</h2>
+            <p>Use este guia quando o ticket mencionar geração de token API, acesso à documentação Swagger do DataCob, API Key, autenticação, login API, token revogado, ativação/desativação de usuário ou dúvida sobre usuários API.</p>
+            <div class="keyword-grid">
+              <span>api datacob</span><span>swagger</span><span>token api</span><span>gerar token</span><span>api key</span><span>apikey</span><span>login api</span><span>autenticação</span><span>controle de usuários</span><span>ativar usuário</span><span>desativar usuário</span><span>403 forbidden</span><span>400 bad request</span>
+            </div>
+          </article>
+
+          <article class="article-panel" id="visao-geral">
+            <span class="eyebrow small">Visão geral</span>
+            <h2>Fluxo da documentação e token API</h2>
+            <p>O manual orienta a configuração para geração de token de usuários API dentro do DataCob. O procedimento passa pelo controle de usuários, geração do token, acesso ao Swagger em <strong>Ajuda &gt; API Documentação</strong> e uso dos endpoints de Account para obter API Key, login e ativar/desativar usuário.</p>
+            <div class="rule-grid">
+              <div class="rule-card"><strong>Token por usuário</strong><span>Gerado no controle de usuários, pelo botão Gerar Token API.</span></div>
+              <div class="rule-card"><strong>Validade máxima</strong><span>O token pode ter validade máxima de 1 ano.</span></div>
+              <div class="rule-card"><strong>Token anterior</strong><span>Ao gerar novo token, o token anterior é automaticamente revogado.</span></div>
+              <div class="rule-card"><strong>Swagger</strong><span>A documentação fica em Ajuda &gt; API Documentação.</span></div>
+            </div>
+          </article>
+
+          <article class="article-panel" id="passo-a-passo">
+            <span class="eyebrow small">Operação</span>
+            <h2>Passo a passo para gerar token API</h2>
+            <ol class="step-list">
+              <li><strong>Acessar o controle de usuários.</strong> No DataCob, acesse <strong>Operações &gt; Controles &gt; Usuários</strong>.</li>
+              <li><strong>Selecionar o usuário API.</strong> Localize o usuário desejado na tela de Controle de Usuários.</li>
+              <li><strong>Gerar Token API.</strong> Clique no botão <strong>Gerar Token API</strong> para iniciar a geração do token de autenticação.</li>
+              <li><strong>Definir validade.</strong> No campo <strong>Novo token para login</strong>, informe a data de validade desejada. O limite máximo é de 1 ano.</li>
+              <li><strong>Atenção ao token anterior.</strong> Ao gerar novo token, o token anterior será revogado automaticamente.</li>
+              <li><strong>Copiar o token gerado.</strong> Após a geração, clique em <strong>Copiar Token</strong> e use o valor nas requisições conforme método de autenticação configurado.</li>
+              <li><strong>Acessar o Swagger.</strong> Para consultar a documentação da API, use <strong>Ajuda &gt; API Documentação</strong> na tela inicial do DataCob.</li>
+            </ol>
+            <div class="image-grid">
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/controle-usuarios.jpg" alt="Menu Operações Controles Usuários no DataCob" /><figcaption>Acesso ao controle de usuários pelo menu Operações &gt; Controles &gt; Usuários.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/gerar-token-api.jpg" alt="Botão Gerar Token API no Controle de Usuários" /><figcaption>Seleção do usuário e botão Gerar Token API.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/validade-token.jpg" alt="Tela de validade e token gerado" /><figcaption>Validade do token e opção Copiar Token.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/swagger-documentacao.jpg" alt="Menu Ajuda API Documentação e Swagger Account" /><figcaption>Acesso à documentação Swagger em Ajuda &gt; API Documentação.</figcaption></figure>
+            </div>
+          </article>
+
+          <article class="article-panel" id="swagger">
+            <span class="eyebrow small">Swagger</span>
+            <h2>Endpoints de Account destacados no manual</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><strong>GET /api/account/v1/obter-apikey</strong><span>Obtém a chave interna usada na autenticação do token API.</span></div>
+              <div class="rule-card"><strong>POST /api/account/v1/login</strong><span>Com Login, Password e ApiKey, retorna o token para uso nas demais requisições.</span></div>
+              <div class="rule-card"><strong>POST /api/account/v1/ativar-desativar-usuario</strong><span>Ativa ou desativa lista de usuários conforme permissão do usuário autenticado.</span></div>
+              <div class="rule-card"><strong>Retornos comuns</strong><span>200 OK, 204 Sucesso, 400 dados inválidos, 403 sem permissão.</span></div>
+            </div>
+            <div class="image-grid">
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/obter-apikey.jpg" alt="Swagger obter API Key" /><figcaption>GET para obter API Key e códigos de retorno.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/login-api.jpg" alt="Swagger login API DataCob" /><figcaption>POST de login usando usuário, senha e API Key.</figcaption></figure>
+              <figure><img src="/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/assets/ativar-desativar-usuario.jpg" alt="Swagger ativar desativar usuário" /><figcaption>Endpoint para ativar/desativar usuários e regras de permissão.</figcaption></figure>
+            </div>
+          </article>
+
+          <article class="article-panel" id="checklist">
+            <span class="eyebrow small">Checklist</span>
+            <h2>Checklist do analista</h2>
+            <ul class="check-list">
+              <li>Confirmar se a solicitação é sobre token API, API Key, Swagger, login ou ativar/desativar usuário.</li>
+              <li>Validar se o usuário utilizado é um usuário API e se possui permissão adequada.</li>
+              <li>Orientar geração do token pelo menu Operações &gt; Controles &gt; Usuários.</li>
+              <li>Confirmar a data de validade desejada, respeitando o limite máximo de 1 ano.</li>
+              <li>Avisar que novo token revoga automaticamente o token anterior.</li>
+              <li>Para documentação, orientar acesso em Ajuda &gt; API Documentação.</li>
+              <li>Em erro 400, validar usuário, senha, API Key e corpo da requisição.</li>
+              <li>Em erro 403, validar permissão do usuário/token e grupo de acesso.</li>
+            </ul>
+            <div class="copy-box" id="checklistCopy">Checklist para o analista:
+- Confirmar se a solicitação envolve token API, API Key, Swagger, login ou ativar/desativar usuário;
+- Validar se o usuário é usuário API e possui permissão adequada;
+- Orientar geração em Operações > Controles > Usuários > Gerar Token API;
+- Confirmar validade do token, respeitando limite máximo de 1 ano;
+- Alertar que novo token revoga automaticamente o token anterior;
+- Para documentação, orientar Ajuda > API Documentação;
+- Em erro 400, validar usuário, senha, API Key e payload;
+- Em erro 403, validar permissão do usuário/token e grupo de acesso.</div>
+          </article>
+
+          <article class="article-panel" id="resposta">
+            <span class="eyebrow small">Freshdesk</span>
+            <h2>Resposta sugerida ao cliente</h2>
+            <div class="template-card">
+              <h3>Orientação - Token API DataCob</h3>
+              <pre id="replyCopy">Olá,
+
+Para geração do token de usuário API no DataCob, acesse:
+
+Operações > Controles > Usuários
+
+Selecione o usuário desejado e clique em "Gerar Token API". Em seguida, informe a validade desejada para o token, respeitando o limite máximo de 1 ano.
+
+Atenção: ao gerar um novo token, o token anterior será automaticamente revogado.
+
+Para consultar as chamadas disponíveis na documentação da API, acesse no DataCob:
+
+Ajuda > API Documentação
+
+Na seção Account, estarão disponíveis as chamadas para obter API Key, realizar login e ativar/desativar usuários, conforme permissão do usuário autenticado.
+
+Caso ocorra erro 400, recomendamos validar usuário, senha, API Key e payload enviado. Em caso de erro 403, validar permissões do usuário/token.
+
+Obrigado!</pre>
+              <button class="btn btn-outline-light" type="button" data-copy-target="replyCopy"><i class="fa-regular fa-copy me-1"></i>Copiar resposta</button>
+            </div>
+          </article>
+
+          <article class="article-panel" id="copilot">
+            <span class="eyebrow small">Support Copilot</span>
+            <h2>Uso no Support Copilot</h2>
+            <p>Quando o ticket mencionar API DataCob, token, Swagger, API Key, login API, usuário API, ativar/desativar usuário, erro 400 ou erro 403, o Copilot deve sugerir este manual e classificar o caso como <strong>Integração</strong>, <strong>Token/TAG</strong> ou <strong>Reset Senha</strong>, conforme o contexto.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const copy = async (text) => {
+      await navigator.clipboard.writeText(text);
+      alert("Conteúdo copiado.");
+    };
+    document.querySelectorAll("[data-copy-target]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = document.getElementById(btn.dataset.copyTarget);
+        if (target) copy(target.innerText.trim());
+      });
+    });
+    document.querySelectorAll("[data-copy-template='checklist']").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = document.getElementById("checklistCopy");
+        if (target) copy(target.innerText.trim());
+      });
+    });
+  </script>
+</body>
+</html>

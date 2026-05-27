@@ -3,175 +3,906 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arriba Platform</title>
+    <meta name="description" content="Arriba Platform: portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
+    <title>Arriba Platform | PH3A AI Portfolio</title>
     <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/oracle-inspired.css" />
+    <style>
+        :root {
+            --enterprise-ink: #11110f;
+            --enterprise-muted: #5f5a55;
+            --enterprise-line: #d8d2ca;
+            --enterprise-panel: #ffffff;
+            --enterprise-bg: #f6f3ef;
+            --enterprise-dark: #16191d;
+            --enterprise-red: #c74634;
+            --enterprise-teal: #73c9c7;
+            --enterprise-sage: #c9d8d2;
+            --enterprise-gold: #e7b85b;
+        }
+
+        body.rw-body {
+            background: var(--enterprise-bg);
+            color: var(--enterprise-ink);
+        }
+
+        .portfolio-shell {
+            min-height: 100vh;
+        }
+
+        .enterprise-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1060;
+            background: #fff;
+            border-bottom: 1px solid var(--enterprise-line);
+        }
+
+        .enterprise-topbar-inner {
+            display: grid;
+            grid-template-columns: auto auto minmax(220px, 1fr) auto;
+            align-items: center;
+            gap: 20px;
+            min-height: 72px;
+            padding: 0 28px;
+        }
+
+        .enterprise-brand {
+            color: var(--enterprise-red);
+            font-size: 1.55rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .enterprise-brand small {
+            color: var(--enterprise-ink);
+            display: block;
+            font-size: .68rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+            margin-top: -6px;
+            text-transform: uppercase;
+        }
+
+        .enterprise-search {
+            width: 100%;
+            max-width: 840px;
+            height: 48px;
+            border: 1px solid #cfc8c1;
+            border-radius: 6px;
+            background: #fff;
+            color: var(--enterprise-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 18px;
+            text-align: left;
+        }
+
+        .enterprise-search:hover,
+        .enterprise-search:focus {
+            border-color: var(--enterprise-red);
+            box-shadow: 0 0 0 3px rgba(199, 70, 52, .12);
+        }
+
+        .enterprise-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .enterprise-icon-btn,
+        .enterprise-flag-btn {
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 4px;
+            background: transparent;
+            color: var(--enterprise-ink);
+            display: grid;
+            place-items: center;
+        }
+
+        .enterprise-icon-btn:hover,
+        .enterprise-flag-btn:hover {
+            background: rgba(0, 0, 0, .06);
+        }
+
+        .enterprise-nav {
+            background: var(--enterprise-dark);
+            color: #fff;
+        }
+
+        .enterprise-nav-inner {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            overflow-x: auto;
+            padding: 0 28px;
+        }
+
+        .enterprise-nav a,
+        .enterprise-nav button {
+            min-height: 54px;
+            display: inline-flex;
+            align-items: center;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            color: #fff;
+            font-size: .92rem;
+            font-weight: 800;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .enterprise-nav a:hover,
+        .enterprise-nav a.active,
+        .enterprise-nav button:hover {
+            border-bottom-color: var(--enterprise-teal);
+        }
+
+        .category-band {
+            background: #fff;
+            border-bottom: 1px solid var(--enterprise-line);
+            padding: 26px 0 24px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(112px, 1fr));
+            gap: 16px;
+        }
+
+        .category-tile {
+            min-height: 118px;
+            border: 1px solid var(--enterprise-line);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--enterprise-ink);
+            display: grid;
+            place-items: center;
+            padding: 16px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 800;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, .11);
+            transition: transform .18s ease, border-color .18s ease;
+        }
+
+        .category-tile:hover {
+            color: var(--enterprise-ink);
+            border-color: var(--enterprise-red);
+            transform: translateY(-3px);
+        }
+
+        .portfolio-hero {
+            background: #102b38;
+            color: #fff;
+            overflow: hidden;
+            padding: clamp(58px, 7vw, 92px) 0;
+        }
+
+        .portfolio-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, .9fr) minmax(430px, 1.1fr);
+            align-items: center;
+            gap: 54px;
+        }
+
+        .hero-eyebrow {
+            color: var(--enterprise-teal);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: .75rem;
+            font-weight: 900;
+            letter-spacing: .14em;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        .hero-eyebrow::before {
+            content: "";
+            width: 34px;
+            height: 2px;
+            background: var(--enterprise-gold);
+        }
+
+        .portfolio-hero h1 {
+            max-width: 720px;
+            font-size: clamp(2.45rem, 5vw, 5.2rem);
+            font-weight: 300;
+            line-height: 1.02;
+            margin-bottom: 24px;
+        }
+
+        .portfolio-hero p {
+            max-width: 690px;
+            color: rgba(255, 255, 255, .88);
+            font-size: 1.08rem;
+            line-height: 1.75;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        .enterprise-btn {
+            min-height: 46px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0 22px;
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .enterprise-btn-primary {
+            background: #fff;
+            color: #111;
+        }
+
+        .enterprise-btn-primary:hover {
+            color: #111;
+            background: #f0e9e2;
+        }
+
+        .enterprise-btn-secondary {
+            border: 1px solid rgba(255, 255, 255, .7);
+            color: #fff;
+        }
+
+        .enterprise-btn-secondary:hover {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+        }
+
+        .ai-showcase {
+            position: relative;
+            min-height: 430px;
+        }
+
+        .dashboard-panel {
+            background: #f7f2ed;
+            color: #2d2926;
+            border-radius: 8px;
+            box-shadow: 0 34px 90px rgba(0, 0, 0, .45);
+            margin-left: auto;
+            max-width: 620px;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd2ca;
+            padding: 20px 24px 12px;
+        }
+
+        .dashboard-header strong {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.12rem;
+            font-weight: 700;
+        }
+
+        .dashboard-chart {
+            height: 242px;
+            margin: 0 24px 24px;
+            border-left: 1px solid #d8d0ca;
+            border-bottom: 1px solid #d8d0ca;
+            background:
+                linear-gradient(180deg, transparent 24%, rgba(0, 0, 0, .05) 24% 25%, transparent 25% 49%, rgba(0, 0, 0, .05) 49% 50%, transparent 50% 74%, rgba(0, 0, 0, .05) 74% 75%, transparent 75%),
+                linear-gradient(90deg, rgba(115, 201, 199, .4) 0 8%, rgba(115, 201, 199, .52) 8% 22%, rgba(199, 70, 52, .14) 22% 44%, rgba(115, 201, 199, .3) 44% 63%, rgba(199, 70, 52, .16) 63% 82%, rgba(115, 201, 199, .5) 82% 100%);
+            clip-path: polygon(0 70%, 8% 24%, 18% 16%, 27% 28%, 36% 74%, 48% 78%, 62% 65%, 73% 72%, 84% 55%, 94% 32%, 100% 28%, 100% 100%, 0 100%);
+        }
+
+        .ai-badge {
+            position: absolute;
+            right: 16px;
+            top: 78px;
+            width: 88px;
+            height: 88px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #73c9c7, #c74634);
+            box-shadow: 0 24px 54px rgba(0, 0, 0, .32);
+            color: #fff;
+            font-size: 2.4rem;
+            font-weight: 900;
+        }
+
+        .assistant-card {
+            position: absolute;
+            left: 12px;
+            bottom: 14px;
+            width: min(440px, 88%);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .92);
+            color: #2d2926;
+            box-shadow: 0 24px 58px rgba(0, 0, 0, .24);
+            overflow: hidden;
+        }
+
+        .assistant-question {
+            display: grid;
+            grid-template-columns: 58px 1fr;
+            align-items: center;
+            gap: 14px;
+            padding: 18px;
+            background: rgba(231, 184, 91, .38);
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .assistant-question img {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            border: 3px solid #fff;
+        }
+
+        .assistant-search {
+            display: grid;
+            grid-template-columns: 1fr 54px 74px;
+            min-height: 58px;
+            border-top: 1px solid rgba(0, 0, 0, .08);
+        }
+
+        .assistant-search span,
+        .assistant-search button {
+            border: 0;
+            border-right: 1px solid rgba(0, 0, 0, .08);
+            background: #fff;
+            color: var(--enterprise-muted);
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+        }
+
+        .assistant-search button:last-child {
+            justify-content: center;
+            background: var(--enterprise-red);
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .section-wrap {
+            padding: 74px 0;
+        }
+
+        .section-heading {
+            max-width: 850px;
+            margin-bottom: 30px;
+        }
+
+        .section-heading span {
+            color: var(--enterprise-red);
+            display: inline-block;
+            font-size: .76rem;
+            font-weight: 900;
+            letter-spacing: .14em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            font-size: clamp(2rem, 3.2vw, 3.4rem);
+            font-weight: 300;
+            letter-spacing: 0;
+            line-height: 1.12;
+            margin-bottom: 14px;
+            text-transform: none;
+        }
+
+        .section-heading p {
+            color: var(--enterprise-muted);
+            font-size: 1.02rem;
+            line-height: 1.75;
+        }
+
+        .portfolio-card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .portfolio-card {
+            min-height: 250px;
+            border: 1px solid var(--enterprise-line);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--enterprise-ink);
+            padding: 24px;
+            text-decoration: none;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, .08);
+            transition: transform .18s ease, border-color .18s ease;
+        }
+
+        .portfolio-card:hover {
+            color: var(--enterprise-ink);
+            border-color: var(--enterprise-red);
+            transform: translateY(-4px);
+        }
+
+        .portfolio-card i {
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
+            background: #f0ebe5;
+            color: var(--enterprise-red);
+            display: grid;
+            place-items: center;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-card span {
+            color: var(--enterprise-red);
+            font-size: .72rem;
+            font-weight: 900;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .portfolio-card h3 {
+            font-size: 1.22rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            margin: 10px 0 12px;
+            text-transform: none;
+        }
+
+        .portfolio-card p {
+            color: var(--enterprise-muted);
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        .case-band {
+            background: #e9e4de;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr);
+            gap: 42px;
+            align-items: stretch;
+        }
+
+        .case-copy {
+            background: #fff;
+            border-radius: 8px;
+            padding: 34px;
+            border: 1px solid var(--enterprise-line);
+        }
+
+        .case-copy h2 {
+            font-size: clamp(2rem, 3.3vw, 3.35rem);
+            font-weight: 300;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .case-copy p {
+            color: var(--enterprise-muted);
+            line-height: 1.75;
+        }
+
+        .metric-list {
+            display: grid;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .metric-list div {
+            border-left: 4px solid var(--enterprise-red);
+            padding-left: 14px;
+        }
+
+        .metric-list strong {
+            display: block;
+            font-size: 1.35rem;
+        }
+
+        .architecture-board {
+            border-radius: 8px;
+            background: #102b38;
+            color: #fff;
+            padding: 30px;
+        }
+
+        .architecture-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1fr;
+            align-items: center;
+            gap: 14px;
+            margin: 22px 0;
+        }
+
+        .architecture-node {
+            min-height: 104px;
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .08);
+            display: grid;
+            align-content: center;
+            gap: 6px;
+            padding: 18px;
+        }
+
+        .architecture-node small {
+            color: rgba(255, 255, 255, .7);
+        }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+        .region-grid h6 {
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .region-grid a {
+            color: #05739b;
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-decoration: none;
+        }
+
+        .enterprise-footer {
+            background: #fff;
+            border-top: 1px solid var(--enterprise-line);
+            padding: 24px 0;
+        }
+
+        .enterprise-footer-inner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 26px;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--enterprise-muted);
+            font-size: .92rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1100px) {
+            .category-grid,
+            .portfolio-card-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .portfolio-hero-grid,
+            .case-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-showcase {
+                min-height: 420px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .enterprise-topbar-inner {
+                grid-template-columns: auto 1fr auto;
+                padding: 0 14px;
+            }
+
+            .enterprise-search {
+                grid-column: 1 / -1;
+                order: 2;
+                max-width: none;
+                margin-bottom: 12px;
+            }
+
+            .enterprise-topbar-inner {
+                min-height: 124px;
+            }
+
+            .enterprise-actions {
+                gap: 2px;
+            }
+
+            .category-grid,
+            .portfolio-card-grid,
+            .region-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-hero-grid {
+                gap: 32px;
+            }
+
+            .dashboard-panel {
+                max-width: 100%;
+            }
+
+            .ai-badge {
+                right: 8px;
+                width: 70px;
+                height: 70px;
+                font-size: 1.9rem;
+            }
+
+            .assistant-card {
+                position: relative;
+                left: auto;
+                bottom: auto;
+                width: 100%;
+                margin-top: 16px;
+            }
+
+            .architecture-row {
+                grid-template-columns: 1fr;
+            }
+
+            .architecture-row > span {
+                display: none;
+            }
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100 rw-body">
-    <header class="rw-topbar" role="banner">
-        <div class="rw-topbar-inner">
-            <button class="rw-icon-btn" type="button" id="enterpriseMenuToggle" aria-label="Abrir menu" aria-expanded="false">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <a class="rw-brand" href="index.html" aria-label="Arriba Platform Home">ARRIBA</a>
-
-            <button class="rw-search-trigger" type="button" id="searchToggleBtn" aria-label="Pesquisar na Arriba Platform">
-                <i class="fas fa-search"></i>
-                <span>Pesquisar</span>
-            </button>
-
-            <div class="rw-topbar-actions">
-                <button type="button" class="rw-icon-btn" id="toggleTheme" aria-label="Alternar tema">
-                    <i class="fas fa-moon" id="themeIcon"></i>
+    <div class="portfolio-shell">
+        <header class="enterprise-topbar" role="banner">
+            <div class="enterprise-topbar-inner">
+                <button class="enterprise-icon-btn" type="button" id="enterpriseMenuToggle" aria-label="Abrir menu" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
                 </button>
 
-                <button type="button" class="rw-flag-btn" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar idioma">
-                    <img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil" width="24" height="24" id="currentLanguageFlag">
+                <a class="enterprise-brand" href="index.html" aria-label="Arriba Platform Home">
+                    ARRIBA
+                    <small>PH3A AI</small>
+                </a>
+
+                <button class="enterprise-search" type="button" id="searchToggleBtn" aria-label="Pesquisar na Arriba Platform">
+                    <i class="fas fa-search"></i>
+                    <span>Pesquisar ferramentas, erros, tickets, DataCob ou IA</span>
                 </button>
 
-                <button type="button" class="rw-icon-btn" id="openChatFromTopbar" aria-label="Abrir Arriba Bot">
-                    <i class="far fa-comment"></i>
-                </button>
+                <div class="enterprise-actions">
+                    <button type="button" class="enterprise-flag-btn" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar pais ou regiao">
+                        <img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil" width="24" height="24" id="currentLanguageFlag">
+                    </button>
+                    <button type="button" class="enterprise-icon-btn" id="toggleTheme" aria-label="Alternar tema">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <button type="button" class="enterprise-icon-btn" id="openChatFromTopbar" aria-label="Abrir Arriba Bot">
+                        <i class="far fa-comment"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <nav class="rw-subnav" aria-label="Navegação secundária">
-        <div class="rw-subnav-inner">
-            <a href="index.html" class="active">Visão geral</a>
-            <a href="#tools-section">Ferramentas</a>
-            <a href="#architecture-section">Arquitetura</a>
-            <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
-            <a href="pages/docs/downloads/index.html" data-route>Downloads</a>
-            <a href="pages/docs/blog/index.html" data-route>Blog técnico</a>
-            <a href="pages/case-study/index.html" data-route>Case Study</a>
-            <a href="pages/lab/index.html" data-route>Lab</a>
-        </div>
-    </nav>
+        <nav class="enterprise-nav" aria-label="Navegacao principal">
+            <div class="enterprise-nav-inner">
+                <button type="button" id="enterpriseMenuOpenProducts">Produtos</button>
+                <a href="#tools-section">Ferramentas</a>
+                <a href="#ph3a-ai">PH3A com IA</a>
+                <a href="#architecture-section">Arquitetura</a>
+                <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
+                <a href="pages/case-study/index.html" data-route>Case Studies</a>
+                <a href="pages/lab/index.html" data-route>Lab</a>
+                <a href="login.html">Login</a>
+            </div>
+        </nav>
 
-    <div class="enterprise-menu-backdrop" id="enterpriseMenuBackdrop"></div>
-    <aside class="enterprise-menu" id="enterpriseMenu" aria-label="Menu principal"></aside>
+        <div class="enterprise-menu-backdrop" id="enterpriseMenuBackdrop"></div>
+        <aside class="enterprise-menu" id="enterpriseMenu" aria-label="Menu principal"></aside>
 
-    <main id="appContent" class="flex-grow-1">
-        <section class="rw-breadcrumb">
+        <section class="category-band" aria-label="Categorias principais">
             <div class="rw-container">
-                <a href="index.html">Arriba Brasil</a>
-                <span>›</span>
-                <a href="#">Plataforma</a>
-                <span>›</span>
-                <span>Produtividade Técnica</span>
+                <div class="category-grid">
+                    <a class="category-tile" href="pages/docs/help-center/index.html" data-route>Help Center</a>
+                    <a class="category-tile" href="tools/datacob/support-copilot/support-copilot.html">AI Support Copilot</a>
+                    <a class="category-tile" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">DataCob CSV</a>
+                    <a class="category-tile" href="tools/datacob/massa-dados/massa-dados.html">Massa de dados</a>
+                    <a class="category-tile" href="tools/dados/json-validator/json_validator.html">JSON</a>
+                    <a class="category-tile" href="pages/docs/blog/index.html" data-route>Erros e blog</a>
+                    <a class="category-tile" href="pages/case-study/deploy-cloud.html" data-route>Cloud</a>
+                    <a class="category-tile" href="pages/case-study/arriba-platform.html" data-route>Portfolio</a>
+                </div>
             </div>
         </section>
 
-        <section class="rw-hero">
-            <div class="rw-container rw-hero-grid">
-                <div>
-                    <span class="rw-kicker">Suporte técnico · APIs · IA · Cloud</span>
-                    <h1>Produtividade técnica com arquitetura de produto.</h1>
-                    <p>
-                        Uma plataforma modular para suporte, documentação, ferramentas de dados,
-                        automações e assistentes inteligentes — construída como portfólio fullstack.
-                    </p>
+        <main id="appContent" class="flex-grow-1">
+            <section class="portfolio-hero">
+                <div class="rw-container portfolio-hero-grid">
+                    <div>
+                        <span class="hero-eyebrow">Portfolio enterprise para PH3A</span>
+                        <h1>A proxima geracao da Arriba Platform com IA.</h1>
+                        <p>
+                            Uma vitrine fullstack inspirada em produtos corporativos: suporte com IA,
+                            automacao DataCob, base de conhecimento, dashboards de atendimento e
+                            storytelling tecnico para entrevista.
+                        </p>
 
-                    <div class="rw-actions">
-                        <a class="rw-btn rw-btn-primary" href="pages/docs/help-center/index.html" data-route>Entrar no Help Center</a>
-                        <a class="rw-btn rw-btn-secondary" href="pages/docs/downloads/index.html" data-route>Ver Downloads</a>
-                        <button type="button" class="rw-btn rw-btn-secondary" id="openChatFromHero">Falar com Arriba Bot</button>
+                        <div class="hero-actions">
+                            <a class="enterprise-btn enterprise-btn-primary" href="tools/datacob/support-copilot/support-copilot.html">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                Explorar Copilot
+                            </a>
+                            <a class="enterprise-btn enterprise-btn-secondary" href="pages/case-study/ph3a-support-copilot.html" data-route>
+                                Ver case PH3A
+                            </a>
+                            <button type="button" class="enterprise-btn enterprise-btn-secondary" id="openChatFromHero">
+                                Perguntar ao bot
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ai-showcase" aria-label="Demonstração visual do copiloto de IA">
+                        <div class="dashboard-panel">
+                            <div class="dashboard-header">
+                                <strong>Chamados críticos caíram 18% no cenário simulado</strong>
+                                <span>PH3A Support</span>
+                            </div>
+                            <div class="dashboard-chart" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="ai-badge" aria-hidden="true">AI</div>
+
+                        <div class="assistant-card">
+                            <div class="assistant-question">
+                                <img src="assets/img/frames_sapolingo/sapolingo_hack.png" alt="Mascote Sapolingo usando computador">
+                                <span>Quais tickets precisam de acao tecnica hoje?</span>
+                            </div>
+                            <div class="assistant-search">
+                                <span>Buscar ou perguntar a Arriba</span>
+                                <button type="button" aria-label="Abrir conversa"><i class="fa-regular fa-message"></i></button>
+                                <button type="button" aria-label="Executar busca"><i class="fa-solid fa-toggle-on"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <aside class="rw-flow-card" aria-label="Fluxo principal">
-                    <div class="rw-flow-card-header">
-                        <span>Fluxo principal</span>
-                        <strong>Fullstack Cloud</strong>
+            <section class="section-wrap" id="tools-section">
+                <div class="rw-container">
+                    <div class="section-heading">
+                        <span>Infraestrutura de operacao</span>
+                        <h2>Ferramentas que parecem portfolio, mas nasceram de rotina real.</h2>
+                        <p>
+                            A ideia e mostrar dominio tecnico com algo que resolve trabalho de verdade:
+                            arquivos, validacoes, documentacao, atendimento e integracoes.
+                        </p>
                     </div>
-                    <div class="rw-flow">
-                        <div><strong>Vercel</strong><span>Frontend</span></div>
-                        <span>→</span>
-                        <div><strong>Render</strong><span>Node API</span></div>
-                        <span>→</span>
-                        <div><strong>OpenAI</strong><span>IA</span></div>
+
+                    <div class="portfolio-card-grid">
+                        <a class="portfolio-card" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">
+                            <i class="fa-solid fa-table-list"></i>
+                            <span>DataCob</span>
+                            <h3>Gerador CSV</h3>
+                            <p>Cria arquivos de carga com layout, preview, tipos de registro e exportacao.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/datacob/support-copilot/support-copilot.html">
+                            <i class="fa-solid fa-headset"></i>
+                            <span>Suporte com IA</span>
+                            <h3>Support Copilot</h3>
+                            <p>Resume tickets, sugere checklist, classifica prioridade e apoia respostas.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="pages/docs/help-center/index.html" data-route>
+                            <i class="fa-solid fa-book-open"></i>
+                            <span>Conhecimento</span>
+                            <h3>Help Center</h3>
+                            <p>Busca em manuais, pacotes, artigos e materiais tecnicos para suporte.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/datacob/manual-builder/freshdesk-paste.html">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>Freshdesk</span>
+                            <h3>Gerador de artigo</h3>
+                            <p>Transforma conhecimento operacional em conteudo limpo para publicacao.</p>
+                        </a>
                     </div>
-                    <p>Fallback local mantém o bot útil mesmo quando a IA está indisponível.</p>
-                </aside>
+                </div>
+            </section>
+
+            <section class="section-wrap case-band" id="ph3a-ai">
+                <div class="rw-container case-grid">
+                    <div class="case-copy">
+                        <span class="hero-eyebrow">Projeto para empresa</span>
+                        <h2>PH3A com IA: suporte mais rapido, contexto melhor.</h2>
+                        <p>
+                            O case mostra como uma plataforma interna pode reduzir leitura manual,
+                            padronizar respostas, encontrar manuais e transformar chamados em insumos
+                            claros para suporte e desenvolvimento.
+                        </p>
+
+                        <div class="metric-list">
+                            <div><strong>Read-only primeiro</strong><span>Integracao segura antes de qualquer escrita no Freshdesk.</span></div>
+                            <div><strong>Fallback local</strong><span>O fluxo continua util mesmo sem IA ou API externa.</span></div>
+                            <div><strong>Base pesquisavel</strong><span>Manuais, pacotes, erros e artigos em uma busca unica.</span></div>
+                        </div>
+                    </div>
+
+                    <div class="architecture-board" id="architecture-section">
+                        <span class="hero-eyebrow">Arquitetura demonstravel</span>
+                        <h2 class="h3">Do ticket ao insight.</h2>
+                        <div class="architecture-row">
+                            <div class="architecture-node"><strong>Freshdesk</strong><small>Tickets e conversas</small></div>
+                            <span><i class="fa-solid fa-arrow-right"></i></span>
+                            <div class="architecture-node"><strong>Arriba API</strong><small>Node, regras e contexto</small></div>
+                            <span><i class="fa-solid fa-arrow-right"></i></span>
+                            <div class="architecture-node"><strong>OpenAI</strong><small>Resumo, triagem e checklist</small></div>
+                        </div>
+                        <p class="mb-0 text-white-50">
+                            O diferencial para entrevista e explicar decisoes: seguranca por flags,
+                            separacao de modulos, fallback e evolucao incremental.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-wrap">
+                <div class="rw-container">
+                    <div class="section-heading">
+                        <span>O que destacar</span>
+                        <h2>Um portfolio com linguagem de produto enterprise.</h2>
+                    </div>
+
+                    <div class="portfolio-card-grid">
+                        <a class="portfolio-card" href="pages/case-study/arriba-platform.html" data-route>
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>Case</span>
+                            <h3>Arriba Platform</h3>
+                            <p>Arquitetura, decisoes tecnicas, evolucao e proposta de valor.</p>
+                        </a>
+                        <a class="portfolio-card" href="pages/case-study/chatbot-ai.html" data-route>
+                            <i class="fa-solid fa-robot"></i>
+                            <span>IA</span>
+                            <h3>Chatbot AI</h3>
+                            <p>Modos de resposta, fallback local e integracao com API.</p>
+                        </a>
+                        <a class="portfolio-card" href="pages/case-study/deploy-cloud.html" data-route>
+                            <i class="fa-solid fa-cloud"></i>
+                            <span>Cloud</span>
+                            <h3>Deploy</h3>
+                            <p>Vercel, Render, Cloudflare, dominios e ambiente produtivo.</p>
+                        </a>
+                        <a class="portfolio-card" href="pages/docs/blog/index.html" data-route>
+                            <i class="fa-solid fa-magnifying-glass-chart"></i>
+                            <span>Documentacao</span>
+                            <h3>Erros e topicos</h3>
+                            <p>Base operacional que transforma suporte repetitivo em conhecimento.</p>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="enterprise-footer">
+            <div class="rw-container enterprise-footer-inner">
+                <span>Arriba Platform | PH3A AI Portfolio</span>
+                <span>Frontend estatico + Node API + Freshdesk + OpenAI</span>
+                <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
+                <a href="pages/case-study/index.html" data-route>Case Studies</a>
             </div>
-        </section>
+        </footer>
+    </div>
 
-        <section class="rw-section rw-section-light" id="tools-section">
-            <div class="rw-container">
-                <div class="rw-section-header">
-                    <span>Ferramentas e documentação</span>
-                    <h2>Comece pela operação. Depois vá para a arquitetura.</h2>
-                </div>
-
-                <div class="rw-card-grid rw-card-grid-4">
-                    <a class="rw-product-card" href="tools/datacob/csv-generator/csv-template-generator.html">
-                        <span>DataCob</span>
-                        <h3>Gerador CSV</h3>
-                        <p>Cargas de titular, contrato, parcela e combinada.</p>
-                    </a>
-
-                    <a class="rw-product-card" href="tools/datacob/csv-generator/csv-template-generator.html">
-                        <span>Teste</span>
-                        <h3>Massa de Dados</h3>
-                        <p>Dados fictícios compatíveis com o CSV DataCob.</p>
-                    </a>
-
-                    <a class="rw-product-card" href="pages/docs/help-center/index.html" data-route>
-                        <span>Ajuda</span>
-                        <h3>Help Center</h3>
-                        <p>Busca, tópicos, documentação e guia operacional.</p>
-                    </a>
-
-                    <a class="rw-product-card" href="pages/docs/downloads/index.html" data-route>
-                        <span>Arquivos</span>
-                        <h3>Downloads</h3>
-                        <p>Modelos, exemplos e materiais de apoio.</p>
-                    </a>
-                     <a class="rw-product-card" href="tools/datacob/manual-builder/freshdesk-paste.html" data-route>
-                        <span>Arquivos</span>
-                        <h3> Gerador de Artigo Freshdesk</h3>
-                        <p>Modelos, exemplos e materiais de apoio. (Versão Teste)</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="rw-section" id="architecture-section">
-            <div class="rw-container">
-                <div class="rw-section-header">
-                    <span>Arquitetura</span>
-                    <h2>Um laboratório fullstack com cara de produto real.</h2>
-                    <p>
-                        O projeto conecta frontend, backend, domínio próprio, deploy em cloud,
-                        chatbot com IA e fallback local para manter a experiência resiliente.
-                    </p>
-                </div>
-
-                <div class="rw-card-grid rw-card-grid-4">
-                    <a class="rw-product-card" href="pages/case-study/deploy-cloud.html" data-route>
-                        <span>Cloud</span><h3>Deploy</h3><p>Vercel, Render e Cloudflare.</p>
-                    </a>
-                    <a class="rw-product-card" href="pages/case-study/chatbot-ai.html" data-route>
-                        <span>IA</span><h3>Chatbot AI</h3><p>OpenAI, fallback e modos técnicos.</p>
-                    </a>
-                    <a class="rw-product-card" href="pages/docs/blog/index.html" data-route>
-                        <span>Blog</span><h3>Erros e tópicos</h3><p>Documentação pesquisável em formato técnico.</p>
-                    </a>
-                    <a class="rw-product-card" href="pages/lab/index.html" data-route>
-                        <span>Lab</span><h3>Portfólios</h3><p>GameDev, IA, psicologia e experimentos.</p>
-                    </a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-<button id="chatbotBtn" class="btn btn-primary shadow-lg" aria-label="Abrir chatbot">
+    <button id="chatbotBtn" class="btn btn-primary shadow-lg" aria-label="Abrir chatbot">
         <i class="fas fa-comments"></i>
     </button>
 
@@ -196,116 +927,58 @@
         </div>
     </div>
 
-    
-
-
-
-<div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="languageModalLabel">Selecione o Idioma</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="languageModalLabel">Selecione seu pais/regiao</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-3 mb-4">
-                                <h6>Europa</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="us"
-                                            data-country="Estados Unidos">
-                                            <img src="assets/img/bandeiras_idiomas/flg-us.svg" alt="Bandeira dos EUA"
-                                                width="24" height="24"> English (US)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="es"
-                                            data-country="Espanha">
-                                            <img src="assets/img/bandeiras_idiomas/flg-es.svg" alt="Bandeira da Espanha"
-                                                width="24" height="24"> Español
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="fr" data-flag="fr"
-                                            data-country="França">
-                                            <img src="assets/img/bandeiras_idiomas/flg-fr.svg" alt="Bandeira da França"
-                                                width="24" height="24"> Français
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="de" data-flag="de"
-                                            data-country="Alemanha">
-                                            <img src="assets/img/bandeiras_idiomas/flg-de.svg" alt="Bandeira da Alemanha"
-                                                width="24" height="24"> Alemanha (Deutsch)
-                                        </a></li>
-                                </ul>
-                            </div>
-
-                            <div class="col-md-3 mb-4">
-                                <h6>Américas</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="pt" data-flag="br"
-                                            data-country="Brasil">
-                                            <img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil"
-                                                width="24" height="24"> Português (Brasil)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="mx"
-                                            data-country="México">
-                                            <img src="assets/img/bandeiras_idiomas/flg-mx.svg" alt="Bandeira do México"
-                                                width="24" height="24"> Español (México)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="ca"
-                                            data-country="Canadá">
-                                            <img src="assets/img/bandeiras_idiomas/flg-ca.svg" alt="Bandeira do Canadá"
-                                                width="24" height="24"> Canada
-                                        </a></li>
-                                </ul>
-                            </div>
-
-                            <div class="col-md-3 mb-4">
-                                <h6>Ásia e Oceania</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="ko" data-flag="kr"
-                                            data-country="Coreia do Sul">
-                                            <img src="assets/img/bandeiras_idiomas/flg-kr.svg" alt="Bandeira da Coreia do Sul"
-                                                width="24" height="24"> 한국어 (Coreia do Sul)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="au"
-                                            data-country="Austrália">
-                                            <img src="assets/img/bandeiras_idiomas/flg-au.svg" alt="Bandeira da Austrália"
-                                                width="24" height="24"> Australia
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="in"
-                                            data-country="Índia">
-                                            <img src="assets/img/bandeiras_idiomas/flg-in.svg" alt="Bandeira da Índia"
-                                                width="24" height="24"> India
-                                        </a></li>
-                                </ul>
-                            </div>
-
-                            <div class="col-md-3 mb-4">
-                                <h6>Oriente Médio e África</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="za"
-                                            data-country="África do Sul">
-                                            <img src="assets/img/bandeiras_idiomas/flg-za.svg" alt="Bandeira da África do Sul"
-                                                width="24" height="24"> South Africa
-                                        </a></li>
-                                </ul>
-                            </div>
+                <div class="modal-body px-4 pb-4">
+                    <div class="region-grid">
+                        <div>
+                            <h6>Americas</h6>
+                            <a href="#" class="select-lang" data-lang-code="pt" data-flag="br" data-country="Brasil"><img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="" width="20" height="20"> Brasil</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="us" data-country="Estados Unidos"><img src="assets/img/bandeiras_idiomas/flg-us.svg" alt="" width="20" height="20"> United States</a>
+                            <a href="#" class="select-lang" data-lang-code="es" data-flag="mx" data-country="Mexico"><img src="assets/img/bandeiras_idiomas/flg-mx.svg" alt="" width="20" height="20"> Mexico</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="ca" data-country="Canada"><img src="assets/img/bandeiras_idiomas/flg-ca.svg" alt="" width="20" height="20"> Canada - English</a>
+                        </div>
+                        <div>
+                            <h6>Asia Pacific</h6>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="au" data-country="Australia"><img src="assets/img/bandeiras_idiomas/flg-au.svg" alt="" width="20" height="20"> Australia</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="in" data-country="India"><img src="assets/img/bandeiras_idiomas/flg-in.svg" alt="" width="20" height="20"> India</a>
+                            <a href="#" class="select-lang" data-lang-code="ko" data-flag="kr" data-country="Coreia do Sul"><img src="assets/img/bandeiras_idiomas/flg-kr.svg" alt="" width="20" height="20"> Korea</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="za" data-country="South Africa"><img src="assets/img/bandeiras_idiomas/flg-za.svg" alt="" width="20" height="20"> South Africa</a>
+                        </div>
+                        <div>
+                            <h6>Europe</h6>
+                            <a href="#" class="select-lang" data-lang-code="fr" data-flag="fr" data-country="Franca"><img src="assets/img/bandeiras_idiomas/flg-fr.svg" alt="" width="20" height="20"> France</a>
+                            <a href="#" class="select-lang" data-lang-code="de" data-flag="de" data-country="Alemanha"><img src="assets/img/bandeiras_idiomas/flg-de.svg" alt="" width="20" height="20"> Deutschland</a>
+                            <a href="#" class="select-lang" data-lang-code="es" data-flag="es" data-country="Espanha"><img src="assets/img/bandeiras_idiomas/flg-es.svg" alt="" width="20" height="20"> Espana</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="us" data-country="United Kingdom"><img src="assets/img/bandeiras_idiomas/flg-us.svg" alt="" width="20" height="20"> United Kingdom</a>
+                        </div>
+                        <div>
+                            <h6>Projeto</h6>
+                            <a href="pages/case-study/arriba-platform.html" data-route>Case Arriba Platform</a>
+                            <a href="pages/case-study/ph3a-support-copilot.html" data-route>Case PH3A Copilot</a>
+                            <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
+                            <a href="login.html">Area interna</a>
                         </div>
                     </div>
                 </div>
-
-    <footer class="rw-footer">
-        <div class="rw-container rw-footer-inner">
-            <span>© 2025 Arriba Platform</span>
-            <span>Versão: 1.12.0</span>
-            <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
-            <a href="pages/docs/downloads/index.html" data-route>Downloads</a>
-            <a href="pages/docs/blog/index.html" data-route>Blog técnico</a>
+            </div>
         </div>
-    </footer>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="assets/js/main.js"></script>
     <script type="module" src="assets/js/navigation-v2.js"></script>
     <script src="assets/js/docs-search.js"></script>
     <script type="module" src="assets/js/router.js"></script>
+    <script>
+        document.getElementById("enterpriseMenuOpenProducts")?.addEventListener("click", () => {
+            document.getElementById("enterpriseMenuToggle")?.click();
+        });
+    </script>
 </body>
 </html>

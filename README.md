@@ -1,32 +1,28 @@
-# Massa de Dados DataCob
+# Arriba DataCob Beta Tools - UX Final
 
-Ferramenta beta para gerar massa fictícia compatível com o Gerador CSV DataCob.
+Pacote com duas ferramentas beta ajustadas para uma UX mais simples e consistente com o estilo Oracle/Redwood da Arriba Platform.
 
-## Tipos de massa
+## Caminhos prontos para copiar
 
-- Titular
-- Contrato
-- Parcela
-- Combinada: titular + contrato + parcela
+- `tools/datacob/arriba-csv-generator/csv-template-generator.html`
+- `tools/datacob/arriba-csv-generator/script.js`
+- `tools/datacob/massa-dados/massa-dados.html`
+- `tools/datacob/massa-dados/script.js`
 
-## Compatibilidade
+## O que mudou
 
-A exportação usa o mesmo padrão de colunas do gerador CSV:
+### Gerador CSV DataCob
+- Tela principal com apenas os campos obrigatórios.
+- Campos avançados separados por seção recolhível.
+- Validação antes de exportar.
+- Preview dos três arquivos: contrato, financiado e parcela.
+- Exportação individual ou dos três CSVs.
 
-- titular.csv
-- contrato.csv
-- parcela.csv
-
-## Recursos
-
-- Quantidade de registros configurável
-- CPF, CNPJ ou documentos mistos
-- Credor e produto padrão
-- Parcelas por contrato
-- Preview por arquivo
-- Exportação CSV individual ou em lote
-- Exportação JSON para teste/debug
+### Massa de Dados
+- Formulário simplificado para usuário comum.
+- Geração de dados fictícios MX + CPF/CNPJ BR.
+- Exportação JSON, CSV genérico e Financiado DataCob.
+- Preview automático.
 
 ## Observação
-
-Os documentos gerados são fictícios e servem apenas para testes de layout e fluxo.
+O navegador não gera ZIP nativo sem biblioteca externa. Por isso, o botão "Baixar os 3 CSVs" baixa contrato, financiado e parcela em sequência.

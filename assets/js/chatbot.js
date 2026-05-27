@@ -70,10 +70,8 @@ export function initChatbot() {
         );
 
         try {
-            const apiBase = (window.ARRIBA_API_BASE || 'https://api.arriba.jm.dev.br').replace(/\/$/, '');
-            const response = await fetch(`${apiBase}/chat`, {
+            const response = await fetch('https://api.jm.dev.br/chat', {
                 method: 'POST',
-                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },

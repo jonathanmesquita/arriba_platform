@@ -65,7 +65,7 @@ const menuData = {
                 links: [
                     ["PH3A Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
                     ["Case Study Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"]
+                    ["API Freshdesk Status", "https://api.jm.dev.br/freshdesk/status"]
                 ]
             },
             cloudtools: {
@@ -74,8 +74,8 @@ const menuData = {
                 title: "Ferramentas Cloud",
                 description: "Acesso rapido a API, Render, Vercel, Cloudflare e documentacao tecnica.",
                 links: [
-                    ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["Status Freshdesk API", "https://api.arriba.jm.dev.br/freshdesk/status"],
+                    ["API Arriba", "https://api.jm.dev.br"],
+                    ["Status Freshdesk API", "https://api.jm.dev.br/freshdesk/status"],
                     ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
                     ["Arquitetura Arriba", "pages/case-study/arriba-platform.html", true]
                 ]
@@ -132,8 +132,8 @@ const menuData = {
                 description: "Vercel, Render, Cloudflare e dominio proprio.",
                 links: [
                     ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
+                    ["API Arriba", "https://api.jm.dev.br"],
+                    ["Freshdesk Status", "https://api.jm.dev.br/freshdesk/status"],
                     ["Case de arquitetura", "pages/case-study/arriba-platform.html", true]
                 ]
             },
@@ -145,8 +145,8 @@ const menuData = {
                 links: [
                     ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
                     ["PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["API publica", "https://api.arriba.jm.dev.br"],
-                    ["Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
+                    ["API publica", "https://api.jm.dev.br"],
+                    ["Freshdesk Status", "https://api.jm.dev.br/freshdesk/status"],
                     ["Help Center", "pages/docs/help-center/index.html", true]
                 ]
             }
@@ -174,7 +174,7 @@ const menuData = {
 const searchItems = [
     ["PH3A Support Copilot", "Freshdesk suporte IA chamados triagem templates anotacao desenvolvimento especificacao", "tools/datacob/support-copilot/support-copilot.html"],
     ["Case Support Copilot", "case study suporte clientes Freshdesk IA", "pages/case-study/ph3a-support-copilot.html", true],
-    ["API Freshdesk Status", "status api freshdesk render node", "https://api.arriba.jm.dev.br/freshdesk/status"],
+    ["API Freshdesk Status", "status api freshdesk render node", "https://api.jm.dev.br/freshdesk/status"],
     ["Gerador CSV DataCob", "Carga titular contrato parcela combinada", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
     ["Massa de Dados", "Dados ficticios CPF CNPJ DataCob CSV", "tools/datacob/massa-dados/massa-dados.html"],
     ["Gerador de Manual DataCob", "manual pdf documentacao rotina passo a passo freshdesk help center", "tools/datacob/manual-builder/manual-builder.html"],
@@ -187,7 +187,7 @@ const searchItems = [
     ["Erro PR102", "Processamento interrompido DataCob", "pages/docs/blog/index.html#pr102", true],
     ["Chatbot AI", "OpenAI fallback local modos", "pages/case-study/chatbot-ai.html", true],
     ["Deploy Cloud", "Vercel Render Cloudflare DNS", "pages/case-study/deploy-cloud.html", true],
-    ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
+    ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.jm.dev.br"],
     ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true]
 ];
 

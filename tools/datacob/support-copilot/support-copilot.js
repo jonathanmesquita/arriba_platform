@@ -1,4 +1,4 @@
-const API_DEFAULT = "https://api.arriba.jm.dev.br";
+const API_DEFAULT = "https://api.jm.dev.br";
 const LOCAL_LOG_KEY = "arribaSupportCopilotLocalLogs";
 
 const demoTicket = {
@@ -111,6 +111,66 @@ function apiBase() {
   localStorage.setItem("arribaSupportApiBase", value);
   return value;
 }
+
+
+function showAuthOverlay(message = "") {
+  const overlay = getEl("authOverlay");
+  const msg = getEl("authMessage");
+  if (msg) msg.textContent = message || "";
+  overlay?.classList.remove("d-none");
+  setTimeout(() => getEl("authUsername")?.focus(), 80);
+}
+
+function hideAuthOverlay() {
+  getEl("authOverlay")?.classList.add("d-none");
+  const msg = getEl("authMessage");
+  if (msg) msg.textContent = "";
+}
+
+async function fetchAuthStatus() {
+  return requestJson(`${apiBase()}/auth/status`);
+}
+
+async function handleAuthLogin(event) {
+  event?.preventDefault();
+  const username = getEl("authUsername")?.value.trim();
+  const password = getEl("authPassword")?.value || "";
+  const message = getEl("authMessage");
+  if (message) message.textContent = "";
+
+  if (!username || !password) {
+    if (message) message.textContent = "Informe usuário e senha.";
+    return;
+  }
+
+  await withLoading(getEl("authLoginBtn"), "Entrando...", async () => {
+    try {
+      await requestJson(`${apiBase()}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      hideAuthOverlay();
+      showCopilotNotice("success", "Sessão iniciada", "Acesso liberado para consultar tickets e base de conhecimento.", "Auth → Copilot");
+    } catch (error) {
+      if (message) message.textContent = getFriendlyErrorMessage(error);
+      showCopilotNotice("warning", "Login não realizado", getFriendlyErrorMessage(error), "Auth");
+    }
+  });
+}
+
+async function checkAuthOnLoad() {
+  try {
+    const status = await fetchAuthStatus();
+    if (status.enabled && !status.authenticated) {
+      showAuthOverlay("Faça login para usar o Support Copilot.");
+    }
+  } catch (error) {
+    // Se a rota de auth ainda não estiver no backend, não bloqueia o uso atual.
+    console.warn("Auth status indisponível.", error);
+  }
+}
+
 
 function readForm() {
   return {
@@ -295,17 +355,25 @@ function buildLocalDevelopmentSpec(input, product, priority, developmentType, ch
 
 async function requestJson(url, options = {}) {
   const response = await fetch(url, {
-    ...options,
     credentials: "include",
+    ...options,
     headers: {
       ...(options.headers || {})
     }
   });
   const payload = await response.json().catch(() => ({}));
+
+  if (response.status === 401 || payload?.code === "AUTH_REQUIRED") {
+    showAuthOverlay(payload?.message || payload?.error || "Faça login para continuar.");
+  }
+
   if (!response.ok) {
-    const message = payload.error || `HTTP ${response.status}`;
+    const message = payload.error || payload.message || `HTTP ${response.status}`;
     const error = new Error(message);
+    error.status = response.status;
     error.payload = payload;
+    if (response.status === 401) error.authRequired = true;
+    if (response.status === 403 || payload.permissionDenied) error.permissionDenied = true;
     throw error;
   }
   return payload;
@@ -720,7 +788,7 @@ async function handleRefreshKnowledgeAdmin(force = false) {
       showToast("Status da base atualizado.");
     } catch (error) {
       safeHtml("knowledgeAdminPanel", `<div class="empty-mini">Nao foi possivel carregar o status da base: ${escapeHtml(error.message)}</div>`);
-      showToast("Falha ao carregar status da base.");
+      showCopilotError("Falha ao carregar status da base", error, "Base → Freshdesk Solutions");
     }
   });
 }
@@ -1245,21 +1313,32 @@ function renderResult(rawData, options = {}) {
 
 
 function getFriendlyErrorMessage(error) {
-  const raw = String(error?.message || error || "").trim();
+  const payload = error?.payload || {};
+  const raw = String(payload.message || payload.error || error?.message || error || "").trim();
+
+  if (payload.permissionDenied || error?.permissionDenied || /401|403|unauthorized|forbidden|permissao negada|permissão negada/i.test(raw)) {
+    return payload.hint || "Permissão negada na base do Freshdesk. Use uma API key de agente com permissão em Solutions, especialmente para artigos em rascunho ou privados.";
+  }
+
+  if (error?.authRequired || payload.code === "AUTH_REQUIRED") {
+    return "Sua sessão expirou ou o acesso protegido está ativo. Faça login para continuar.";
+  }
+
   if (!raw) return "Não consegui concluir a ação agora. Tente novamente em alguns instantes.";
-  if (/failed to fetch|network|load failed|cors/i.test(raw)) {
-    return "A API não respondeu ou o navegador bloqueou a comunicação. Verifique a conexão e tente novamente.";
+
+  if (/failed to fetch|network|load failed|cors|fetch failed/i.test(raw)) {
+    return payload.hint || "A API não respondeu ou a conexão com o Freshdesk falhou. Valide domínio, CORS, FRESHDESK_DOMAIN e tente novamente.";
   }
-  if (/401|403|unauthorized|forbidden/i.test(raw)) {
-    return "A API retornou permissão negada. Confira token, credenciais ou liberação do Freshdesk.";
-  }
+
   if (/404|not found/i.test(raw)) {
-    return "Não encontrei o recurso solicitado. Confira o número do ticket ou o caminho informado.";
+    return "Não encontrei o recurso solicitado. Confira o número do ticket, artigo, pasta ou idioma.";
   }
+
   if (/500|502|503|504|server/i.test(raw)) {
-    return "A API respondeu com instabilidade. Aguarde alguns segundos e tente novamente.";
+    return payload.hint || "A API respondeu com instabilidade. Aguarde alguns segundos e tente novamente.";
   }
-  return raw.length > 160 ? `${raw.slice(0, 157)}...` : raw;
+
+  return raw.length > 180 ? `${raw.slice(0, 177)}...` : raw;
 }
 
 function showCopilotNotice(type = "info", title = "Aviso do Copilot", message = "", meta = "") {
@@ -1302,6 +1381,23 @@ function showCopilotNotice(type = "info", title = "Aviso do Copilot", message = 
 }
 
 function showCopilotError(title, error, meta = "") {
+  const payload = error?.payload || {};
+  if (payload.permissionDenied || error?.permissionDenied) {
+    showCopilotNotice(
+      "warning",
+      "Permissão na base Freshdesk",
+      getFriendlyErrorMessage(error),
+      meta || "Freshdesk Solutions → API key"
+    );
+    return;
+  }
+
+  if (error?.authRequired || payload.code === "AUTH_REQUIRED") {
+    showAuthOverlay(payload.message || payload.error || "Faça login para continuar.");
+    showCopilotNotice("info", "Sessão necessária", getFriendlyErrorMessage(error), "Arriba Auth");
+    return;
+  }
+
   showCopilotNotice("error", title, getFriendlyErrorMessage(error), meta || "Ação preservada em modo seguro");
 }
 
@@ -1518,6 +1614,7 @@ function setupEvents() {
   getEl("copyValidationBtn")?.addEventListener("click", handleCopyValidation);
   getEl("approveValidationBtn")?.addEventListener("click", handleApproveValidation);
   getEl("presentationModeToggle")?.addEventListener("change", handlePresentationModeChange);
+  getEl("authLoginForm")?.addEventListener("submit", handleAuthLogin);
   setupCopyButtons();
   getEl("packageSuggestions")?.addEventListener("click", (event) => {
     const copyBtn = event.target.closest("[data-package-copy]");
@@ -1534,6 +1631,7 @@ function setupEvents() {
   });
   renderQualityDashboard();
   updateFlowStatus("input");
+  checkAuthOnLoad();
 
   getEl("supportForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();

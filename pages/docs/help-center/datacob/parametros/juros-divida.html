@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro de juros sobre a divida | DataCob</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    body { background: #f7f4f0; color: #232120; }
+    .article-shell { max-width: 980px; margin: 0 auto; padding: 32px 18px 56px; }
+    .article-hero { border-bottom: 1px solid #e8e2d9; padding-bottom: 22px; margin-bottom: 24px; }
+    .article-hero span { color: #b84a39; font-weight: 800; text-transform: uppercase; font-size: 0.78rem; }
+    .article-hero h1 { margin: 8px 0 12px; font-weight: 800; letter-spacing: 0; text-transform: none; }
+    .path-box, .article-card { background: #fff; border: 1px solid #e8e2d9; border-radius: 8px; padding: 18px; margin-bottom: 18px; }
+    .path-box strong { display: block; color: #b84a39; margin-bottom: 6px; }
+    .article-card h2 { font-size: 1.1rem; letter-spacing: 0; text-transform: none; margin-bottom: 12px; }
+    li { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <main class="article-shell">
+    <nav class="mb-3">
+      <a href="/pages/docs/help-center/index.html">Help Center</a>
+      <span class="mx-2">/</span>
+      <span>Parametros DataCob</span>
+    </nav>
+
+    <header class="article-hero">
+      <span>DataCob / Parametros / Contrato</span>
+      <h1>Cadastro de juros sobre a divida</h1>
+      <p>Guia rapido para orientar analistas no cadastro e validacao de regras de juros sobre divida no DataCob.</p>
+    </header>
+
+    <section class="path-box">
+      <strong>Caminho da tela</strong>
+      Parametros &gt; Visualizacao de Parametros &gt; Contrato &gt; Juros
+    </section>
+
+    <section class="article-card">
+      <h2>Passo a passo</h2>
+      <ol>
+        <li>Acesse o menu Parametros.</li>
+        <li>Entre em Visualizacao de Parametros.</li>
+        <li>Abra a area de Contrato.</li>
+        <li>Localize a configuracao relacionada a juros.</li>
+        <li>Valide se a regra sera aplicada por grupo, cliente, fase ou carteira.</li>
+        <li>Salve a configuracao e teste em um contrato de exemplo.</li>
+      </ol>
+    </section>
+
+    <section class="article-card">
+      <h2>Checklist de validacao</h2>
+      <ul>
+        <li>Confirmar se o cliente utiliza regra de juros.</li>
+        <li>Validar grupo, cliente, fase ou carteira.</li>
+        <li>Conferir se a regra impacta acordo, contrato ou parcela.</li>
+        <li>Testar em contrato de exemplo.</li>
+        <li>Registrar evidencia se necessario.</li>
+      </ul>
+    </section>
+
+    <section class="article-card">
+      <h2>Quando encaminhar para DEV</h2>
+      <p>Encaminhe para Desenvolvimento apenas se a regra nao estiver sendo aplicada corretamente apos validar os parametros, testar em contrato de exemplo e coletar evidencias.</p>
+    </section>
+  </main>
+</body>
+</html>

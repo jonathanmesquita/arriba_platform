@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Arriba Platform: vitrine fullstack com IA para suporte PH3A, automacao DataCob, Help Center, treinamento e ferramentas de dados." />
+  <title>Arriba Platform | PH3A AI</title>
+  <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/oracle-inspired.css" />
+  <style>
+    :root {
+      --arriba-red: #c74634;
+      --arriba-orange: #f45124;
+      --arriba-ink: #171717;
+      --arriba-muted: #5f5a55;
+      --arriba-dark: #15191f;
+      --arriba-bar: #3b3732;
+      --arriba-line: #d8d2ca;
+      --arriba-bg: #f7f3ee;
+      --arriba-panel: #fff;
+      --arriba-teal: #65c7c5;
+      --arriba-gold: #f0c36a;
+    }
+
+    body.arriba-home {
+      background: var(--arriba-bg);
+      color: var(--arriba-ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body.dark-mode.arriba-home {
+      --arriba-bg: #111315;
+      --arriba-panel: #1a1d20;
+      --arriba-ink: #f6f1ea;
+      --arriba-muted: #b7afa7;
+      --arriba-line: #34302c;
+      background: var(--arriba-bg);
+      color: var(--arriba-ink);
+    }
+
+    .rw-container {
+      width: min(1180px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .arriba-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1060;
+      background: var(--arriba-panel);
+      border-bottom: 1px solid var(--arriba-line);
+    }
+
+    .arriba-topbar-inner {
+      min-height: 70px;
+      display: grid;
+      grid-template-columns: auto auto minmax(220px, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      padding: 0 30px;
+    }
+
+    .arriba-brand {
+      color: var(--arriba-red);
+      font-size: 1.55rem;
+      font-weight: 950;
+      line-height: .88;
+      letter-spacing: -.055em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .arriba-brand small {
+      display: block;
+      color: var(--arriba-ink);
+      font-size: .64rem;
+      letter-spacing: .12em;
+      margin-top: 3px;
+      text-transform: uppercase;
+    }
+
+    .enterprise-icon-btn,
+    .enterprise-flag-btn {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--arriba-ink);
+      display: inline-grid;
+      place-items: center;
+    }
+
+    .enterprise-icon-btn:hover,
+    .enterprise-flag-btn:hover {
+      background: rgba(199, 70, 52, .1);
+    }
+
+    .arriba-search {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid #cfc8c1;
+      border-radius: 6px;
+      background: var(--arriba-panel);
+      color: var(--arriba-muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      text-align: left;
+    }
+
+    .arriba-search:hover,
+    .arriba-search:focus-visible {
+      outline: none;
+      border-color: var(--arriba-red);
+      box-shadow: 0 0 0 3px rgba(199, 70, 52, .12);
+    }
+
+    .arriba-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .arriba-nav {
+      background: var(--arriba-dark);
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.16);
+    }
+
+    .arriba-nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      overflow-x: auto;
+      min-height: 54px;
+      padding: 0 30px;
+    }
+
+    .arriba-nav a,
+    .arriba-nav button {
+      min-height: 54px;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      background: transparent;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      font-size: .92rem;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .arriba-nav a:hover,
+    .arriba-nav button:hover,
+    .arriba-nav .active {
+      border-bottom-color: var(--arriba-orange);
+      color: #fff;
+    }
+
+    .oracle-hero {
+      position: relative;
+      min-height: 492px;
+      color: #fff;
+      overflow: hidden;
+      isolation: isolate;
+      background: #132c3b;
+    }
+
+    .oracle-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(90deg, rgba(16, 31, 42, .96) 0%, rgba(16, 31, 42, .86) 43%, rgba(16, 31, 42, .36) 100%),
+        var(--hero-bg, url("assets/img/capas-wallpaper-menus/sc24-ai-database.webp")) center/cover no-repeat;
+      transform: scale(1.01);
+      transition: opacity .32s ease, transform 6s ease;
+    }
+
+    .oracle-hero.is-changing::before {
+      opacity: .72;
+      transform: scale(1.045);
+    }
+
+    .oracle-hero-content {
+      min-height: 492px;
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(360px, .8fr);
+      align-items: center;
+      gap: 54px;
+      padding: 62px 0 86px;
+    }
+
+    .hero-eyebrow {
+      color: var(--hero-accent, var(--arriba-teal));
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .72rem;
+      font-weight: 950;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: var(--arriba-gold);
+    }
+
+    .oracle-hero h1 {
+      max-width: 730px;
+      font-size: clamp(2.55rem, 5.4vw, 5.4rem);
+      line-height: .98;
+      font-weight: 300;
+      letter-spacing: -.045em;
+      margin: 0 0 24px;
+    }
+
+    .oracle-hero p {
+      max-width: 720px;
+      color: rgba(255,255,255,.9);
+      font-size: clamp(1rem, 1.25vw, 1.18rem);
+      line-height: 1.72;
+      margin: 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .oracle-btn {
+      min-height: 46px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 22px;
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .oracle-btn-primary {
+      background: #fff;
+      color: #12171d;
+    }
+
+    .oracle-btn-primary:hover { color: #12171d; background: #f0ebe5; }
+
+    .oracle-btn-secondary {
+      border: 1px solid rgba(255,255,255,.72);
+      color: #fff;
+    }
+
+    .oracle-btn-secondary:hover { color: #fff; background: rgba(255,255,255,.12); }
+
+    .hero-visual-card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 312px;
+      box-shadow: 0 32px 90px rgba(0,0,0,.34);
+      background: rgba(255,255,255,.9);
+      color: #1f252b;
+      transform: translateZ(0);
+    }
+
+    .hero-visual-card img {
+      width: 100%;
+      height: 312px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-visual-card.is-contain img {
+      object-fit: contain;
+      padding: 26px;
+      background: #f4eee8;
+    }
+
+    .hero-visual-caption {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 22px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.92);
+      color: #192029;
+      padding: 18px 20px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.18);
+    }
+
+    .hero-visual-caption strong {
+      display: block;
+      font-size: 1.3rem;
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+
+    .hero-visual-caption small { color: #5f5a55; }
+
+    .hero-arrow {
+      position: absolute;
+      top: 50%;
+      z-index: 5;
+      width: 50px;
+      height: 58px;
+      border: 0;
+      border-radius: 0 6px 6px 0;
+      background: rgba(0,0,0,.52);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      transform: translateY(-50%);
+      font-size: 1.6rem;
+    }
+
+    .hero-arrow.next {
+      right: 0;
+      border-radius: 6px 0 0 6px;
+    }
+
+    .hero-arrow.prev { left: 0; }
+    .hero-arrow:hover { background: rgba(0,0,0,.72); }
+
+    .hero-bottom-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      min-height: 42px;
+      background: rgba(59,55,50,.86);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 8px 80px;
+      color: rgba(255,255,255,.92);
+      font-size: .92rem;
+      font-weight: 750;
+    }
+
+    .hero-bottom-bar a { color: #fff; text-decoration: underline; }
+
+    .hero-dots {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .hero-dot {
+      width: 50px;
+      height: 6px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      padding: 0;
+    }
+
+    .hero-dot[aria-current="true"] {
+      background: #fff;
+      border-color: #fff;
+    }
+
+    .hero-pause {
+      width: 36px;
+      height: 32px;
+      border: 1px solid rgba(255,255,255,.65);
+      border-radius: 4px;
+      color: #fff;
+      background: transparent;
+    }
+
+    .quick-band {
+      background: var(--arriba-panel);
+      border-bottom: 1px solid var(--arriba-line);
+      padding: 30px 0;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(110px, 1fr));
+      gap: 16px;
+    }
+
+    .quick-tile {
+      min-height: 112px;
+      border: 1px solid var(--arriba-line);
+      border-radius: 8px;
+      background: var(--arriba-panel);
+      color: var(--arriba-ink);
+      text-decoration: none;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 10px;
+      padding: 14px;
+      text-align: center;
+      font-weight: 850;
+      box-shadow: 0 10px 24px rgba(0,0,0,.08);
+      transition: transform .18s ease, border-color .18s ease;
+    }
+
+    .quick-tile i { color: var(--arriba-orange); font-size: 1.25rem; }
+    .quick-tile:hover { color: var(--arriba-ink); border-color: var(--arriba-red); transform: translateY(-3px); }
+
+    .section-wrap { padding: 72px 0; }
+
+    .section-heading { max-width: 840px; margin-bottom: 30px; }
+    .section-heading span {
+      color: var(--arriba-red);
+      display: inline-block;
+      font-size: .76rem;
+      font-weight: 950;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .section-heading h2 {
+      font-size: clamp(2rem, 3.2vw, 3.35rem);
+      line-height: 1.1;
+      font-weight: 300;
+      letter-spacing: -.025em;
+      margin-bottom: 12px;
+    }
+    .section-heading p { color: var(--arriba-muted); line-height: 1.75; font-size: 1.02rem; }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .product-card {
+      min-height: 282px;
+      border: 1px solid var(--arriba-line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--arriba-panel);
+      color: var(--arriba-ink);
+      text-decoration: none;
+      box-shadow: 0 16px 40px rgba(0,0,0,.08);
+      transition: transform .18s ease, border-color .18s ease;
+    }
+
+    .product-card:hover { color: var(--arriba-ink); transform: translateY(-4px); border-color: var(--arriba-red); }
+    .product-card img { width: 100%; height: 136px; object-fit: cover; display: block; }
+    .product-card-content { padding: 20px; }
+    .product-card small { color: var(--arriba-red); font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
+    .product-card h3 { font-size: 1.22rem; font-weight: 850; margin: 9px 0; }
+    .product-card p { color: var(--arriba-muted); margin: 0; line-height: 1.58; }
+
+    .case-band { background: #e8e2db; }
+    body.dark-mode .case-band { background: #191b1d; }
+
+    .case-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(360px, 1fr);
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .case-panel {
+      border: 1px solid var(--arriba-line);
+      border-radius: 10px;
+      background: var(--arriba-panel);
+      padding: 32px;
+    }
+
+    .case-panel h2 { font-size: clamp(2rem, 3.2vw, 3.2rem); font-weight: 300; letter-spacing: -.03em; }
+    .case-panel p { color: var(--arriba-muted); line-height: 1.75; }
+
+    .impact-list { display: grid; gap: 14px; margin-top: 22px; }
+    .impact-list div { border-left: 4px solid var(--arriba-orange); padding-left: 14px; }
+    .impact-list strong { display: block; font-size: 1.15rem; }
+
+    .architecture-board {
+      border-radius: 10px;
+      background: #132c3b;
+      color: #fff;
+      padding: 32px;
+    }
+
+    .architecture-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: stretch;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .architecture-node {
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px;
+      background: rgba(255,255,255,.08);
+      display: grid;
+      align-content: center;
+      gap: 5px;
+      min-height: 108px;
+      padding: 18px;
+    }
+    .architecture-node small { color: rgba(255,255,255,.72); }
+
+    .enterprise-footer {
+      background: var(--arriba-panel);
+      border-top: 1px solid var(--arriba-line);
+      padding: 24px 0;
+    }
+    .enterprise-footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 24px;
+      justify-content: space-between;
+      color: var(--arriba-muted);
+      font-weight: 750;
+    }
+
+    .region-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px;
+    }
+    .region-grid h6 { font-weight: 900; margin-bottom: 12px; }
+    .region-grid a { display: block; color: #05739b; text-decoration: none; font-weight: 700; margin-bottom: 9px; }
+    .region-grid img { margin-right: 8px; }
+
+    #chatbotBtn {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 1020;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--arriba-red);
+      border: 0;
+    }
+
+    .chatbot-popup {
+      position: fixed;
+      right: 22px;
+      bottom: 92px;
+      z-index: 1021;
+      width: min(360px, calc(100vw - 32px));
+    }
+
+    @media (max-width: 1100px) {
+      .oracle-hero-content, .case-grid { grid-template-columns: 1fr; }
+      .quick-grid, .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero-visual-card { max-width: 620px; }
+    }
+
+    @media (max-width: 720px) {
+      .arriba-topbar-inner { grid-template-columns: auto 1fr auto; min-height: 118px; padding: 0 14px; }
+      .arriba-search { grid-column: 1 / -1; order: 2; margin-bottom: 12px; }
+      .arriba-actions { gap: 2px; }
+      .arriba-nav-inner { padding: 0 16px; gap: 18px; }
+      .oracle-hero-content { padding: 44px 0 88px; min-height: auto; }
+      .hero-visual-card { min-height: 230px; }
+      .hero-visual-card img { height: 230px; }
+      .hero-bottom-bar { padding: 8px 58px; flex-wrap: wrap; gap: 10px; }
+      .hero-dot { width: 34px; }
+      .quick-grid, .product-grid, .region-grid { grid-template-columns: 1fr; }
+      .architecture-flow { grid-template-columns: 1fr; }
+      .architecture-flow > span { display: none; }
+      .rw-container { width: min(100% - 28px, 1180px); }
+    }
+  </style>
+</head>
+<body class="arriba-home d-flex flex-column min-vh-100">
+  <header class="arriba-topbar" role="banner">
+    <div class="arriba-topbar-inner">
+      <button class="enterprise-icon-btn" type="button" id="enterpriseMenuToggle" aria-label="Abrir menu" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <a class="arriba-brand" href="index.html" aria-label="Arriba Platform Home">
+        ARRIBA
+        <small>PH3A AI</small>
+      </a>
+
+      <button class="arriba-search" type="button" id="searchToggleBtn" aria-label="Pesquisar na Arriba Platform">
+        <i class="fas fa-search"></i>
+        <span>Pesquisar ferramentas, erros, tickets, DataCob ou IA</span>
+      </button>
+
+      <div class="arriba-actions">
+        <button type="button" class="enterprise-flag-btn" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar idioma">
+          <img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil" width="24" height="24" id="currentLanguageFlag">
+        </button>
+        <button type="button" class="enterprise-icon-btn" id="toggleTheme" aria-label="Alternar tema">
+          <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+        <button type="button" class="enterprise-icon-btn" id="openChatFromTopbar" aria-label="Abrir assistente PHIA">
+          <i class="far fa-comment"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="arriba-nav" aria-label="Navegacao principal">
+    <div class="arriba-nav-inner">
+      <button type="button" id="enterpriseMenuOpenProducts" class="active">Produtos</button>
+      <a href="tools/datacob/treinamento-cliente/index.html">Portal DataCob</a>
+      <a href="#tools-section">Ferramentas</a>
+      <a href="#ph3a-ai">PH3A com IA</a>
+      <a href="#architecture-section">Arquitetura</a>
+      <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
+      <a href="pages/case-study/index.html" data-route>Case Studies</a>
+      <a href="pages/lab/index.html" data-route>Lab</a>
+      <a href="login.html">Login</a>
+    </div>
+  </nav>
+
+  <div class="enterprise-menu-backdrop" id="enterpriseMenuBackdrop"></div>
+  <aside class="enterprise-menu" id="enterpriseMenu" aria-label="Menu principal"></aside>
+
+  <main id="appContent" class="flex-grow-1">
+    <section class="oracle-hero" id="oracleHero" aria-roledescription="carousel" aria-label="Destaques da Arriba Platform">
+      <button class="hero-arrow prev" type="button" id="heroPrev" aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="hero-arrow next" type="button" id="heroNext" aria-label="Proximo slide"><i class="fa-solid fa-chevron-right"></i></button>
+
+      <div class="rw-container oracle-hero-content">
+        <div>
+          <span class="hero-eyebrow" id="heroEyebrow">Fullstack SaaS · DataCob · IA</span>
+          <h1 id="heroTitle">A próxima geração da Arriba Platform com IA.</h1>
+          <p id="heroCopy">Uma vitrine fullstack inspirada em produtos corporativos: suporte com IA, automação DataCob, base de conhecimento, dashboards de atendimento e storytelling técnico para entrevista.</p>
+          <div class="hero-actions">
+            <a class="oracle-btn oracle-btn-primary" id="heroPrimary" href="tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-wand-magic-sparkles"></i> Explorar Copilot</a>
+            <a class="oracle-btn oracle-btn-secondary" id="heroSecondary" href="pages/docs/help-center/index.html" data-route>Abrir Help Center</a>
+          </div>
+        </div>
+
+        <div class="hero-visual-card" id="heroVisualCard">
+          <img id="heroImage" src="assets/img/capas-wallpaper-menus/sc24-ai-database.webp" alt="Arriba Platform com IA" />
+          <div class="hero-visual-caption">
+            <strong id="heroCardTitle">PH3A Support Intelligence</strong>
+            <small id="heroCardCopy">Suporte, dados e conhecimento conectados.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-bottom-bar">
+        <span id="heroBottomText">Support Copilot, Help Center e automações DataCob em uma experiência só.</span>
+        <a id="heroBottomLink" href="tools/datacob/support-copilot/support-copilot.html">Saiba mais</a>
+        <div class="hero-dots" id="heroDots" role="tablist" aria-label="Slides"></div>
+        <button class="hero-pause" type="button" id="heroPause" aria-label="Pausar carousel"><i class="fa-solid fa-pause"></i></button>
+      </div>
+    </section>
+
+    <section class="quick-band" aria-label="Atalhos principais">
+      <div class="rw-container quick-grid">
+        <a class="quick-tile" href="pages/docs/help-center/index.html" data-route><i class="fa-solid fa-book-open"></i><span>Help Center</span></a>
+        <a class="quick-tile" href="tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-headset"></i><span>AI Support Copilot</span></a>
+        <a class="quick-tile" href="tools/datacob/arriba-csv-generator/csv-template-generator.html"><i class="fa-solid fa-table-list"></i><span>DataCob CSV</span></a>
+        <a class="quick-tile" href="tools/datacob/massa-dados/massa-dados.html"><i class="fa-solid fa-database"></i><span>Massa de dados</span></a>
+        <a class="quick-tile" href="tools/datacob/treinamento-cliente/index.html"><i class="fa-solid fa-graduation-cap"></i><span>Treinamento DataCob</span></a>
+        <a class="quick-tile" href="tools/dados/json-validator/json_validator.html"><i class="fa-solid fa-code"></i><span>JSON</span></a>
+        <a class="quick-tile" href="pages/docs/blog/index.html" data-route><i class="fa-solid fa-bug"></i><span>Erros e blog</span></a>
+        <a class="quick-tile" href="pages/case-study/deploy-cloud.html" data-route><i class="fa-solid fa-cloud"></i><span>Cloud</span></a>
+      </div>
+    </section>
+
+    <section class="section-wrap" id="tools-section">
+      <div class="rw-container">
+        <div class="section-heading">
+          <span>Ferramentas de operação</span>
+          <h2>Rotinas DataCob com cara de produto SaaS.</h2>
+          <p>Gerador CSV, massa de dados, JSON, artigos Freshdesk e materiais técnicos organizados em uma experiência consistente para portfólio e uso real.</p>
+        </div>
+
+        <div class="product-grid">
+          <a class="product-card" href="tools/datacob/support-copilot/support-copilot.html">
+            <img src="assets/img/capas-wallpaper-menus/sc24-ai-database.webp" alt="Support Copilot com IA" />
+            <div class="product-card-content"><small>IA Copilot</small><h3>Suporte com IA</h3><p>Resumo, prioridade, checklist, manuais sugeridos e resposta inicial para o analista.</p></div>
+          </a>
+          <a class="product-card" href="tools/datacob/treinamento-cliente/index.html">
+            <img src="assets/img/capas-wallpaper-menus/cv-home-tag.webp" alt="Treinamento DataCob para clientes" />
+            <div class="product-card-content"><small>Cliente</small><h3>Treinamento DataCob</h3><p>Transforme prints, vídeos e regras de suporte em uma jornada guiada para o cliente.</p></div>
+          </a>
+          <a class="product-card" href="pages/docs/help-center/index.html" data-route>
+            <img src="assets/img/capas-wallpaper-menus/cv-home-cob.webp" alt="Manual interativo DataCob" />
+            <div class="product-card-content"><small>Base local</small><h3>Manual interativo</h3><p>Busca por rotinas, caminhos de tela, erros e links, mesmo sem banco de dados.</p></div>
+          </a>
+          <a class="product-card" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">
+            <img src="assets/img/capas-wallpaper-menus/datacob-man-min.webp" alt="Ferramentas operacionais DataCob" />
+            <div class="product-card-content"><small>Operação</small><h3>DataCob CSV</h3><p>Layouts, validações, massa de dados e arquivos de apoio com visual de produto.</p></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-wrap case-band" id="ph3a-ai">
+      <div class="rw-container case-grid">
+        <article class="case-panel">
+          <span class="hero-eyebrow">Suporte a clientes</span>
+          <h2>Como usar IA para melhorar atendimento e experiência do cliente?</h2>
+          <p>A Arriba Platform organiza suporte, treinamento, base de conhecimento e ferramentas DataCob em um fluxo simples: entender rápido, orientar melhor e transformar recorrência em melhoria.</p>
+          <div class="impact-list">
+            <div><strong>Reduzir tempo de resposta</strong><span>O Copilot resume o ticket e sugere próximos passos antes da primeira resposta.</span></div>
+            <div><strong>Aumentar resolutividade</strong><span>Manual, checklist e histórico ficam no mesmo lugar.</span></div>
+            <div><strong>Criar suporte preditivo</strong><span>Chamados recorrentes viram sinais para base, treinamento e DEV.</span></div>
+            <div><strong>Antecipar problemas do cliente</strong><span>Treinamento e manuais reduzem dúvidas repetidas antes de virarem chamados.</span></div>
+          </div>
+        </article>
+
+        <article class="architecture-board" id="architecture-section">
+          <span class="hero-eyebrow">Arquitetura demonstrável</span>
+          <h2 class="h3">Do ticket ao insight.</h2>
+          <div class="architecture-flow">
+            <div class="architecture-node"><strong>Entrada</strong><small>Ticket, texto manual ou dúvida do cliente</small></div>
+            <span class="d-flex align-items-center"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="architecture-node"><strong>Base + IA</strong><small>Manuais locais, Freshdesk e OpenAI</small></div>
+            <span class="d-flex align-items-center"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="architecture-node"><strong>Saída</strong><small>Resposta, checklist, treinamento e recorrência</small></div>
+          </div>
+          <p class="mb-0 text-white-50">Começa seguro, em modo leitura e com fallback local. Depois evolui para integrações mais fortes.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="enterprise-footer">
+    <div class="rw-container enterprise-footer-inner">
+      <span>Arriba Platform | PH3A AI</span>
+      <span>Frontend estático + Node API + Freshdesk + OpenAI</span>
+      <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
+      <a href="pages/case-study/index.html" data-route>Case Studies</a>
+    </div>
+  </footer>
+
+  <button id="chatbotBtn" class="btn btn-primary shadow-lg" aria-label="Abrir chatbot"><i class="fas fa-comments"></i></button>
+  <div id="chatbot" class="chatbot-popup card d-none">
+    <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+      <span>PHIA · Assistente Arriba</span>
+      <button id="closeChat" class="btn-close btn-close-white" aria-label="Fechar chatbot"></button>
+    </div>
+    <div class="card-body chat-window" id="chatWindow"></div>
+    <div class="card-footer d-flex">
+      <input type="text" id="chatInput" class="form-control" placeholder="Digite sua dúvida sobre DataCob...">
+      <button id="sendChat" class="btn btn-danger ms-2">Enviar</button>
+    </div>
+  </div>
+
+  <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold" id="languageModalLabel">Selecione o idioma</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <div class="region-grid">
+            <div><h6>Europa</h6>
+              <a href="#" class="select-lang" data-lang-code="en" data-flag="us" data-country="Estados Unidos"><img src="assets/img/bandeiras_idiomas/flg-us.svg" alt="" width="22">English (US)</a>
+              <a href="#" class="select-lang" data-lang-code="es" data-flag="es" data-country="Espanha"><img src="assets/img/bandeiras_idiomas/flg-es.svg" alt="" width="22">Español</a>
+              <a href="#" class="select-lang" data-lang-code="fr" data-flag="fr" data-country="França"><img src="assets/img/bandeiras_idiomas/flg-fr.svg" alt="" width="22">Français</a>
+              <a href="#" class="select-lang" data-lang-code="de" data-flag="de" data-country="Alemanha"><img src="assets/img/bandeiras_idiomas/flg-de.svg" alt="" width="22">Alemanha (Deutsch)</a>
+            </div>
+            <div><h6>Américas</h6>
+              <a href="#" class="select-lang" data-lang-code="pt" data-flag="br" data-country="Brasil"><img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="" width="22">Português (Brasil)</a>
+              <a href="#" class="select-lang" data-lang-code="es" data-flag="mx" data-country="México"><img src="assets/img/bandeiras_idiomas/flg-mx.svg" alt="" width="22">Español (México)</a>
+              <a href="#" class="select-lang" data-lang-code="en" data-flag="ca" data-country="Canada"><img src="assets/img/bandeiras_idiomas/flg-ca.svg" alt="" width="22">Canada</a>
+            </div>
+            <div><h6>Ásia e Oceania</h6>
+              <a href="#" class="select-lang" data-lang-code="ko" data-flag="kr" data-country="Coreia do Sul"><img src="assets/img/bandeiras_idiomas/flg-kr.svg" alt="" width="22">한국어 (Coreia do Sul)</a>
+              <a href="#" class="select-lang" data-lang-code="en" data-flag="au" data-country="Australia"><img src="assets/img/bandeiras_idiomas/flg-au.svg" alt="" width="22">Australia</a>
+              <a href="#" class="select-lang" data-lang-code="en" data-flag="in" data-country="India"><img src="assets/img/bandeiras_idiomas/flg-in.svg" alt="" width="22">India</a>
+            </div>
+            <div><h6>Oriente Médio e África</h6>
+              <a href="#" class="select-lang" data-lang-code="en" data-flag="za" data-country="South Africa"><img src="assets/img/bandeiras_idiomas/flg-za.svg" alt="" width="22">South Africa</a>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-center text-secondary small">
+          <span>© 2026 Arriba Platform</span><span class="mx-3">Versão: 2.9.10</span><a href="pages/docs/help-center/index.html" data-route>Help Center</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/navigation-v2.js"></script>
+  <script src="assets/js/docs-search.js"></script>
+  <script type="module" src="assets/js/router.js"></script>
+  <script>
+    document.getElementById("enterpriseMenuOpenProducts")?.addEventListener("click", () => {
+      document.getElementById("enterpriseMenuToggle")?.click();
+    });
+
+    document.querySelectorAll(".select-lang").forEach((item) => {
+      item.addEventListener("click", (event) => {
+        event.preventDefault();
+        const flag = item.dataset.flag || "br";
+        const flagEl = document.getElementById("currentLanguageFlag");
+        if (flagEl) flagEl.src = `assets/img/bandeiras_idiomas/flg-${flag}.svg`;
+        const modal = bootstrap.Modal.getInstance(document.getElementById("languageModal"));
+        modal?.hide();
+      });
+    });
+
+    document.getElementById("toggleTheme")?.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      const icon = document.getElementById("themeIcon");
+      if (icon) icon.className = document.body.classList.contains("dark-mode") ? "fas fa-sun" : "fas fa-moon";
+      localStorage.setItem("arriba-theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+    });
+
+    if (localStorage.getItem("arriba-theme") === "dark") {
+      document.body.classList.add("dark-mode");
+      const icon = document.getElementById("themeIcon");
+      if (icon) icon.className = "fas fa-sun";
+    }
+
+    (() => {
+      const hero = document.getElementById("oracleHero");
+      if (!hero) return;
+      const slides = [
+        {
+          eyebrow: "Fullstack SaaS · DataCob · Suporte técnico",
+          title: "A próxima geração da Arriba Platform com IA.",
+          copy: "Uma vitrine fullstack inspirada em produtos corporativos: suporte com IA, automação DataCob, base de conhecimento, dashboards de atendimento e storytelling técnico para entrevista.",
+          image: "assets/img/capas-wallpaper-menus/sc24-ai-database.webp",
+          alt: "Plataforma com IA e dados",
+          cardTitle: "PH3A Support Intelligence",
+          cardCopy: "Suporte, dados e conhecimento conectados.",
+          primaryText: "Explorar Copilot",
+          primaryHref: "tools/datacob/support-copilot/support-copilot.html",
+          primaryIcon: "fa-wand-magic-sparkles",
+          secondaryText: "Abrir Help Center",
+          secondaryHref: "pages/docs/help-center/index.html",
+          accent: "#65c7c5",
+          bottomText: "Support Copilot, Help Center e automações DataCob em uma experiência só."
+        },
+        {
+          eyebrow: "Portal DataCob para cliente",
+          title: "Treinamento DataCob com passos claros e reutilizáveis.",
+          copy: "Nova área para transformar prints, vídeos e regras de suporte em uma jornada de treinamento para clientes, com módulos, checklists e documentação guiada.",
+          image: "assets/img/capas-wallpaper-menus/cv-home-tag.webp",
+          alt: "Clientes realizando treinamento",
+          cardTitle: "Treinamento DataCob",
+          cardCopy: "Conteúdo guiado para reduzir dúvidas repetidas.",
+          primaryText: "Abrir treinamento",
+          primaryHref: "tools/datacob/treinamento-cliente/index.html",
+          primaryIcon: "fa-graduation-cap",
+          secondaryText: "Ver manuais",
+          secondaryHref: "pages/docs/help-center/index.html",
+          accent: "#f45124",
+          bottomText: "Transforme prints e rotinas em material reutilizável para clientes e suporte."
+        },
+        {
+          eyebrow: "Manual interativo DataCob",
+          title: "Respostas padronizadas para suporte com base local.",
+          copy: "O chatbot consulta manuais, rotinas, caminhos de tela e links mesmo sem banco de dados, reduzindo retrabalho e acelerando orientações práticas.",
+          image: "assets/img/capas-wallpaper-menus/cv-home-cob.webp",
+          alt: "Manual interativo DataCob",
+          cardTitle: "Manual interativo",
+          cardCopy: "Busca local por rotina, erro, pacote e caminho de tela.",
+          primaryText: "Pesquisar base",
+          primaryHref: "pages/docs/help-center/index.html",
+          primaryIcon: "fa-book-open",
+          secondaryText: "Perguntar à PHIA",
+          secondaryHref: "#chatbot",
+          accent: "#f0c36a",
+          bottomText: "Chatbot e Help Center trabalhando juntos para orientar o analista."
+        },
+        {
+          eyebrow: "Ferramentas de operação",
+          title: "Rotinas DataCob com cara de produto SaaS.",
+          copy: "Gerador CSV, massa de dados, JSON, artigos Freshdesk e materiais técnicos organizados em uma experiência consistente para portfólio e uso real.",
+          image: "assets/img/capas-wallpaper-menus/datacob-man-min.webp",
+          alt: "Ferramentas operacionais DataCob",
+          cardTitle: "Operação DataCob",
+          cardCopy: "CSV, massa de dados, JSON e documentação.",
+          primaryText: "Abrir CSV",
+          primaryHref: "tools/datacob/arriba-csv-generator/csv-template-generator.html",
+          primaryIcon: "fa-table-list",
+          secondaryText: "Ver ferramentas",
+          secondaryHref: "#tools-section",
+          accent: "#c74634",
+          bottomText: "Ferramentas recorrentes centralizadas em um portal único."
+        }
+      ];
+
+      const refs = {
+        eyebrow: document.getElementById("heroEyebrow"),
+        title: document.getElementById("heroTitle"),
+        copy: document.getElementById("heroCopy"),
+        image: document.getElementById("heroImage"),
+        visual: document.getElementById("heroVisualCard"),
+        cardTitle: document.getElementById("heroCardTitle"),
+        cardCopy: document.getElementById("heroCardCopy"),
+        primary: document.getElementById("heroPrimary"),
+        secondary: document.getElementById("heroSecondary"),
+        bottomText: document.getElementById("heroBottomText"),
+        bottomLink: document.getElementById("heroBottomLink"),
+        dots: document.getElementById("heroDots"),
+        pause: document.getElementById("heroPause")
+      };
+
+      let current = 0;
+      let paused = false;
+      let timer = null;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const dots = slides.map((slide, index) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "hero-dot";
+        dot.setAttribute("role", "tab");
+        dot.setAttribute("aria-label", `Ir para ${slide.cardTitle}`);
+        dot.addEventListener("click", () => goTo(index, true));
+        refs.dots?.appendChild(dot);
+        return dot;
+      });
+
+      function updateLink(anchor, text, href, icon) {
+        if (!anchor) return;
+        anchor.href = href;
+        anchor.innerHTML = `${icon ? `<i class="fa-solid ${icon}"></i>` : ""}${text}`;
+        if (href.startsWith("pages/")) anchor.setAttribute("data-route", "");
+        else anchor.removeAttribute("data-route");
+      }
+
+      function goTo(index, userAction = false) {
+        current = (index + slides.length) % slides.length;
+        const slide = slides[current];
+        hero.classList.add("is-changing");
+        hero.style.setProperty("--hero-bg", `url("${slide.image}")`);
+        hero.style.setProperty("--hero-accent", slide.accent);
+        refs.eyebrow.textContent = slide.eyebrow;
+        refs.title.textContent = slide.title;
+        refs.copy.textContent = slide.copy;
+        refs.image.src = slide.image;
+        refs.image.alt = slide.alt;
+        refs.cardTitle.textContent = slide.cardTitle;
+        refs.cardCopy.textContent = slide.cardCopy;
+        refs.visual.classList.toggle("is-contain", slide.image.includes("logo-"));
+        updateLink(refs.primary, slide.primaryText, slide.primaryHref, slide.primaryIcon);
+        updateLink(refs.secondary, slide.secondaryText, slide.secondaryHref, "");
+        refs.bottomText.textContent = slide.bottomText;
+        refs.bottomLink.href = slide.primaryHref;
+        dots.forEach((dot, i) => dot.setAttribute("aria-current", i === current ? "true" : "false"));
+        window.setTimeout(() => hero.classList.remove("is-changing"), 320);
+        if (userAction) restart();
+      }
+
+      function next(userAction = false) { goTo(current + 1, userAction); }
+      function previous() { goTo(current - 1, true); }
+      function stop() { window.clearInterval(timer); timer = null; }
+      function start() { if (!reducedMotion && !paused && !timer) timer = window.setInterval(() => next(false), 5000); }
+      function restart() { stop(); start(); }
+
+      document.getElementById("heroPrev")?.addEventListener("click", previous);
+      document.getElementById("heroNext")?.addEventListener("click", () => next(true));
+      refs.pause?.addEventListener("click", () => {
+        paused = !paused;
+        refs.pause.innerHTML = paused ? '<i class="fa-solid fa-play"></i>' : '<i class="fa-solid fa-pause"></i>';
+        paused ? stop() : start();
+      });
+      hero.addEventListener("mouseenter", () => { paused = true; stop(); });
+      hero.addEventListener("mouseleave", () => { paused = false; refs.pause.innerHTML = '<i class="fa-solid fa-pause"></i>'; start(); });
+      document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
+
+      goTo(0);
+      start();
+    })();
+  </script>
+</body>
+</html>

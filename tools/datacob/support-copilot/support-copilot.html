@@ -40,26 +40,29 @@
   </header>
 
   <main>
-    <section class="hero-section">
+    <section class="hero-section support-hero-carousel" id="supportHeroCarousel" aria-roledescription="carousel" aria-label="Destaques do suporte DataCob">
       <div class="container-fluid">
         <div class="row align-items-center g-4">
           <div class="col-lg-7">
-            <span class="eyebrow">PH3A Support Copilot</span>
-            <h1>Atendimento mais rapido com contexto melhor.</h1>
-            <p class="hero-copy">
+            <span class="eyebrow" id="supportHeroEyebrow">PH3A Support Copilot</span>
+            <h1 id="supportHeroTitle">Atendimento mais rapido com contexto melhor.</h1>
+            <p class="hero-copy" id="supportHeroCopy">
               Copiloto de IA para analisar chamados do Freshdesk, resumir solicitacoes, recomendar respostas predefinidas,
               criar anotacoes internas e gerar especificacao para Desenvolvimento quando necessario.
             </p>
             <div class="d-flex flex-wrap gap-2 mt-4">
-              <a href="#analisar" class="btn btn-danger btn-lg"><i class="fa-solid fa-play me-2"></i>Analisar chamado</a>
-              <a href="#arquitetura" class="btn btn-outline-light btn-lg"><i class="fa-solid fa-diagram-project me-2"></i>Ver arquitetura</a>
+              <a href="#analisar" class="btn btn-danger btn-lg" id="supportHeroCta"><i class="fa-solid fa-play me-2"></i>Saiba Mais</a>
+              <a href="../treinamento-cliente/index.html" class="btn btn-outline-light btn-lg" id="supportHeroPortal"><i class="fa-solid fa-graduation-cap me-2"></i>Portal DataCob</a>
             </div>
           </div>
           <div class="col-lg-5">
-            <div class="architecture-card">
+            <button class="support-hero-visual" type="button" id="supportHeroVisual" aria-label="Avancar destaque do suporte">
+              <img id="supportHeroImage" src="../../../assets/img/capas-wallpaper-menus/sc24-ai-database.webp" alt="Destaque visual do Support Copilot" />
+            </button>
+            <div class="architecture-card support-hero-card">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="small text-uppercase text-secondary">Fluxo principal</span>
-                <strong>Fullstack Cloud</strong>
+                <span class="small text-uppercase text-secondary" id="supportHeroKicker">Fluxo principal</span>
+                <strong id="supportHeroCardTitle">Fullstack Cloud</strong>
               </div>
               <div class="flow-grid">
                 <div class="flow-step"><strong>Freshdesk</strong><small>Chamados</small></div>
@@ -74,6 +77,11 @@
             </div>
           </div>
         </div>
+        <div class="support-carousel-controls">
+          <button class="support-carousel-btn" type="button" id="supportHeroPrev" aria-label="Destaque anterior"><i class="fa-solid fa-chevron-left"></i></button>
+          <div class="support-carousel-dots" id="supportHeroDots" role="tablist" aria-label="Destaques"></div>
+          <button class="support-carousel-btn" type="button" id="supportHeroNext" aria-label="Proximo destaque"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
       </div>
     </section>
 
@@ -83,6 +91,55 @@
         <div class="col-md-3"><div class="metric-card"><span>Entrada</span><strong>Freshdesk</strong><small>Portal ou suporte@ph3a.com.br</small></div></div>
         <div class="col-md-3"><div class="metric-card"><span>Saida</span><strong>Templates</strong><small>Resposta, nota interna e checklist</small></div></div>
         <div class="col-md-3"><div class="metric-card"><span>Diferencial</span><strong>DEV</strong><small>Melhoria, Customizacao ou BUG</small></div></div>
+      </div>
+    </section>
+
+    <section class="container-fluid pb-4" id="manual-dinamico">
+      <div class="support-intel-grid">
+        <article class="panel-card dynamic-manual-panel">
+          <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+            <div>
+              <span class="eyebrow small">Busca dinamica</span>
+              <h2 class="h3 mb-1">Manuais DataCob sem recarregar a pagina</h2>
+              <p class="text-secondary mb-0">Pesquise por rotina, erro, modulo, cliente, token, versao ou negativacao. O artigo abre aqui na tela.</p>
+            </div>
+            <span class="status-pill">Base local indexada</span>
+          </div>
+          <div class="manual-live-search">
+            <input id="dynamicManualSearchInput" class="form-control" placeholder="Ex: token API, nova carteira, negativacao, agendamento de versao..." />
+            <button class="btn btn-danger" type="button" id="dynamicManualSearchBtn"><i class="fa-solid fa-magnifying-glass me-1"></i>Buscar</button>
+          </div>
+          <div id="dynamicManualResults" class="dynamic-manual-results" aria-live="polite"></div>
+          <div id="dynamicManualViewer" class="dynamic-manual-viewer">
+            <div class="empty-mini">Selecione um manual para renderizar o artigo aqui.</div>
+          </div>
+        </article>
+
+        <article class="panel-card ticket-dashboard-panel" id="ticketDashboard">
+          <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+            <div>
+              <span class="eyebrow small">Freshdesk Intelligence</span>
+              <h2 class="h3 mb-1">Mini dashboard de tickets</h2>
+              <p class="text-secondary mb-0">Estrutura pronta para consumir tickets por empresa, agente ou busca recorrente.</p>
+            </div>
+            <button class="btn btn-sm btn-outline-light" type="button" id="refreshTicketDashboardBtn"><i class="fa-solid fa-rotate me-1"></i>Atualizar</button>
+          </div>
+          <div class="ticket-dashboard-filters">
+            <select id="ticketDashboardScope" class="form-select">
+              <option value="agent">Agente logado</option>
+              <option value="company">Empresa do ticket</option>
+              <option value="all">Todos os chamados</option>
+            </select>
+            <input id="ticketDashboardTerm" class="form-control" placeholder="Filtrar tema: boleto, API, versao..." />
+          </div>
+          <div id="ticketDashboardMetrics" class="ticket-dashboard-metrics"></div>
+          <div id="ticketDashboardThemes" class="ticket-dashboard-themes"></div>
+          <div id="ticketDashboardList" class="ticket-dashboard-list"></div>
+          <div class="freshdesk-api-note">
+            <strong>API preparada:</strong>
+            <span>GET /tickets, GET /search/tickets, GET /tickets/{id}, POST /tickets/{id}/notes.</span>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -484,6 +541,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./manual-search-index.js"></script>
   <script src="./support-copilot.js" defer></script>
 </body>
 

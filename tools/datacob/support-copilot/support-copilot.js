@@ -1,5 +1,39 @@
 const API_DEFAULT = "https://api.arriba.jm.dev.br";
 const LOCAL_LOG_KEY = "arribaSupportCopilotLocalLogs";
+const DATACOB_MANUAL_INDEX = window.DATACOB_MANUAL_INDEX || [];
+
+const supportHeroSlides = [
+  {
+    eyebrow: "PH3A Support Copilot",
+    title: "Atendimento mais rapido com contexto melhor.",
+    copy: "Copiloto de IA para analisar chamados do Freshdesk, encontrar manuais, sugerir resposta e reduzir tempo de triagem.",
+    image: "../../../assets/img/capas-wallpaper-menus/sc24-ai-database.webp",
+    cta: "#analisar",
+    portal: "../treinamento-cliente/index.html",
+    kicker: "Fluxo principal",
+    cardTitle: "Freshdesk + IA + Base"
+  },
+  {
+    eyebrow: "Base preditiva DataCob",
+    title: "Manuais dinamicos dentro da tela do suporte.",
+    copy: "A busca indexa a base local de manuais e renderiza o artigo sem recarregar, pronta para alimentar assistentes inteligentes.",
+    image: "../../../assets/img/logos-assets/logo-datacob.png",
+    cta: "#manual-dinamico",
+    portal: "../treinamento-cliente/index.html",
+    kicker: "Conhecimento operacional",
+    cardTitle: "Manual vivo"
+  },
+  {
+    eyebrow: "Freshdesk Intelligence",
+    title: "Mini dashboard para antecipar temas recorrentes.",
+    copy: "Filtros por agente, empresa e tema ajudam o suporte a enxergar volume, urgencia, recorrencia e possiveis lacunas na base.",
+    image: "../../../assets/img/logos-assets/logo-ph3.webp",
+    cta: "#ticketDashboard",
+    portal: "../treinamento-cliente/index.html",
+    kicker: "Dados para IA",
+    cardTitle: "Tickets agrupados"
+  }
+];
 
 const demoTicket = {
   ticketId: "65841",
@@ -63,6 +97,23 @@ function normalizeText(value = "") {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function fuzzyScore(term = "", item = {}) {
+  const query = normalizeText(term);
+  if (!query) return 1;
+  const haystack = normalizeText([
+    item.title,
+    item.category,
+    item.product,
+    item.summary,
+    ...(item.keywords || [])
+  ].join(" "));
+  const words = query.split(" ").filter(Boolean);
+  const exact = haystack.includes(query) ? 4 : 0;
+  const wordScore = words.reduce((score, word) => score + (haystack.includes(word) ? 1 : 0), 0);
+  const acronymScore = words.some((word) => (item.keywords || []).some((keyword) => normalizeText(keyword).startsWith(word))) ? 1 : 0;
+  return exact + wordScore + acronymScore;
 }
 
 
@@ -399,6 +450,10 @@ async function fetchFreshdeskContext(ticketId) {
 
 async function searchFreshdeskTickets(term) {
   return requestJson(`${apiBase()}/freshdesk/tickets/search?term=${encodeURIComponent(term)}`);
+}
+
+async function fetchFreshdeskDashboard(scope = "agent", term = "") {
+  return requestJson(`${apiBase()}/freshdesk/tickets/dashboard?scope=${encodeURIComponent(scope)}&term=${encodeURIComponent(term)}`);
 }
 
 async function analyzeFreshdeskTicket(ticketId) {
@@ -866,9 +921,23 @@ async function handleManualSearch() {
     try {
       const result = await searchManualsBase(term);
       renderManualSuggestions(result.manuals || [], { detected: { routine: term, category: "Busca manual", client: "A confirmar" } });
+      getEl("dynamicManualSearchInput") && (getEl("dynamicManualSearchInput").value = term);
+      handleDynamicManualSearch();
       showToast("Busca de manuais concluida.");
     } catch (error) {
-      safeHtml("manualSuggestions", `<div class="empty-mini">Falha ao buscar manuais: ${escapeHtml(error.message)}</div>`);
+      const local = searchLocalManuals(term);
+      renderManualSuggestions(local.map((item) => ({
+        title: item.title,
+        category: item.category,
+        client: "Geral",
+        summary: item.summary,
+        url: item.url,
+        score: item.score,
+        kind: "Manual local"
+      })), { detected: { routine: term, category: "Fallback local", client: "Geral" } });
+      getEl("dynamicManualSearchInput") && (getEl("dynamicManualSearchInput").value = term);
+      handleDynamicManualSearch();
+      showToast("API indisponivel. Usando indice local de manuais.");
     }
   });
 }
@@ -1012,6 +1081,14 @@ function saveLocalLog(data) {
     localStorage.setItem(LOCAL_LOG_KEY, JSON.stringify(logs.slice(-200)));
   } catch (error) {
     console.warn("Nao foi possivel gravar log local do navegador.", error);
+  }
+}
+
+function getLocalLogs() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_LOG_KEY) || "[]");
+  } catch {
+    return [];
   }
 }
 
@@ -1317,6 +1394,7 @@ function renderResult(rawData, options = {}) {
   renderKnowledge(analysis, context);
   applyPriorityClass(analysis.priority || "");
   saveLocalLog(data);
+  renderTicketDashboard();
   renderQualityDashboard();
   handleRefreshKnowledgeAdmin(false).catch(() => {});
   renderValidation(data);
@@ -1499,6 +1577,228 @@ function renderSearchResults(tickets = []) {
   });
 }
 
+function initSupportHeroCarousel() {
+  const root = getEl("supportHeroCarousel");
+  if (!root || !supportHeroSlides.length) return;
+  const els = {
+    eyebrow: getEl("supportHeroEyebrow"),
+    title: getEl("supportHeroTitle"),
+    copy: getEl("supportHeroCopy"),
+    image: getEl("supportHeroImage"),
+    cta: getEl("supportHeroCta"),
+    portal: getEl("supportHeroPortal"),
+    kicker: getEl("supportHeroKicker"),
+    cardTitle: getEl("supportHeroCardTitle"),
+    visual: getEl("supportHeroVisual"),
+    prev: getEl("supportHeroPrev"),
+    next: getEl("supportHeroNext"),
+    dots: getEl("supportHeroDots")
+  };
+  let index = 0;
+  let timer = null;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const dots = supportHeroSlides.map((slide, dotIndex) => {
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "support-carousel-dot";
+    dot.setAttribute("aria-label", `Ir para ${slide.title}`);
+    dot.addEventListener("click", () => goTo(dotIndex, true));
+    els.dots?.appendChild(dot);
+    return dot;
+  });
+
+  function goTo(nextIndex, userAction = false) {
+    index = (nextIndex + supportHeroSlides.length) % supportHeroSlides.length;
+    const slide = supportHeroSlides[index];
+    root.style.setProperty("--support-hero-bg", `url("${slide.image}")`);
+    els.eyebrow && (els.eyebrow.textContent = slide.eyebrow);
+    els.title && (els.title.textContent = slide.title);
+    els.copy && (els.copy.textContent = slide.copy);
+    els.kicker && (els.kicker.textContent = slide.kicker);
+    els.cardTitle && (els.cardTitle.textContent = slide.cardTitle);
+    if (els.image) {
+      els.image.src = slide.image;
+      els.image.alt = slide.title;
+      els.image.style.objectFit = slide.image.includes("logo-") ? "contain" : "cover";
+      els.image.style.padding = slide.image.includes("logo-") ? "30px" : "0";
+    }
+    if (els.cta) els.cta.href = slide.cta;
+    if (els.portal) els.portal.href = slide.portal;
+    dots.forEach((dot, currentIndex) => dot.setAttribute("aria-current", currentIndex === index ? "true" : "false"));
+    if (userAction) restart();
+  }
+
+  function start() {
+    if (reducedMotion || timer) return;
+    timer = window.setInterval(() => goTo(index + 1), 5000);
+  }
+
+  function stop() {
+    if (timer) window.clearInterval(timer);
+    timer = null;
+  }
+
+  function restart() {
+    stop();
+    start();
+  }
+
+  els.prev?.addEventListener("click", () => goTo(index - 1, true));
+  els.next?.addEventListener("click", () => goTo(index + 1, true));
+  els.visual?.addEventListener("click", () => goTo(index + 1, true));
+  root.addEventListener("mouseenter", stop);
+  root.addEventListener("mouseleave", start);
+  root.addEventListener("focusin", stop);
+  root.addEventListener("focusout", start);
+  goTo(0);
+  start();
+}
+
+function searchLocalManuals(term = "") {
+  const scored = DATACOB_MANUAL_INDEX
+    .map((item) => ({ ...item, score: fuzzyScore(term, item) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+  return scored.length ? scored : DATACOB_MANUAL_INDEX.slice(0, 4).map((item) => ({ ...item, score: 0 }));
+}
+
+function renderDynamicManualResults(items = []) {
+  const target = getEl("dynamicManualResults");
+  if (!target) return;
+  target.innerHTML = items.map((item, index) => `
+    <button type="button" class="manual-result-card ${index === 0 ? "active" : ""}" data-dynamic-manual="${escapeHtml(item.id)}">
+      <span>${escapeHtml(item.category || "Manual")}</span>
+      <strong>${escapeHtml(item.title)}</strong>
+      <small>${escapeHtml(item.summary || "")}</small>
+    </button>
+  `).join("");
+}
+
+async function openDynamicManual(manualId) {
+  const manual = DATACOB_MANUAL_INDEX.find((item) => item.id === manualId) || DATACOB_MANUAL_INDEX[0];
+  const viewer = getEl("dynamicManualViewer");
+  if (!manual || !viewer) return;
+  viewer.innerHTML = `<div class="empty-mini">Carregando manual...</div>`;
+  document.querySelectorAll("[data-dynamic-manual]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.dynamicManual === manual.id);
+  });
+
+  try {
+    const response = await fetch(manual.url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const html = await response.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    doc.querySelectorAll("script, style, link, header.kb-topbar").forEach((node) => node.remove());
+    const article = doc.querySelector("main") || doc.body;
+    viewer.innerHTML = `
+      <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+        <div>
+          <span class="eyebrow small">${escapeHtml(manual.category)}</span>
+          <h3 class="h4 mb-1">${escapeHtml(manual.title)}</h3>
+          <p class="text-secondary mb-0">${escapeHtml(manual.summary)}</p>
+        </div>
+        <a class="btn btn-sm btn-outline-light" href="${escapeHtml(manual.url)}" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square me-1"></i>Abrir completo</a>
+      </div>
+      <div class="manual-article-frame">${article.innerHTML}</div>
+    `;
+  } catch (error) {
+    viewer.innerHTML = `<div class="empty-mini">Nao foi possivel renderizar o manual local: ${escapeHtml(error.message)}</div>`;
+  }
+}
+
+function handleDynamicManualSearch() {
+  const term = getEl("dynamicManualSearchInput")?.value || "";
+  const items = searchLocalManuals(term);
+  renderDynamicManualResults(items);
+  openDynamicManual(items[0]?.id);
+}
+
+function buildTicketDashboardData() {
+  const logs = getLocalLogs();
+  let cached = [];
+  try {
+    cached = JSON.parse(localStorage.getItem("arribaFreshdeskDashboardCache") || "[]");
+  } catch {
+    cached = [];
+  }
+  const analyzed = logs.map((item, index) => ({
+    id: item.ticketId || `manual-${index + 1}`,
+    subject: item.subject || item.routine || "Analise manual",
+    priority: item.priority || "Baixa",
+    status_name: item.status || "Analisado",
+    product: item.product || "DataCob",
+    requester_name: item.customerName || "Cliente",
+    updated_at: item.createdAt || new Date().toISOString(),
+    tags: [item.freshdeskType, item.recommendedScenario, item.product].filter(Boolean)
+  }));
+  const fallback = [
+    { id: "65841", subject: "Negociar debitos com parcelamento", priority: "Baixa", status_name: "Aberto", product: "DataCob", requester_name: "BCBR CARD LTDA", tags: ["acordo", "parcelamento", "contrato"] },
+    { id: "65888", subject: "Cliente solicita token API DataCob", priority: "Media", status_name: "Pendente", product: "DataCob", requester_name: "Operacao API", tags: ["api", "token", "integracao"] },
+    { id: "65902", subject: "Agendamento automatico de versao", priority: "Media", status_name: "Aguardando cliente", product: "DataCob", requester_name: "Cliente versao", tags: ["versao", "homologacao"] },
+    { id: "65944", subject: "Duvida sobre negativacao em massa", priority: "Alta", status_name: "Aberto", product: "DataCob", requester_name: "Cobranca", tags: ["negativacao", "bureau"] }
+  ];
+  return dedupeByTicketId([...cached, ...analyzed, ...fallback]);
+}
+
+function renderTicketDashboard() {
+  try {
+  const scope = getEl("ticketDashboardScope")?.value || "agent";
+  const term = normalizeText(getEl("ticketDashboardTerm")?.value || "");
+  const allTickets = buildTicketDashboardData();
+  const tickets = allTickets.filter((ticket) => {
+    if (!term) return true;
+    return normalizeText(`${ticket.subject} ${ticket.product} ${(ticket.tags || []).join(" ")} ${ticket.requester_name}`).includes(term);
+  });
+  const urgent = tickets.filter((ticket) => normalizeText(ticket.priority).includes("alta") || normalizeText(ticket.priority).includes("urgente"));
+  const open = tickets.filter(isTicketOpen);
+  const themes = new Map();
+  tickets.forEach((ticket) => {
+    const tags = ticket.tags?.length ? ticket.tags : normalizeText(ticket.subject).split(" ").slice(0, 3);
+    tags.forEach((tag) => {
+      const key = normalizeText(tag);
+      if (!key) return;
+      themes.set(key, (themes.get(key) || 0) + 1);
+    });
+  });
+  const topThemes = [...themes.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+  safeHtml("ticketDashboardMetrics", `
+    <div class="ticket-metric"><span>Escopo</span><strong>${escapeHtml(scope === "company" ? "Empresa" : scope === "all" ? "Todos" : "Agente")}</strong></div>
+    <div class="ticket-metric"><span>Tickets</span><strong>${tickets.length}</strong></div>
+    <div class="ticket-metric"><span>Abertos</span><strong>${open.length}</strong></div>
+    <div class="ticket-metric"><span>Alta/Urgente</span><strong>${urgent.length}</strong></div>
+  `);
+  safeHtml("ticketDashboardThemes", topThemes.map(([theme, count]) => `<span class="theme-chip">${escapeHtml(theme)} · ${count}</span>`).join("") || `<span class="theme-chip">Sem recorrencia ainda</span>`);
+  safeHtml("ticketDashboardList", tickets.slice(0, 6).map((ticket) => `
+    <article class="dashboard-ticket-row">
+      <strong>#${escapeHtml(ticket.id)} - ${escapeHtml(ticket.subject)}</strong>
+      <span>${escapeHtml(ticket.requester_name || "-")} · ${escapeHtml(ticket.status_name || statusLabel(ticket.status))} · Prioridade ${escapeHtml(ticket.priority_name || ticket.priority || "-")}</span>
+    </article>
+  `).join("") || `<div class="empty-mini">Nenhum ticket encontrado para o filtro.</div>`);
+  } catch (error) {
+    safeHtml("ticketDashboardMetrics", `<div class="empty-mini">Dashboard em modo seguro.</div>`);
+    safeHtml("ticketDashboardThemes", "");
+    safeHtml("ticketDashboardList", `<div class="empty-mini">${escapeHtml(error.message || "Nao foi possivel renderizar tickets.")}</div>`);
+  }
+}
+
+async function handleRefreshTicketDashboard() {
+  const scope = getEl("ticketDashboardScope")?.value || "agent";
+  const term = getEl("ticketDashboardTerm")?.value || "";
+  try {
+    const data = await fetchFreshdeskDashboard(scope, term);
+    if (Array.isArray(data.tickets)) {
+      localStorage.setItem("arribaFreshdeskDashboardCache", JSON.stringify(data.tickets.slice(0, 100)));
+    }
+    renderTicketDashboard();
+    showToast("Dashboard atualizado pela API.");
+  } catch {
+    renderTicketDashboard();
+    showToast("API indisponivel. Dashboard em modo demonstravel/local.");
+  }
+}
+
 async function handleFetchTicket() {
   const term = getEl("ticketId")?.value.trim();
   if (!term) {
@@ -1656,6 +1956,10 @@ function setupEvents() {
   const savedApi = localStorage.getItem("arribaSupportApiBase");
   if (savedApi && getEl("apiBase")) getEl("apiBase").value = savedApi;
   initSupportTheme();
+  initSupportHeroCarousel();
+  renderDynamicManualResults(searchLocalManuals(""));
+  openDynamicManual(DATACOB_MANUAL_INDEX[0]?.id);
+  renderTicketDashboard();
 
   getEl("loadDemoBtn")?.addEventListener("click", () => {
     updateFlowStatus("input");
@@ -1688,6 +1992,15 @@ function setupEvents() {
   getEl("supportHelpPanel")?.addEventListener("keydown", (event) => {
     if (event.key === "Escape") setHelpPanel(false);
   });
+  getEl("dynamicManualSearchBtn")?.addEventListener("click", handleDynamicManualSearch);
+  getEl("dynamicManualSearchInput")?.addEventListener("input", handleDynamicManualSearch);
+  getEl("dynamicManualResults")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-dynamic-manual]");
+    if (button) openDynamicManual(button.dataset.dynamicManual);
+  });
+  getEl("refreshTicketDashboardBtn")?.addEventListener("click", handleRefreshTicketDashboard);
+  getEl("ticketDashboardScope")?.addEventListener("change", renderTicketDashboard);
+  getEl("ticketDashboardTerm")?.addEventListener("input", renderTicketDashboard);
   setupCopyButtons();
   getEl("packageSuggestions")?.addEventListener("click", (event) => {
     const copyBtn = event.target.closest("[data-package-copy]");

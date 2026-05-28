@@ -26,9 +26,19 @@
                 <a class="rw-icon-btn text-decoration-none" href="/index.html" aria-label="Voltar para a plataforma">
                     <i class="fas fa-home"></i>
                 </a>
-                <button type="button" class="rw-flag-btn" aria-label="Idioma atual">
-                    <img src="/assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil" width="24" height="24">
+                <button type="button" class="rw-icon-btn" id="toggleTheme" aria-label="Alternar tema claro ou escuro">
+                    <i class="fas fa-sun" id="themeIcon"></i>
                 </button>
+                <div class="rw-language-wrap">
+                    <button type="button" class="rw-flag-btn" id="languageToggle" aria-label="Selecionar idioma" aria-expanded="false">
+                        <img id="currentLanguageFlag" src="/assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil" width="24" height="24">
+                    </button>
+                    <div class="rw-language-menu" id="languageMenu" hidden>
+                        <button type="button" data-lang-code="pt-BR" data-lang-label="Português" data-lang-flag="/assets/img/bandeiras_idiomas/flg-br.svg">🇧🇷 Português</button>
+                        <button type="button" data-lang-code="en-US" data-lang-label="English" data-lang-flag="/assets/img/bandeiras_idiomas/flg-us.svg">🇺🇸 English</button>
+                        <button type="button" data-lang-code="es-ES" data-lang-label="Español" data-lang-flag="/assets/img/bandeiras_idiomas/flg-es.svg">🇪🇸 Español</button>
+                    </div>
+                </div>
                 <a class="rw-icon-btn text-decoration-none" href="/tools/datacob/support-copilot/support-copilot.html" aria-label="Abrir Support Copilot">
                     <i class="far fa-comment"></i>
                 </a>
@@ -58,13 +68,76 @@
             </div>
         </section>
 
-        <section class="rw-help-hero" id="help-search">
+        <section class="rw-help-hero rw-help-hero-knowledge" id="help-search">
             <div class="rw-container">
+                <span class="knowledge-kicker">Arriba Knowledge Advanced</span>
                 <h1>O que podemos ajudar você a encontrar?</h1>
-                <label class="rw-help-search">
+                <p class="knowledge-hero-copy">Pesquise em manuais locais, pacotes DataCob, artigos rápidos, base Freshdesk e erros conhecidos. Uma única busca para suporte, delivery e triagem com IA.</p>
+                <label class="rw-help-search knowledge-global-search">
                     <i class="fas fa-search"></i>
-                    <input type="search" id="docSearchInput" placeholder="Busque por erro, carga, CSV, contrato, parcela, API, rotina ou manual...">
+                    <input type="search" id="docSearchInput" placeholder="Busque por erro, cliente, pacote, carga, versão, API, CNAB, DataCob 4.0..." autocomplete="off">
+                    <button type="button" id="knowledgeSearchButton" aria-label="Buscar na base de conhecimento">Buscar</button>
                 </label>
+                <div class="knowledge-quick-actions" aria-label="Sugestões de busca">
+                    <button type="button" data-knowledge-query="versão checklist homologação">Versão</button>
+                    <button type="button" data-knowledge-query="negativação serasa bureau retorno">Negativação</button>
+                    <button type="button" data-knowledge-query="api token usuários datacob">API Token</button>
+                    <button type="button" data-knowledge-query="cnab boleto baixa retorno">CNAB / Baixa</button>
+                    <button type="button" data-knowledge-query="datacob 4.0 erro migração">DataCob 4.0</button>
+                </div>
+                <div class="knowledge-hero-results" id="knowledgeHeroResults" hidden></div>
+            </div>
+        </section>
+
+        <section class="knowledge-search-console" id="knowledge-console" aria-labelledby="knowledge-console-title">
+            <div class="knowledge-console-inner">
+                <div class="knowledge-console-header">
+                    <div>
+                        <span class="manual-eyebrow">Busca federada</span>
+                        <h2 id="knowledge-console-title">Procurar em toda a base de conhecimento.</h2>
+                        <p>Resultado unificado com fonte, relevância, tipo de material e ação rápida para abrir artigo, manual ou pacote.</p>
+                    </div>
+                    <div class="knowledge-source-status" id="knowledgeSourceStatus">
+                        <span><i class="fa-solid fa-database"></i> Base local pronta</span>
+                        <span><i class="fa-solid fa-cloud"></i> Freshdesk sob demanda</span>
+                    </div>
+                </div>
+
+                <div class="knowledge-filter-tabs" role="tablist" aria-label="Filtrar resultados da base">
+                    <button type="button" class="active" data-knowledge-filter="all">Todos</button>
+                    <button type="button" data-knowledge-filter="manual">Manuais</button>
+                    <button type="button" data-knowledge-filter="package">Pacotes</button>
+                    <button type="button" data-knowledge-filter="article">Artigos</button>
+                    <button type="button" data-knowledge-filter="freshdesk">Freshdesk</button>
+                </div>
+
+                <div class="knowledge-result-layout">
+                    <aside class="knowledge-insight-panel">
+                        <h3>Leitura rápida</h3>
+                        <div class="knowledge-insight-grid" id="knowledgeInsights">
+                            <div><span>Resultados</span><strong>0</strong></div>
+                            <div><span>Fonte principal</span><strong>Local</strong></div>
+                            <div><span>Termo</span><strong>-</strong></div>
+                        </div>
+                        <div class="knowledge-guided-box">
+                            <strong>Como usar</strong>
+                            <p>Pesquise pelo erro do cliente, rotina, ID de pacote, banco, módulo ou palavra-chave do ticket. O Copilot usa essa mesma lógica para sugerir manuais.</p>
+                        </div>
+                    </aside>
+                    <div class="knowledge-results-panel">
+                        <div class="knowledge-results-title">
+                            <h3>Resultados encontrados</h3>
+                            <span id="knowledgeResultsCount">Digite para pesquisar</span>
+                        </div>
+                        <div id="knowledgeGlobalResults" class="knowledge-global-results">
+                            <div class="knowledge-empty-state">
+                                <i class="fa-regular fa-lightbulb"></i>
+                                <strong>Comece pesquisando um problema real.</strong>
+                                <p>Exemplo: “BTG encerramento ticket”, “versão homologação”, “pacote 186”, “negativação retorno” ou “DataCob 4.0 API”.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -213,24 +286,70 @@
     </main>
 
     <script src="/pages/docs/help-center/assets/manuals-index.js"></script>
-    <script src="/pages/docs/help-center/assets/manual-router.js"></script>
+    <script src="/pages/docs/help-center/assets/manuals-index-2025.additions.js"></script>
     <script src="/pages/docs/help-center/assets/packages-index.js"></script>
+    <script src="/pages/docs/help-center/assets/global-knowledge-search.js"></script>
+    <script src="/pages/docs/help-center/assets/manual-router.js"></script>
     <script src="/pages/docs/help-center/assets/package-router.js"></script>
     <script>
         (function () {
-            const input = document.getElementById("docSearchInput");
-            const cards = Array.from(document.querySelectorAll("#docSearchCards .rw-doc-card"));
-            function normalize(value) {
-                return String(value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const body = document.body;
+            const toggleTheme = document.getElementById("toggleTheme");
+            const themeIcon = document.getElementById("themeIcon");
+            const languageToggle = document.getElementById("languageToggle");
+            const languageMenu = document.getElementById("languageMenu");
+            const currentLanguageFlag = document.getElementById("currentLanguageFlag");
+
+            function applyTheme(theme) {
+                const isDark = theme !== "light";
+                body.classList.toggle("dark-mode", isDark);
+                body.classList.toggle("light-mode", !isDark);
+                if (themeIcon) {
+                    themeIcon.className = isDark ? "fas fa-sun" : "fas fa-moon";
+                }
+                localStorage.setItem("arribaTheme", isDark ? "dark" : "light");
             }
-            input?.addEventListener("input", () => {
-                const term = normalize(input.value);
-                cards.forEach((card) => {
-                    const haystack = normalize(card.textContent + " " + (card.dataset.docKeywords || ""));
-                    card.style.display = !term || haystack.includes(term) ? "" : "none";
+
+            applyTheme(localStorage.getItem("arribaTheme") || "dark");
+            toggleTheme?.addEventListener("click", () => {
+                applyTheme(body.classList.contains("dark-mode") ? "light" : "dark");
+            });
+
+            function closeLanguageMenu() {
+                if (languageMenu) languageMenu.hidden = true;
+                languageToggle?.setAttribute("aria-expanded", "false");
+            }
+
+            languageToggle?.addEventListener("click", (event) => {
+                event.stopPropagation();
+                if (!languageMenu) return;
+                languageMenu.hidden = !languageMenu.hidden;
+                languageToggle.setAttribute("aria-expanded", String(!languageMenu.hidden));
+            });
+
+            languageMenu?.querySelectorAll("[data-lang-code]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const lang = button.dataset.langCode || "pt-BR";
+                    const flag = button.dataset.langFlag || "/assets/img/bandeiras_idiomas/flg-br.svg";
+                    document.documentElement.lang = lang;
+                    if (currentLanguageFlag) {
+                        currentLanguageFlag.src = flag;
+                        currentLanguageFlag.alt = button.dataset.langLabel || lang;
+                    }
+                    localStorage.setItem("arribaLanguage", lang);
+                    localStorage.setItem("arribaLanguageFlag", flag);
+                    closeLanguageMenu();
                 });
             });
+
+            const savedFlag = localStorage.getItem("arribaLanguageFlag");
+            const savedLang = localStorage.getItem("arribaLanguage");
+            if (savedLang) document.documentElement.lang = savedLang;
+            if (savedFlag && currentLanguageFlag) currentLanguageFlag.src = savedFlag;
+
+            document.addEventListener("click", closeLanguageMenu);
         })();
     </script>
+  <script type="module" src="/assets/js/auth-guard.js"></script>
 </body>
 </html>

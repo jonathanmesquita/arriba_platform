@@ -166,6 +166,293 @@ body.theme-light .empty-state {
   border-bottom: 1px solid var(--arriba-border);
 }
 
+.support-hero-carousel {
+  --support-hero-accent: #f45124;
+  --support-hero-bg: url("../../../assets/img/capas-wallpaper-menus/sc24-ai-database.webp");
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    linear-gradient(90deg, rgba(14, 20, 24, .96), rgba(41, 31, 24, .82)),
+    var(--support-hero-bg) center/cover no-repeat;
+}
+
+.support-hero-carousel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 78% 16%, color-mix(in srgb, var(--support-hero-accent) 26%, transparent), transparent 32%),
+    linear-gradient(180deg, transparent 64%, rgba(0,0,0,.35));
+  pointer-events: none;
+}
+
+.support-hero-visual {
+  width: 100%;
+  min-height: 245px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  overflow: hidden;
+  padding: 0;
+  box-shadow: 0 28px 72px rgba(0,0,0,.34);
+}
+
+.support-hero-visual img {
+  width: 100%;
+  height: 245px;
+  object-fit: cover;
+  display: block;
+  transition: transform .45s ease, opacity .28s ease;
+}
+
+.support-hero-visual:hover img {
+  transform: scale(1.035);
+}
+
+.support-hero-card {
+  margin-top: -26px;
+  position: relative;
+  z-index: 2;
+}
+
+.support-carousel-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(0,0,0,.32);
+  backdrop-filter: blur(14px);
+}
+
+.support-carousel-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  color: #fff;
+}
+
+.support-carousel-btn:hover {
+  background: rgba(244,81,36,.2);
+  border-color: rgba(244,81,36,.5);
+}
+
+.support-carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.support-carousel-dot {
+  width: 44px;
+  height: 7px;
+  border: 1px solid rgba(255,255,255,.42);
+  border-radius: 999px;
+  background: rgba(255,255,255,.12);
+  padding: 0;
+}
+
+.support-carousel-dot[aria-current="true"] {
+  background: #fff;
+  border-color: #fff;
+}
+
+.support-intel-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, .85fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.manual-live-search,
+.ticket-dashboard-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ticket-dashboard-filters {
+  grid-template-columns: minmax(150px, .55fr) minmax(0, 1fr);
+}
+
+.dynamic-manual-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.manual-result-card {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+  color: rgba(255,255,255,.92);
+  padding: 14px;
+  text-align: left;
+  display: grid;
+  gap: 8px;
+  transition: border-color .18s ease, transform .18s ease, background .18s ease;
+}
+
+.manual-result-card:hover,
+.manual-result-card.active {
+  transform: translateY(-1px);
+  border-color: rgba(244,81,36,.55);
+  background: rgba(244,81,36,.12);
+}
+
+.manual-result-card strong {
+  font-size: .98rem;
+}
+
+.manual-result-card span,
+.manual-result-card small {
+  color: rgba(255,255,255,.62);
+}
+
+.dynamic-manual-viewer {
+  min-height: 340px;
+  max-height: 680px;
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  background: rgba(0,0,0,.20);
+  padding: 18px;
+}
+
+.manual-article-frame {
+  color: rgba(255,255,255,.9);
+}
+
+.manual-article-frame .kb-topbar,
+.manual-article-frame .kb-hero .hero-actions,
+.manual-article-frame script,
+.manual-article-frame style,
+.manual-article-frame link {
+  display: none !important;
+}
+
+.manual-article-frame .kb-hero,
+.manual-article-frame .container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.manual-article-frame h1,
+.manual-article-frame h2,
+.manual-article-frame h3,
+.manual-article-frame strong {
+  color: #fff;
+}
+
+.ticket-dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ticket-metric {
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+  padding: 12px;
+}
+
+.ticket-metric span {
+  color: var(--arriba-muted);
+  display: block;
+  font-size: .76rem;
+}
+
+.ticket-metric strong {
+  color: #fff;
+  display: block;
+  font-size: 1.35rem;
+}
+
+.ticket-dashboard-themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.theme-chip {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.86);
+  padding: 7px 10px;
+  font-size: .8rem;
+  font-weight: 800;
+}
+
+.ticket-dashboard-list {
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-ticket-row {
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  background: rgba(0,0,0,.16);
+  padding: 12px;
+}
+
+.dashboard-ticket-row strong,
+.dashboard-ticket-row span {
+  display: block;
+}
+
+.dashboard-ticket-row span {
+  color: var(--arriba-muted);
+  font-size: .82rem;
+  margin-top: 4px;
+}
+
+.freshdesk-api-note {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(244,81,36,.10);
+  border: 1px solid rgba(244,81,36,.24);
+  color: rgba(255,255,255,.78);
+  font-size: .84rem;
+}
+
+body.theme-light .manual-result-card,
+body.theme-light .dynamic-manual-viewer,
+body.theme-light .ticket-metric,
+body.theme-light .dashboard-ticket-row,
+body.theme-light .theme-chip,
+body.theme-light .freshdesk-api-note {
+  color: #211f1d;
+  background: rgba(255,255,255,.75);
+  border-color: rgba(41,31,24,.14);
+}
+
+body.theme-light .manual-result-card span,
+body.theme-light .manual-result-card small,
+body.theme-light .dashboard-ticket-row span {
+  color: #6f6860;
+}
+
+body.theme-light .manual-article-frame h1,
+body.theme-light .manual-article-frame h2,
+body.theme-light .manual-article-frame h3,
+body.theme-light .manual-article-frame strong,
+body.theme-light .ticket-metric strong {
+  color: #211f1d;
+}
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -1232,12 +1519,26 @@ body.presentation-mode .brand-link::after {
 .support-tabs .nav-link { white-space: nowrap; }
 @media (max-width: 1100px) {
   .diagnostic-panel { grid-template-columns: 1fr; }
+  .support-intel-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
   .copilot-flow-status { grid-template-columns: 1fr 1fr; }
   .flow-status-line { display: none; }
   .diagnostic-grid { grid-template-columns: 1fr; }
   .quick-action-btn { width: 100%; justify-content: center; }
+  .manual-live-search,
+  .ticket-dashboard-filters,
+  .dynamic-manual-results {
+    grid-template-columns: 1fr;
+  }
+  .ticket-dashboard-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .support-carousel-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  .support-carousel-dot { width: 32px; }
 }
 
 /* v2.7.5 - Stepper UX corrigido: Entrada -> Ticket -> Base -> Analise */

@@ -1,5 +1,20 @@
 window.ARRIBA_MANUALS_INDEX = [
   {
+    id: "datacob-acoes-em-massa-negativacao",
+    title: "Ações em Massa - Negativação DataCob",
+    product: "DataCob",
+    category: "Ações em Massa / Negativação",
+    routine: "Negativação",
+    module: "Ações em Massa / Bureaus",
+    kind: "Manual geral",
+    client: "Geral",
+    url: "/tools/datacob/support-copilot/docs/datacob/acoes-em-massa/negativacao/",
+    keywords: ["ações em massa", "acoes em massa", "negativação", "negativacao", "bureau", "bureaus", "serasa", "boa vista", "scpc", "spc", "retorno bureau", "arquivo retorno", "detalhes negativação", "status negativação", "logs"],
+    summary: "Guia de triagem para negativação em massa no DataCob: bureau, configuração, estratégia, envio, retorno, logs e status.",
+    checklist: ["Confirmar tipo da solicitação", "Validar Grupo/Cliente/Fase", "Confirmar bureau", "Validar estratégia/filtros", "Conferir retorno e logs", "Abrir manual antes de escalar"]
+  },
+
+  {
     id: "datacob-treinamento-cliente",
     title: "Treinamento DataCob para Cliente",
     product: "DataCob",

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ações em Massa - Negativação | Arriba Help Center</title>
+  <meta name="description" content="Manual local do DataCob para orientar suporte sobre Ações em Massa, Negativação, bureaus, retorno, logs e validações antes de escalar para DEV." />
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="/tools/datacob/support-copilot/docs/datacob/acoes-em-massa/negativacao/article.css" />
+</head>
+<body class="kb-article-page">
+  <header class="kb-topbar">
+    <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <a href="/index.html" class="brand-link">ARRIBA</a>
+        <span class="topbar-divider"></span>
+        <span class="small text-secondary">Help Center / DataCob / Ações em Massa / Negativação</span>
+      </div>
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <a class="btn btn-sm btn-outline-light" href="/tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-robot me-1"></i> Support Copilot</a>
+        <a class="btn btn-sm btn-outline-light" href="/pages/docs/help-center/index.html"><i class="fa-solid fa-magnifying-glass me-1"></i> Help Center</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="kb-hero">
+      <div class="container-fluid">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-8">
+            <span class="eyebrow">DataCob • Ações em Massa</span>
+            <h1>Negativação em massa.</h1>
+            <p class="hero-copy">Guia inicial para orientar analistas na triagem de chamados sobre negativação no DataCob: configuração, bureau, estratégia, envio, retorno, logs e validação de status.</p>
+            <div class="hero-actions">
+              <a class="btn btn-danger btn-lg" href="#passo-a-passo"><i class="fa-solid fa-list-check me-2"></i>Ver passo a passo</a>
+              <button class="btn btn-outline-light btn-lg" type="button" data-copy-template="checklist"><i class="fa-regular fa-copy me-2"></i>Copiar checklist</button>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="hero-card">
+              <div class="p-4">
+                <span>Fonte local</span>
+                <strong>Manual - Ações em Massa / Negativação</strong>
+                <small>Base offline usada pelo Support Copilot quando o ticket mencionar negativação, bureau, Serasa, Boa Vista, SCPC, SPC, arquivo de retorno ou status de negativação.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-fluid py-4">
+      <div class="row g-3">
+        <div class="col-md-3"><div class="metric-card"><span>Produto</span><strong>DataCob</strong><small>Rotina operacional</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Módulo</span><strong>Ações em Massa</strong><small>Negativação / bureaus</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Bureaus</span><strong>Serasa, Boa Vista, SCPC, SPC</strong><small>Arquivo ou WebService</small></div></div>
+        <div class="col-md-3"><div class="metric-card"><span>Antes de DEV</span><strong>Logs + status</strong><small>Validar retorno e evidências</small></div></div>
+      </div>
+    </section>
+
+    <section class="container-fluid pb-4">
+      <div class="row g-4">
+        <div class="col-xl-4">
+          <aside class="article-sidebar">
+            <h2>Índice</h2>
+            <nav>
+              <a href="#quando-usar">Quando usar</a>
+              <a href="#passo-a-passo">Passo a passo</a>
+              <a href="#bureaus">Bureaus e retorno</a>
+              <a href="#status">Status e evidências</a>
+              <a href="#resposta">Resposta sugerida</a>
+              <a href="#copilot">Uso no Support Copilot</a>
+            </nav>
+            <div class="note-card mt-3">
+              <strong>Tipo Freshdesk sugerido</strong>
+              <p>Negativação / Recepção de Arquivo / Dúvida operacional</p>
+              <strong>Encaminhar para DEV?</strong>
+              <p>Somente depois de validar configuração, bureau, estratégia, retorno, logs e status.</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="col-xl-8">
+          <article class="article-panel" id="quando-usar">
+            <span class="eyebrow small">Triagem</span>
+            <h2>Quando usar este artigo</h2>
+            <p>Use este guia quando o ticket mencionar negativação em massa, inclusão ou exclusão de negativação, arquivo de retorno, bureau, Serasa, Boa Vista, SCPC, SPC, status de negativação ou divergência após recepção de retorno.</p>
+            <div class="keyword-grid">
+              <span>negativação</span><span>ações em massa</span><span>Serasa</span><span>Boa Vista</span><span>SCPC</span><span>SPC</span><span>retorno bureau</span><span>arquivo retorno</span><span>Detalhes Negativação</span><span>logs</span>
+            </div>
+          </article>
+
+          <article class="article-panel" id="passo-a-passo">
+            <span class="eyebrow small">Operação</span>
+            <h2>Passo a passo prático</h2>
+            <ol class="step-list">
+              <li><strong>Identificar o tipo da solicitação.</strong> Confirme se o chamado trata de configuração, inclusão, exclusão, envio, recepção de retorno ou status de negativação.</li>
+              <li><strong>Validar Grupo / Cliente / Fase.</strong> Antes de qualquer análise técnica, confirme se a configuração de negativação está vinculada ao cadastro correto.</li>
+              <li><strong>Confirmar o bureau.</strong> Identifique se o fluxo usa Serasa, Boa Vista, SCPC ou SPC. Cada bureau pode ter regras de layout, retorno e validação diferentes.</li>
+              <li><strong>Validar estratégia e filtros.</strong> Confira se os contratos esperados entram na seleção da ação em massa e se não há filtro impedindo a geração.</li>
+              <li><strong>Validar envio e retorno.</strong> Para fluxos por arquivo, confira arquivo gerado, arquivo de retorno recepcionado e logs do processamento.</li>
+              <li><strong>Conferir status no contrato.</strong> Verifique o status em <strong>Resumo &gt; Opções &gt; Contrato &gt; Detalhes Negativação</strong>.</li>
+              <li><strong>Escalar com evidência.</strong> Se persistir, encaminhe para DEV somente com prints, logs, contrato exemplo, bureau, status atual e comportamento esperado.</li>
+            </ol>
+          </article>
+
+          <article class="article-panel" id="bureaus">
+            <span class="eyebrow small">Bureaus</span>
+            <h2>Bureaus, envio e retorno</h2>
+            <div class="rule-grid">
+              <div class="rule-card"><strong>Serasa</strong><p>Normalmente trabalha com arquivo de envio e retorno. Validar layout, CNAB/arquivo gerado e recepção do retorno.</p></div>
+              <div class="rule-card"><strong>Boa Vista</strong><p>Validar se o arquivo foi gerado conforme layout esperado e se o retorno foi recepcionado sem erro.</p></div>
+              <div class="rule-card"><strong>SCPC</strong><p>Validar regras de arquivo, retorno e status esperado após processamento.</p></div>
+              <div class="rule-card"><strong>SPC</strong><p>Pode depender de WebService e credenciais. Validar configuração, acesso e retorno da comunicação.</p></div>
+            </div>
+          </article>
+
+          <article class="article-panel" id="status">
+            <span class="eyebrow small">Validação</span>
+            <h2>Status e evidências necessárias</h2>
+            <ul class="check-list">
+              <li>Print da tela da estratégia/filtros usados na ação em massa.</li>
+              <li>Contrato exemplo com status atual e status esperado.</li>
+              <li>Nome do bureau utilizado e tipo de operação: inclusão ou exclusão.</li>
+              <li>Arquivo gerado e arquivo de retorno, quando existir.</li>
+              <li>Logs da recepção/processamento do retorno.</li>
+              <li>Print de <strong>Detalhes Negativação</strong> no contrato.</li>
+              <li>Confirmação se o problema ocorre com um contrato ou em massa.</li>
+            </ul>
+          </article>
+
+          <article class="article-panel" id="resposta">
+            <span class="eyebrow small">Freshdesk</span>
+            <h2>Resposta sugerida ao cliente</h2>
+            <div class="template-card">
+              <h3>Solicitação de evidências</h3>
+              <pre data-template="customer">Olá,
+
+Para analisarmos a rotina de negativação no DataCob, precisamos validar algumas informações:
+
+- Bureau utilizado: Serasa, Boa Vista, SCPC ou SPC;
+- Tipo de operação: inclusão ou exclusão de negativação;
+- Grupo/Cliente/Fase envolvido;
+- Contrato exemplo;
+- Print da estratégia/filtros utilizados;
+- Arquivo gerado e/ou arquivo de retorno, quando aplicável;
+- Logs da recepção/processamento;
+- Status atual em Detalhes Negativação.
+
+Com essas evidências conseguimos confirmar se a situação está relacionada à parametrização, retorno do bureau ou comportamento sistêmico.
+
+Ficamos à disposição.</pre>
+              <button class="btn btn-outline-light btn-sm" type="button" data-copy-template="customer"><i class="fa-regular fa-copy me-1"></i>Copiar resposta</button>
+            </div>
+          </article>
+
+          <article class="article-panel" id="copilot">
+            <span class="eyebrow small">Support Copilot</span>
+            <h2>Como este manual entra na triagem</h2>
+            <p>Quando o ticket mencionar negativação, ações em massa, bureaus, retorno ou status divergente, o Copilot deve sugerir este manual e orientar a coleta de evidências antes de abrir demanda para Desenvolvimento.</p>
+            <textarea class="copy-box" readonly>Checklist interno - Negativação DataCob:
+1. Confirmar tipo da solicitação: configuração, inclusão, exclusão, retorno ou status.
+2. Validar Grupo/Cliente/Fase.
+3. Confirmar bureau: Serasa, Boa Vista, SCPC ou SPC.
+4. Validar estratégia e filtros da ação em massa.
+5. Conferir arquivo gerado e retorno recepcionado.
+6. Analisar logs.
+7. Conferir status em Detalhes Negativação.
+8. Escalar para DEV apenas com contrato exemplo, prints, logs e comportamento esperado.</textarea>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelectorAll('[data-copy-template]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const key = button.getAttribute('data-copy-template');
+        const source = document.querySelector(`[data-template="${key}"]`) || document.querySelector('.copy-box');
+        const text = source ? source.value || source.textContent : '';
+        try {
+          await navigator.clipboard.writeText(text.trim());
+          const original = button.innerHTML;
+          button.innerHTML = '<i class="fa-solid fa-check me-1"></i>Copiado';
+          setTimeout(() => { button.innerHTML = original; }, 1600);
+        } catch (error) {
+          alert('Não foi possível copiar automaticamente.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -125,8 +125,8 @@ export const DATACOB_KNOWLEDGE_BASE = [
     id: "datacob-negativacao",
     titulo: "Negativacao DataCob",
     produto: "DataCob",
-    categoria: "Juridico / Negativacao",
-    palavrasChave: ["negativacao", "serasa", "bureau", "spc", "boa vista", "scpc", "retorno", "inclusao", "exclusao", "cobranca"],
+    categoria: "Ações em Massa / Negativação",
+    palavrasChave: ["ações em massa", "acoes em massa", "negativacao", "serasa", "bureau", "spc", "boa vista", "scpc", "retorno", "inclusao", "exclusao", "cobranca"],
     perguntaExemplo: "Como configurar negativacao?",
     caminhoTela: "Acao de Cobranca > Bureaus / Resumo > Opcoes > Contrato > Detalhes Negativacao",
     resumo: "Ajuda o analista a validar configuracao de negativacao, bureau utilizado, retorno e status do contrato.",
@@ -145,7 +145,7 @@ export const DATACOB_KNOWLEDGE_BASE = [
       "Arquivo de retorno recepcionado quando aplicavel.",
       "Logs e status anexados ao chamado."
     ],
-    linkManual: "/pages/docs/help-center/index.html#manual-router",
+    linkManual: "/tools/datacob/support-copilot/docs/datacob/acoes-em-massa/negativacao/",
     tipoFreshdeskSugerido: "Negativacao",
     quandoEncaminharDev: "Encaminhar para DEV se configuracao e retorno estiverem corretos, mas o status permanecer divergente ou houver erro sistemico."
   },

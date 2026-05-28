@@ -182,10 +182,48 @@
         }
 
         .portfolio-hero {
+            --hero-accent: var(--enterprise-teal);
+            --hero-deep: #102b38;
+            --hero-bg-image: url("assets/img/capas-wallpaper-menus/sc24-ai-database.webp");
+            position: relative;
             background: #102b38;
             color: #fff;
             overflow: hidden;
-            padding: clamp(58px, 7vw, 92px) 0;
+            padding: clamp(58px, 7vw, 92px) 0 clamp(118px, 8vw, 136px);
+            isolation: isolate;
+            transition: background-color .45s ease;
+        }
+
+        .portfolio-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+            background:
+                linear-gradient(90deg, rgba(10, 24, 31, .96) 0%, rgba(16, 43, 56, .88) 42%, rgba(16, 43, 56, .52) 100%),
+                var(--hero-bg-image) center/cover no-repeat;
+            transform: scale(1.02);
+            transition: opacity .45s ease, transform 8s ease;
+        }
+
+        .portfolio-hero::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0;
+            height: 160px;
+            z-index: -1;
+            background: linear-gradient(0deg, rgba(0, 0, 0, .32), transparent);
+            pointer-events: none;
+        }
+
+        .portfolio-hero.is-changing::before {
+            opacity: .72;
+            transform: scale(1.04);
+        }
+
+        .portfolio-hero .rw-container {
+            position: relative;
+            z-index: 1;
         }
 
         .portfolio-hero-grid {
@@ -271,6 +309,13 @@
         .ai-showcase {
             position: relative;
             min-height: 430px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .ai-showcase:focus-visible {
+            border-radius: 14px;
+            box-shadow: 0 0 0 4px rgba(115, 201, 199, .34);
         }
 
         .dashboard-panel {
@@ -379,6 +424,146 @@
             background: var(--enterprise-red);
             color: #fff;
             font-size: 1.5rem;
+        }
+
+        .hero-cover-card {
+            position: absolute;
+            right: 0;
+            bottom: 76px;
+            width: min(300px, 42vw);
+            min-height: 182px;
+            border: 1px solid rgba(255, 255, 255, .26);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .9);
+            color: #211f1d;
+            box-shadow: 0 26px 70px rgba(0, 0, 0, .34);
+            overflow: hidden;
+            transform: translateZ(0);
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        .hero-cover-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 34px 86px rgba(0, 0, 0, .42);
+        }
+
+        .hero-cover-card img {
+            width: 100%;
+            height: 118px;
+            object-fit: cover;
+            background: #f4eee9;
+            display: block;
+        }
+
+        .hero-cover-card.is-logo img {
+            object-fit: contain;
+            padding: 24px;
+        }
+
+        .hero-cover-card span {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            font-weight: 900;
+        }
+
+        .hero-cover-card span::after {
+            content: "\f061";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--hero-accent);
+        }
+
+        .hero-carousel-controls {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            z-index: 4;
+            width: min(940px, calc(100% - 42px));
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: auto minmax(160px, 1fr) auto;
+            gap: 18px;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1px solid rgba(255, 255, 255, .16);
+            border-radius: 8px;
+            background: rgba(22, 25, 29, .72);
+            backdrop-filter: blur(16px);
+        }
+
+        .hero-carousel-copy {
+            color: rgba(255, 255, 255, .88);
+            font-size: .92rem;
+            font-weight: 800;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .hero-carousel-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-carousel-btn {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(255, 255, 255, .28);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            display: inline-grid;
+            place-items: center;
+            transition: background .18s ease, border-color .18s ease, transform .18s ease;
+        }
+
+        .hero-carousel-btn:hover,
+        .hero-carousel-btn:focus-visible {
+            background: rgba(255, 255, 255, .18);
+            border-color: rgba(255, 255, 255, .7);
+            transform: translateY(-1px);
+        }
+
+        .hero-carousel-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .hero-carousel-dot {
+            width: 54px;
+            height: 7px;
+            border: 1px solid rgba(255, 255, 255, .45);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .12);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .hero-carousel-dot::before {
+            content: "";
+            display: block;
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: #fff;
+            transition: width .25s ease;
+        }
+
+        .hero-carousel-dot[aria-current="true"] {
+            border-color: #fff;
+            background: rgba(255, 255, 255, .24);
+        }
+
+        .hero-carousel-dot[aria-current="true"]::before {
+            width: 100%;
         }
 
         .section-wrap {
@@ -598,6 +783,12 @@
             .ai-showcase {
                 min-height: 420px;
             }
+
+            .hero-cover-card {
+                right: 18px;
+                bottom: 34px;
+                width: min(280px, 52vw);
+            }
         }
 
         @media (max-width: 720px) {
@@ -631,6 +822,10 @@
                 gap: 32px;
             }
 
+            .portfolio-hero {
+                padding-bottom: 42px;
+            }
+
             .dashboard-panel {
                 max-width: 100%;
             }
@@ -648,6 +843,43 @@
                 bottom: auto;
                 width: 100%;
                 margin-top: 16px;
+            }
+
+            .hero-cover-card {
+                position: relative;
+                right: auto;
+                bottom: auto;
+                width: 100%;
+                margin-top: 16px;
+            }
+
+            .hero-cover-card img {
+                height: 150px;
+            }
+
+            .hero-carousel-controls {
+                position: relative;
+                left: auto;
+                bottom: auto;
+                width: calc(100% - 28px);
+                transform: none;
+                margin: 22px auto 0;
+                grid-template-columns: 1fr;
+                justify-items: stretch;
+                gap: 12px;
+            }
+
+            .hero-carousel-copy {
+                text-align: center;
+                white-space: normal;
+            }
+
+            .hero-carousel-nav {
+                justify-content: center;
+            }
+
+            .hero-carousel-dot {
+                width: 38px;
             }
 
             .architecture-row {
@@ -696,6 +928,7 @@
         <nav class="enterprise-nav" aria-label="Navegacao principal">
             <div class="enterprise-nav-inner">
                 <button type="button" id="enterpriseMenuOpenProducts">Produtos</button>
+                <a href="tools/datacob/treinamento-cliente/index.html">Portal DataCob</a>
                 <a href="#tools-section">Ferramentas</a>
                 <a href="#ph3a-ai">PH3A com IA</a>
                 <a href="#architecture-section">Arquitetura</a>
@@ -716,6 +949,7 @@
                     <a class="category-tile" href="tools/datacob/support-copilot/support-copilot.html">AI Support Copilot</a>
                     <a class="category-tile" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">DataCob CSV</a>
                     <a class="category-tile" href="tools/datacob/massa-dados/massa-dados.html">Massa de dados</a>
+                    <a class="category-tile" href="tools/datacob/treinamento-cliente/index.html">Treinamento DataCob</a>
                     <a class="category-tile" href="tools/dados/json-validator/json_validator.html">JSON</a>
                     <a class="category-tile" href="pages/docs/blog/index.html" data-route>Erros e blog</a>
                     <a class="category-tile" href="pages/case-study/deploy-cloud.html" data-route>Cloud</a>
@@ -763,7 +997,7 @@
 
                         <div class="assistant-card">
                             <div class="assistant-question">
-                                <img src="assets/img/frames_chat-ph3a/chat_ph3a_think.png" alt="Mascote Sapolingo usando computador">
+                                <img src="assets/img/frames_sapolingo/sapolingo_hack.png" alt="Mascote Sapolingo usando computador">
                                 <span>Quais tickets precisam de acao tecnica hoje?</span>
                             </div>
                             <div class="assistant-search">
@@ -807,6 +1041,13 @@
                             <span>Conhecimento</span>
                             <h3>Help Center</h3>
                             <p>Busca em manuais, pacotes, artigos e materiais tecnicos para suporte.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/datacob/treinamento-cliente/index.html">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Cliente</span>
+                            <h3>Treinamento DataCob</h3>
+                            <p>Pagina de treinamento com passo a passo, FAQs e prompt para gerar manuais por prints.</p>
                         </a>
 
                         <a class="portfolio-card" href="tools/datacob/manual-builder/freshdesk-paste.html">
@@ -931,7 +1172,7 @@
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header border-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold" id="languageModalLabel">Selecione seu pais/regiao</h5>
+                    <h5 class="modal-title fw-bold" id="languageModalLabel">Selecione o idioma</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body px-4 pb-4">
@@ -979,6 +1220,213 @@
         document.getElementById("enterpriseMenuOpenProducts")?.addEventListener("click", () => {
             document.getElementById("enterpriseMenuToggle")?.click();
         });
+
+        (() => {
+            const hero = document.querySelector(".portfolio-hero");
+            if (!hero) return;
+
+            const slides = [
+                {
+                    eyebrow: "Portfolio enterprise para PH3A",
+                    title: "A proxima geracao da Arriba Platform com IA.",
+                    copy: "Uma vitrine fullstack inspirada em produtos corporativos: suporte com IA, automacao DataCob, base de conhecimento, dashboards de atendimento e storytelling tecnico para entrevista.",
+                    primary: { label: "Saiba Mais", href: "tools/datacob/support-copilot/support-copilot.html", icon: "fa-wand-magic-sparkles" },
+                    secondary: { label: "Ver case PH3A", href: "pages/case-study/ph3a-support-copilot.html" },
+                    cover: "assets/img/capas-wallpaper-menus/sc24-ai-database.webp",
+                    coverLabel: "Support Copilot",
+                    dashboard: "Chamados criticos cairam 18% no cenario simulado",
+                    question: "Quais tickets precisam de acao tecnica hoje?",
+                    accent: "#73c9c7",
+                    deep: "#102b38",
+                    summary: "Support Copilot, base de conhecimento e IA aplicada ao atendimento."
+                },
+                {
+                    eyebrow: "Portal DataCob para cliente",
+                    title: "Treinamento DataCob com passos claros e reutilizaveis.",
+                    copy: "Nova area para transformar prints, videos e regras de suporte em uma jornada de treinamento para clientes, com modulos, checklists e documentacao guiada.",
+                    primary: { label: "Saiba Mais", href: "tools/datacob/treinamento-cliente/index.html", icon: "fa-graduation-cap" },
+                    secondary: { label: "Abrir Help Center", href: "pages/docs/help-center/index.html" },
+                    cover: "assets/img/logos-assets/logo-datacob.png",
+                    coverLabel: "Treinamento DataCob",
+                    coverFit: "logo",
+                    dashboard: "Onboarding com trilha visual e progresso do cliente",
+                    question: "Qual rotina do DataCob deve virar treinamento?",
+                    accent: "#f45124",
+                    deep: "#231f20",
+                    summary: "Treinamento DataCob para cliente, padrao de portal e conteudo operacional."
+                },
+                {
+                    eyebrow: "Manual interativo DataCob",
+                    title: "Respostas padronizadas para suporte com base local.",
+                    copy: "O chatbot consulta manuais, rotinas, caminhos de tela e links mesmo sem banco de dados, reduzindo retrabalho e acelerando orientacoes praticas.",
+                    primary: { label: "Saiba Mais", href: "pages/docs/help-center/index.html", icon: "fa-book-open" },
+                    secondary: { label: "Perguntar ao bot", href: "#chatbot" },
+                    cover: "assets/img/frames_chat-ph3a/chat_ph3a_think.png",
+                    coverLabel: "Manual interativo",
+                    coverFit: "logo",
+                    dashboard: "Base local encontra artigos, passos e checklist",
+                    question: "Como cadastrar juros sobre a divida?",
+                    accent: "#e7b85b",
+                    deep: "#243a34",
+                    summary: "Help Center, chatbot DataCob e fallback local para suporte."
+                },
+                {
+                    eyebrow: "Ferramentas de operacao",
+                    title: "Rotinas DataCob com cara de produto SaaS.",
+                    copy: "Gerador CSV, massa de dados, JSON, artigos Freshdesk e materiais tecnicos organizados em uma experiencia consistente para portfolio e uso real.",
+                    primary: { label: "Saiba Mais", href: "tools/datacob/arriba-csv-generator/csv-template-generator.html", icon: "fa-table-list" },
+                    secondary: { label: "Ver ferramentas", href: "#tools-section" },
+                    cover: "assets/img/logos-assets/logo-ph3.webp",
+                    coverLabel: "Portal de ferramentas",
+                    coverFit: "logo",
+                    dashboard: "Ferramentas recorrentes centralizadas em um portal unico",
+                    question: "Qual arquivo precisa ser validado agora?",
+                    accent: "#c74634",
+                    deep: "#16191d",
+                    summary: "Portal de ferramentas para suporte, dados e documentacao."
+                }
+            ];
+
+            const eyebrow = hero.querySelector(".hero-eyebrow");
+            const title = hero.querySelector("h1");
+            const copy = hero.querySelector("p");
+            const actions = hero.querySelector(".hero-actions");
+            const primary = actions?.querySelector(".enterprise-btn-primary");
+            const secondary = actions?.querySelector(".enterprise-btn-secondary");
+            const dashboardTitle = hero.querySelector(".dashboard-header strong");
+            const assistantQuestion = hero.querySelector(".assistant-question span");
+            const showcase = hero.querySelector(".ai-showcase");
+            const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            let current = 0;
+            let timer = null;
+            let paused = false;
+
+            hero.setAttribute("aria-roledescription", "carousel");
+            hero.setAttribute("aria-live", "polite");
+            showcase?.setAttribute("role", "button");
+            showcase?.setAttribute("tabindex", "0");
+            showcase?.setAttribute("aria-label", "Avancar slide do portal");
+
+            const cover = document.createElement("button");
+            cover.type = "button";
+            cover.className = "hero-cover-card";
+            cover.setAttribute("aria-label", "Avancar para o proximo destaque");
+            cover.innerHTML = '<img alt=""><span></span>';
+            showcase?.appendChild(cover);
+
+            const controls = document.createElement("div");
+            controls.className = "hero-carousel-controls";
+            controls.innerHTML = `
+                <div class="hero-carousel-copy" id="heroCarouselSummary"></div>
+                <div class="hero-carousel-dots" role="tablist" aria-label="Destaques do portal"></div>
+                <div class="hero-carousel-nav">
+                    <button type="button" class="hero-carousel-btn" data-hero-prev aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button type="button" class="hero-carousel-btn" data-hero-next aria-label="Proximo slide"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            `;
+            hero.appendChild(controls);
+
+            const dotsWrap = controls.querySelector(".hero-carousel-dots");
+            const summary = controls.querySelector("#heroCarouselSummary");
+            const dots = slides.map((slide, index) => {
+                const dot = document.createElement("button");
+                dot.type = "button";
+                dot.className = "hero-carousel-dot";
+                dot.setAttribute("role", "tab");
+                dot.setAttribute("aria-label", `Ir para ${slide.coverLabel}`);
+                dot.addEventListener("click", () => goTo(index, true));
+                dotsWrap.appendChild(dot);
+                return dot;
+            });
+
+            function setLink(link, config) {
+                if (!link || !config) return;
+                link.href = config.href;
+                link.removeAttribute("data-route");
+                link.innerHTML = `${config.icon ? `<i class="fa-solid ${config.icon}"></i>` : ""}${config.label}`;
+            }
+
+            function goTo(index, userAction = false) {
+                current = (index + slides.length) % slides.length;
+                const slide = slides[current];
+                hero.classList.add("is-changing");
+                hero.style.setProperty("--hero-bg-image", `url("${slide.cover}")`);
+                hero.style.setProperty("--hero-accent", slide.accent);
+                hero.style.setProperty("--hero-deep", slide.deep);
+                hero.style.backgroundColor = slide.deep;
+
+                if (eyebrow) eyebrow.textContent = slide.eyebrow;
+                if (title) title.textContent = slide.title;
+                if (copy) copy.textContent = slide.copy;
+                setLink(primary, slide.primary);
+                setLink(secondary, slide.secondary);
+                if (dashboardTitle) dashboardTitle.textContent = slide.dashboard;
+                if (assistantQuestion) assistantQuestion.textContent = slide.question;
+                if (summary) summary.textContent = slide.summary;
+
+                cover.classList.toggle("is-logo", slide.coverFit === "logo");
+                const coverImg = cover.querySelector("img");
+                const coverText = cover.querySelector("span");
+                if (coverImg) {
+                    coverImg.src = slide.cover;
+                    coverImg.alt = slide.coverLabel;
+                }
+                if (coverText) coverText.textContent = slide.coverLabel;
+
+                dots.forEach((dot, dotIndex) => {
+                    const active = dotIndex === current;
+                    dot.setAttribute("aria-current", active ? "true" : "false");
+                    dot.setAttribute("aria-selected", active ? "true" : "false");
+                });
+
+                window.setTimeout(() => hero.classList.remove("is-changing"), 360);
+                if (userAction) restart();
+            }
+
+            function next(userAction = false) { goTo(current + 1, userAction); }
+            function previous() { goTo(current - 1, true); }
+            function stop() {
+                window.clearInterval(timer);
+                timer = null;
+            }
+            function start() {
+                if (reducedMotion || paused || timer) return;
+                timer = window.setInterval(() => next(false), 6500);
+            }
+            function restart() {
+                stop();
+                start();
+            }
+
+            controls.querySelector("[data-hero-prev]")?.addEventListener("click", previous);
+            controls.querySelector("[data-hero-next]")?.addEventListener("click", () => next(true));
+            cover.addEventListener("click", () => next(true));
+            showcase?.addEventListener("click", (event) => {
+                if (event.target.closest(".assistant-search button, .hero-cover-card")) return;
+                next(true);
+            });
+            showcase?.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    next(true);
+                }
+            });
+            hero.addEventListener("keydown", (event) => {
+                if (event.key === "ArrowRight") next(true);
+                if (event.key === "ArrowLeft") previous();
+            });
+            hero.addEventListener("mouseenter", () => { paused = true; stop(); });
+            hero.addEventListener("mouseleave", () => { paused = false; start(); });
+            hero.addEventListener("focusin", () => { paused = true; stop(); });
+            hero.addEventListener("focusout", () => { paused = false; start(); });
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) stop();
+                else start();
+            });
+
+            goTo(0, false);
+            start();
+        })();
     </script>
 </body>
 </html>

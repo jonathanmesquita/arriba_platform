@@ -1,5 +1,20 @@
 window.ARRIBA_MANUALS_INDEX = [
   {
+    id: "datacob-treinamento-cliente",
+    title: "Treinamento DataCob para Cliente",
+    product: "DataCob",
+    category: "Treinamento / Cliente",
+    routine: "Onboarding e capacitação",
+    module: "Treinamento",
+    kind: "Página de treinamento",
+    client: "Geral",
+    url: "/tools/datacob/treinamento-cliente/",
+    keywords: ["treinamento", "cliente", "aula", "curso", "onboarding", "prints", "passo a passo", "dataCob", "manual interativo", "dúvidas frequentes"],
+    summary: "Página modelo para capacitar clientes DataCob, com módulos, passo a passo, FAQs e prompt para transformar prints em documentação.",
+    checklist: ["Definir procedimento", "Enviar prints ou vídeo", "Gerar Markdown", "Publicar no Help Center"]
+  },
+
+  {
     id: "datacob-versao-agendamento-automatico",
     title: "Agendamento automático de versão DataCob",
     product: "DataCob",

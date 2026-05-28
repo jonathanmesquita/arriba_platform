@@ -20,6 +20,15 @@
         <span class="small text-secondary">Case Study / Suporte a Clientes</span>
       </div>
       <div class="d-flex align-items-center gap-2">
+        <a href="../../../pages/docs/help-center/index.html" class="topbar-icon-action" aria-label="Abrir Help Center">
+          <i class="fa-regular fa-circle-question"></i><span>Ajuda</span>
+        </a>
+        <a href="../treinamento-cliente/index.html" class="topbar-icon-action" aria-label="Abrir treinamento DataCob">
+          <i class="fa-solid fa-graduation-cap"></i><span>Treinamento</span>
+        </a>
+        <button class="topbar-icon-action" type="button" id="supportThemeToggle" aria-label="Alternar cor da pagina">
+          <i class="fa-solid fa-palette" id="supportThemeIcon"></i><span>Tema</span>
+        </button>
         <a href="../../../index.html" class="btn btn-sm btn-outline-light"><i class="fa-solid fa-arrow-left me-1"></i> Voltar</a>
         <label class="presentation-switch" title="Mascara dados sensiveis para apresentacao">
           <input type="checkbox" id="presentationModeToggle" />
@@ -107,7 +116,7 @@
                   <span class="stepper-kicker">Fluxo da análise</span>
                   <strong id="copilotFlowTitle">Entrada</strong>
                 </div>
-                <div class="stepper-rail" aria-hidden="true">
+                <div class="stepper-rail" id="copilotFlowRail" role="progressbar" aria-label="Progresso da analise" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                   <span class="stepper-rail-fill" id="copilotFlowFill"></span>
                 </div>
                 <div class="stepper-items">
@@ -171,7 +180,7 @@
                 </div>
                 <div class="col-12">
                   <label for="apiBase" class="form-label">API utilizada</label>
-                  <input id="apiBase" class="form-control" value="https://api.jm.dev.br" />
+                  <input id="apiBase" class="form-control" value="https://api.arriba.jm.dev.br" />
                   <small class="text-secondary">Para teste local, use http://localhost:3000. Se a API falhar, a pagina usa fallback local.</small>
                 </div>
               </div>
@@ -438,6 +447,32 @@
   </div>
 
   <div id="copilotNoticeStack" class="copilot-notice-stack" aria-live="polite" aria-atomic="false"></div>
+
+  <button class="support-floating-help" type="button" id="supportHelpButton" aria-expanded="false" aria-controls="supportHelpPanel">
+    <i class="fa-regular fa-circle-question"></i>
+    <span>Ajuda</span>
+  </button>
+
+  <aside class="support-help-panel d-none" id="supportHelpPanel" role="dialog" aria-label="Ajuda do Support Copilot">
+    <div class="support-help-header">
+      <div>
+        <span class="eyebrow small">Ajuda rapida</span>
+        <h2>Como usar o Copilot</h2>
+      </div>
+      <button type="button" id="supportHelpClose" aria-label="Fechar ajuda"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ol class="support-help-steps">
+      <li><strong>Entrada</strong><span>Informe o numero do ticket ou cole a solicitacao.</span></li>
+      <li><strong>Ticket</strong><span>Busque o contexto Freshdesk quando existir.</span></li>
+      <li><strong>Base</strong><span>Confira manuais, pacotes e artigos sugeridos.</span></li>
+      <li><strong>Analise</strong><span>Copie a resposta final, nota interna ou checklist.</span></li>
+    </ol>
+    <div class="support-help-links">
+      <a href="../../../pages/docs/help-center/index.html"><i class="fa-solid fa-book-open"></i> Help Center</a>
+      <a href="../treinamento-cliente/index.html"><i class="fa-solid fa-graduation-cap"></i> Treinamento DataCob</a>
+      <a href="../../../index.html"><i class="fa-solid fa-house"></i> Portal Arriba</a>
+    </div>
+  </aside>
 
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="copyToast" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">

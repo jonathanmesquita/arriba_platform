@@ -1,4 +1,4 @@
-const API_DEFAULT = "https://api.jm.dev.br";
+const API_DEFAULT = "https://api.arriba.jm.dev.br";
 const LOCAL_LOG_KEY = "arribaSupportCopilotLocalLogs";
 
 const demoTicket = {
@@ -29,6 +29,7 @@ const ids = [
 let lastCopilotResult = null;
 let currentTicketContext = null;
 let selectedTicketFilter = "requesterOpenTickets";
+let flowPlaybackTimer = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -1211,18 +1212,21 @@ function updateFlowStatus(step = "input") {
   const order = ["input", "ticket", "knowledge", "analysis"];
   const labels = {
     input: "Entrada",
-    ticket: "Ticket carregado",
-    knowledge: "Base consultada",
-    analysis: "Análise pronta"
+    ticket: "Ticket",
+    knowledge: "Base",
+    analysis: "Analise"
   };
   const activeIndex = Math.max(0, order.indexOf(step));
   const currentStep = order[activeIndex] || "input";
   const container = document.getElementById("copilotFlowStatus");
   const fill = document.getElementById("copilotFlowFill");
+  const rail = document.getElementById("copilotFlowRail");
   const title = document.getElementById("copilotFlowTitle");
+  const progress = Math.round((activeIndex / (order.length - 1)) * 100);
 
   if (container) container.dataset.flowState = currentStep;
-  if (fill) fill.style.width = `${(activeIndex / (order.length - 1)) * 100}%`;
+  if (fill) fill.style.width = `${progress}%`;
+  if (rail) rail.setAttribute("aria-valuenow", String(progress));
   if (title) title.textContent = labels[currentStep] || "Entrada";
 
   document.querySelectorAll("[data-flow-step]").forEach((item) => {
@@ -1235,8 +1239,29 @@ function updateFlowStatus(step = "input") {
     item.classList.toggle("current", isCurrent);
     item.classList.toggle("done", isDone);
     item.classList.toggle("pending", idx > activeIndex);
+    item.classList.toggle("processing", isCurrent && currentStep !== "analysis");
     item.dataset.stepStatus = isCurrent ? "current" : isDone ? "done" : "pending";
+    item.setAttribute("aria-current", isCurrent ? "step" : "false");
   });
+}
+
+function stopFlowPlayback() {
+  if (flowPlaybackTimer) {
+    window.clearInterval(flowPlaybackTimer);
+    flowPlaybackTimer = null;
+  }
+}
+
+function startFlowPlayback(sequence = ["input", "ticket", "knowledge"], interval = 850) {
+  stopFlowPlayback();
+  const steps = sequence.length ? sequence : ["input"];
+  let index = 0;
+  updateFlowStatus(steps[index]);
+  flowPlaybackTimer = window.setInterval(() => {
+    index = Math.min(index + 1, steps.length - 1);
+    updateFlowStatus(steps[index]);
+    if (index >= steps.length - 1) stopFlowPlayback();
+  }, interval);
 }
 
 function activateTab(targetId) {
@@ -1267,6 +1292,7 @@ function renderResult(rawData, options = {}) {
   getEl("resultContent")?.classList.remove("d-none");
 
   renderDiagnostic(analysis, context, templates);
+  stopFlowPlayback();
   updateFlowStatus("analysis");
 
   safeSet("analysisSource", analysis.source || "analise");
@@ -1480,7 +1506,7 @@ async function handleFetchTicket() {
     return;
   }
 
-  updateFlowStatus("ticket");
+  startFlowPlayback(["input", "ticket"], 520);
   try {
     await withLoading(getEl("fetchTicketBtn"), "Buscando...", async () => {
       if (!isProbablyTicketId(term)) {
@@ -1500,6 +1526,7 @@ async function handleFetchTicket() {
       showCopilotNotice("info", "Ticket carregado", "Contexto do Freshdesk disponível. Agora você pode analisar o chamado.", "Entrada → Ticket → Base");
     });
   } catch (error) {
+    stopFlowPlayback();
     updateFlowStatus("input");
     showCopilotError("Não foi possível buscar o ticket", error, "Entrada → Ticket");
   }
@@ -1512,7 +1539,7 @@ async function handleAnalyzeFreshdesk() {
     return;
   }
 
-  updateFlowStatus("knowledge");
+  startFlowPlayback(["ticket", "knowledge"], 620);
   try {
     await withLoading(getEl("analyzeFreshdeskBtn"), "Analisando ticket...", async () => {
       const result = await analyzeFreshdeskTicket(ticketId);
@@ -1521,7 +1548,8 @@ async function handleAnalyzeFreshdesk() {
       document.getElementById("resultContent")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   } catch (error) {
-    updateFlowStatus("knowledge");
+    stopFlowPlayback();
+    startFlowPlayback(input.ticketId ? ["input", "ticket", "knowledge"] : ["input", "knowledge"], 620);
     showCopilotError("Análise não concluída", error, "Base → Análise");
   }
 }
@@ -1569,6 +1597,44 @@ function handlePresentationModeChange() {
   if (lastCopilotResult) renderResult(lastCopilotResult, { notify: false });
 }
 
+function applySupportTheme(theme = "dark") {
+  const light = theme === "light";
+  document.body.classList.toggle("theme-light", light);
+  const icon = getEl("supportThemeIcon");
+  const button = getEl("supportThemeToggle");
+  if (icon) icon.className = light ? "fa-solid fa-moon" : "fa-solid fa-palette";
+  if (button) button.setAttribute("aria-pressed", light ? "true" : "false");
+  localStorage.setItem("arribaSupportTheme", light ? "light" : "dark");
+}
+
+function initSupportTheme() {
+  applySupportTheme(localStorage.getItem("arribaSupportTheme") || "dark");
+}
+
+function toggleSupportTheme() {
+  const nextTheme = document.body.classList.contains("theme-light") ? "dark" : "light";
+  applySupportTheme(nextTheme);
+  showCopilotNotice(
+    "info",
+    nextTheme === "light" ? "Tema claro ativado" : "Tema escuro ativado",
+    "A preferencia fica salva neste navegador.",
+    "UX"
+  );
+}
+
+function setHelpPanel(open) {
+  const panel = getEl("supportHelpPanel");
+  const button = getEl("supportHelpButton");
+  if (!panel || !button) return;
+  panel.classList.toggle("d-none", !open);
+  button.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function toggleHelpPanel() {
+  const panel = getEl("supportHelpPanel");
+  setHelpPanel(panel?.classList.contains("d-none"));
+}
+
 async function handleAddNote() {
   showToast("Modo seguro ativo: copie a nota interna e cole manualmente no Freshdesk.");
 }
@@ -1589,6 +1655,7 @@ async function handleRefreshQuality() {
 function setupEvents() {
   const savedApi = localStorage.getItem("arribaSupportApiBase");
   if (savedApi && getEl("apiBase")) getEl("apiBase").value = savedApi;
+  initSupportTheme();
 
   getEl("loadDemoBtn")?.addEventListener("click", () => {
     updateFlowStatus("input");
@@ -1615,6 +1682,12 @@ function setupEvents() {
   getEl("approveValidationBtn")?.addEventListener("click", handleApproveValidation);
   getEl("presentationModeToggle")?.addEventListener("change", handlePresentationModeChange);
   getEl("authLoginForm")?.addEventListener("submit", handleAuthLogin);
+  getEl("supportThemeToggle")?.addEventListener("click", toggleSupportTheme);
+  getEl("supportHelpButton")?.addEventListener("click", toggleHelpPanel);
+  getEl("supportHelpClose")?.addEventListener("click", () => setHelpPanel(false));
+  getEl("supportHelpPanel")?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setHelpPanel(false);
+  });
   setupCopyButtons();
   getEl("packageSuggestions")?.addEventListener("click", (event) => {
     const copyBtn = event.target.closest("[data-package-copy]");
@@ -1649,6 +1722,7 @@ function setupEvents() {
         renderResult(result);
       });
     } catch (error) {
+      stopFlowPlayback();
       updateFlowStatus("input");
       showCopilotError("Não consegui analisar o texto", error, "Entrada → Análise");
     }

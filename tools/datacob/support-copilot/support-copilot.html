@@ -40,47 +40,43 @@
   </header>
 
   <main>
-    <section class="hero-section support-hero-carousel" id="supportHeroCarousel" aria-roledescription="carousel" aria-label="Destaques do suporte DataCob">
+    <section class="hero-section support-simple-hero" aria-label="AI Support Copilot">
       <div class="container-fluid">
         <div class="row align-items-center g-4">
           <div class="col-lg-7">
-            <span class="eyebrow" id="supportHeroEyebrow">PH3A Support Copilot</span>
-            <h1 id="supportHeroTitle">Atendimento mais rapido com contexto melhor.</h1>
-            <p class="hero-copy" id="supportHeroCopy">
-              Copiloto de IA para analisar chamados do Freshdesk, resumir solicitacoes, recomendar respostas predefinidas,
-              criar anotacoes internas e gerar especificacao para Desenvolvimento quando necessario.
+            <span class="eyebrow">AI Support Copilot</span>
+            <h1>AI Support Copilot</h1>
+            <p class="hero-copy">
+              Ferramenta de apoio ao analista de suporte: recebe ticket, assunto ou texto manual,
+              busca contexto, consulta base local/Freshdesk quando disponivel e gera resumo,
+              checklist, resposta sugerida e encaminhamento.
             </p>
-            <div class="d-flex flex-wrap gap-2 mt-4">
-              <a href="#analisar" class="btn btn-danger btn-lg" id="supportHeroCta"><i class="fa-solid fa-play me-2"></i>Saiba Mais</a>
-              <a href="../treinamento-cliente/index.html" class="btn btn-outline-light btn-lg" id="supportHeroPortal"><i class="fa-solid fa-graduation-cap me-2"></i>Portal DataCob</a>
+            <div class="support-simple-actions">
+              <button class="btn btn-danger btn-lg" type="button" id="topFetchTicketBtn"><i class="fa-solid fa-magnifying-glass me-2"></i>Buscar ticket</button>
+              <button class="btn btn-light btn-lg" type="button" id="topAnalyzeBtn"><i class="fa-solid fa-brain me-2"></i>Analisar</button>
+              <button class="btn btn-outline-light btn-lg" type="button" id="topLoadDemoBtn"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Carregar demo</button>
+              <button class="btn btn-outline-light btn-lg" type="button" id="topClearBtn"><i class="fa-solid fa-eraser me-2"></i>Limpar</button>
+              <a href="../../../pages/docs/help-center/index.html" class="btn btn-outline-light btn-lg"><i class="fa-solid fa-book-open me-2"></i>Abrir Help Center</a>
             </div>
           </div>
           <div class="col-lg-5">
-            <button class="support-hero-visual" type="button" id="supportHeroVisual" aria-label="Avancar destaque do suporte">
-              <img id="supportHeroImage" src="../../../assets/img/capas-wallpaper-menus/sc24-ai-database.webp" alt="Destaque visual do Support Copilot" />
-            </button>
             <div class="architecture-card support-hero-card">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="small text-uppercase text-secondary" id="supportHeroKicker">Fluxo principal</span>
-                <strong id="supportHeroCardTitle">Fullstack Cloud</strong>
+                <span class="small text-uppercase text-secondary">Fluxo principal</span>
+                <strong>Suporte assistido</strong>
               </div>
               <div class="flow-grid">
-                <div class="flow-step"><strong>Freshdesk</strong><small>Chamados</small></div>
+                <div class="flow-step"><strong>Entrada</strong><small>Ticket ou texto</small></div>
                 <span class="flow-arrow">&rarr;</span>
-                <div class="flow-step"><strong>Render</strong><small>Node API</small></div>
+                <div class="flow-step"><strong>Base</strong><small>Manual local</small></div>
                 <span class="flow-arrow">&rarr;</span>
-                <div class="flow-step"><strong>OpenAI</strong><small>Analise IA</small></div>
+                <div class="flow-step"><strong>Resposta</strong><small>Checklist</small></div>
               </div>
               <p class="mb-0 mt-4 text-secondary">
-                Fallback local mantem a triagem util mesmo quando a IA esta indisponivel.
+                O fallback local mantem a triagem util mesmo quando a IA ou o Freshdesk estao indisponiveis.
               </p>
             </div>
           </div>
-        </div>
-        <div class="support-carousel-controls">
-          <button class="support-carousel-btn" type="button" id="supportHeroPrev" aria-label="Destaque anterior"><i class="fa-solid fa-chevron-left"></i></button>
-          <div class="support-carousel-dots" id="supportHeroDots" role="tablist" aria-label="Destaques"></div>
-          <button class="support-carousel-btn" type="button" id="supportHeroNext" aria-label="Proximo destaque"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
       </div>
     </section>
@@ -94,56 +90,35 @@
       </div>
     </section>
 
-    <section class="container-fluid pb-4" id="manual-dinamico">
-      <div class="support-intel-grid">
-        <article class="panel-card dynamic-manual-panel">
-          <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
-            <div>
-              <span class="eyebrow small">Busca dinamica</span>
-              <h2 class="h3 mb-1">Manuais DataCob sem recarregar a pagina</h2>
-              <p class="text-secondary mb-0">Pesquise por rotina, erro, modulo, cliente, token, versao ou negativacao. O artigo abre aqui na tela.</p>
-            </div>
-            <span class="status-pill">Base local indexada</span>
-          </div>
-          <div class="manual-live-search">
-            <input id="dynamicManualSearchInput" class="form-control" placeholder="Ex: token API, nova carteira, negativacao, agendamento de versao..." />
-            <button class="btn btn-danger" type="button" id="dynamicManualSearchBtn"><i class="fa-solid fa-magnifying-glass me-1"></i>Buscar</button>
-          </div>
-          <div id="dynamicManualResults" class="dynamic-manual-results" aria-live="polite"></div>
-          <div id="dynamicManualViewer" class="dynamic-manual-viewer">
-            <div class="empty-mini">Selecione um manual para renderizar o artigo aqui.</div>
-          </div>
-        </article>
-
-        <article class="panel-card ticket-dashboard-panel" id="ticketDashboard">
-          <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
-            <div>
-              <span class="eyebrow small">Freshdesk Intelligence</span>
-              <h2 class="h3 mb-1">Mini dashboard de tickets</h2>
-              <p class="text-secondary mb-0">Estrutura pronta para consumir tickets por empresa, agente ou busca recorrente.</p>
-            </div>
-            <button class="btn btn-sm btn-outline-light" type="button" id="refreshTicketDashboardBtn"><i class="fa-solid fa-rotate me-1"></i>Atualizar</button>
-          </div>
-          <div class="ticket-dashboard-filters">
-            <select id="ticketDashboardScope" class="form-select">
-              <option value="agent">Agente logado</option>
-              <option value="company">Empresa do ticket</option>
-              <option value="all">Todos os chamados</option>
-            </select>
-            <input id="ticketDashboardTerm" class="form-control" placeholder="Filtrar tema: boleto, API, versao..." />
-          </div>
-          <div id="ticketDashboardMetrics" class="ticket-dashboard-metrics"></div>
-          <div id="ticketDashboardThemes" class="ticket-dashboard-themes"></div>
-          <div id="ticketDashboardList" class="ticket-dashboard-list"></div>
-          <div class="freshdesk-api-note">
-            <strong>API preparada:</strong>
-            <span>GET /tickets, GET /search/tickets, GET /tickets/{id}, POST /tickets/{id}/notes.</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
     <section class="container-fluid pb-5" id="analisar">
+      <section class="copilot-stepper-2026" id="copilotFlowStatus" data-flow-state="input" aria-label="Fluxo do Copilot">
+        <div class="stepper-heading">
+          <span class="stepper-kicker">Fluxo da analise</span>
+          <strong id="copilotFlowTitle">Entrada</strong>
+        </div>
+        <div class="stepper-rail" id="copilotFlowRail" role="progressbar" aria-label="Progresso da analise" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span class="stepper-rail-fill" id="copilotFlowFill"></span>
+        </div>
+        <div class="stepper-items">
+          <div class="stepper-item active current" data-flow-step="input">
+            <span class="stepper-dot">01</span>
+            <span class="stepper-text"><strong>Entrada</strong><small>Dados ou numero do ticket</small></span>
+          </div>
+          <div class="stepper-item" data-flow-step="ticket">
+            <span class="stepper-dot">02</span>
+            <span class="stepper-text"><strong>Ticket</strong><small>Contexto Freshdesk</small></span>
+          </div>
+          <div class="stepper-item" data-flow-step="knowledge">
+            <span class="stepper-dot">03</span>
+            <span class="stepper-text"><strong>Base</strong><small>Manuais e pacotes</small></span>
+          </div>
+          <div class="stepper-item" data-flow-step="analysis">
+            <span class="stepper-dot">04</span>
+            <span class="stepper-text"><strong>Analise</strong><small>Recomendacao final</small></span>
+          </div>
+        </div>
+      </section>
+
       <div class="row g-4">
         <div class="col-xl-5">
           <div class="panel-card h-100">
@@ -167,34 +142,6 @@
                 <small class="text-secondary">Se informar numero, busca o contexto do ticket. Se informar assunto, lista tickets encontrados.</small>
                 <div id="searchResults" class="search-results mt-3 d-none"></div>
               </div>
-
-              <section class="copilot-stepper-2026" id="copilotFlowStatus" data-flow-state="input" aria-label="Fluxo do Copilot">
-                <div class="stepper-heading">
-                  <span class="stepper-kicker">Fluxo da análise</span>
-                  <strong id="copilotFlowTitle">Entrada</strong>
-                </div>
-                <div class="stepper-rail" id="copilotFlowRail" role="progressbar" aria-label="Progresso da analise" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                  <span class="stepper-rail-fill" id="copilotFlowFill"></span>
-                </div>
-                <div class="stepper-items">
-                  <div class="stepper-item active current" data-flow-step="input">
-                    <span class="stepper-dot">01</span>
-                    <span class="stepper-text"><strong>Entrada</strong><small>Dados ou número do ticket</small></span>
-                  </div>
-                  <div class="stepper-item" data-flow-step="ticket">
-                    <span class="stepper-dot">02</span>
-                    <span class="stepper-text"><strong>Ticket</strong><small>Contexto Freshdesk</small></span>
-                  </div>
-                  <div class="stepper-item" data-flow-step="knowledge">
-                    <span class="stepper-dot">03</span>
-                    <span class="stepper-text"><strong>Base</strong><small>Manuais e pacotes</small></span>
-                  </div>
-                  <div class="stepper-item" data-flow-step="analysis">
-                    <span class="stepper-dot">04</span>
-                    <span class="stepper-text"><strong>Análise</strong><small>Recomendação final</small></span>
-                  </div>
-                </div>
-              </section>
 
               <div class="row g-3">
                 <div class="col-md-12">

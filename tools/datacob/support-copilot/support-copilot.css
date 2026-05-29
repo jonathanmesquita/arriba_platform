@@ -166,6 +166,35 @@ body.theme-light .empty-state {
   border-bottom: 1px solid var(--arriba-border);
 }
 
+.support-simple-hero {
+  background:
+    radial-gradient(circle at 86% 12%, rgba(244, 81, 36, .20), transparent 28%),
+    linear-gradient(135deg, #121619 0%, #211f1d 52%, #2d241f 100%);
+}
+
+.support-simple-hero h1 {
+  max-width: 760px;
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
+  line-height: .98;
+  letter-spacing: -.04em;
+}
+
+.support-simple-hero .hero-copy {
+  max-width: 820px;
+}
+
+.support-simple-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1.75rem;
+}
+
+.support-simple-actions .btn {
+  border-radius: 8px;
+  font-weight: 800;
+}
+
 .support-hero-carousel {
   --support-hero-accent: #f45124;
   --support-hero-bg: url("../../../assets/img/capas-wallpaper-menus/sc24-ai-database.webp");

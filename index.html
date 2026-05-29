@@ -529,6 +529,10 @@
             transform: translateY(-1px);
         }
 
+        .hero-carousel-toggle {
+            min-width: 42px;
+        }
+
         .hero-carousel-dots {
             display: flex;
             justify-content: center;
@@ -953,7 +957,6 @@
                     <a class="category-tile" href="tools/dados/json-validator/json_validator.html">JSON</a>
                     <a class="category-tile" href="pages/docs/blog/index.html" data-route>Erros e blog</a>
                     <a class="category-tile" href="pages/case-study/deploy-cloud.html" data-route>Cloud</a>
-                    <!--<a class="category-tile" href="pages/case-study/arriba-platform.html" data-route>Portfolio</a> -->
                 </div>
             </div>
         </section>
@@ -1220,28 +1223,27 @@
 
             const slides = [
                 {
-                    eyebrow: "Portfolio enterprise para PH3A",
-                    title: "A proxima geracao da Arriba Platform com IA.",
+                    eyebrow: "PH3A com IA",
+                    title: "A proxima geracao da Arriba Platform com IA",
                     copy: "Uma vitrine fullstack inspirada em produtos corporativos: suporte com IA, automacao DataCob, base de conhecimento, dashboards de atendimento e storytelling tecnico para entrevista.",
-                    primary: { label: "Saiba Mais", href: "tools/datacob/support-copilot/support-copilot.html", icon: "fa-wand-magic-sparkles" },
-                    secondary: { label: "Ver case PH3A", href: "pages/case-study/ph3a-support-copilot.html" },
+                    primary: { label: "Conhecer plataforma", href: "pages/case-study/arriba-platform.html", icon: "fa-wand-magic-sparkles" },
+                    secondary: { label: "Abrir Copilot", href: "tools/datacob/support-copilot/support-copilot.html" },
                     cover: "assets/img/capas-wallpaper-menus/sc24-ai-database.webp",
-                    coverLabel: "Support Copilot",
-                    dashboard: "Chamados criticos cairam 18% no cenario simulado",
-                    question: "Quais tickets precisam de acao tecnica hoje?",
+                    coverLabel: "Arriba Platform com IA",
+                    dashboard: "Suporte com IA, base local e dashboards de atendimento",
+                    question: "Como a Arriba ajuda o suporte hoje?",
                     accent: "#73c9c7",
                     deep: "#102b38",
                     summary: "Support Copilot, base de conhecimento e IA aplicada ao atendimento."
                 },
                 {
                     eyebrow: "Portal DataCob para cliente",
-                    title: "Treinamento DataCob com passos claros e reutilizaveis.",
+                    title: "Treinamento DataCob com passos claros e reutilizaveis",
                     copy: "Nova area para transformar prints, videos e regras de suporte em uma jornada de treinamento para clientes, com modulos, checklists e documentacao guiada.",
-                    primary: { label: "Saiba Mais", href: "tools/datacob/treinamento-cliente/index.html", icon: "fa-graduation-cap" },
+                    primary: { label: "Abrir treinamento", href: "tools/datacob/treinamento-cliente/index.html", icon: "fa-graduation-cap" },
                     secondary: { label: "Abrir Help Center", href: "pages/docs/help-center/index.html" },
-                    cover: "assets/img/capas-wallpaper-menus/robo-chat-01.png",
+                    cover: "assets/img/capas-wallpaper-menus/cv-home-tag.webp",
                     coverLabel: "Treinamento DataCob",
-                    coverFit: "logo",
                     dashboard: "Onboarding com trilha visual e progresso do cliente",
                     question: "Qual rotina do DataCob deve virar treinamento?",
                     accent: "#f45124",
@@ -1250,13 +1252,12 @@
                 },
                 {
                     eyebrow: "Manual interativo DataCob",
-                    title: "Respostas padronizadas para suporte com base local.",
+                    title: "Manual interativo DataCob",
                     copy: "O chatbot consulta manuais, rotinas, caminhos de tela e links mesmo sem banco de dados, reduzindo retrabalho e acelerando orientacoes praticas.",
-                    primary: { label: "Saiba Mais", href: "pages/docs/help-center/index.html", icon: "fa-book-open" },
+                    primary: { label: "Abrir Help Center", href: "pages/docs/help-center/index.html", icon: "fa-book-open" },
                     secondary: { label: "Perguntar ao bot", href: "#chatbot" },
-                    cover: "assets/img/capas-wallpaper-menus/robo-chat-03.png",
+                    cover: "assets/img/capas-wallpaper-menus/cv-home-cob.webp",
                     coverLabel: "Manual interativo",
-                    coverFit: "logo",
                     dashboard: "Base local encontra artigos, passos e checklist",
                     question: "Como cadastrar juros sobre a divida?",
                     accent: "#e7b85b",
@@ -1265,13 +1266,12 @@
                 },
                 {
                     eyebrow: "Ferramentas de operacao",
-                    title: "Rotinas DataCob com cara de produto SaaS.",
+                    title: "Ferramentas de operacao",
                     copy: "Gerador CSV, massa de dados, JSON, artigos Freshdesk e materiais tecnicos organizados em uma experiencia consistente para portfolio e uso real.",
-                    primary: { label: "Saiba Mais", href: "tools/datacob/arriba-csv-generator/csv-template-generator.html", icon: "fa-table-list" },
-                    secondary: { label: "Ver ferramentas", href: "#tools-section" },
-                    cover: "assets/img/capas-wallpaper-menus/capa-01-manual-interativo-datacob.png",
+                    primary: { label: "Ver ferramentas", href: "#tools-section", icon: "fa-table-list" },
+                    secondary: { label: "Gerador CSV", href: "tools/datacob/arriba-csv-generator/csv-template-generator.html" },
+                    cover: "assets/img/capas-wallpaper-menus/datacob-man-min.webp",
                     coverLabel: "Portal de ferramentas",
-                    coverFit: "logo",
                     dashboard: "Ferramentas recorrentes centralizadas em um portal unico",
                     question: "Qual arquivo precisa ser validado agora?",
                     accent: "#c74634",
@@ -1315,12 +1315,14 @@
                 <div class="hero-carousel-nav">
                     <button type="button" class="hero-carousel-btn" data-hero-prev aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
                     <button type="button" class="hero-carousel-btn" data-hero-next aria-label="Proximo slide"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button type="button" class="hero-carousel-btn hero-carousel-toggle" data-hero-toggle aria-label="Pausar carousel"><i class="fa-solid fa-pause"></i></button>
                 </div>
             `;
             hero.appendChild(controls);
 
             const dotsWrap = controls.querySelector(".hero-carousel-dots");
             const summary = controls.querySelector("#heroCarouselSummary");
+            const toggleBtn = controls.querySelector("[data-hero-toggle]");
             const dots = slides.map((slide, index) => {
                 const dot = document.createElement("button");
                 dot.type = "button";
@@ -1384,15 +1386,26 @@
             }
             function start() {
                 if (reducedMotion || paused || timer) return;
-                timer = window.setInterval(() => next(false), 6500);
+                timer = window.setInterval(() => next(false), 5000);
             }
             function restart() {
                 stop();
                 start();
             }
+            function syncToggle() {
+                if (!toggleBtn) return;
+                toggleBtn.setAttribute("aria-label", paused ? "Retomar carousel" : "Pausar carousel");
+                toggleBtn.innerHTML = paused ? '<i class="fa-solid fa-play"></i>' : '<i class="fa-solid fa-pause"></i>';
+            }
 
             controls.querySelector("[data-hero-prev]")?.addEventListener("click", previous);
             controls.querySelector("[data-hero-next]")?.addEventListener("click", () => next(true));
+            toggleBtn?.addEventListener("click", () => {
+                paused = !paused;
+                if (paused) stop();
+                else start();
+                syncToggle();
+            });
             cover.addEventListener("click", () => next(true));
             showcase?.addEventListener("click", (event) => {
                 if (event.target.closest(".assistant-search button, .hero-cover-card")) return;
@@ -1408,16 +1421,13 @@
                 if (event.key === "ArrowRight") next(true);
                 if (event.key === "ArrowLeft") previous();
             });
-            hero.addEventListener("mouseenter", () => { paused = true; stop(); });
-            hero.addEventListener("mouseleave", () => { paused = false; start(); });
-            hero.addEventListener("focusin", () => { paused = true; stop(); });
-            hero.addEventListener("focusout", () => { paused = false; start(); });
             document.addEventListener("visibilitychange", () => {
                 if (document.hidden) stop();
                 else start();
             });
 
             goTo(0, false);
+            syncToggle();
             start();
         })();
     </script>

@@ -18,7 +18,7 @@ const supportHeroSlides = [
     title: "Manuais dinamicos dentro da tela do suporte.",
     copy: "A busca indexa a base local de manuais e renderiza o artigo sem recarregar, pronta para alimentar assistentes inteligentes.",
     image: "../../../assets/img/logos-assets/logo-datacob.png",
-    cta: "#manual-dinamico",
+    cta: "#analisar",
     portal: "../treinamento-cliente/index.html",
     kicker: "Conhecimento operacional",
     cardTitle: "Manual vivo"
@@ -1849,7 +1849,7 @@ async function handleAnalyzeFreshdesk() {
     });
   } catch (error) {
     stopFlowPlayback();
-    startFlowPlayback(input.ticketId ? ["input", "ticket", "knowledge"] : ["input", "knowledge"], 620);
+    updateFlowStatus("knowledge");
     showCopilotError("Análise não concluída", error, "Base → Análise");
   }
 }
@@ -1957,9 +1957,11 @@ function setupEvents() {
   if (savedApi && getEl("apiBase")) getEl("apiBase").value = savedApi;
   initSupportTheme();
   initSupportHeroCarousel();
-  renderDynamicManualResults(searchLocalManuals(""));
-  openDynamicManual(DATACOB_MANUAL_INDEX[0]?.id);
-  renderTicketDashboard();
+  if (getEl("dynamicManualResults")) {
+    renderDynamicManualResults(searchLocalManuals(""));
+    openDynamicManual(DATACOB_MANUAL_INDEX[0]?.id);
+  }
+  if (getEl("ticketDashboardMetrics")) renderTicketDashboard();
 
   getEl("loadDemoBtn")?.addEventListener("click", () => {
     updateFlowStatus("input");
@@ -1971,6 +1973,10 @@ function setupEvents() {
   getEl("clearBtn")?.addEventListener("click", clearForm);
   getEl("fetchTicketBtn")?.addEventListener("click", handleFetchTicket);
   getEl("analyzeFreshdeskBtn")?.addEventListener("click", handleAnalyzeFreshdesk);
+  getEl("topFetchTicketBtn")?.addEventListener("click", handleFetchTicket);
+  getEl("topAnalyzeBtn")?.addEventListener("click", () => getEl("supportForm")?.requestSubmit());
+  getEl("topLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
+  getEl("topClearBtn")?.addEventListener("click", () => getEl("clearBtn")?.click());
   getEl("addNoteBtn")?.addEventListener("click", handleAddNote);
   getEl("refreshQualityBtn")?.addEventListener("click", handleRefreshQuality);
   getEl("refreshKnowledgeAdminBtn")?.addEventListener("click", () => handleRefreshKnowledgeAdmin(false));

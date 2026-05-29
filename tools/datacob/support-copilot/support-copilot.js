@@ -18,7 +18,7 @@ const supportHeroSlides = [
     title: "Manuais dinamicos dentro da tela do suporte.",
     copy: "A busca indexa a base local de manuais e renderiza o artigo sem recarregar, pronta para alimentar assistentes inteligentes.",
     image: "../../../assets/img/logos-assets/logo-datacob.png",
-    cta: "#analisar",
+    cta: "#manual-dinamico",
     portal: "../treinamento-cliente/index.html",
     kicker: "Conhecimento operacional",
     cardTitle: "Manual vivo"
@@ -445,7 +445,23 @@ async function analyzeManualTicket(input) {
 }
 
 async function fetchFreshdeskContext(ticketId) {
-  return requestJson(`${apiBase()}/freshdesk/tickets/${encodeURIComponent(ticketId)}/context`);
+  const encodedTicketId = encodeURIComponent(ticketId);
+  try {
+    return await requestJson(`${apiBase()}/freshdesk/tickets/${encodedTicketId}/context`);
+  } catch (error) {
+    const raw = `${error?.message || ""} ${error?.payload?.error || ""} ${error?.payload?.path || ""}`;
+    const routeMissing = error?.status === 404 || /rota não encontrada|rota nao encontrada|not found/i.test(raw);
+    if (!routeMissing) throw error;
+
+    // Compatibilidade com versões antigas da API que ainda não tinham /context.
+    const basic = await requestJson(`${apiBase()}/freshdesk/tickets/${encodedTicketId}`);
+    return {
+      ticket: basic.ticket || basic,
+      conversations: basic.conversations || [],
+      context: basic.context || {},
+      compatibilityMode: "ticket-basic-fallback"
+    };
+  }
 }
 
 async function searchFreshdeskTickets(term) {
@@ -457,11 +473,45 @@ async function fetchFreshdeskDashboard(scope = "agent", term = "") {
 }
 
 async function analyzeFreshdeskTicket(ticketId) {
-  return requestJson(`${apiBase()}/freshdesk/tickets/${encodeURIComponent(ticketId)}/analyze`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ addInternalNote: false, updateTags: false })
-  });
+  const encodedTicketId = encodeURIComponent(ticketId);
+
+  try {
+    return await requestJson(`${apiBase()}/freshdesk/tickets/${encodedTicketId}/analyze`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ addInternalNote: false, updateTags: false })
+    });
+  } catch (error) {
+    const raw = `${error?.message || ""} ${error?.payload?.error || ""} ${error?.payload?.path || ""}`;
+    const routeMissing = error?.status === 404 || /rota não encontrada|rota nao encontrada|not found/i.test(raw);
+    if (!routeMissing) throw error;
+
+    // A API em produção pode estar sem a rota /freshdesk/tickets/:id/analyze.
+    // Neste caso, busca o contexto e usa a rota genérica do Copilot, mantendo o Freshdesk funcionando.
+    const contextData = await fetchFreshdeskContext(ticketId);
+    const ticket = contextData.ticket || {};
+    const fallbackInput = {
+      ...ticket,
+      id: ticket.id || ticketId,
+      ticketId: ticket.id || ticketId,
+      subject: ticket.subject || ticket.title || getEl("title")?.value || "",
+      title: ticket.subject || ticket.title || getEl("title")?.value || "",
+      message: ticket.description_text || stripHtml(ticket.description || "") || getEl("message")?.value || "",
+      description: ticket.description_text || stripHtml(ticket.description || "") || getEl("message")?.value || "",
+      requester: ticket.requester || contextData.context?.contact || {},
+      company: ticket.company || contextData.context?.company || {}
+    };
+
+    const analyzed = await analyzeManualTicket(fallbackInput);
+    const normalized = normalizeResult(analyzed);
+    return {
+      ...normalized,
+      ticket: contextData.ticket || normalized.ticket || fallbackInput,
+      context: { ...(normalized.context || {}), ...(contextData.context || {}) },
+      conversations: contextData.conversations || normalized.conversations || [],
+      compatibilityMode: "context-plus-copilot-fallback"
+    };
+  }
 }
 
 async function fetchQualityDashboard() {
@@ -1430,6 +1480,10 @@ function getFriendlyErrorMessage(error) {
 
   if (!raw) return "Não consegui concluir a ação agora. Tente novamente em alguns instantes.";
 
+  if (/rota não encontrada|rota nao encontrada/i.test(raw)) {
+    return "A rota chamada pelo frontend não existe nesta versão da API publicada. Atualize o backend ou use o fallback /context + /support/copilot/analyze.";
+  }
+
   if (/failed to fetch|network|load failed|cors|fetch failed/i.test(raw)) {
     return payload.hint || "A API não respondeu ou a conexão com o Freshdesk falhou. Valide domínio, CORS, FRESHDESK_DOMAIN e tente novamente.";
   }
@@ -1849,7 +1903,7 @@ async function handleAnalyzeFreshdesk() {
     });
   } catch (error) {
     stopFlowPlayback();
-    updateFlowStatus("knowledge");
+    startFlowPlayback(input.ticketId ? ["input", "ticket", "knowledge"] : ["input", "knowledge"], 620);
     showCopilotError("Análise não concluída", error, "Base → Análise");
   }
 }
@@ -1957,11 +2011,9 @@ function setupEvents() {
   if (savedApi && getEl("apiBase")) getEl("apiBase").value = savedApi;
   initSupportTheme();
   initSupportHeroCarousel();
-  if (getEl("dynamicManualResults")) {
-    renderDynamicManualResults(searchLocalManuals(""));
-    openDynamicManual(DATACOB_MANUAL_INDEX[0]?.id);
-  }
-  if (getEl("ticketDashboardMetrics")) renderTicketDashboard();
+  renderDynamicManualResults(searchLocalManuals(""));
+  openDynamicManual(DATACOB_MANUAL_INDEX[0]?.id);
+  renderTicketDashboard();
 
   getEl("loadDemoBtn")?.addEventListener("click", () => {
     updateFlowStatus("input");
@@ -1973,10 +2025,6 @@ function setupEvents() {
   getEl("clearBtn")?.addEventListener("click", clearForm);
   getEl("fetchTicketBtn")?.addEventListener("click", handleFetchTicket);
   getEl("analyzeFreshdeskBtn")?.addEventListener("click", handleAnalyzeFreshdesk);
-  getEl("topFetchTicketBtn")?.addEventListener("click", handleFetchTicket);
-  getEl("topAnalyzeBtn")?.addEventListener("click", () => getEl("supportForm")?.requestSubmit());
-  getEl("topLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
-  getEl("topClearBtn")?.addEventListener("click", () => getEl("clearBtn")?.click());
   getEl("addNoteBtn")?.addEventListener("click", handleAddNote);
   getEl("refreshQualityBtn")?.addEventListener("click", handleRefreshQuality);
   getEl("refreshKnowledgeAdminBtn")?.addEventListener("click", () => handleRefreshKnowledgeAdmin(false));

@@ -431,6 +431,37 @@ async function requestJson(url, options = {}) {
   return payload;
 }
 
+function getErrorText(error) {
+  const payload = error?.payload || {};
+  return String([
+    payload.code,
+    payload.message,
+    payload.error,
+    payload.path,
+    error?.message,
+    error
+  ].filter(Boolean).join(" ")).trim();
+}
+
+function isRouteMissingError(error, expectedPath = "") {
+  const payload = error?.payload || {};
+  const raw = getErrorText(error);
+  const pathMatches = expectedPath && String(payload.path || "").includes(expectedPath);
+  return Boolean(
+    error?.routeMissing ||
+    payload.code === "ROUTE_NOT_FOUND" ||
+    (expectedPath && error?.status === 404) ||
+    pathMatches ||
+    /rota n[aã]o encontrada|route not found|endpoint not found|cannot (get|post|put|patch|delete)|no route matches/i.test(raw)
+  );
+}
+
+function markRouteMissing(error, path) {
+  error.routeMissing = true;
+  error.routePath = path;
+  return error;
+}
+
 async function analyzeManualTicket(input) {
   try {
     return await requestJson(`${apiBase()}/support/copilot/analyze`, {
@@ -446,15 +477,16 @@ async function analyzeManualTicket(input) {
 
 async function fetchFreshdeskContext(ticketId) {
   const encodedTicketId = encodeURIComponent(ticketId);
-  try {
-    return await requestJson(`${apiBase()}/freshdesk/tickets/${encodedTicketId}/context`);
-  } catch (error) {
-    const raw = `${error?.message || ""} ${error?.payload?.error || ""} ${error?.payload?.path || ""}`;
-    const routeMissing = error?.status === 404 || /rota não encontrada|rota nao encontrada|not found/i.test(raw);
-    if (!routeMissing) throw error;
+  const contextPath = `/freshdesk/tickets/${encodedTicketId}/context`;
+  const basicPath = `/freshdesk/tickets/${encodedTicketId}`;
 
-    // Compatibilidade com versões antigas da API que ainda não tinham /context.
-    const basic = await requestJson(`${apiBase()}/freshdesk/tickets/${encodedTicketId}`);
+  try {
+    return await requestJson(`${apiBase()}${contextPath}`);
+  } catch (error) {
+    const canTryBasicTicket = isRouteMissingError(error, contextPath) || [502, 503, 504].includes(Number(error?.status));
+    if (!canTryBasicTicket) throw error;
+
+    const basic = await requestJson(`${apiBase()}${basicPath}`);
     return {
       ticket: basic.ticket || basic,
       conversations: basic.conversations || [],
@@ -474,20 +506,20 @@ async function fetchFreshdeskDashboard(scope = "agent", term = "") {
 
 async function analyzeFreshdeskTicket(ticketId) {
   const encodedTicketId = encodeURIComponent(ticketId);
+  const analyzePath = `/freshdesk/tickets/${encodedTicketId}/analyze`;
 
   try {
-    return await requestJson(`${apiBase()}/freshdesk/tickets/${encodedTicketId}/analyze`, {
+    return await requestJson(`${apiBase()}${analyzePath}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ addInternalNote: false, updateTags: false })
     });
   } catch (error) {
-    const raw = `${error?.message || ""} ${error?.payload?.error || ""} ${error?.payload?.path || ""}`;
-    const routeMissing = error?.status === 404 || /rota não encontrada|rota nao encontrada|not found/i.test(raw);
-    if (!routeMissing) throw error;
+    const analyzeRouteMissing = isRouteMissingError(error, analyzePath);
+    const canUseCopilotFallback = analyzeRouteMissing || [502, 503, 504].includes(Number(error?.status));
+    if (!canUseCopilotFallback) throw error;
+    if (analyzeRouteMissing) markRouteMissing(error, analyzePath);
 
-    // A API em produção pode estar sem a rota /freshdesk/tickets/:id/analyze.
-    // Neste caso, busca o contexto e usa a rota genérica do Copilot, mantendo o Freshdesk funcionando.
     const contextData = await fetchFreshdeskContext(ticketId);
     const ticket = contextData.ticket || {};
     const fallbackInput = {
@@ -502,7 +534,24 @@ async function analyzeFreshdeskTicket(ticketId) {
       company: ticket.company || contextData.context?.company || {}
     };
 
-    const analyzed = await analyzeManualTicket(fallbackInput);
+    let analyzed;
+    try {
+      analyzed = await requestJson(`${apiBase()}/support/copilot/analyze`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticket: fallbackInput,
+          context: contextData.context || {},
+          conversations: contextData.conversations || [],
+          source: "freshdesk-context-fallback"
+        })
+      });
+    } catch (fallbackError) {
+      console.warn("Fallback /support/copilot/analyze indisponivel. Usando inferencia local.", fallbackError);
+      analyzed = inferLocal(fallbackInput);
+      analyzed.compatibilityWarning = getFriendlyErrorMessage(error);
+    }
+
     const normalized = normalizeResult(analyzed);
     return {
       ...normalized,
@@ -1470,26 +1519,26 @@ function getFriendlyErrorMessage(error) {
   const payload = error?.payload || {};
   const raw = String(payload.message || payload.error || error?.message || error || "").trim();
 
-  if (payload.permissionDenied || error?.permissionDenied || /401|403|unauthorized|forbidden|permissao negada|permissão negada/i.test(raw)) {
-    return payload.hint || "Permissão negada na base do Freshdesk. Use uma API key de agente com permissão em Solutions, especialmente para artigos em rascunho ou privados.";
+  if (isRouteMissingError(error)) {
+    return "A API esta online, mas esta rota ainda nao existe na versao publicada. O Copilot pode usar compatibilidade: /freshdesk/tickets/:id/context ou /freshdesk/tickets/:id + /support/copilot/analyze.";
+  }
+
+  if (payload.permissionDenied || error?.permissionDenied || /401|403|unauthorized|forbidden|permissao negada|permiss?o negada/i.test(raw)) {
+    return payload.hint || "Permissao negada na base do Freshdesk. Use uma API key de agente com permissao em Solutions, especialmente para artigos em rascunho ou privados.";
   }
 
   if (error?.authRequired || payload.code === "AUTH_REQUIRED") {
-    return "Sua sessão expirou ou o acesso protegido está ativo. Faça login para continuar.";
+    return "Sua sessao expirou ou o acesso protegido esta ativo. Faca login para continuar.";
   }
 
-  if (!raw) return "Não consegui concluir a ação agora. Tente novamente em alguns instantes.";
-
-  if (/rota não encontrada|rota nao encontrada/i.test(raw)) {
-    return "A rota chamada pelo frontend não existe nesta versão da API publicada. Atualize o backend ou use o fallback /context + /support/copilot/analyze.";
-  }
+  if (!raw) return "Nao consegui concluir a acao agora. Tente novamente em alguns instantes.";
 
   if (/failed to fetch|network|load failed|cors|fetch failed/i.test(raw)) {
-    return payload.hint || "A API não respondeu ou a conexão com o Freshdesk falhou. Valide domínio, CORS, FRESHDESK_DOMAIN e tente novamente.";
+    return payload.hint || "Nao consegui conectar na API a partir do navegador. Se /healthz estiver ok, tente novamente em alguns segundos ou valide se a sessao do navegador expirou.";
   }
 
   if (/404|not found/i.test(raw)) {
-    return "Não encontrei o recurso solicitado. Confira o número do ticket, artigo, pasta ou idioma.";
+    return "A API respondeu 404 para o recurso solicitado. Se a rota existe, confira se o ticket, artigo, pasta ou idioma existe no Freshdesk.";
   }
 
   if (/500|502|503|504|server/i.test(raw)) {
@@ -1903,7 +1952,7 @@ async function handleAnalyzeFreshdesk() {
     });
   } catch (error) {
     stopFlowPlayback();
-    startFlowPlayback(input.ticketId ? ["input", "ticket", "knowledge"] : ["input", "knowledge"], 620);
+    updateFlowStatus("knowledge");
     showCopilotError("Análise não concluída", error, "Base → Análise");
   }
 }
@@ -2011,9 +2060,11 @@ function setupEvents() {
   if (savedApi && getEl("apiBase")) getEl("apiBase").value = savedApi;
   initSupportTheme();
   initSupportHeroCarousel();
-  renderDynamicManualResults(searchLocalManuals(""));
-  openDynamicManual(DATACOB_MANUAL_INDEX[0]?.id);
-  renderTicketDashboard();
+  if (getEl("dynamicManualResults")) {
+    renderDynamicManualResults(searchLocalManuals(""));
+    openDynamicManual(DATACOB_MANUAL_INDEX[0]?.id);
+  }
+  if (getEl("ticketDashboardMetrics")) renderTicketDashboard();
 
   getEl("loadDemoBtn")?.addEventListener("click", () => {
     updateFlowStatus("input");
@@ -2025,6 +2076,10 @@ function setupEvents() {
   getEl("clearBtn")?.addEventListener("click", clearForm);
   getEl("fetchTicketBtn")?.addEventListener("click", handleFetchTicket);
   getEl("analyzeFreshdeskBtn")?.addEventListener("click", handleAnalyzeFreshdesk);
+  getEl("topFetchTicketBtn")?.addEventListener("click", handleFetchTicket);
+  getEl("topAnalyzeBtn")?.addEventListener("click", () => getEl("supportForm")?.requestSubmit());
+  getEl("topLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
+  getEl("topClearBtn")?.addEventListener("click", () => getEl("clearBtn")?.click());
   getEl("addNoteBtn")?.addEventListener("click", handleAddNote);
   getEl("refreshQualityBtn")?.addEventListener("click", handleRefreshQuality);
   getEl("refreshKnowledgeAdminBtn")?.addEventListener("click", () => handleRefreshKnowledgeAdmin(false));

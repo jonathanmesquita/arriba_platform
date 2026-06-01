@@ -47,12 +47,11 @@
             <span class="eyebrow">AI Support Copilot</span>
             <h1>AI Support Copilot</h1>
             <p class="hero-copy">
-              Ferramenta de apoio ao analista de suporte: recebe ticket, assunto ou texto manual,
-              busca contexto, consulta base local/Freshdesk quando disponivel e gera resumo,
-              checklist, resposta sugerida e encaminhamento.
+              Cole um ticket ou uma descricao do chamado. O Copilot busca contexto, consulta a base local
+              e devolve uma recomendacao clara para o atendimento.
             </p>
             <div class="support-simple-actions">
-              <button class="btn btn-danger btn-lg" type="button" id="topFetchTicketBtn"><i class="fa-solid fa-magnifying-glass me-2"></i>Buscar ticket</button>
+              <button class="btn btn-danger btn-lg" type="button" id="topFetchTicketBtn"><i class="fa-solid fa-magnifying-glass me-2"></i>Informar ticket</button>
               <button class="btn btn-light btn-lg" type="button" id="topAnalyzeBtn"><i class="fa-solid fa-brain me-2"></i>Analisar</button>
               <button class="btn btn-outline-light btn-lg" type="button" id="topLoadDemoBtn"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Carregar demo</button>
               <button class="btn btn-outline-light btn-lg" type="button" id="topClearBtn"><i class="fa-solid fa-eraser me-2"></i>Limpar</button>
@@ -124,9 +123,9 @@
           <div class="panel-card h-100">
             <div class="d-flex justify-content-between align-items-start mb-3">
               <div>
-                <span class="eyebrow small">MVP demonstravel</span>
+                <span class="eyebrow small">Entrada do chamado</span>
                 <h2 class="h3 mb-1">Analisar chamado</h2>
-                <p class="text-secondary mb-0">Informe apenas o ticket, ou cole uma solicitacao manual.</p>
+                <p class="text-secondary mb-0">Comece pelo ticket Freshdesk ou cole uma descricao manual.</p>
               </div>
               <span class="status-pill">Humano aprova</span>
             </div>
@@ -139,7 +138,10 @@
                   <button class="btn btn-outline-light" type="button" id="fetchTicketBtn"><i class="fa-solid fa-magnifying-glass me-1"></i>Buscar</button>
                   <button class="btn btn-danger" type="button" id="analyzeFreshdeskBtn"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Analisar</button>
                 </div>
-                <small class="text-secondary">Se informar numero, busca o contexto do ticket. Se informar assunto, lista tickets encontrados.</small>
+                <div class="ticket-helper-row">
+                  <small class="text-secondary">Numero: carrega contexto do ticket. Texto: lista chamados relacionados.</small>
+                  <button class="mini-link-btn" type="button" id="fillTicket65960Btn">Usar #65960</button>
+                </div>
                 <div id="searchResults" class="search-results mt-3 d-none"></div>
               </div>
 
@@ -183,9 +185,14 @@
                   <textarea id="message" class="form-control" rows="7" placeholder="Cole aqui a descricao do chamado..."></textarea>
                 </div>
                 <div class="col-12">
-                  <label for="apiBase" class="form-label">API utilizada</label>
-                  <input id="apiBase" class="form-control" value="https://api.arriba.jm.dev.br" />
-                  <small class="text-secondary">Para teste local, use http://localhost:3000. Se a API falhar, a pagina usa fallback local.</small>
+                  <details class="advanced-config">
+                    <summary><i class="fa-solid fa-sliders me-2"></i>Configuração avançada</summary>
+                    <div class="advanced-config-body">
+                      <label for="apiBase" class="form-label">API utilizada</label>
+                      <input id="apiBase" class="form-control" value="https://api.arriba.jm.dev.br" />
+                      <small class="text-secondary">Mantenha a API oficial em producao. Para teste local, use http://localhost:3000.</small>
+                    </div>
+                  </details>
                 </div>
               </div>
 
@@ -213,8 +220,12 @@
 
             <div id="emptyState" class="empty-state">
               <i class="fa-regular fa-message"></i>
-              <h3>Carregue uma demo, busque um ticket ou cole um chamado.</h3>
-              <p>A IA recomenda; o analista revisa. A maquina toca jazz, mas quem escolhe o tom ainda e o suporte.</p>
+              <h3>Nenhuma analise carregada ainda.</h3>
+              <p>Busque um ticket, carregue a demo ou cole a descricao do chamado para gerar resumo, checklist e resposta sugerida.</p>
+              <div class="empty-state-actions">
+                <button class="mini-link-btn" type="button" id="emptyFocusTicketBtn">Informar ticket</button>
+                <button class="mini-link-btn" type="button" id="emptyLoadDemoBtn">Ver demo</button>
+              </div>
             </div>
 
             <div id="resultContent" class="d-none">

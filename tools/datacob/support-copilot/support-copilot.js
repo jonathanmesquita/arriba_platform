@@ -2038,6 +2038,14 @@ function toggleHelpPanel() {
   setHelpPanel(panel?.classList.contains("d-none"));
 }
 
+function focusTicketEntry(prefill = "") {
+  document.getElementById("analisar")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const input = getEl("ticketId");
+  if (input && prefill) input.value = prefill;
+  window.setTimeout(() => input?.focus(), 260);
+  updateFlowStatus("input");
+}
+
 async function handleAddNote() {
   showToast("Modo seguro ativo: copie a nota interna e cole manualmente no Freshdesk.");
 }
@@ -2076,10 +2084,20 @@ function setupEvents() {
   getEl("clearBtn")?.addEventListener("click", clearForm);
   getEl("fetchTicketBtn")?.addEventListener("click", handleFetchTicket);
   getEl("analyzeFreshdeskBtn")?.addEventListener("click", handleAnalyzeFreshdesk);
-  getEl("topFetchTicketBtn")?.addEventListener("click", handleFetchTicket);
-  getEl("topAnalyzeBtn")?.addEventListener("click", () => getEl("supportForm")?.requestSubmit());
+  getEl("topFetchTicketBtn")?.addEventListener("click", () => focusTicketEntry());
+  getEl("topAnalyzeBtn")?.addEventListener("click", () => {
+    const ticket = getEl("ticketId")?.value.trim();
+    if (ticket && isProbablyTicketId(ticket)) {
+      handleAnalyzeFreshdesk();
+      return;
+    }
+    getEl("supportForm")?.requestSubmit();
+  });
   getEl("topLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
   getEl("topClearBtn")?.addEventListener("click", () => getEl("clearBtn")?.click());
+  getEl("fillTicket65960Btn")?.addEventListener("click", () => focusTicketEntry("65960"));
+  getEl("emptyFocusTicketBtn")?.addEventListener("click", () => focusTicketEntry());
+  getEl("emptyLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
   getEl("addNoteBtn")?.addEventListener("click", handleAddNote);
   getEl("refreshQualityBtn")?.addEventListener("click", handleRefreshQuality);
   getEl("refreshKnowledgeAdminBtn")?.addEventListener("click", () => handleRefreshKnowledgeAdmin(false));

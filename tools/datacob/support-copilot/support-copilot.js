@@ -2095,7 +2095,6 @@ function setupEvents() {
   });
   getEl("topLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
   getEl("topClearBtn")?.addEventListener("click", () => getEl("clearBtn")?.click());
-  getEl("fillTicket65960Btn")?.addEventListener("click", () => focusTicketEntry("65960"));
   getEl("emptyFocusTicketBtn")?.addEventListener("click", () => focusTicketEntry());
   getEl("emptyLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
   getEl("addNoteBtn")?.addEventListener("click", handleAddNote);

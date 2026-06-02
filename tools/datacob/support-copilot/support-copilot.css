@@ -264,6 +264,30 @@ body.theme-light .presentation-switch span {
   margin-top: 14px;
 }
 
+.quick-knowledge-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-knowledge-topics button {
+  border: 1px solid var(--arriba-border);
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.84);
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: .78rem;
+  font-weight: 850;
+}
+
+.quick-knowledge-topics button:hover,
+.quick-knowledge-topics button:focus-visible {
+  color: #fff;
+  border-color: rgba(244,81,36,.55);
+  background: rgba(244,81,36,.16);
+}
+
 @media (max-width: 575.98px) {
   .support-simple-actions .btn {
     width: 100%;
@@ -341,6 +365,19 @@ body.theme-light .advanced-config {
 
 body.theme-light .advanced-config summary {
   color: #211f1d;
+}
+
+body.theme-light .quick-knowledge-topics button {
+  color: #211f1d;
+  background: rgba(255,255,255,.78);
+  border-color: rgba(41,31,24,.14);
+}
+
+body.theme-light .quick-knowledge-topics button:hover,
+body.theme-light .quick-knowledge-topics button:focus-visible {
+  color: #fff;
+  background: #231f20;
+  border-color: #231f20;
 }
 
 .support-hero-carousel {

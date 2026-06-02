@@ -1,6 +1,8 @@
 const API_DEFAULT = "https://api.arriba.jm.dev.br";
 const LOCAL_LOG_KEY = "arribaSupportCopilotLocalLogs";
 const DATACOB_MANUAL_INDEX = window.DATACOB_MANUAL_INDEX || [];
+let DATACOB_SUPPORT_KB = [];
+let DATACOB_SUPPORT_TOPICS = [];
 
 const supportHeroSlides = [
   {
@@ -114,6 +116,102 @@ function fuzzyScore(term = "", item = {}) {
   const wordScore = words.reduce((score, word) => score + (haystack.includes(word) ? 1 : 0), 0);
   const acronymScore = words.some((word) => (item.keywords || []).some((keyword) => normalizeText(keyword).startsWith(word))) ? 1 : 0;
   return exact + wordScore + acronymScore;
+}
+
+async function loadDatacobSupportKnowledge() {
+  try {
+    const module = await import("../../../assets/data/datacob-knowledge-base.js");
+    DATACOB_SUPPORT_KB = Array.isArray(module.DATACOB_KNOWLEDGE_BASE) ? module.DATACOB_KNOWLEDGE_BASE : [];
+    DATACOB_SUPPORT_TOPICS = Array.isArray(module.DATACOB_QUICK_TOPICS) ? module.DATACOB_QUICK_TOPICS : [];
+  } catch (error) {
+    console.warn("Base local DataCob indisponivel no Copilot.", error);
+    DATACOB_SUPPORT_KB = [];
+    DATACOB_SUPPORT_TOPICS = [];
+  }
+}
+
+function scoreKnowledgeItem(term = "", item = {}) {
+  const query = normalizeText(term);
+  if (!query) return 1;
+  const haystack = normalizeText([
+    item.titulo,
+    item.produto,
+    item.categoria,
+    item.perguntaExemplo,
+    item.caminhoTela,
+    item.resumo,
+    item.tipoFreshdeskSugerido,
+    item.quandoEncaminharDev,
+    ...(item.palavrasChave || []),
+    ...(item.passos || []),
+    ...(item.checklist || [])
+  ].join(" "));
+  const words = query.split(" ").filter(Boolean);
+  const exact = haystack.includes(query) ? 5 : 0;
+  return exact + words.reduce((score, word) => score + (haystack.includes(word) ? 1 : 0), 0);
+}
+
+function mapKnowledgeItem(item = {}, score = 0) {
+  return {
+    id: item.id,
+    title: item.titulo,
+    source: "base-local-datacob",
+    sourceLabel: "Base local DataCob",
+    product: item.produto,
+    freshdeskType: item.tipoFreshdeskSugerido,
+    summary: item.resumo,
+    rules: [
+      item.caminhoTela ? `Caminho de tela: ${item.caminhoTela}` : "",
+      item.quandoEncaminharDev ? `Escalar DEV: ${item.quandoEncaminharDev}` : ""
+    ].filter(Boolean),
+    checklist: item.checklist || [],
+    url: item.linkManual,
+    score,
+    suggestedReply: buildKnowledgeReply(item)
+  };
+}
+
+function findKnowledgeMatches(input = {}, limit = 3) {
+  const term = [
+    input.subject,
+    input.title,
+    input.product,
+    input.message,
+    input.description,
+    input.customerName,
+    input.company?.name
+  ].join(" ");
+  return DATACOB_SUPPORT_KB
+    .map((item) => ({ item, score: scoreKnowledgeItem(term, item) }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || a.item.titulo.localeCompare(b.item.titulo))
+    .slice(0, limit)
+    .map(({ item, score }) => mapKnowledgeItem(item, score));
+}
+
+function buildKnowledgeReply(item = {}) {
+  const steps = Array.isArray(item.passos) ? item.passos : [];
+  return [
+    `Para orientar sobre ${item.titulo || "o assunto informado"}, siga este caminho:`,
+    item.caminhoTela || "Caminho de tela a confirmar.",
+    "",
+    "Passo a passo:",
+    ...(steps.length ? steps.map((step, index) => `${index + 1}. ${step}`) : ["1. Validar o cenario informado pelo cliente."]),
+    "",
+    item.linkManual ? `Manual relacionado: ${item.linkManual}` : "Manual relacionado: a confirmar."
+  ].join("\n");
+}
+
+function renderQuickKnowledgeTopics() {
+  const target = getEl("quickKnowledgeTopics");
+  if (!target) return;
+  const topics = DATACOB_SUPPORT_TOPICS.length ? DATACOB_SUPPORT_TOPICS : [
+    "Recepcao de arquivo",
+    "Gerar token API",
+    "Negativacao",
+    "Cadastrar juros"
+  ];
+  target.innerHTML = topics.map((topic) => `<button type="button" data-knowledge-topic="${escapeHtml(topic)}">${escapeHtml(topic)}</button>`).join("");
 }
 
 
@@ -344,9 +442,11 @@ function inferLocal(input) {
     : recommendedScenario === "Mover para Desenvolvimento"
       ? { key: "encaminharDesenvolvimento", title: "Chamado encaminhado para Desenvolvimento" }
       : { key: "solicitarEvidencias", title: "Solicitar mais evidencias" };
+  const knowledgeMatches = findKnowledgeMatches(input, 3);
+  const primaryKnowledge = knowledgeMatches[0];
   const summary = `${input.customerName || input.company?.name || "Cliente"} relata: ${input.message || input.description || "descricao nao informada."}`;
   const versionReply = `Boa tarde, ${input.requester?.name || input.requester_name || ""},\n\nO agendamento deve ocorrer no ambiente de homologacao.\n\nEm anexo, segue o manual com as instrucoes para o agendamento automatico de versao do DataCob.\n\nDe forma resumida, o cliente deve acessar o ambiente de homologacao, abrir a opcao Checklist versao, validar os itens necessarios e finalizar o checklist para selecionar a data e horario da virada.\n\nAtencao as principais regras:\n- Para agendamento no mesmo dia, o checklist deve ser finalizado ate as 17h;\n- Agendamentos automaticos devem ocorrer de segunda a quinta-feira, entre 20h e 00h;\n- Agendamentos para sexta-feira, sabado ou domingo exigem atuacao/validacao do suporte;\n- Em caso de cancelamento do agendamento, sera necessario contato com o suporte para nova orientacao.\n\nObrigado!`;
-  const responseBody = isVersionTicket ? versionReply : `Ola ${input.requester?.name || input.requester_name || ""},\n\nRecebemos sua solicitacao e ja estamos analisando o cenario informado.\n\nPara seguirmos com a validacao, poderia nos encaminhar:\n${checklist.map((item) => "- " + item).join("\n")}\n\nAtenciosamente,\n${input.agent_name || "Analista responsavel"}`;
+  const responseBody = isVersionTicket ? versionReply : primaryKnowledge?.suggestedReply || `Ola ${input.requester?.name || input.requester_name || ""},\n\nRecebemos sua solicitacao e ja estamos analisando o cenario informado.\n\nPara seguirmos com a validacao, poderia nos encaminhar:\n${checklist.map((item) => "- " + item).join("\n")}\n\nAtenciosamente,\n${input.agent_name || "Analista responsavel"}`;
   const internalBody = `Analise IA - Support Copilot\n\nTicket: #${input.id || input.ticketId || "manual"}\nAssunto: ${input.subject || "-"}\nSolicitante: ${input.requester?.name || input.requester_name || "-"}\nEmpresa: ${input.customerName || input.company?.name || "-"}\n\nResumo da solicitacao:\n${summary}\n\nProduto identificado:\n${product}\n\nTipo Freshdesk sugerido:\n${freshdeskType}\n\nTipo DEV sugerido:\n${developmentType}\n\nPrioridade sugerida:\n${priority}\n\nCenario recomendado:\n${recommendedScenario}\n\nResposta predefinida recomendada:\n${recommendedTemplate.title}\n\nChecklist de evidencias:\n${checklist.map((item) => "- " + item).join("\n")}`;
   return {
     ticket: input,
@@ -374,7 +474,7 @@ function inferLocal(input) {
         status: "Nao validado",
         message: "Validacao de agente/grupo disponivel quando o ticket vem do Freshdesk."
       },
-      knowledgeBase: isVersionTicket ? [{
+      knowledgeBase: knowledgeMatches.length ? knowledgeMatches : isVersionTicket ? [{
         id: "datacob-agendamento-automatico-versao",
         title: "Manual - Agendamento automatico de versao",
         source: "fallback-local-frontend",
@@ -388,8 +488,8 @@ function inferLocal(input) {
         ],
         checklist
       }] : [],
-      knowledgeSummary: isVersionTicket ? "Manual - Agendamento automatico de versao: orientar ambiente de homologacao, checklist versao e regras de horario." : "Sem base relacionada.",
-      nextAction: isVersionTicket ? "Usar resposta predefinida de agendamento de versao, anexar/indicar o manual e confirmar data/horario conforme regras do checklist." : "Revisar a analise, confirmar evidencias e usar a resposta predefinida recomendada.",
+      knowledgeSummary: primaryKnowledge ? `${primaryKnowledge.title}: ${primaryKnowledge.summary}` : isVersionTicket ? "Manual - Agendamento automatico de versao: orientar ambiente de homologacao, checklist versao e regras de horario." : "Sem base relacionada.",
+      nextAction: primaryKnowledge ? `Usar o manual sugerido "${primaryKnowledge.title}", validar o checklist e copiar a resposta orientativa para o cliente.` : isVersionTicket ? "Usar resposta predefinida de agendamento de versao, anexar/indicar o manual e confirmar data/horario conforme regras do checklist." : "Revisar a analise, confirmar evidencias e usar a resposta predefinida recomendada.",
       developmentSpec: buildLocalDevelopmentSpec(input, product, priority, developmentType, checklist)
     },
     renderedTemplates: {
@@ -624,6 +724,53 @@ function normalizeResult(data) {
     };
   }
   return data;
+}
+
+function enrichWithLocalKnowledge(data = {}) {
+  const normalized = normalizeResult(data);
+  const analysis = normalized.analysis || {};
+  const ticket = normalized.ticket || {};
+  const context = normalized.context || {};
+  const input = {
+    ...ticket,
+    subject: ticket.subject || ticket.title || analysis.routine,
+    title: ticket.subject || ticket.title || analysis.routine,
+    product: analysis.product || ticket.product,
+    message: ticket.message || ticket.description_text || ticket.description || analysis.summary || analysis.currentScenario,
+    description: ticket.description_text || ticket.description || analysis.summary || analysis.currentScenario,
+    customerName: context.company?.name || context.company?.businessname || ticket.customerName || ticket.company_name,
+    company: context.company || ticket.company || {}
+  };
+  const localMatches = findKnowledgeMatches(input, 3);
+  if (!localMatches.length) return normalized;
+
+  const existing = Array.isArray(analysis.knowledgeBase) ? analysis.knowledgeBase : [];
+  const seen = new Set(existing.map((item) => item.id || item.title || item.url).filter(Boolean));
+  const merged = [
+    ...existing,
+    ...localMatches.filter((item) => !seen.has(item.id || item.title || item.url))
+  ];
+
+  normalized.analysis = {
+    ...analysis,
+    knowledgeBase: merged,
+    knowledgeSummary: analysis.knowledgeSummary || `${localMatches[0].title}: ${localMatches[0].summary}`,
+    nextAction: analysis.nextAction || `Validar o manual sugerido "${localMatches[0].title}" e copiar a resposta orientativa para o cliente.`
+  };
+
+  if (!normalized.renderedTemplates?.customerReply?.body && localMatches[0]?.suggestedReply) {
+    normalized.renderedTemplates = {
+      ...(normalized.renderedTemplates || {}),
+      customerReply: {
+        title: localMatches[0].title,
+        type: "public_reply",
+        body: localMatches[0].suggestedReply,
+        variables: {}
+      }
+    };
+  }
+
+  return normalized;
 }
 
 function renderList(items = []) {
@@ -970,8 +1117,20 @@ async function handleKnowledgeSearch() {
       renderKnowledgeSearchResults(result);
       showToast("Busca na base concluida.");
     } catch (error) {
-      safeHtml("knowledgeSearchResults", `<div class="empty-mini">Falha na busca da base: ${escapeHtml(error.message)}</div>`);
-      showToast("Falha ao buscar na base.");
+      const local = DATACOB_SUPPORT_KB
+        .map((item) => ({ item, score: scoreKnowledgeItem(term, item) }))
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score || a.item.titulo.localeCompare(b.item.titulo))
+        .slice(0, 6)
+        .map(({ item, score }) => mapKnowledgeItem(item, score));
+      renderKnowledgeSearchResults({
+        term,
+        source: "fallback-local-datacob",
+        local,
+        freshdesk: [],
+        combined: local
+      });
+      showToast(local.length ? "API indisponivel. Base local DataCob usada." : "Nenhum artigo local encontrado.");
     }
   });
 }
@@ -1454,7 +1613,7 @@ async function copyTextFromElement(id, fallbackMessage) {
 }
 
 function renderResult(rawData, options = {}) {
-  const data = normalizeResult(rawData);
+  const data = enrichWithLocalKnowledge(rawData);
   lastCopilotResult = data;
   const ticket = data.ticket || {};
   const context = data.context || {};
@@ -2063,9 +2222,11 @@ async function handleRefreshQuality() {
   });
 }
 
-function setupEvents() {
+async function setupEvents() {
   const savedApi = localStorage.getItem("arribaSupportApiBase");
   if (savedApi && getEl("apiBase")) getEl("apiBase").value = savedApi;
+  await loadDatacobSupportKnowledge();
+  renderQuickKnowledgeTopics();
   initSupportTheme();
   initSupportHeroCarousel();
   if (getEl("dynamicManualResults")) {
@@ -2102,6 +2263,15 @@ function setupEvents() {
   getEl("refreshKnowledgeAdminBtn")?.addEventListener("click", () => handleRefreshKnowledgeAdmin(false));
   getEl("syncKnowledgeBtn")?.addEventListener("click", handleSyncKnowledge);
   getEl("knowledgeSearchBtn")?.addEventListener("click", handleKnowledgeSearch);
+  getEl("quickKnowledgeTopics")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-knowledge-topic]");
+    if (!button) return;
+    const topic = button.dataset.knowledgeTopic || button.textContent.trim();
+    if (getEl("knowledgeSearchInput")) getEl("knowledgeSearchInput").value = topic;
+    if (getEl("manualSearchInput")) getEl("manualSearchInput").value = topic;
+    handleKnowledgeSearch();
+    handleManualSearch();
+  });
   getEl("manualSearchBtn")?.addEventListener("click", handleManualSearch);
   getEl("packageSearchBtn")?.addEventListener("click", handlePackageSearch);
   getEl("copyFullAnalysisBtn")?.addEventListener("click", handleCopyFullAnalysis);

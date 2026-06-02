@@ -1,422 +1,480 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Documentação de Erros DataCob - Arriba Platform</title>
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Erros recorrentes DataCob com busca rapida, checklist e links de manuais para apoio ao suporte." />
+  <title>Erros recorrentes DataCob | Arriba Platform</title>
+  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --ink: #171412;
+      --muted: #706a64;
+      --line: #ded7cf;
+      --bg: #f6f3ef;
+      --panel: #fff;
+      --red: #c74634;
+      --orange: #f45124;
+      --blue: #2d6f8f;
+      --green: #297a55;
+      --dark: #17191d;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .portal-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .portal-header-inner {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      color: var(--red);
+      font-size: 1.5rem;
+      font-weight: 950;
+      letter-spacing: -.06em;
+      text-decoration: none;
+    }
+
+    .portal-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .portal-nav a,
+    .portal-nav button {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      min-height: 38px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: .88rem;
+    }
+
+    .portal-nav a:hover,
+    .portal-nav button:hover {
+      border-color: rgba(199,70,52,.35);
+      background: rgba(199,70,52,.08);
+    }
+
+    .hero {
+      background:
+        linear-gradient(90deg, rgba(23,25,29,.94), rgba(23,25,29,.78)),
+        url("../assets/img/capas-wallpaper-menus/datacob-man-min.webp") center/cover no-repeat;
+      color: #fff;
+      padding: clamp(42px, 6vw, 76px) 0;
+    }
+
+    .hero h1 {
+      max-width: 820px;
+      font-size: clamp(2.2rem, 5vw, 4.6rem);
+      line-height: 1.02;
+      letter-spacing: -.04em;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: rgba(255,255,255,.78);
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+
+    .search-panel {
+      margin-top: -34px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .search-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 18px 42px rgba(39,31,25,.12);
+      padding: 18px;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 0 14px;
+      min-height: 54px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      font-size: 1rem;
+    }
+
+    .quick-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .quick-tags button {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      min-height: 34px;
+      padding: 0 12px;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+
+    .quick-tags button:hover {
+      background: #231f20;
+      color: #fff;
+    }
+
+    .section-kicker {
+      color: var(--red);
+      font-size: .76rem;
+      font-weight: 950;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .issue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .issue-card {
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 12px 28px rgba(39,31,25,.08);
+    }
+
+    .issue-card h2 {
+      font-size: 1.16rem;
+      line-height: 1.24;
+      margin: 8px 0 10px;
+    }
+
+    .issue-card p {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .issue-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      background: rgba(199,70,52,.1);
+      color: var(--red);
+      padding: 6px 10px;
+      font-size: .72rem;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .path {
+      border-left: 3px solid var(--orange);
+      background: #f8f5f1;
+      padding: 10px 12px;
+      color: #332d29;
+      font-size: .9rem;
+      margin: 14px 0;
+    }
+
+    .checklist {
+      padding-left: 18px;
+      color: #332d29;
+    }
+
+    .checklist li {
+      margin-bottom: 6px;
+    }
+
+    .issue-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn-enterprise {
+      border: 1px solid #231f20;
+      border-radius: 8px;
+      background: #231f20;
+      color: #fff;
+      min-height: 38px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 850;
+      font-size: .88rem;
+    }
+
+    .btn-enterprise.secondary {
+      background: #fff;
+      color: #231f20;
+      border-color: var(--line);
+    }
+
+    .btn-enterprise:hover {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .empty-result {
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--muted);
+      padding: 28px;
+      text-align: center;
+    }
+
+    @media (max-width: 991.98px) {
+      .issue-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      .portal-header-inner,
+      .portal-nav {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .portal-nav a,
+      .portal-nav button {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .issue-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-
-<body class="d-flex flex-column min-vh-100">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">ARRIBA</a>
-            <button class="navbar-toggler" type="button" id="mobileMenuToggle" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="desktop-navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto u30navul">
-                    <li class="nav-item u30navli">
-                        <button data-lbl="tools" class="nav-link u30navitem" data-navtarget="tools">Ferramentas
-                            Produtividade</button>
-                    </li>
-                    <li class="nav-item u30navli">
-                        <button data-lbl="apis" class="nav-link u30navitem" data-navtarget="apis">APIs</button>
-                    </li>
-                    <li class="nav-item u30navli">
-                        <a href="erros-datacob.html" class="nav-link u30navitem active" data-lbl="datacoberrors">Erros
-                            DataCob</a>
-                    </li>
-                </ul>
-
-                <ul class="navbar-nav ms-auto desktop-only-icons">
-                    <li class="nav-item search-container" id="searchContainer">
-                        <button class="search-icon-btn" id="searchToggleBtn" aria-label="Abrir pesquisa">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <div class="search-box">
-                            <input type="text" class="form-control search-input" id="searchInput"
-                                placeholder="Pesquisar...">
-                            <button class="search-close-btn" id="searchCloseBtn" aria-label="Fechar pesquisa">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="toggleTheme" aria-label="Alternar tema">
-                            <i class="fas fa-moon" id="themeIcon"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#languageModal"
-                            aria-label="Selecionar idioma">
-                            <img src="img/bandeiras_idiomas/br.svg" alt="Bandeira do Brasil" width="24" height="24"
-                                id="currentLanguageFlag">
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="mobile-menu-overlay" id="mobileOverlayMenu">
-        <div class="d-flex justify-content-end p-3">
-            <button class="btn-close btn-close-white" id="mobileMenuClose" aria-label="Fechar Menu"></button>
-        </div>
-        <ul class="navbar-nav flex-column u30navul-mobile">
-            <li class="nav-item u30navli-mobile">
-                <button data-lbl="tools" class="nav-link u30navitem-mobile" data-navtarget="tools">Ferramentas
-                    Produtividade</button>
-            </li>
-            <li class="nav-item u30navli-mobile">
-                <button data-lbl="apis" class="nav-link u30navitem-mobile" data-navtarget="apis">APIs</button>
-            </li>
-            <li class="nav-item u30navli-mobile">
-                <a href="erros-datacob.html" class="nav-link u30navitem-mobile" data-lbl="datacoberrors">Erros
-                    DataCob</a>
-            </li>
-        </ul>
-
-        <ul class="navbar-nav flex-column align-items-center mt-3 mobile-only-icons">
-            <li class="nav-item">
-                <button id="searchToggleBtnMobile" class="btn btn-link nav-link text-white">
-                    <i class="fas fa-search me-2"></i> Pesquisar
-                </button>
-            </li>
-            <li class="nav-item">
-                <button id="toggleThemeMobile" class="btn btn-link nav-link text-white">
-                    <i id="themeIconMobile" class="fas fa-moon me-2"></i> Tema
-                </button>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white" href="#" id="languageDropdownMobile" role="button" data-bs-toggle="modal"
-                    data-bs-target="#languageModal" aria-expanded="false">
-                    <img id="currentLanguageFlagMobile" src="img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil"
-                        width="24" height="24" class="me-2"> Idioma
-                </a>
-            </li>
-        </ul>
+<body>
+  <header class="portal-header">
+    <div class="container portal-header-inner">
+      <a class="brand" href="../index.html">ARRIBA</a>
+      <nav class="portal-nav" aria-label="Navegacao de suporte">
+        <a href="../index.html"><i class="fa-solid fa-house"></i> Portal</a>
+        <a href="../pages/docs/help-center/index.html"><i class="fa-solid fa-book-open"></i> Help Center</a>
+        <a href="../tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-headset"></i> Copilot</a>
+        <a href="../tools/datacob/treinamento-cliente/index.html"><i class="fa-solid fa-graduation-cap"></i> Treinamento</a>
+      </nav>
     </div>
-    
-    <div class="u30navw2" id="toolsDropdownMenu" data-dropdown="tools">
-        <div class="closenav">
-            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <span class="section-kicker">Triagem DataCob</span>
+        <h1 class="mt-3">Erros recorrentes e solucoes rapidas para suporte.</h1>
+        <p class="mt-3 mb-0">
+          Pesquise por boleto, contrato, API, token, versao, juros, recepcao ou negativacao.
+          A pagina mostra resumo, caminho de tela, checklist e manual relacionado.
+        </p>
+      </div>
+    </section>
+
+    <section class="container search-panel" aria-label="Busca de erros recorrentes">
+      <div class="search-box">
+        <label class="section-kicker mb-2" for="issueSearch">Busca unica de suporte</label>
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass text-secondary"></i>
+          <input id="issueSearch" type="search" placeholder="Ex.: erro ao importar contrato, gerar token API, boleto, negativacao..." autocomplete="off" />
         </div>
-        <div class="u30nav3-inner">
-            <div class="container-fluid">
-                <div class="row fourclm">
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">Ferramentas de Produtividade</a></h3>
-                            <ul>
-                                <li><a href="json_validator.html">Validador JSON</a></li>
-                                <li><a href="#">Formatador de Código</a></li>
-                                <li><a href="#">Gerador de Senhas</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">Utilitários de Dados</a></h3>
-                            <ul>
-                                <li><a href="#">Conversor CSV para JSON</a></li>
-                                <li><a href="#">Comparador de Texto</a></li>
-                                <li><a href="#">Calculadora de Hash</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">DevOps e Cloud</a></h3>
-                            <ul>
-                                <li><a href="#">Calculadora de Custo Cloud</a></li>
-                                <li><a href="#">Gerador de .gitignore</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">Outras Ferramentas</a></h3>
-                            <ul>
-                                <li><a href="#">Analisador de Logs</a></li>
-                                <li><a href="#">Gerador de Lorem Ipsum</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="quick-tags" id="quickTags"></div>
+      </div>
+    </section>
+
+    <section class="container py-5">
+      <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mb-4">
+        <div>
+          <span class="section-kicker">Base local</span>
+          <h2 class="h3 mt-2 mb-0">Assuntos encontrados</h2>
         </div>
-    </div>
+        <span class="text-secondary" id="resultCount"></span>
+      </div>
 
-    <div class="u30navw2" id="apisDropdownMenu" data-dropdown="apis">
-        <div class="closenav">
-            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
-        </div>
-        <div class="u30nav3-inner">
-            <div class="container-fluid">
-                <div class="row fourclm">
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">APIs de Dados</a></h3>
-                            <ul>
-                                <li><a href="#">API de Cotação de Moedas</a></li>
-                                <li><a href="#">API de Clima</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">APIs de Integração</a></h3>
-                            <ul>
-                                <li><a href="#">API de Notificações</a></li>
-                                <li><a href="#">API de Pagamentos (Mock)</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">APIs de Utilitários</a></h3>
-                            <ul>
-                                <li><a href="#">API de Validação de Email</a></li>
-                                <li><a href="#">API de Geração de QR Code</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="u30t1">
-                            <h3><a href="#">APIs Diversas</a></h3>
-                            <ul>
-                                <li><a href="#">API de Feriados Nacionais</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+      <div class="issue-grid" id="issueGrid"></div>
+      <div class="empty-result d-none" id="emptyResult">
+        <h3 class="h5">Nenhum assunto encontrado.</h3>
+        <p class="mb-3">Tente outro termo ou abra o Copilot para gerar uma analise manual.</p>
+        <a class="btn-enterprise" href="../tools/datacob/support-copilot/support-copilot.html">
+          <i class="fa-solid fa-headset"></i> Abrir Support Copilot
+        </a>
+      </div>
+    </section>
+  </main>
 
-    <div class="u30navw2" id="datacoberrorsDropdownMenu" data-dropdown="datacoberrors">
-        <div class="closenav">
-            <a href="#"><img src="https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg" alt="Close" /></a>
-        </div>
-        <div class="u30nav3-inner">
-            <div class="container-fluid">
-                <div class="row fourclm">
-                    <div class="col-md-6">
-                        <div class="u30t1">
-                            <h3><a href="erros-datacob.html">Documentação de Erros Comuns</a></h3>
-                            <ul>
-                                <li><a href="#">Erro DX001: Falha de Conexão</a></li>
-                                <li><a href="#">Erro LV005: Licença Inválida</a></li>
-                                <li><a href="#">Erro PR102: Processamento Interrompido</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="u30t1">
-                            <h3><a href="#">Soluções e Workarounds</a></h3>
-                            <ul>
-                                <li><a href="#">Guia de Troubleshooting Avançado</a></li>
-                                <li><a href="#">FAQs de Erros Críticos</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  <script type="module">
+    import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from "../assets/data/datacob-knowledge-base.js";
 
-    <main class="container my-5 flex-grow-1">
-        <h1 class="mb-4">Documentação de Erros DataCob</h1>
+    const grid = document.getElementById("issueGrid");
+    const search = document.getElementById("issueSearch");
+    const count = document.getElementById("resultCount");
+    const empty = document.getElementById("emptyResult");
+    const quickTags = document.getElementById("quickTags");
 
-        <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm border-danger">
-                    <div class="card-header bg-danger text-white py-3">
-                        <h5 class="mb-0">Erro DC1003 – Conexão ao Banco de Dados Falhou</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text"><strong>Causa:</strong> Credenciais inválidas, banco de dados indisponível, ou firewall bloqueando a conexão.</p>
-                        <p class="card-text"><strong>Solução:</strong> Verifique a string de conexão ou reinicie o serviço DB.</p>
-                        <p class="card-text">
-                            <strong>Documentação Relacionada:</strong>
-                            <a href="erros/DC1003.html" class="text-decoration-none">Detalhes Completos</a> |
-                            <a href="ferramentas/configuracao-conexao.html" class="text-decoration-none">Configuração de Conexão DB</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
+    const normalize = (value) => String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
 
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm border-warning">
-                    <div class="card-header bg-warning text-dark py-3">
-                        <h5 class="mb-0">Aviso LV005 – Licença Próxima do Vencimento</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text"><strong>Causa:</strong> A licença de uso do sistema expira em menos de 30 dias.</p>
-                        <p class="card-text"><strong>Solução:</strong> Contate o departamento comercial para renovação da licença.</p>
-                        <p class="card-text">
-                            <strong>Documentação Relacionada:</strong>
-                            <a href="erros/LV005.html" class="text-decoration-none">Políticas de Licenciamento</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
+    const searchableText = (item) => normalize([
+      item.titulo,
+      item.produto,
+      item.categoria,
+      item.perguntaExemplo,
+      item.caminhoTela,
+      item.resumo,
+      item.tipoFreshdeskSugerido,
+      item.quandoEncaminharDev,
+      ...(item.palavrasChave || []),
+      ...(item.passos || []),
+      ...(item.checklist || [])
+    ].join(" "));
 
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm border-info">
-                    <div class="card-header bg-info text-white py-3">
-                        <h5 class="mb-0">Info PR102 – Atualização de Processo Disponível</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text"><strong>Descrição:</strong> Uma nova versão do processo 'X' está disponível para download e instalação.</p>
-                        <p class="card-text"><strong>Ação:</strong> Recomenda-se atualizar para a versão mais recente para acessar novas funcionalidades e correções.</p>
-                        <p class="card-text">
-                            <strong>Documentação Relacionada:</strong>
-                            <a href="erros/PR102.html" class="text-decoration-none">Notas de Lançamento</a> |
-                            <a href="ferramentas/atualizacao.html" class="text-decoration-none">Guia de Atualização</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
+    function rank(item, query) {
+      if (!query) return 1;
+      const terms = normalize(query).split(/\s+/).filter(Boolean);
+      const text = searchableText(item);
+      return terms.reduce((score, term) => score + (text.includes(term) ? 1 : 0), 0);
+    }
 
-            </div>
-    </main>
+    function render(items) {
+      grid.innerHTML = items.map((item) => `
+        <article class="issue-card">
+          <div class="issue-meta">
+            <span class="pill">${escapeHtml(item.categoria)}</span>
+            <small class="text-secondary">${escapeHtml(item.tipoFreshdeskSugerido)}</small>
+          </div>
+          <h2>${escapeHtml(item.titulo)}</h2>
+          <p>${escapeHtml(item.resumo)}</p>
+          <div class="path"><strong>Caminho:</strong> ${escapeHtml(item.caminhoTela)}</div>
+          <strong>Checklist rapido</strong>
+          <ul class="checklist mt-2">
+            ${(item.checklist || []).slice(0, 4).map((check) => `<li>${escapeHtml(check)}</li>`).join("")}
+          </ul>
+          <div class="issue-actions">
+            <a class="btn-enterprise" href="${item.linkManual}"><i class="fa-solid fa-book-open"></i> Abrir manual</a>
+            <button class="btn-enterprise secondary" type="button" data-copy="${item.id}"><i class="fa-regular fa-copy"></i> Copiar triagem</button>
+          </div>
+        </article>
+      `).join("");
 
-    <footer class="mt-auto py-3 bg-dark text-white-50">
-        <div class="container text-center">
-            <p class="mb-0">
-                &copy; 2025 Arriba Platform. Todos os direitos reservados.
-            </p>
-            <small class="text-secondary">Versão: 1.10.0</small>
-        </div>
-    </footer>
+      count.textContent = `${items.length} assunto${items.length === 1 ? "" : "s"}`;
+      empty.classList.toggle("d-none", items.length > 0);
+    }
 
-    <button id="chatbotBtn" class="btn btn-primary shadow-lg">
-        <i class="fas fa-comments"></i>
-    </button>
+    function filter(query) {
+      const ranked = DATACOB_KNOWLEDGE_BASE
+        .map((item) => ({ item, score: rank(item, query) }))
+        .filter(({ score }) => !query || score > 0)
+        .sort((a, b) => b.score - a.score || a.item.titulo.localeCompare(b.item.titulo))
+        .map(({ item }) => item);
 
-    <div id="chatbot" class="chatbot-popup card d-none">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            Arriba Bot
-            <button id="closeChat" class="btn-close btn-close-white" aria-label="Close"></button>
-        </div>
-        <div class="card-body chat-window" id="chatWindow">
-        </div>
-        <div class="card-footer d-flex">
-            <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem...">
-            <button id="sendChat" class="btn btn-primary ms-2">Enviar</button>
-        </div>
-    </div>
+      render(ranked);
+    }
 
-    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="languageModalLabel">Selecione o Idioma</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-3 mb-4">
-                                <h6>Europa</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="gb"
-                                            data-country="Reino Unido">
-                                            <img src="img/bandeiras_idiomas/flg-gb.svg" alt="Bandeira do Reino Unido"
-                                                width="24" height="24"> English (UK)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="us"
-                                            data-country="Estados Unidos">
-                                            <img src="img/bandeiras_idiomas/flg-us.svg" alt="Bandeira dos EUA"
-                                                width="24" height="24"> English (US)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="es"
-                                            data-country="Espanha">
-                                            <img src="img/bandeiras_idiomas/flg-es.svg" alt="Bandeira da Espanha"
-                                                width="24" height="24"> Español
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="fr" data-flag="fr"
-                                            data-country="França">
-                                            <img src="img/bandeiras_idiomas/flg-fr.svg" alt="Bandeira da França"
-                                                width="24" height="24"> Français
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="de" data-flag="de"
-                                            data-country="Alemanha">
-                                            <img src="img/bandeiras_idiomas/flg-de.svg" alt="Bandeira da Alemanha"
-                                                width="24" height="24"> Alemanha (Deutsch)
-                                        </a></li>
-                                </ul>
-                            </div>
+    function copyIssue(id) {
+      const item = DATACOB_KNOWLEDGE_BASE.find((entry) => entry.id === id);
+      if (!item) return;
+      const text = [
+        `Assunto: ${item.titulo}`,
+        `Resumo: ${item.resumo}`,
+        `Caminho: ${item.caminhoTela}`,
+        "",
+        "Checklist:",
+        ...(item.checklist || []).map((check) => `- ${check}`),
+        "",
+        `Manual: ${item.linkManual}`,
+        `Encaminhar DEV: ${item.quandoEncaminharDev}`
+      ].join("\n");
 
-                            <div class="col-md-3 mb-4">
-                                <h6>Américas</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="pt" data-flag="br"
-                                            data-country="Brasil">
-                                            <img src="img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil"
-                                                width="24" height="24"> Português (Brasil)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="es" data-flag="mx"
-                                            data-country="México">
-                                            <img src="img/bandeiras_idiomas/flg-mx.svg" alt="Bandeira do México"
-                                                width="24" height="24"> Español (México)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="ca"
-                                            data-country="Canadá">
-                                            <img src="img/bandeiras_idiomas/flg-ca.svg" alt="Bandeira do Canadá"
-                                                width="24" height="24"> Canada
-                                        </a></li>
-                                </ul>
-                            </div>
+      navigator.clipboard?.writeText(text);
+    }
 
-                            <div class="col-md-3 mb-4">
-                                <h6>Ásia e Oceania</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="ko" data-flag="kr"
-                                            data-country="Coreia do Sul">
-                                            <img src="img/bandeiras_idiomas/flg-kr.svg" alt="Bandeira da Coreia do Sul"
-                                                width="24" height="24"> 한국어 (Coreia do Sul)
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="au"
-                                            data-country="Austrália">
-                                            <img src="img/bandeiras_idiomas/flg-au.svg" alt="Bandeira da Austrália"
-                                                width="24" height="24"> Australia
-                                        </a></li>
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="in"
-                                            data-country="Índia">
-                                            <img src="img/bandeiras_idiomas/flg-in.svg" alt="Bandeira da Índia"
-                                                width="24" height="24"> India
-                                        </a></li>
-                                </ul>
-                            </div>
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-                            <div class="col-md-3 mb-4">
-                                <h6>Oriente Médio e África</h6>
-                                <ul class="list-unstyled language-list">
-                                    <li><a href="#" class="select-lang" data-lang-code="en" data-flag="za"
-                                            data-country="África do Sul">
-                                            <img src="img/bandeiras_idiomas/flg-za.svg" alt="Bandeira da África do Sul"
-                                                width="24" height="24"> South Africa
-                                        </a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    quickTags.innerHTML = DATACOB_QUICK_TOPICS.map((topic) => `<button type="button">${escapeHtml(topic)}</button>`).join("");
+    quickTags.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      search.value = button.textContent.trim();
+      filter(search.value);
+      search.focus();
+    });
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="js/main.js"></script>
+    grid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-copy]");
+      if (!button) return;
+      copyIssue(button.dataset.copy);
+      button.innerHTML = '<i class="fa-solid fa-check"></i> Copiado';
+      window.setTimeout(() => {
+        button.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar triagem';
+      }, 1400);
+    });
+
+    search.addEventListener("input", () => filter(search.value));
+
+    const initialQuery = new URLSearchParams(window.location.search).get("q") || "";
+    search.value = initialQuery;
+    filter(initialQuery);
+  </script>
 </body>
-
 </html>

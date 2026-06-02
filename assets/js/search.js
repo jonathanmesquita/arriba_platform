@@ -11,20 +11,38 @@ export function initSearchBox() {
 
     const searchData = [
         {
+            title: 'Help Center',
+            url: 'pages/docs/help-center/index.html',
+            keywords: ['help center', 'manual', 'manuais', 'documentacao', 'base', 'conhecimento', 'datacob'],
+            category: 'Conhecimento'
+        },
+        {
+            title: 'AI Support Copilot',
+            url: 'tools/datacob/support-copilot/support-copilot.html',
+            keywords: ['copilot', 'ia', 'ticket', 'freshdesk', 'suporte', 'checklist', 'resposta', 'analise'],
+            category: 'Suporte'
+        },
+        {
+            title: 'Treinamento DataCob',
+            url: 'tools/datacob/treinamento-cliente/index.html',
+            keywords: ['treinamento', 'cliente', 'datacob', 'passo a passo', 'onboarding', 'aula'],
+            category: 'Treinamento'
+        },
+        {
             title: 'Validador JSON',
-            url: 'json_validator.html',
+            url: 'tools/dados/json-validator/json_validator.html',
             keywords: ['json', 'validar', 'formatar', 'api', 'estrutura'],
             category: 'Ferramentas'
         },
         {
             title: 'Gerador CSV Dock v.1',
-            url: 'tools/arriba-csv-generator/csv-template-generator.html',
+            url: 'tools/datacob/arriba-csv-generator/csv-template-generator.html',
             keywords: ['csv', 'dock', 'massa', 'dados', 'contrato', 'parcela', 'financiado', 'avalista'],
             category: 'Ferramentas'
         },
         {
             title: 'Massa de Dados (Gerador Fictício CPF/CNPJ)',
-            url: 'tools/massa-dados/massa-dados.html',
+            url: 'tools/datacob/massa-dados/massa-dados.html',
             keywords: ['cpf', 'cnpj', 'massa', 'dados', 'ficticio', 'json', 'teste', 'mock'],
             category: 'Ferramentas'
         },
@@ -314,7 +332,7 @@ function setActiveSuggestion(items, index) {
 
 function performSearch(query) {
     if (query.trim() === '') return;
-    alert('Função de pesquisa ativada! Termo: ' + query);
+    window.location.href = 'erros/erros-datacob.html?q=' + encodeURIComponent(query.trim());
 }
 
 function escapeHtml(str) {
@@ -329,20 +347,38 @@ function escapeHtml(str) {
 function getSearchDataFallback() {
     return [
         {
+            title: 'Help Center',
+            url: 'pages/docs/help-center/index.html',
+            keywords: ['help center', 'manual', 'manuais', 'documentacao', 'datacob'],
+            category: 'Conhecimento'
+        },
+        {
+            title: 'AI Support Copilot',
+            url: 'tools/datacob/support-copilot/support-copilot.html',
+            keywords: ['copilot', 'ia', 'ticket', 'freshdesk', 'suporte'],
+            category: 'Suporte'
+        },
+        {
+            title: 'Treinamento DataCob',
+            url: 'tools/datacob/treinamento-cliente/index.html',
+            keywords: ['treinamento', 'cliente', 'datacob', 'passo a passo'],
+            category: 'Treinamento'
+        },
+        {
             title: 'Validador JSON',
-            url: 'json_validator.html',
+            url: 'tools/dados/json-validator/json_validator.html',
             keywords: ['json', 'validar', 'formatar', 'api'],
             category: 'Ferramentas'
         },
         {
             title: 'Gerador CSV Dock v.1',
-            url: 'tools/arriba-csv-generator/csv-template-generator.html',
+            url: 'tools/datacob/arriba-csv-generator/csv-template-generator.html',
             keywords: ['csv', 'dock', 'massa', 'dados', 'contrato', 'parcela'],
             category: 'Ferramentas'
         },
         {
             title: 'Massa de Dados (Gerador Fictício CPF/CNPJ)',
-            url: 'tools/massa-dados/massa-dados.html',
+            url: 'tools/datacob/massa-dados/massa-dados.html',
             keywords: ['cpf', 'cnpj', 'massa', 'dados', 'ficticio'],
             category: 'Ferramentas'
         },

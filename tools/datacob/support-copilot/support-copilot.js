@@ -383,6 +383,132 @@ function inferDevelopmentType(text, freshdeskType) {
   return "Melhoria";
 }
 
+function requesterDisplay(input = {}, ticket = {}) {
+  return input.requester?.name || input.requester_name || ticket.requester?.name || ticket.requester_name || "";
+}
+
+function customerDisplay(input = {}, ticket = {}, context = {}) {
+  return input.customerName || input.company?.name || context.company?.name || context.company?.businessname || ticket.company_name || ticket.company?.name || "Cliente";
+}
+
+function buildFormalTemplates({ input = {}, ticket = {}, context = {}, analysis = {}, knowledge = [], checklist = [] } = {}) {
+  const requester = requesterDisplay(input, ticket);
+  const customer = customerDisplay(input, ticket, context);
+  const ticketId = input.id || input.ticketId || ticket.id || ticket.ticketId || "manual";
+  const subject = input.subject || input.title || ticket.subject || ticket.title || analysis.routine || "Assunto a confirmar";
+  const product = analysis.product || input.product || ticket.product || "DataCob";
+  const priority = analysis.priority || "A confirmar";
+  const freshdeskType = analysis.freshdeskType || analysis.requestType || "Duvida";
+  const scenario = analysis.recommendedScenario || "Revisao manual pelo Suporte";
+  const developmentType = analysis.developmentType || "Nao indicado";
+  const summary = analysis.summary || input.message || input.description || ticket.description_text || "Descrição não informada.";
+  const primaryKnowledge = knowledge[0] || {};
+  const manualTitle = primaryKnowledge.title || "Manual relacionado a confirmar";
+  const manualUrl = primaryKnowledge.url || "";
+  const evidence = checklist.length ? checklist : [
+    "Print da tela ou erro apresentado",
+    "Passo a passo realizado",
+    "Comportamento esperado",
+    "Cliente, carteira, contrato ou parcela afetada",
+    "Horário aproximado da ocorrência"
+  ];
+
+  const greeting = requester ? `Olá, ${requester}.` : "Olá.";
+  const manualLine = manualUrl ? `\n\nManual relacionado:\n${manualUrl}` : "";
+  const responseToCustomer = [
+    greeting,
+    "",
+    `Recebemos sua solicitacao sobre "${subject}" e ja levantamos a orientacao inicial para o produto ${product}.`,
+    primaryKnowledge.summary ? `\nResumo da orientacao:\n${primaryKnowledge.summary}` : "",
+    primaryKnowledge.rules?.length ? `\nCaminho/validacoes principais:\n${primaryKnowledge.rules.map((item) => `- ${item}`).join("\n")}` : "",
+    primaryKnowledge.checklist?.length ? `\nChecklist recomendado:\n${primaryKnowledge.checklist.slice(0, 6).map((item) => `- ${item}`).join("\n")}` : "",
+    manualLine,
+    "",
+    "Caso o comportamento continue divergente apos essas validacoes, por favor nos envie as evidencias para seguirmos com a analise.",
+    "",
+    "Atenciosamente,"
+  ].filter(Boolean).join("\n");
+
+  const evidenceRequest = [
+    greeting,
+    "",
+    `Para avancarmos com a analise do chamado "${subject}", poderia nos encaminhar as evidencias abaixo?`,
+    "",
+    ...evidence.map((item) => `- ${item}`),
+    "",
+    "Com essas informacoes conseguimos validar o cenario com mais precisao e direcionar corretamente, se houver necessidade de apoio tecnico.",
+    "",
+    "Atenciosamente,"
+  ].join("\n");
+
+  const internalNote = [
+    "Analise interna - Support Copilot",
+    "",
+    `Ticket: #${ticketId}`,
+    `Cliente: ${customer}`,
+    `Solicitante: ${requester || "-"}`,
+    `Assunto: ${subject}`,
+    `Produto: ${product}`,
+    `Tipo Freshdesk sugerido: ${freshdeskType}`,
+    `Prioridade sugerida: ${priority}`,
+    `Cenário recomendado: ${scenario}`,
+    `Tipo DEV sugerido: ${developmentType}`,
+    "",
+    "Resumo:",
+    summary,
+    "",
+    "Base/manual relacionado:",
+    `${manualTitle}${manualUrl ? ` - ${manualUrl}` : ""}`,
+    "",
+    "Checklist de validacao:",
+    ...evidence.map((item) => `- ${item}`),
+    "",
+    "Observacao:",
+    analysis.needsDevelopmentSpec ? "Ha indicio de encaminhamento para DEV. Validar evidencias antes de abrir especificacao." : "Atendimento pode seguir pelo suporte, salvo nova evidencia tecnica."
+  ].join("\n");
+
+  const devEscalation = [
+    "------------| Encaminhamento para Desenvolvimento |------------",
+    "",
+    `Cliente: ${customer}`,
+    `Ticket Freshdesk: #${ticketId}`,
+    `Produto: ${product}`,
+    `Tipo DEV: ${developmentType}`,
+    `Prioridade sugerida: ${priority}`,
+    "",
+    "Rotina/Tela:",
+    subject,
+    "",
+    "Cenario atual:",
+    summary,
+    "",
+    "Comportamento esperado:",
+    analysis.expectedBehavior || "Confirmar comportamento esperado com o cliente/suporte.",
+    "",
+    "Base consultada:",
+    `${manualTitle}${manualUrl ? ` - ${manualUrl}` : ""}`,
+    "",
+    "Evidencias necessarias:",
+    ...evidence.map((item) => `- ${item}`),
+    "",
+    "Critérios de aceite:",
+    "- Cenario reproduzivel ou evidenciado pelo suporte.",
+    "- Correcao/ajuste validado sem regressao nas rotinas relacionadas.",
+    "- Retorno documentado para o cliente e para a base de conhecimento."
+  ].join("\n");
+
+  return {
+    recommended: {
+      key: analysis.needsDevelopmentSpec ? "encaminharDev" : "respostaClienteComBase",
+      title: analysis.needsDevelopmentSpec ? "Encaminhar para DEV com evidências" : "Resposta ao cliente com base local"
+    },
+    customerReply: { title: "Resposta para cliente", type: "public_reply", body: responseToCustomer, variables: {} },
+    internalNote: { title: "Nota interna de triagem", type: "private_note", body: internalNote, variables: {} },
+    devEscalation: { title: "Encaminhar para DEV", type: "dev_spec", body: devEscalation, variables: {} },
+    evidenceRequest: { title: "Solicitar evidencias", type: "public_reply", body: evidenceRequest, variables: {} }
+  };
+}
+
 function inferLocal(input) {
   const text = normalizeText(`${input.subject} ${input.product} ${input.message}`);
   const isVersionTicket = /versao|versão|atualizacao de versao|atualização de versão|agendamento automatico|agendamento automático|checklist versao|checklist versão|virada de versao|virada de versão|homologacao|homologação/.test(text);
@@ -448,54 +574,60 @@ function inferLocal(input) {
   const versionReply = `Boa tarde, ${input.requester?.name || input.requester_name || ""},\n\nO agendamento deve ocorrer no ambiente de homologacao.\n\nEm anexo, segue o manual com as instrucoes para o agendamento automatico de versao do DataCob.\n\nDe forma resumida, o cliente deve acessar o ambiente de homologacao, abrir a opcao Checklist versao, validar os itens necessarios e finalizar o checklist para selecionar a data e horario da virada.\n\nAtencao as principais regras:\n- Para agendamento no mesmo dia, o checklist deve ser finalizado ate as 17h;\n- Agendamentos automaticos devem ocorrer de segunda a quinta-feira, entre 20h e 00h;\n- Agendamentos para sexta-feira, sabado ou domingo exigem atuacao/validacao do suporte;\n- Em caso de cancelamento do agendamento, sera necessario contato com o suporte para nova orientacao.\n\nObrigado!`;
   const responseBody = isVersionTicket ? versionReply : primaryKnowledge?.suggestedReply || `Ola ${input.requester?.name || input.requester_name || ""},\n\nRecebemos sua solicitacao e ja estamos analisando o cenario informado.\n\nPara seguirmos com a validacao, poderia nos encaminhar:\n${checklist.map((item) => "- " + item).join("\n")}\n\nAtenciosamente,\n${input.agent_name || "Analista responsavel"}`;
   const internalBody = `Analise IA - Support Copilot\n\nTicket: #${input.id || input.ticketId || "manual"}\nAssunto: ${input.subject || "-"}\nSolicitante: ${input.requester?.name || input.requester_name || "-"}\nEmpresa: ${input.customerName || input.company?.name || "-"}\n\nResumo da solicitacao:\n${summary}\n\nProduto identificado:\n${product}\n\nTipo Freshdesk sugerido:\n${freshdeskType}\n\nTipo DEV sugerido:\n${developmentType}\n\nPrioridade sugerida:\n${priority}\n\nCenario recomendado:\n${recommendedScenario}\n\nResposta predefinida recomendada:\n${recommendedTemplate.title}\n\nChecklist de evidencias:\n${checklist.map((item) => "- " + item).join("\n")}`;
+  const baseAnalysis = {
+    source: "fallback-local-frontend",
+    product,
+    requestType: freshdeskType === "Incidente" ? "Erro tecnico" : freshdeskType === "Prospect" ? "Solicitacao comercial" : "Duvida operacional",
+    freshdeskType,
+    priority,
+    recommendedScenario,
+    developmentType,
+    needsDevelopmentSpec,
+    recommendedTemplate,
+    confidence: 0.72,
+    routine: input.subject || "Rotina a confirmar",
+    summary,
+    currentScenario: summary,
+    expectedBehavior: "O atendimento deve validar evidencias, orientar o cliente ou encaminhar com contexto suficiente.",
+    suggestedReply: responseBody,
+    checklist,
+    evidenceNeeded: checklist,
+    agentValidation: {
+      status: "Nao validado",
+      message: "Validacao de agente/grupo disponivel quando o ticket vem do Freshdesk."
+    },
+    knowledgeBase: knowledgeMatches.length ? knowledgeMatches : isVersionTicket ? [{
+      id: "datacob-agendamento-automatico-versao",
+      title: "Manual - Agendamento automatico de versao",
+      source: "fallback-local-frontend",
+      product: "DataCob",
+      freshdeskType: "Versao",
+      summary: "Manual usado para orientar agendamento automatico de versao do DataCob em homologacao.",
+      rules: [
+        "Checklist deve ser finalizado ate as 17h para agendamento no mesmo dia.",
+        "Agendamento automatico ocorre de segunda a quinta-feira entre 20h e 00h.",
+        "Sexta, sabado, domingo ou cancelamento exigem atuacao do suporte."
+      ],
+      checklist
+    }] : [],
+    knowledgeSummary: primaryKnowledge ? `${primaryKnowledge.title}: ${primaryKnowledge.summary}` : isVersionTicket ? "Manual - Agendamento automatico de versao: orientar ambiente de homologacao, checklist versao e regras de horario." : "Sem base relacionada.",
+    nextAction: primaryKnowledge ? `Usar o manual sugerido "${primaryKnowledge.title}", validar o checklist e copiar a resposta orientativa para o cliente.` : isVersionTicket ? "Usar resposta predefinida de agendamento de versao, anexar/indicar o manual e confirmar data/horario conforme regras do checklist." : "Revisar a analise, confirmar evidencias e usar a resposta predefinida recomendada.",
+    developmentSpec: buildLocalDevelopmentSpec(input, product, priority, developmentType, checklist)
+  };
+  const formalTemplates = buildFormalTemplates({
+    input,
+    analysis: baseAnalysis,
+    knowledge: baseAnalysis.knowledgeBase,
+    checklist
+  });
   return {
     ticket: input,
     conversations: [],
     context: {},
-    analysis: {
-      source: "fallback-local-frontend",
-      product,
-      requestType: freshdeskType === "Incidente" ? "Erro tecnico" : freshdeskType === "Prospect" ? "Solicitacao comercial" : "Duvida operacional",
-      freshdeskType,
-      priority,
-      recommendedScenario,
-      developmentType,
-      needsDevelopmentSpec,
-      recommendedTemplate,
-      confidence: 0.72,
-      routine: input.subject || "Rotina a confirmar",
-      summary,
-      currentScenario: summary,
-      expectedBehavior: "O atendimento deve validar evidencias, orientar o cliente ou encaminhar com contexto suficiente.",
-      suggestedReply: responseBody,
-      checklist,
-      evidenceNeeded: checklist,
-      agentValidation: {
-        status: "Nao validado",
-        message: "Validacao de agente/grupo disponivel quando o ticket vem do Freshdesk."
-      },
-      knowledgeBase: knowledgeMatches.length ? knowledgeMatches : isVersionTicket ? [{
-        id: "datacob-agendamento-automatico-versao",
-        title: "Manual - Agendamento automatico de versao",
-        source: "fallback-local-frontend",
-        product: "DataCob",
-        freshdeskType: "Versao",
-        summary: "Manual usado para orientar agendamento automatico de versao do DataCob em homologacao.",
-        rules: [
-          "Checklist deve ser finalizado ate as 17h para agendamento no mesmo dia.",
-          "Agendamento automatico ocorre de segunda a quinta-feira entre 20h e 00h.",
-          "Sexta, sabado, domingo ou cancelamento exigem atuacao do suporte."
-        ],
-        checklist
-      }] : [],
-      knowledgeSummary: primaryKnowledge ? `${primaryKnowledge.title}: ${primaryKnowledge.summary}` : isVersionTicket ? "Manual - Agendamento automatico de versao: orientar ambiente de homologacao, checklist versao e regras de horario." : "Sem base relacionada.",
-      nextAction: primaryKnowledge ? `Usar o manual sugerido "${primaryKnowledge.title}", validar o checklist e copiar a resposta orientativa para o cliente.` : isVersionTicket ? "Usar resposta predefinida de agendamento de versao, anexar/indicar o manual e confirmar data/horario conforme regras do checklist." : "Revisar a analise, confirmar evidencias e usar a resposta predefinida recomendada.",
-      developmentSpec: buildLocalDevelopmentSpec(input, product, priority, developmentType, checklist)
-    },
+    analysis: { ...baseAnalysis, developmentSpec: formalTemplates.devEscalation.body },
     renderedTemplates: {
-      recommended: recommendedTemplate,
-      customerReply: { title: recommendedTemplate.title, type: "public_reply", body: responseBody, variables: {} },
-      internalNote: { title: "@Anotacoes - Analise IA Support Copilot", type: "private_note", body: internalBody, variables: {} }
+      ...formalTemplates,
+      legacyInternalNote: { title: "@Anotacoes - Analise IA Support Copilot", type: "private_note", body: internalBody, variables: {} }
     }
   };
 }
@@ -742,8 +874,6 @@ function enrichWithLocalKnowledge(data = {}) {
     company: context.company || ticket.company || {}
   };
   const localMatches = findKnowledgeMatches(input, 3);
-  if (!localMatches.length) return normalized;
-
   const existing = Array.isArray(analysis.knowledgeBase) ? analysis.knowledgeBase : [];
   const seen = new Set(existing.map((item) => item.id || item.title || item.url).filter(Boolean));
   const merged = [
@@ -754,21 +884,31 @@ function enrichWithLocalKnowledge(data = {}) {
   normalized.analysis = {
     ...analysis,
     knowledgeBase: merged,
-    knowledgeSummary: analysis.knowledgeSummary || `${localMatches[0].title}: ${localMatches[0].summary}`,
-    nextAction: analysis.nextAction || `Validar o manual sugerido "${localMatches[0].title}" e copiar a resposta orientativa para o cliente.`
+    knowledgeSummary: analysis.knowledgeSummary || (localMatches[0] ? `${localMatches[0].title}: ${localMatches[0].summary}` : "Base local sem correspondencia exata."),
+    nextAction: analysis.nextAction || (localMatches[0] ? `Validar o manual sugerido "${localMatches[0].title}" e copiar a resposta orientativa para o cliente.` : "Revisar as evidencias e usar o template formal mais adequado.")
   };
 
-  if (!normalized.renderedTemplates?.customerReply?.body && localMatches[0]?.suggestedReply) {
-    normalized.renderedTemplates = {
-      ...(normalized.renderedTemplates || {}),
-      customerReply: {
-        title: localMatches[0].title,
-        type: "public_reply",
-        body: localMatches[0].suggestedReply,
-        variables: {}
-      }
-    };
-  }
+  const checklist = normalized.analysis.checklist || normalized.analysis.evidenceNeeded || localMatches[0]?.checklist || [];
+  const formalTemplates = buildFormalTemplates({
+    input,
+    ticket,
+    context,
+    analysis: normalized.analysis,
+    knowledge: merged,
+    checklist
+  });
+
+  normalized.renderedTemplates = {
+    ...formalTemplates,
+    ...(normalized.renderedTemplates || {}),
+    recommended: normalized.renderedTemplates?.recommended || formalTemplates.recommended,
+    customerReply: normalized.renderedTemplates?.customerReply?.body ? normalized.renderedTemplates.customerReply : formalTemplates.customerReply,
+    internalNote: normalized.renderedTemplates?.internalNote?.body ? normalized.renderedTemplates.internalNote : formalTemplates.internalNote,
+    devEscalation: formalTemplates.devEscalation,
+    evidenceRequest: formalTemplates.evidenceRequest
+  };
+
+  normalized.analysis.developmentSpec = normalized.analysis.developmentSpec || formalTemplates.devEscalation.body;
 
   return normalized;
 }
@@ -1487,11 +1627,14 @@ ${(analysis.checklist || analysis.evidenceNeeded || []).map((item) => "- " + ite
 Resposta sugerida:
 ${templates.customerReply?.body || analysis.suggestedReply || "-"}
 
+Solicitacao de evidencias:
+${templates.evidenceRequest?.body || "-"}
+
 Nota interna sugerida:
 ${templates.internalNote?.body || "-"}
 
 Especificacao DEV:
-${analysis.developmentSpec || "Nao indicado"}`;
+${templates.devEscalation?.body || analysis.developmentSpec || "Nao indicado"}`;
 }
 
 function renderValidation(data = lastCopilotResult) {
@@ -1621,6 +1764,8 @@ function renderResult(rawData, options = {}) {
   const templates = data.renderedTemplates || {};
   const customerReply = templates.customerReply || {};
   const internalNote = templates.internalNote || {};
+  const devEscalation = templates.devEscalation || {};
+  const evidenceRequest = templates.evidenceRequest || {};
   const recommended = templates.recommended || analysis.recommendedTemplate || {};
 
   getEl("emptyState")?.classList.add("d-none");
@@ -1642,8 +1787,9 @@ function renderResult(rawData, options = {}) {
   safeSet("outPredefined", recommended.title || customerReply.title || "-");
   safeSet("outTemplateReason", `Modelo: ${recommended.key || customerReply.key || "recomendado pela analise"}`);
   safeSet("outResponse", customerReply.body || analysis.suggestedReply || "-");
-  safeSet("outDevSpec", analysis.developmentSpec || "Nao indicado neste momento.");
+  safeSet("outDevSpec", devEscalation.body || analysis.developmentSpec || "Nao indicado neste momento.");
   safeSet("outInternalNote", internalNote.body || "-");
+  safeSet("outEvidenceRequest", evidenceRequest.body || "Analise um ticket para gerar uma solicitacao formal de evidencias.");
   safeSet("outVariables", formatVariables(internalNote.variables || customerReply.variables || {}));
 
   renderList(analysis.checklist || analysis.evidenceNeeded || []);

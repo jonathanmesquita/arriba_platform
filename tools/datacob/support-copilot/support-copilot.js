@@ -334,6 +334,15 @@ function readForm() {
     requester_email: getEl("requesterEmail")?.value.trim(),
     agent_name: getEl("agentName")?.value.trim() || "Jonathan Oliveira Mesquita",
     product: getEl("product")?.value.trim(),
+    triage: {
+      type: getEl("triageType")?.value.trim(),
+      impact: getEl("triageImpact")?.value.trim(),
+      scope: getEl("triageScope")?.value.trim(),
+      environment: getEl("triageEnvironment")?.value.trim(),
+      evidence: getEl("triageEvidence")?.value.trim(),
+      route: getEl("triageRoute")?.value.trim(),
+      entities: getEl("triageEntities")?.value.trim()
+    },
     message: getEl("message")?.value.trim(),
     description: getEl("message")?.value.trim(),
     channel: "Manual / Freshdesk",
@@ -391,6 +400,19 @@ function customerDisplay(input = {}, ticket = {}, context = {}) {
   return input.customerName || input.company?.name || context.company?.name || context.company?.businessname || ticket.company_name || ticket.company?.name || "Cliente";
 }
 
+function formatTriageSummary(triage = {}) {
+  const rows = [
+    ["Tipo", triage.type],
+    ["Impacto", triage.impact],
+    ["Abrangencia", triage.scope],
+    ["Ambiente", triage.environment],
+    ["Evidencias recebidas", triage.evidence],
+    ["Direcionamento inicial", triage.route],
+    ["IDs/entidades", triage.entities]
+  ].filter(([, value]) => value);
+  return rows.length ? rows.map(([label, value]) => `- ${label}: ${value}`).join("\n") : "- Triagem guiada nao preenchida.";
+}
+
 function buildFormalTemplates({ input = {}, ticket = {}, context = {}, analysis = {}, knowledge = [], checklist = [] } = {}) {
   const requester = requesterDisplay(input, ticket);
   const customer = customerDisplay(input, ticket, context);
@@ -402,6 +424,7 @@ function buildFormalTemplates({ input = {}, ticket = {}, context = {}, analysis 
   const scenario = analysis.recommendedScenario || "Revisao manual pelo Suporte";
   const developmentType = analysis.developmentType || "Nao indicado";
   const summary = analysis.summary || input.message || input.description || ticket.description_text || "Descrição não informada.";
+  const triageSummary = formatTriageSummary(input.triage || ticket.triage || {});
   const primaryKnowledge = knowledge[0] || {};
   const manualTitle = primaryKnowledge.title || "Manual relacionado a confirmar";
   const manualUrl = primaryKnowledge.url || "";
@@ -457,6 +480,9 @@ function buildFormalTemplates({ input = {}, ticket = {}, context = {}, analysis 
     "Resumo:",
     summary,
     "",
+    "Triagem guiada:",
+    triageSummary,
+    "",
     "Base/manual relacionado:",
     `${manualTitle}${manualUrl ? ` - ${manualUrl}` : ""}`,
     "",
@@ -481,6 +507,9 @@ function buildFormalTemplates({ input = {}, ticket = {}, context = {}, analysis 
     "",
     "Cenario atual:",
     summary,
+    "",
+    "Triagem guiada:",
+    triageSummary,
     "",
     "Comportamento esperado:",
     analysis.expectedBehavior || "Confirmar comportamento esperado com o cliente/suporte.",
@@ -510,11 +539,23 @@ function buildFormalTemplates({ input = {}, ticket = {}, context = {}, analysis 
 }
 
 function inferLocal(input) {
-  const text = normalizeText(`${input.subject} ${input.product} ${input.message}`);
+  const triage = input.triage || {};
+  const triageText = `${triage.type || ""} ${triage.impact || ""} ${triage.scope || ""} ${triage.environment || ""} ${triage.evidence || ""} ${triage.route || ""} ${triage.entities || ""}`;
+  const normalizedTriageType = normalizeText(triage.type || "");
+  const normalizedTriageRoute = normalizeText(triage.route || "");
+  const text = normalizeText(`${input.subject} ${input.product} ${input.message} ${triageText}`);
   const isVersionTicket = /versao|versão|atualizacao de versao|atualização de versão|agendamento automatico|agendamento automático|checklist versao|checklist versão|virada de versao|virada de versão|homologacao|homologação/.test(text);
   const product = isVersionTicket ? "DataCob" : (input.product || (text.includes("databusca") ? "DataBusca" : text.includes("datacob") || text.includes("contrato") || text.includes("parcelamento") ? "DataCob" : "Nao identificado"));
   const freshdeskType = isVersionTicket
     ? "Versao"
+    : normalizedTriageType.includes("integracao")
+      ? "Integracao"
+    : normalizedTriageType.includes("melhoria")
+      ? "Melhorias"
+    : normalizedTriageType.includes("erro")
+      ? "Incidente"
+    : normalizedTriageType.includes("acesso")
+      ? "Acesso"
     : /comercial|proposta|orcamento|licenca|demo|teste/.test(text)
     ? "Prospect"
     : /recepcao|importacao|layout|csv|arquivo/.test(text)
@@ -524,15 +565,23 @@ function inferLocal(input) {
         : /melhoria|feature|sugestao/.test(text)
           ? "Melhorias"
           : "Duvida";
-  const priority = /recepcao travada|sistema parado|operacao parada|urgente|indisponivel|parado/.test(text)
+  const priority = /critico|operacao parada|recepcao travada|sistema parado|urgente|indisponivel|parado/.test(text)
     ? "Urgente"
-    : freshdeskType === "Incidente"
+    : /alto|producao|mais de um cliente|ambiente inteiro/.test(text) || freshdeskType === "Incidente"
       ? "Alta"
       : freshdeskType === "Versao"
         ? "Media"
         : "Baixa";
   const recommendedScenario = freshdeskType === "Versao"
     ? "Mover para Datacob"
+    : normalizedTriageRoute.includes("dev")
+      ? "Mover para Desenvolvimento"
+    : normalizedTriageRoute.includes("datacob")
+      ? "Mover para Datacob"
+    : normalizedTriageRoute.includes("comercial")
+      ? "Mover para Comercial"
+    : normalizedTriageRoute.includes("suporte resolve")
+      ? "Revisao manual pelo Suporte"
     : freshdeskType === "Prospect"
       ? "Mover para Comercial"
     : /bug|corrigir|melhoria|feature|customizacao|customizacao/.test(text)
@@ -871,7 +920,8 @@ function enrichWithLocalKnowledge(data = {}) {
     message: ticket.message || ticket.description_text || ticket.description || analysis.summary || analysis.currentScenario,
     description: ticket.description_text || ticket.description || analysis.summary || analysis.currentScenario,
     customerName: context.company?.name || context.company?.businessname || ticket.customerName || ticket.company_name,
-    company: context.company || ticket.company || {}
+    company: context.company || ticket.company || {},
+    triage: ticket.triage || {}
   };
   const localMatches = findKnowledgeMatches(input, 3);
   const existing = Array.isArray(analysis.knowledgeBase) ? analysis.knowledgeBase : [];
@@ -1275,6 +1325,13 @@ async function handleKnowledgeSearch() {
   });
 }
 
+function clearTriage() {
+  ["triageType", "triageImpact", "triageScope", "triageEnvironment", "triageEvidence", "triageRoute", "triageEntities"].forEach((id) => {
+    const el = getEl(id);
+    if (el) el.value = "";
+  });
+}
+
 
 function renderManualSuggestions(manuals = [], match = {}) {
   const target = getEl("manualSuggestions");
@@ -1462,6 +1519,8 @@ function saveLocalLog(data) {
     const analysis = result.analysis || {};
     const ticket = result.ticket || {};
     const context = result.context || {};
+    const triage = ticket.triage || {};
+    const knowledge = Array.isArray(analysis.knowledgeBase) ? analysis.knowledgeBase : [];
     const logs = JSON.parse(localStorage.getItem(LOCAL_LOG_KEY) || "[]");
     logs.push({
       createdAt: new Date().toISOString(),
@@ -1474,7 +1533,16 @@ function saveLocalLog(data) {
       priority: analysis.priority || null,
       recommendedScenario: analysis.recommendedScenario || null,
       routine: analysis.routine || null,
-      needsDevelopmentSpec: Boolean(analysis.needsDevelopmentSpec)
+      needsDevelopmentSpec: Boolean(analysis.needsDevelopmentSpec),
+      triageType: triage.type || null,
+      triageImpact: triage.impact || null,
+      triageScope: triage.scope || null,
+      triageEnvironment: triage.environment || null,
+      triageEvidence: triage.evidence || null,
+      triageRoute: triage.route || null,
+      triageEntities: triage.entities || null,
+      knowledgeCount: knowledge.length,
+      knowledgeTitles: knowledge.map((item) => item.title || item.titulo).filter(Boolean)
     });
     localStorage.setItem(LOCAL_LOG_KEY, JSON.stringify(logs.slice(-200)));
   } catch (error) {
@@ -1490,6 +1558,38 @@ function getLocalLogs() {
   }
 }
 
+const RECURRENCE_TOPICS = [
+  { label: "Boleto", terms: ["boleto", "segunda via", "linha digitavel", "registrado"] },
+  { label: "Contrato", terms: ["contrato", "parcela", "divida", "acordo"] },
+  { label: "Recepcao/importacao", terms: ["recepcao", "importacao", "arquivo", "layout", "csv", "carga"] },
+  { label: "API/token", terms: ["api", "token", "apikey", "swagger", "integracao"] },
+  { label: "Versao", terms: ["versao", "atualizacao", "homologacao", "virada"] },
+  { label: "Negativacao", terms: ["negativacao", "serasa", "bureau", "spc", "scpc"] },
+  { label: "Juros/acordo", terms: ["juros", "mora", "acordo", "parcelamento"] },
+  { label: "Acesso/usuario", terms: ["acesso", "usuario", "senha", "permissao", "login"] }
+];
+
+function detectLogTopics(log = {}) {
+  const text = normalizeText([
+    log.subject,
+    log.routine,
+    log.product,
+    log.freshdeskType,
+    log.triageType,
+    log.triageEntities,
+    ...(log.knowledgeTitles || [])
+  ].join(" "));
+  return RECURRENCE_TOPICS
+    .filter((topic) => topic.terms.some((term) => text.includes(normalizeText(term))))
+    .map((topic) => topic.label);
+}
+
+function incrementCount(acc, label, amount = 1) {
+  const key = label || "Nao informado";
+  acc[key] = (acc[key] || 0) + amount;
+  return acc;
+}
+
 function buildLocalQualityDashboard() {
   const logs = JSON.parse(localStorage.getItem(LOCAL_LOG_KEY) || "[]");
   const countBy = (key) => logs.reduce((acc, item) => {
@@ -1497,17 +1597,52 @@ function buildLocalQualityDashboard() {
     acc[label] = (acc[label] || 0) + 1;
     return acc;
   }, {});
+  const now = Date.now();
+  const last24h = logs.filter((item) => {
+    const time = Date.parse(item.createdAt || "");
+    return Number.isFinite(time) && now - time <= 24 * 60 * 60 * 1000;
+  });
+  const topicCounts = logs.reduce((acc, item) => {
+    const topics = detectLogTopics(item);
+    if (!topics.length) incrementCount(acc, "Sem tema detectado");
+    topics.forEach((topic) => incrementCount(acc, topic));
+    return acc;
+  }, {});
+  const knowledgeGaps = logs.reduce((acc, item) => {
+    if (Number(item.knowledgeCount || 0) > 0) return acc;
+    const topics = detectLogTopics(item);
+    if (!topics.length) incrementCount(acc, item.freshdeskType || item.product || "Sem base relacionada");
+    topics.forEach((topic) => incrementCount(acc, topic));
+    return acc;
+  }, {});
+  const recurrenceAlerts = [];
+  Object.entries(topicCounts).forEach(([topic, count]) => {
+    if (topic !== "Sem tema detectado" && count >= 3) recurrenceAlerts.push(`${topic}: ${count} analises recorrentes nos logs locais.`);
+  });
+  Object.entries(knowledgeGaps).forEach(([topic, count]) => {
+    if (count >= 2) recurrenceAlerts.push(`Lacuna de base em ${topic}: ${count} analises sem manual relacionado.`);
+  });
+  if (last24h.length >= 5) recurrenceAlerts.push(`Volume recente alto: ${last24h.length} analises nas ultimas 24h.`);
   return {
     mode: "browser-local-logs",
     totalAnalyses: logs.length,
+    last24hAnalyses: last24h.length,
     urgentCount: logs.filter((item) => item.priority === "Urgente").length,
     devCount: logs.filter((item) => item.needsDevelopmentSpec || ["Melhoria", "Customizacao", "BUG (Erros)"].includes(item.developmentType)).length,
     commercialCount: logs.filter((item) => item.recommendedScenario === "Mover para Comercial" || item.freshdeskType === "Prospect").length,
-    recurrenceAlerts: [],
+    knowledgeGapCount: logs.filter((item) => Number(item.knowledgeCount || 0) === 0).length,
+    recurrenceAlerts,
     topProducts: countBy("product"),
     topTypes: countBy("freshdeskType"),
     topPriorities: countBy("priority"),
     topScenarios: countBy("recommendedScenario"),
+    topCompanies: countBy("companyName"),
+    topTriageTypes: countBy("triageType"),
+    topImpacts: countBy("triageImpact"),
+    topEnvironments: countBy("triageEnvironment"),
+    topEvidence: countBy("triageEvidence"),
+    topTopics: topicCounts,
+    knowledgeGaps,
     recentLogs: logs.slice(-10).reverse()
   };
 }
@@ -1517,9 +1652,91 @@ function renderCountMap(title, map = {}) {
   return `<div class="quality-card"><h4>${escapeHtml(title)}</h4>${entries.length ? entries.map(([key, value]) => `<div class="quality-row"><span>${escapeHtml(key)}</span><strong>${value}</strong></div>`).join("") : `<p class="text-secondary mb-0">Sem dados.</p>`}</div>`;
 }
 
+function renderBarMap(title, map = {}, emptyText = "Sem dados suficientes.") {
+  const entries = Object.entries(map || {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const max = Math.max(1, ...entries.map(([, value]) => Number(value) || 0));
+  return `
+    <div class="quality-card recurrence-bars">
+      <h4>${escapeHtml(title)}</h4>
+      ${entries.length ? entries.map(([key, value]) => {
+        const width = Math.max(8, Math.round((Number(value) / max) * 100));
+        return `
+          <div class="recurrence-bar-row">
+            <div class="recurrence-bar-label"><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>
+            <div class="recurrence-bar-track"><span style="width:${width}%"></span></div>
+          </div>`;
+      }).join("") : `<p class="text-secondary mb-0">${escapeHtml(emptyText)}</p>`}
+    </div>`;
+}
+
+function mapToMarkdown(map = {}, emptyText = "Sem dados.") {
+  const entries = Object.entries(map || {}).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  return entries.length ? entries.map(([key, value]) => `- ${key}: ${value}`).join("\n") : `- ${emptyText}`;
+}
+
+function buildRecurrenceMarkdown(data = buildLocalQualityDashboard()) {
+  const alerts = Array.isArray(data.recurrenceAlerts) ? data.recurrenceAlerts : [];
+  const recent = Array.isArray(data.recentLogs) ? data.recentLogs : [];
+  const generatedAt = new Date().toLocaleString("pt-BR");
+  return `# Dashboard de Recorrencia - Support Copilot
+
+Gerado em: ${generatedAt}
+Fonte: ${data.mode || "local"}
+
+## Resumo executivo
+- Total de analises: ${data.totalAnalyses || 0}
+- Analises nas ultimas 24h: ${data.last24hAnalyses ?? 0}
+- Urgentes: ${data.urgentCount || 0}
+- Encaminhamentos para DEV: ${data.devCount || 0}
+- Demandas comerciais: ${data.commercialCount || 0}
+- Lacunas de base: ${data.knowledgeGapCount || 0}
+
+## Alertas de recorrencia
+${alerts.length ? alerts.map((item) => `- ${item}`).join("\n") : "- Sem alertas fortes ainda."}
+
+## Temas mais recorrentes
+${mapToMarkdown(data.topTopics)}
+
+## Possiveis lacunas na base
+${mapToMarkdown(data.knowledgeGaps, "Nenhuma lacuna detectada.")}
+
+## Tipos Freshdesk
+${mapToMarkdown(data.topTypes)}
+
+## Prioridades
+${mapToMarkdown(data.topPriorities)}
+
+## Cenarios recomendados
+${mapToMarkdown(data.topScenarios)}
+
+## Empresas
+${mapToMarkdown(data.topCompanies)}
+
+## Triagem guiada
+### Tipo
+${mapToMarkdown(data.topTriageTypes)}
+
+### Impacto
+${mapToMarkdown(data.topImpacts)}
+
+### Evidencias recebidas
+${mapToMarkdown(data.topEvidence)}
+
+## Ultimas analises
+${recent.length ? recent.map((item) => `- #${item.ticketId || "manual"} | ${item.subject || item.routine || "Sem assunto"} | Prioridade: ${item.priority || "-"}`).join("\n") : "- Sem historico local."}
+
+## Proximas acoes sugeridas
+- Criar ou revisar artigos para os temas com lacuna de base.
+- Priorizar documentacao dos temas recorrentes com maior volume.
+- Conferir se chamados urgentes possuem evidencias suficientes.
+- Revisar os encaminhamentos para DEV e transformar aprendizados em base local.
+`;
+}
+
 function renderQualityDashboard(data = buildLocalQualityDashboard()) {
   const alerts = Array.isArray(data.recurrenceAlerts) ? data.recurrenceAlerts : [];
   const recent = Array.isArray(data.recentLogs) ? data.recentLogs : [];
+  safeSet("outRecurrenceMarkdown", buildRecurrenceMarkdown(data));
   safeHtml("outQuality", `
     <div class="quality-summary-grid">
       <div class="quality-card"><span>Total de analises</span><strong>${data.totalAnalyses || 0}</strong><small>${escapeHtml(data.mode || "local")}</small></div>
@@ -1527,6 +1744,7 @@ function renderQualityDashboard(data = buildLocalQualityDashboard()) {
       <div class="quality-card"><span>Urgentes</span><strong>${data.urgentCount || 0}</strong><small>Recepcao travada, sistema parado ou bug bloqueante</small></div>
       <div class="quality-card"><span>DEV</span><strong>${data.devCount || 0}</strong><small>Melhoria, Customizacao ou BUG</small></div>
       <div class="quality-card"><span>Comercial</span><strong>${data.commercialCount || 0}</strong><small>Prospect, proposta, demo ou licenca</small></div>
+      <div class="quality-card"><span>Lacunas de base</span><strong>${data.knowledgeGapCount || 0}</strong><small>Analises sem manual relacionado</small></div>
       <div class="quality-card"><span>Validações</span><strong>${data.validationCount || 0}</strong><small>${data.validationApprovalRate !== null && data.validationApprovalRate !== undefined ? data.validationApprovalRate + "% aprovadas" : "sem validações"}</small></div>
     </div>
     <div class="quality-alerts mt-3">
@@ -1534,12 +1752,18 @@ function renderQualityDashboard(data = buildLocalQualityDashboard()) {
       ${alerts.length ? alerts.map((item) => `<div class="quality-alert"><i class="fa-solid fa-triangle-exclamation me-2"></i>${escapeHtml(item)}</div>`).join("") : `<p class="text-secondary mb-0">Ainda nao ha recorrencias suficientes nos logs locais.</p>`}
     </div>
     <div class="quality-grid mt-3">
+      ${renderBarMap("Temas mais recorrentes", data.topTopics)}
+      ${renderBarMap("Possiveis lacunas na base", data.knowledgeGaps, "Nenhuma lacuna detectada.")}
+    </div>
+    <div class="quality-grid mt-3">
       ${renderCountMap("Produtos", data.topProducts)}
       ${renderCountMap("Tipos Freshdesk", data.topTypes)}
       ${renderCountMap("Prioridades", data.topPriorities)}
       ${renderCountMap("Cenarios", data.topScenarios)}
       ${renderCountMap("Empresas", data.topCompanies)}
-      ${renderCountMap("Agentes", data.topAgents)}
+      ${renderCountMap("Tipo de triagem", data.topTriageTypes)}
+      ${renderCountMap("Impacto", data.topImpacts)}
+      ${renderCountMap("Evidencias", data.topEvidence)}
     </div>
     <div class="quality-card mt-3">
       <h4>Ultimas analises</h4>
@@ -1635,6 +1859,67 @@ ${templates.internalNote?.body || "-"}
 
 Especificacao DEV:
 ${templates.devEscalation?.body || analysis.developmentSpec || "Nao indicado"}`;
+}
+
+function buildArticleDraftText(data = lastCopilotResult) {
+  if (!data) return "Analise um chamado para gerar o rascunho do artigo.";
+  const ticket = data.ticket || {};
+  const context = data.context || {};
+  const analysis = data.analysis || {};
+  const templates = data.renderedTemplates || {};
+  const knowledge = Array.isArray(analysis.knowledgeBase) ? analysis.knowledgeBase : [];
+  const primary = knowledge[0] || {};
+  const checklist = analysis.checklist || analysis.evidenceNeeded || primary.checklist || [];
+  const title = analysis.routine || ticket.subject || ticket.title || primary.title || "Artigo DataCob a revisar";
+  const category = primary.freshdeskType || analysis.freshdeskType || analysis.requestType || "Suporte DataCob";
+  const product = analysis.product || primary.product || ticket.product || "DataCob";
+  const screenPath = (primary.rules || []).find((item) => normalizeText(item).includes("caminho")) || "A confirmar";
+  const company = context.company?.name || context.company?.businessname || ticket.company_name || "Geral";
+  const summary = primary.summary || analysis.summary || "Resumo a completar com base no atendimento.";
+  const steps = primary.suggestedReply
+    ? primary.suggestedReply.split("\n").filter((line) => /^\d+\./.test(line.trim())).slice(0, 8)
+    : [];
+
+  return `# ${title}
+
+## Produto
+${product}
+
+## Categoria
+${category}
+
+## Origem do aprendizado
+- Ticket: #${ticket.id || ticket.ticketId || "manual"}
+- Cliente/contexto: ${company}
+- Fonte: ${primary.sourceLabel || primary.source || "Support Copilot"}
+
+## Quando usar
+Use este artigo quando o cliente relatar uma situacao relacionada a: ${title}.
+
+## Caminho da tela
+${screenPath}
+
+## Resumo
+${summary}
+
+## Passo a passo
+${steps.length ? steps.join("\n") : "1. Confirmar o produto, cliente e rotina afetada.\n2. Validar o cenario informado pelo cliente.\n3. Conferir parametros, tela ou arquivo relacionado.\n4. Solicitar evidencias quando o comportamento nao estiver claro.\n5. Encaminhar para DEV apenas se houver erro reproduzivel ou regra divergente."}
+
+## Checklist de validacao
+${checklist.length ? checklist.map((item) => `- ${item}`).join("\n") : "- Print ou log anexado.\n- Passo a passo reproduzido.\n- Cliente, contrato, carteira, grupo ou fase identificados.\n- Comportamento esperado confirmado."}
+
+## Resposta padrao ao cliente
+${templates.customerReply?.body || analysis.suggestedReply || "Resposta a completar pelo suporte."}
+
+## Nota interna sugerida
+${templates.internalNote?.body || "Nota interna a completar."}
+
+## Quando encaminhar para DEV
+${primary.rules?.find((item) => normalizeText(item).includes("escalar dev")) || analysis.developmentSpec || "Encaminhar para DEV somente quando a parametrizacao/base estiver correta e houver erro reproduzivel com evidencias."}
+
+## Palavras-chave
+${[product, category, analysis.freshdeskType, analysis.priority, ...(primary.title ? [primary.title] : [])].filter(Boolean).join(", ")}
+`;
 }
 
 function renderValidation(data = lastCopilotResult) {
@@ -1791,6 +2076,7 @@ function renderResult(rawData, options = {}) {
   safeSet("outInternalNote", internalNote.body || "-");
   safeSet("outEvidenceRequest", evidenceRequest.body || "Analise um ticket para gerar uma solicitacao formal de evidencias.");
   safeSet("outVariables", formatVariables(internalNote.variables || customerReply.variables || {}));
+  safeSet("outArticleDraft", buildArticleDraftText(data));
 
   renderList(analysis.checklist || analysis.evidenceNeeded || []);
   renderContact(context, ticket, analysis);
@@ -1939,6 +2225,7 @@ function clearForm() {
     const input = getEl(id);
     if (input) input.value = id === "agentName" ? "Jonathan Oliveira Mesquita" : "";
   });
+  clearTriage();
   safeHtml("searchResults", "");
   getEl("searchResults")?.classList.add("d-none");
 }
@@ -2389,6 +2676,7 @@ async function setupEvents() {
   });
 
   getEl("clearBtn")?.addEventListener("click", clearForm);
+  getEl("clearTriageBtn")?.addEventListener("click", clearTriage);
   getEl("fetchTicketBtn")?.addEventListener("click", handleFetchTicket);
   getEl("analyzeFreshdeskBtn")?.addEventListener("click", handleAnalyzeFreshdesk);
   getEl("topFetchTicketBtn")?.addEventListener("click", () => focusTicketEntry());
@@ -2406,6 +2694,7 @@ async function setupEvents() {
   getEl("emptyLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
   getEl("addNoteBtn")?.addEventListener("click", handleAddNote);
   getEl("refreshQualityBtn")?.addEventListener("click", handleRefreshQuality);
+  getEl("copyRecurrenceMarkdownBtn")?.addEventListener("click", () => copyTextFromElement("outRecurrenceMarkdown", "Ainda nao ha relatorio de recorrencia para copiar."));
   getEl("refreshKnowledgeAdminBtn")?.addEventListener("click", () => handleRefreshKnowledgeAdmin(false));
   getEl("syncKnowledgeBtn")?.addEventListener("click", handleSyncKnowledge);
   getEl("knowledgeSearchBtn")?.addEventListener("click", handleKnowledgeSearch);

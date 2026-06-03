@@ -180,6 +180,87 @@
                   </select>
                 </div>
                 <div class="col-12">
+                  <section class="guided-triage" aria-label="Triagem guiada DataCob">
+                    <div class="guided-triage-header">
+                      <div>
+                        <span class="eyebrow small">Triagem guiada</span>
+                        <h3 class="h5 mb-1">Contexto rapido do atendimento</h3>
+                        <p class="text-secondary mb-0">Preencha o que souber. Esses dados melhoram a resposta, a nota interna e o encaminhamento para DEV.</p>
+                      </div>
+                      <button class="mini-link-btn" type="button" id="clearTriageBtn">Limpar triagem</button>
+                    </div>
+                    <div class="row g-3 mt-1">
+                      <div class="col-md-6">
+                        <label for="triageType" class="form-label">Tipo do chamado</label>
+                        <select id="triageType" class="form-select">
+                          <option value="">A confirmar</option>
+                          <option>Duvida</option>
+                          <option>Erro</option>
+                          <option>Melhoria</option>
+                          <option>Integracao</option>
+                          <option>Acesso</option>
+                          <option>Versao</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="triageImpact" class="form-label">Impacto</label>
+                        <select id="triageImpact" class="form-select">
+                          <option value="">A confirmar</option>
+                          <option>Baixo - orientacao operacional</option>
+                          <option>Medio - afeta usuario ou rotina</option>
+                          <option>Alto - afeta producao</option>
+                          <option>Critico - operacao parada</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="triageScope" class="form-label">Abrangencia</label>
+                        <select id="triageScope" class="form-select">
+                          <option value="">A confirmar</option>
+                          <option>Um usuario</option>
+                          <option>Um contrato/carteira</option>
+                          <option>Um cliente</option>
+                          <option>Mais de um cliente</option>
+                          <option>Ambiente inteiro</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="triageEnvironment" class="form-label">Ambiente</label>
+                        <select id="triageEnvironment" class="form-select">
+                          <option value="">A confirmar</option>
+                          <option>Producao</option>
+                          <option>Homologacao</option>
+                          <option>Teste interno</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="triageEvidence" class="form-label">Evidencias recebidas</label>
+                        <select id="triageEvidence" class="form-select">
+                          <option value="">A confirmar</option>
+                          <option>Sem evidencias</option>
+                          <option>Print anexado</option>
+                          <option>Log anexado</option>
+                          <option>Arquivo anexado</option>
+                          <option>Print, log e arquivo anexados</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="triageRoute" class="form-label">Direcionamento inicial</label>
+                        <select id="triageRoute" class="form-select">
+                          <option value="">Copilot sugere</option>
+                          <option>Suporte resolve</option>
+                          <option>Encaminhar DataCob</option>
+                          <option>Encaminhar DEV</option>
+                          <option>Encaminhar Comercial</option>
+                        </select>
+                      </div>
+                      <div class="col-12">
+                        <label for="triageEntities" class="form-label">IDs ou entidades citadas</label>
+                        <input id="triageEntities" class="form-control" placeholder="Contrato, parcela, grupo, cliente, fase, carteira, API, token..." />
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <div class="col-12">
                   <label for="message" class="form-label">Mensagem / descricao do chamado</label>
                   <textarea id="message" class="form-control" rows="7" placeholder="Cole aqui a descricao do chamado..."></textarea>
                 </div>
@@ -265,7 +346,7 @@
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#devTab" type="button">DEV</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#noteTab" type="button">Nota interna</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#variablesTab" type="button">Variaveis</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#qualityTab" type="button">Qualidade</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#qualityTab" type="button">Recorrencia</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#validationTab" type="button">Validação</button></li>
               </ul>
 
@@ -341,6 +422,16 @@
                   <div id="knowledgeSearchResults" class="knowledge-panel mb-3"></div>
                   <div id="outKnowledge" class="knowledge-panel"></div>
                   <pre id="outKnowledgeText" class="copy-box mt-3"></pre>
+                  <div class="article-draft-panel mt-3">
+                    <div class="d-flex justify-content-between align-items-center gap-2 mb-2 flex-wrap">
+                      <div>
+                        <h3 class="h5 mb-0">Rascunho de artigo/manual</h3>
+                        <small class="text-secondary">Gerado a partir do atendimento atual para alimentar Help Center ou Freshdesk.</small>
+                      </div>
+                      <button class="btn btn-sm btn-outline-light copy-btn" data-copy-target="outArticleDraft"><i class="fa-regular fa-copy me-1"></i>Copiar rascunho</button>
+                    </div>
+                    <pre id="outArticleDraft" class="copy-box tall"></pre>
+                  </div>
                 </div>
 
                 <div class="tab-pane fade" id="responseTab">
@@ -406,12 +497,21 @@
                 <div class="tab-pane fade" id="qualityTab">
                   <div class="d-flex justify-content-between align-items-center gap-2 mb-2 flex-wrap">
                     <div>
-                      <h3 class="h5 mb-0">Painel de qualidade do suporte</h3>
-                      <small class="text-secondary">Baseado em logs locais de analise. Nao grava nada no Freshdesk.</small>
+                      <h3 class="h5 mb-0">Dashboard de recorrencia do suporte</h3>
+                      <small class="text-secondary">Temas frequentes, impacto, lacunas da base e ultimas analises. Nao grava nada no Freshdesk.</small>
                     </div>
-                    <button class="btn btn-sm btn-outline-light" type="button" id="refreshQualityBtn"><i class="fa-solid fa-chart-line me-1"></i>Atualizar painel</button>
+                    <div class="d-flex gap-2 flex-wrap">
+                      <button class="btn btn-sm btn-outline-light" type="button" id="refreshQualityBtn"><i class="fa-solid fa-chart-line me-1"></i>Atualizar recorrencia</button>
+                      <button class="btn btn-sm btn-outline-light" type="button" id="copyRecurrenceMarkdownBtn"><i class="fa-regular fa-copy me-1"></i>Copiar Markdown</button>
+                    </div>
                   </div>
                   <div id="outQuality" class="quality-panel"></div>
+                  <details class="advanced-config mt-3">
+                    <summary><i class="fa-solid fa-file-lines me-2"></i>Relatorio em Markdown</summary>
+                    <div class="advanced-config-body">
+                      <pre id="outRecurrenceMarkdown" class="copy-box tall"></pre>
+                    </div>
+                  </details>
                 </div>
 
                 <div class="tab-pane fade" id="validationTab">

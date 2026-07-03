@@ -53,6 +53,7 @@ const menuData = {
                     ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
                     ["Treinamento DataCob Cliente", "tools/datacob/treinamento-cliente/index.html"],                
                     ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
+                     ["CNAB 400 Bradesco", "tools/datacob/cnab400-bradesco/cnab400-bradesco.html"],
                      ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
                      ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
                     ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
@@ -180,6 +181,7 @@ const searchItems = [
     ["Massa de Dados", "Dados ficticios CPF CNPJ DataCob CSV", "tools/datacob/massa-dados/massa-dados.html"],
     ["Gerador de Manual DataCob", "manual pdf documentacao rotina passo a passo freshdesk help center", "tools/datacob/manual-builder/manual-builder.html"],
     ["Treinamento DataCob Cliente", "curso aula cliente onboarding passo a passo prints documentacao PH3A", "tools/datacob/treinamento-cliente/index.html"],
+    ["CNAB 400 Bradesco", "cnab 400 retorno remessa bradesco 237 boleto ocorrencia liquidacao gerador leitor validador parser arquivo", "tools/datacob/cnab400-bradesco/cnab400-bradesco.html"],
     ["Help Center", "Ajuda documentacao suporte", "pages/docs/help-center/index.html", true],
     ["Cadastro Nova Carteira DataCob", "nova carteira grupo cliente fase regua boleto ocorrencia calculo acordo recibo layout padrao", "tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/"],
     ["API DataCob Token Usuarios", "api datacob swagger token usuario api key login ativar desativar 400 403", "tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/"],

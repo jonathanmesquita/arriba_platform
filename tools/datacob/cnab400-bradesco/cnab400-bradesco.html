@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNAB 400 Bradesco - Gerador e Leitor de Retorno - Arriba Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      --bg: #f7f5f2;
+      --surface: #ffffff;
+      --surface-soft: #efede9;
+      --ink: #171412;
+      --muted: #625c56;
+      --line: #d9d2cc;
+      --red: #c74634;
+      --gold: #f0c75e;
+      --dark: #1f1b19;
+      --ok: #198754;
+      --warn: #b58100;
+      --danger: #dc3545;
+      --blue: #28708a;
+      --shadow: 0 18px 46px rgba(0, 0, 0, .08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero {
+      background:
+        radial-gradient(circle at 90% 10%, rgba(199, 70, 52, .08), transparent 28%),
+        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 48px 0 34px;
+    }
+
+    .container-page { width: min(1180px, calc(100% - 44px)); margin-inline: auto; }
+
+    .kicker {
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 900;
+      font-size: .78rem;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    h1 { font-size: clamp(2.7rem, 6vw, 5.5rem); line-height: .95; letter-spacing: -.07em; font-weight: 300; margin: 0 0 20px; }
+    .hero p { color: var(--muted); font-size: 1.08rem; line-height: 1.65; max-width: 900px; margin: 0; }
+
+    .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; padding: 28px 0 60px; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .sidebar { position: sticky; top: 86px; height: fit-content; padding: 18px; }
+    .side-title { color: var(--red); text-transform: uppercase; letter-spacing: .14em; font-weight: 900; font-size: .76rem; margin: 0 0 12px; }
+    .side-list { display: grid; gap: 8px; }
+
+    .side-item {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 9px;
+      padding: 13px 12px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+      cursor: pointer;
+      transition: .18s ease;
+      width: 100%;
+    }
+
+    .side-item:hover { background: #f3f1ee; color: var(--ink); transform: translateX(2px); }
+    .side-item.active { background: #dcebea; color: var(--ink); }
+
+    .side-icon {
+      width: 26px; height: 26px; border-radius: 999px;
+      background: var(--surface-soft);
+      display: grid; place-items: center;
+      font-size: .82rem; color: var(--dark);
+    }
+
+    .side-item.active .side-icon { background: var(--red); color: #fff; }
+
+    .side-note {
+      border-left: 4px solid var(--gold);
+      background: #fff8df;
+      border-radius: 9px;
+      padding: 12px 14px;
+      color: #3a332b;
+      margin-top: 18px;
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .main-stack { display: grid; gap: 20px; min-width: 0; }
+
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+
+    .summary-item {
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex; gap: 12px; align-items: center;
+      min-height: 62px;
+    }
+
+    .summary-item i { font-size: 1.15rem; color: var(--ink); }
+    .summary-item span { display: block; color: var(--muted); font-size: .82rem; }
+    .summary-item strong { display: block; font-size: 1.02rem; line-height: 1.1; }
+
+    .card-section { padding: 24px; }
+    .section-title { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1; letter-spacing: -.055em; font-weight: 650; margin: 0 0 10px; }
+    .section-description { color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+    .oracle-divider { width: 46px; height: 4px; background: var(--gold); margin: 16px 0 24px; }
+
+    label { display: block; font-weight: 850; margin-bottom: 6px; font-size: .94rem; }
+
+    .form-control, .form-select {
+      min-height: 43px; border-radius: 6px; border-color: #cfc8c1;
+      width: 100%; max-width: 100%; min-width: 0;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--red); box-shadow: 0 0 0 .22rem rgba(199, 70, 52, .14);
+    }
+
+    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+    .field.full { grid-column: 1 / -1; }
+    .req::after { content: " *"; color: var(--red); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
+    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba:hover { background: #a93225; color: #fff; }
+    .btn-dark-arriba { background: var(--dark); color: #fff; }
+    .btn-dark-arriba:hover { background: #000; color: #fff; }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
+    .btn-outline-arriba { background: transparent; border-color: var(--dark); color: var(--dark); }
+
+    .validation-msg {
+      border-left: 4px solid var(--warn);
+      background: rgba(181, 129, 0, .09);
+      padding: 12px 14px; border-radius: 7px; line-height: 1.45; margin-top: 14px;
+    }
+    .validation-msg.ok { border-left-color: var(--ok); background: rgba(25, 135, 84, .08); }
+    .validation-msg.error { border-left-color: var(--danger); background: rgba(220, 53, 69, .08); }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .tab-btn { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 12px; font-weight: 900; cursor: pointer; }
+    .tab-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+    .output-box {
+      background: #101010; color: #f3f3f3; border-radius: 8px; padding: 16px;
+      min-height: 160px; overflow: auto;
+      font-family: Consolas, Monaco, monospace; font-size: .8rem;
+      white-space: pre; word-break: normal; max-width: 100%;
+    }
+
+    .drop-zone {
+      border: 1px dashed #a99d94; border-radius: 10px; padding: 26px 18px;
+      background: #fff; color: var(--muted); text-align: center; transition: .18s ease;
+    }
+    .drop-zone.drag { border-color: var(--red); background: #fff6f4; color: var(--ink); }
+    .drop-zone i { font-size: 1.6rem; color: var(--red); }
+
+    .det-row {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr)) 40px;
+      gap: 8px; align-items: end;
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 12px; margin-bottom: 10px; background: var(--surface-soft);
+    }
+    .det-row label { font-size: .76rem; margin-bottom: 3px; }
+    .det-row .form-control, .det-row .form-select { min-height: 38px; font-size: .82rem; }
+    .det-remove { background: #fff; border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger); }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+    table.ret-table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    table.ret-table th, table.ret-table td { padding: 9px 11px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+    table.ret-table th { background: var(--surface-soft); font-weight: 850; position: sticky; top: 0; }
+    table.ret-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: .76rem; font-weight: 800; }
+    .pill.ok { background: rgba(25,135,84,.14); color: #146c43; }
+    .pill.warn { background: rgba(181,129,0,.16); color: #8a6400; }
+    .pill.bad { background: rgba(220,53,69,.14); color: #b02a37; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .det-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .det-row .det-remove { grid-column: 1 / -1; width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+      .topbar { padding: 0 16px; }
+      .summary-grid, .form-grid { grid-template-columns: 1fr; }
+      .det-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      h1 { font-size: 2.8rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para plataforma</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">DataCob · CNAB 400 · Bradesco (237)</span>
+      <h1>CNAB 400 Bradesco</h1>
+      <p>
+        Gere arquivos de teste de <strong>Retorno</strong> (Header + Detalhes + Trailer) com linhas de exatamente
+        400 caracteres, ou faça upload de um arquivo <strong>.RET / .TXT</strong> para validar o Header e extrair
+        os títulos em uma tabela legível. Processamento 100% local no navegador — nenhum dado sai da máquina.
+      </p>
+    </div>
+  </section>
+
+  <div class="container-page layout">
+    <aside class="panel sidebar" aria-label="Atalhos da ferramenta">
+      <p class="side-title">Modo</p>
+
+      <div class="side-list">
+        <button type="button" class="side-item active" data-mode="reader">
+          <span class="side-icon"><i class="fa-solid fa-file-import"></i></span>
+          <span>Ler / Validar Retorno</span>
+          <span>›</span>
+        </button>
+        <button type="button" class="side-item" data-mode="generator">
+          <span class="side-icon"><i class="fa-solid fa-file-export"></i></span>
+          <span>Gerar arquivo de teste</span>
+          <span>›</span>
+        </button>
+      </div>
+
+      <div class="side-note">
+        <strong>Layout</strong><br>
+        Padrão Bradesco CNAB 400 v05 (4008_0008). Posições conferem com o manual e a planilha de validação interna.
+      </div>
+    </aside>
+
+    <main class="main-stack">
+
+      <!-- ===================== LEITOR / VALIDADOR ===================== -->
+      <div id="mode-reader">
+        <div class="summary-grid" aria-label="Resumo da leitura">
+          <div class="summary-item"><i class="fa-solid fa-list-ol"></i><div><span>Linhas (400c)</span><strong id="chipLines">-</strong></div></div>
+          <div class="summary-item"><i class="fa-solid fa-file-invoice-dollar"></i><div><span>Títulos (Detalhe)</span><strong id="chipTitulos">-</strong></div></div>
+          <div class="summary-item"><i class="fa-solid fa-building-columns"></i><div><span>Empresa</span><strong id="chipEmpresa">-</strong></div></div>
+          <div class="summary-item"><i class="fa-solid fa-shield-halved"></i><div><span>Header</span><strong id="chipHeader">Aguardando</strong></div></div>
+        </div>
+
+        <section class="panel card-section" style="margin-top:20px">
+          <span class="kicker">Passo 1</span>
+          <h2 class="section-title">Enviar arquivo de retorno</h2>
+          <p class="section-description">
+            Arraste o arquivo .RET / .TXT ou clique para selecionar. Você também pode colar o conteúdo bruto
+            (uma linha de 400 caracteres por registro).
+          </p>
+          <div class="oracle-divider"></div>
+
+          <div class="drop-zone" id="dropZone">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p style="margin:10px 0 4px"><strong>Solte o arquivo aqui</strong> ou clique para selecionar</p>
+            <small>Formatos: .ret, .txt, .rst (registros de 400 caracteres)</small>
+            <input type="file" id="fileInput" class="hidden" accept=".ret,.txt,.rst,.RET,.TXT,.RST,text/plain">
+          </div>
+
+          <label for="rawInput" style="margin-top:16px">Ou cole o conteúdo bruto</label>
+          <textarea id="rawInput" class="form-control" style="min-height:120px;font-family:Consolas,Monaco,monospace;font-size:.8rem" placeholder="0 2RETORNO01COBRANCA       ..."></textarea>
+
+          <div class="actions">
+            <button type="button" class="btn-arriba btn-red-arriba" id="btnParse"><i class="fa-solid fa-magnifying-glass me-2"></i>Validar e extrair</button>
+            <button type="button" class="btn-arriba btn-dark-arriba" id="btnExampleRet"><i class="fa-solid fa-flask me-2"></i>Carregar exemplo</button>
+            <button type="button" class="btn-arriba btn-light-arriba" id="btnClearReader">Limpar</button>
+          </div>
+
+          <div class="validation-msg" id="readerMsg">Aguardando arquivo de retorno.</div>
+        </section>
+
+        <section class="panel card-section hidden" id="resultSection">
+          <span class="kicker">Passo 2</span>
+          <h2 class="section-title">Títulos extraídos</h2>
+
+          <div class="tabs">
+            <button type="button" class="tab-btn active" data-rtab="table">Tabela</button>
+            <button type="button" class="tab-btn" data-rtab="header">Header</button>
+            <button type="button" class="tab-btn" data-rtab="json">JSON</button>
+          </div>
+
+          <div id="rtab-table">
+            <div class="table-wrap">
+              <table class="ret-table">
+                <thead>
+                  <tr>
+                    <th>#</th><th>Nosso Número</th><th>Nº Documento</th><th>Ocorrência</th>
+                    <th>Vencimento</th><th class="num">Valor Título</th><th class="num">Valor Pago</th>
+                    <th>Data Crédito</th><th>Motivos</th>
+                  </tr>
+                </thead>
+                <tbody id="retBody"></tbody>
+              </table>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn-arriba btn-dark-arriba" id="btnCsv"><i class="fa-solid fa-file-csv me-2"></i>Exportar CSV</button>
+            </div>
+          </div>
+
+          <div id="rtab-header" class="hidden">
+            <div class="table-wrap">
+              <table class="ret-table"><tbody id="headerBody"></tbody></table>
+            </div>
+          </div>
+
+          <pre id="rtab-json" class="output-box hidden"></pre>
+        </section>
+      </div>
+
+      <!-- ===================== GERADOR ===================== -->
+      <div id="mode-generator" class="hidden">
+        <section class="panel card-section">
+          <span class="kicker">Passo 1</span>
+          <h2 class="section-title">Dados do Header (Registro 0)</h2>
+          <p class="section-description">Campos fixos já são preenchidos automaticamente (RETORNO, 01, COBRANCA, 237, BRADESCO).</p>
+          <div class="oracle-divider"></div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="genCodEmpresa" class="req">Código da Empresa (20)</label>
+              <input id="genCodEmpresa" class="form-control" value="5213287" placeholder="Zeros à esquerda">
+            </div>
+            <div class="field">
+              <label for="genNomeEmpresa" class="req">Nome da Empresa (30)</label>
+              <input id="genNomeEmpresa" class="form-control" value="PH3A COMERCIO E SERVICOS DE TE" maxlength="30">
+            </div>
+            <div class="field">
+              <label for="genDataGravacao" class="req">Data da Gravação</label>
+              <input id="genDataGravacao" type="date" class="form-control">
+            </div>
+            <div class="field">
+              <label for="genAviso">Nº Aviso Bancário (5)</label>
+              <input id="genAviso" class="form-control" value="4">
+            </div>
+            <div class="field">
+              <label for="genDataCredito">Data do Crédito</label>
+              <input id="genDataCredito" type="date" class="form-control">
+            </div>
+          </div>
+        </section>
+
+        <section class="panel card-section">
+          <span class="kicker">Passo 2</span>
+          <h2 class="section-title">Títulos (Registros 1)</h2>
+          <p class="section-description">Adicione uma linha por título. Valores em reais (ex: 150,00) — a conversão para o formato sem vírgula é automática.</p>
+          <div class="oracle-divider"></div>
+
+          <div id="detRows"></div>
+
+          <div class="actions">
+            <button type="button" class="btn-arriba btn-outline-arriba" id="btnAddRow"><i class="fa-solid fa-plus me-2"></i>Adicionar título</button>
+          </div>
+        </section>
+
+        <section class="panel card-section">
+          <span class="kicker">Passo 3</span>
+          <h2 class="section-title">Gerar arquivo</h2>
+          <div class="oracle-divider"></div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="genFileName">Nome do arquivo</label>
+              <input id="genFileName" class="form-control" value="CB-retorno-teste.RET">
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn-arriba btn-red-arriba" id="btnGenerate"><i class="fa-solid fa-gears me-2"></i>Gerar e validar</button>
+            <button type="button" class="btn-arriba btn-dark-arriba" id="btnDownload"><i class="fa-solid fa-download me-2"></i>Baixar arquivo</button>
+            <button type="button" class="btn-arriba btn-light-arriba" id="btnCopyGen"><i class="fa-regular fa-copy me-2"></i>Copiar conteúdo</button>
+          </div>
+
+          <div class="validation-msg" id="genMsg">Preencha os títulos e clique em Gerar.</div>
+
+          <label style="margin-top:16px">Prévia (cada linha = 400 caracteres)</label>
+          <pre id="genPreview" class="output-box"></pre>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

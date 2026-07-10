@@ -40,6 +40,7 @@ const menuData = {
                     ["Validador JSON", "tools/dados/json-validator.html"],
                     ["CSV para JSON", "tools/dados/csv-to-json.html"],
                     ["Calculadora de Hash", "tools/dados/hash-generator.html"]
+                    ["Boleto Base64 → PDF", "tools/dados/base64-pdf/base64-pdf.html"],
                 ]
             },
             datacobtools: {
@@ -193,6 +194,7 @@ const searchItems = [
     ["Deploy Cloud", "Vercel Render Cloudflare DNS", "pages/case-study/deploy-cloud.html", true],
     ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
     ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true]
+    ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
 ];
 
 function normalizeSearch(value = "") {

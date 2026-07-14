@@ -20,4 +20,15 @@ packages/
 node_modules/
 
 # Temp files
+
+# SO
+desktop.ini
+.DS_Store
+Thumbs.db
+
+# Front / build
+dist/
+.vercel/
+.env
+.env.*
 *.~

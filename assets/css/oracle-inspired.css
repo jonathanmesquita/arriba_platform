@@ -1,25 +1,10 @@
 /* =========================================================
    Arriba Platform - Oracle/Redwood inspired UX final
    Menu dinâmico, docs/help center, downloads e dark/light.
-   ========================================================= */
 
-:root {
-    --rw-bg: #f7f5f2;
-    --rw-bg-soft: #fbfaf8;
-    --rw-ink: #161513;
-    --rw-muted: #5b5652;
-    --rw-line: #d8d2cc;
-    --rw-card: #ffffff;
-    --rw-dark: #1f1b19;
-    --rw-dark-2: #312d2a;
-    --rw-red: #c74634;
-    --rw-gold: #f0cc71;
-    --rw-teal: #dcebea;
-    --rw-blue-dark: #18213d;
-    --rw-doc-teal: #1f555e;
-    --rw-shadow: 0 18px 48px rgba(0,0,0,.12);
-    --rw-radius: 10px;
-}
+   Tokens de cor vêm de tokens.css (fonte única) — linkar
+   tokens.css ANTES deste arquivo em toda página que o usa.
+   ========================================================= */
 
 html {
     scroll-behavior: smooth;

@@ -1,0 +1,106 @@
+/* =====================================================================
+ * tokens.css — FONTE ÚNICA de design tokens da Arriba Platform
+ * Paleta Oracle Redwood / Deep Autumn (terrosa, minimalista).
+ *
+ * COMO USAR
+ * ---------
+ * 1) Linke este arquivo ANTES de qualquer outro CSS, em toda página:
+ *      <link rel="stylesheet" href="/assets/css/tokens.css">
+ * 2) Nas ferramentas, APAGUE o bloco :root{...} inline e use as vars.
+ *    Os aliases curtos (--bg, --red, ...) existem justamente para que as
+ *    ferramentas atuais (base64-pdf, cnab400, etc.) continuem funcionando
+ *    sem reescrever nada — só remover o :root duplicado.
+ * 3) Dark mode: o toggle (theme.js) adiciona `dark-mode` no <body>.
+ *    Os valores abaixo já respondem a isso automaticamente.
+ * ===================================================================== */
+
+:root {
+  /* ---- Tokens canônicos (Redwood) ---- */
+  /* Valores alinhados à paleta já predominante nas ferramentas (base64-pdf,
+     cnab400-bradesco, massa-dados, csv-template-generator, modelo-carta,
+     freshdesk-paste, manual-builder) — a UI do site (oracle-inspired.css)
+     usava tons quase idênticos e convergiu para estes. */
+  --rw-bg:        #f7f5f2;   /* off-white / areia */
+  --rw-bg-soft:   #fbfaf8;
+  --rw-surface:   #ffffff;   /* cartões */
+  --rw-surface-2: #efede9;   /* superfícies suaves */
+  --rw-ink:       #171412;   /* texto principal (quase preto quente) */
+  --rw-muted:     #625c56;   /* texto secundário */
+  --rw-line:      #d9d2cc;   /* bordas / divisórias */
+
+  --rw-red:       #c74634;   /* terracotta — acento primário Oracle */
+  --rw-red-ink:   #a93225;   /* hover do vermelho */
+  --rw-gold:      #f0c75e;   /* dourado — destaque/dividers */
+  --rw-olive:     #6b6a3a;   /* verde-oliva (Deep Autumn) */
+  --rw-teal:      #dcebea;   /* teal claro — estados selecionados */
+  --rw-doc-teal:  #1f555e;   /* teal escuro — documentação */
+  --rw-blue-dark: #18213d;
+
+  --rw-dark:      #1f1b19;   /* charcoal — botões escuros/rodapé */
+  --rw-dark-2:    #312d2a;
+
+  /* ---- Semânticos ---- */
+  --rw-ok:        #198754;
+  --rw-warn:      #b58100;
+  --rw-warn-soft: #fff3cd;  /* fundo suave de aviso (manual-builder) */
+  --rw-danger:    #dc3545;
+
+  /* ---- Elevação / raio / tipografia ---- */
+  --rw-shadow:  0 18px 46px rgba(0, 0, 0, .08);
+  --rw-shadow-sm: 0 6px 18px rgba(0, 0, 0, .06);
+  --rw-radius:  12px;
+  --rw-radius-lg: 16px;
+  --rw-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --rw-mono: "Consolas", "Monaco", "SFMono-Regular", monospace;
+
+  /* ---- ALIASES curtos (compatibilidade com as ferramentas atuais) ---- */
+  --bg:          var(--rw-bg);
+  --surface:     var(--rw-surface);
+  --surface-soft:var(--rw-surface-2);
+  --soft:        var(--rw-surface-2);
+  --card:        var(--rw-surface);
+  --ink:         var(--rw-ink);
+  --muted:       var(--rw-muted);
+  --line:        var(--rw-line);
+  --red:         var(--rw-red);
+  --gold:        var(--rw-gold);
+  --dark:        var(--rw-dark);
+  --ok:          var(--rw-ok);
+  --warn:        var(--rw-warn);
+  --danger:      var(--rw-danger);
+  --blue:        var(--rw-doc-teal);
+  --blue-soft:   var(--rw-teal);
+  --green-soft:  var(--rw-teal);
+  --shadow:      var(--rw-shadow);
+  --radius:      var(--rw-radius);
+
+  /* ---- Aliases --rw-* (compatibilidade com manual-builder.html e oracle-inspired.css) ---- */
+  --rw-soft:     var(--rw-surface-2);
+  --rw-card:     var(--rw-surface);
+  --rw-green:    var(--rw-ok);
+  --rw-warning:  var(--rw-warn-soft);
+}
+
+/* =====================================================================
+ * DARK MODE — ativado por `body.dark-mode` (compatível com theme.js).
+ * Só sobrescrevemos as cores; acentos (vermelho/dourado) se mantêm.
+ * ===================================================================== */
+body.dark-mode {
+  --rw-bg:        #17150f;   /* charcoal terroso */
+  --rw-bg-soft:   #1d1a14;
+  --rw-surface:   #221e18;
+  --rw-surface-2: #2a251e;
+  --rw-ink:       #f3efe8;   /* off-white como texto */
+  --rw-muted:     #a89f94;
+  --rw-line:      #3a342b;
+
+  --rw-red:       #e06a58;   /* terracotta um pouco mais claro p/ contraste */
+  --rw-red-ink:   #c74634;
+  --rw-teal:      #24484a;
+
+  --rw-shadow:    0 18px 48px rgba(0, 0, 0, .45);
+  --rw-shadow-sm: 0 6px 18px rgba(0, 0, 0, .35);
+}
+
+/* Suavização opcional na troca de tema */
+body { transition: background-color .2s ease, color .2s ease; }

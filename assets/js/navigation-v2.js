@@ -37,9 +37,9 @@ const menuData = {
                 title: "Ferramentas de dados",
                 description: "Validadores, conversores e utilitarios para rotina tecnica.",
                 links: [
-                    ["Validador JSON", "tools/dados/json-validator.html"],
-                    ["CSV para JSON", "tools/dados/csv-to-json.html"],
-                    ["Calculadora de Hash", "tools/dados/hash-generator.html"]
+                    ["Validador JSON", "tools/dados/json-validator/json_validator.html"],
+                    ["CSV para JSON", "tools/dados/csv-to-json/csv-to-json.html"],
+                    ["Calculadora de Hash", "tools/dados/hash-generator/hash-generator.html"],
                     ["Boleto Base64 → PDF", "tools/dados/base64-pdf/base64-pdf.html"],
                 ]
             },
@@ -95,6 +95,7 @@ const menuData = {
                 description: "Busca, topicos, tutoriais e documentacao rapida para suporte tecnico.",
                 links: [
                     ["Help Center", "pages/docs/help-center/index.html", true],
+                    ["Base de Conhecimento DataCob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],
                     ["Documentacao DataCob", "pages/docs/datacob/erros-datacob.html", true],
                     ["Blog de troubleshooting", "pages/docs/blog/index.html", true],
                     ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"]
@@ -162,12 +163,11 @@ const menuData = {
                 label: "Portfolios",
                 badge: "Lab",
                 title: "Projetos pessoais",
-                description: "GameDev, IA, psicologia e experimentos.",
+                description: "GameDev, IA e experimentos.",
                 links: [
                     ["Todos os labs", "pages/lab/index.html", true],
                     ["Portfolio GameDev", "pages/lab/gamedev/index.html", true],
-                    ["Lab IA", "pages/lab/ai/index.html", true],
-                    ["Lab Psicologia", "pages/lab/psychology/index.html", true]
+                    ["Lab IA", "pages/lab/ai/index.html", true]
                 ]
             }
         }
@@ -184,6 +184,7 @@ const searchItems = [
     ["Treinamento DataCob Cliente", "curso aula cliente onboarding passo a passo prints documentacao PH3A", "tools/datacob/treinamento-cliente/index.html"],
     ["CNAB 400 Bradesco", "cnab 400 retorno remessa bradesco 237 boleto ocorrencia liquidacao gerador leitor validador parser arquivo", "tools/datacob/cnab400-bradesco/cnab400-bradesco.html"],
     ["Help Center", "Ajuda documentacao suporte", "pages/docs/help-center/index.html", true],
+    ["Base de Conhecimento DataCob", "manuais internos categorias api integracoes recepcao distribuicao controles discador suporte datacob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],
     ["Cadastro Nova Carteira DataCob", "nova carteira grupo cliente fase regua boleto ocorrencia calculo acordo recibo layout padrao", "tools/datacob/support-copilot/docs/datacob-manuais/carteira/cadastro-nova-carteira-datacob/"],
     ["API DataCob Token Usuarios", "api datacob swagger token usuario api key login ativar desativar 400 403", "tools/datacob/support-copilot/docs/datacob-manuais/api/cadastro-token-usuarios-datacob/"],
     ["Downloads", "Modelos arquivos exemplos", "pages/docs/downloads/index.html", true],
@@ -193,7 +194,7 @@ const searchItems = [
     ["Chatbot AI", "OpenAI fallback local modos", "pages/case-study/chatbot-ai.html", true],
     ["Deploy Cloud", "Vercel Render Cloudflare DNS", "pages/case-study/deploy-cloud.html", true],
     ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
-    ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true]
+    ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true],
     ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
 ];
 

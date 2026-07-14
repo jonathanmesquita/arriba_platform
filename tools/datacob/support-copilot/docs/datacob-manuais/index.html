@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base de Conhecimento DataCob | Base de Conhecimento DataCob | Arriba Platform</title>
+  <meta name="description" content="65 manuais internos de suporte DataCob, organizados em 20 categorias." />
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--rw-font); }
+    .topbar { min-height: 64px; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 22px; padding: 0 28px; position: sticky; top: 0; z-index: 30; }
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+    .container-page { width: min(1180px, calc(100% - 44px)); margin-inline: auto; }
+    .kb-breadcrumb { padding: 16px 0 0; color: var(--muted); font-size: .86rem; font-weight: 700; }
+    .kb-breadcrumb a { color: var(--muted); text-decoration: none; }
+    .kb-breadcrumb a:hover { color: var(--red); }
+    .hero { padding: 18px 0 30px; border-bottom: 1px solid var(--line); }
+    .kicker { color: var(--red); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1; letter-spacing: -.05em; font-weight: 300; margin: 0 0 14px; }
+    .hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.6; max-width: 780px; margin: 0; }
+    .kb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 28px 0 60px; }
+    .kb-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; text-decoration: none; color: var(--ink); display: flex; flex-direction: column; gap: 10px; transition: transform .15s ease, border-color .15s ease; }
+    .kb-card:hover { transform: translateY(-3px); border-color: var(--red); }
+    .kb-card-kind { color: var(--muted); font-size: .74rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .kb-card h3 { font-size: 1.05rem; font-weight: 800; line-height: 1.3; margin: 0; flex-grow: 1; }
+    .kb-card-go { color: var(--red); font-weight: 800; font-size: .85rem; }
+    @media (max-width: 980px) { .kb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 640px) { .kb-grid { grid-template-columns: 1fr; } .topbar { padding: 0 16px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="/index.html" class="brand">ARRIBA</a>
+    <a href="/pages/docs/help-center/index.html" class="back-link">← Help Center</a>
+  </header>
+  <div class="container-page">
+    <nav class="kb-breadcrumb">
+      <a href="/pages/docs/help-center/index.html">Help Center</a>
+      <span> / </span>
+      <span>Base de Conhecimento</span>
+    </nav>
+  </div>
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Arriba Platform</span>
+      <h1>Base de Conhecimento DataCob</h1>
+      <p>65 manuais internos de suporte DataCob, organizados em 20 categorias.</p>
+    </div>
+  </section>
+  <div class="container-page">
+    <div class="kb-grid">
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/api/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>API</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/">
+          <span class="kb-card-kind">8 manuais</span>
+          <h3>API DataCob</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/ajuda/">
+          <span class="kb-card-kind">2 manuais</span>
+          <h3>Ajuda</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/acoes-em-massa/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Ações em Massa</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/carteira/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Carteira</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/chat-datacob/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Chat DataCob</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/cobranca/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Cobrança</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/contagem/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Contagem</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/controles/">
+          <span class="kb-card-kind">5 manuais</span>
+          <h3>Controles</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/datapact/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>DataPact</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/discador/">
+          <span class="kb-card-kind">3 manuais</span>
+          <h3>Discador</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/distribuicao/">
+          <span class="kb-card-kind">5 manuais</span>
+          <h3>Distribuição</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/e-x-portacao-de-arquivos/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Exportação de Arquivos</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/">
+          <span class="kb-card-kind">19 manuais</span>
+          <h3>Integrações com Terceiros</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/juridico/">
+          <span class="kb-card-kind">3 manuais</span>
+          <h3>Jurídico</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/ocorrencias/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Ocorrências</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/">
+          <span class="kb-card-kind">8 manuais</span>
+          <h3>Recepção de Arquivos</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/requisicoes-instalacao-datacob/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Requisições de Instalação</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/cadastro-restricao-por-numero-de-ip/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Restrição por Número de IP</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a class="kb-card" href="/tools/datacob/support-copilot/docs/datacob-manuais/versao/">
+          <span class="kb-card-kind">1 manual</span>
+          <h3>Versão</h3>
+          <span class="kb-card-go">Ver categoria <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+    </div>
+  </div>
+</body>
+</html>

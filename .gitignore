@@ -20,6 +20,8 @@ packages/
 node_modules/
 
 # Temp files
+*~
+*.log
 
 # SO
 desktop.ini
@@ -31,4 +33,3 @@ dist/
 .vercel/
 .env
 .env.*
-*.~

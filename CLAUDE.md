@@ -56,13 +56,21 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   `components/splash.html`, `assets/js/tools/json_validador.js`, `desktop.ini`.
   Adicionar ao `.gitignore`: `desktop.ini .DS_Store Thumbs.db dist/ .vercel/ .env*`
 - [x] **Parte 2 — Tokens CSS** em fonte única (`assets/css/tokens.css`) + README de portfólio.
-- [ ] **Parte 3 — Unificar catálogo de erros.** Canônica: `erros/erros-datacob.html` (13KB).
-  Antes de apagar a de 3KB, rodar `grep -rl "pages/docs/datacob/erros-datacob"` e reapontar
-  TODAS as referências (`assets/js/navigation-v2.js`, `pages/docs/help-center/index.html`)
-  para a canônica; só então `git rm pages/docs/datacob/erros-datacob.html`.
-- [ ] **Parte 4 — Base de Conhecimento.** Expor os ~66 manuais internos hoje enterrados em
-  `tools/datacob/support-copilot/docs/` como seção de primeira classe.
+- [x] **Parte 3 — Catálogo de erros unificado.** Canônica agora em
+  `pages/docs/datacob/erros-datacob.html` (13KB, ex-`erros/erros-datacob.html`).
+  `support-copilot/docs/datacob/` renomeado para `docs/datacob-manuais/`; todas as
+  referências (`search.js`, `index.html`, `navigation-v2.js`, `manuals-index*.js`,
+  autorreferências internas dos manuais) reapontadas.
+- [x] **Parte 4 (parcial) — Base de Conhecimento navegável.** Dados de
+  `manuals-index.js`/`manuals-index-2025.additions.js` limpos (sem entradas fictícias,
+  quebradas ou duplicadas; 65 manuais reais indexados 1x cada). Hub +
+  20 páginas de índice por categoria em `docs/datacob-manuais/<categoria>/index.html`.
+  Integrado ao mega-menu, à busca do topo e ao Knowledge Router do Help Center.
+  - [ ] **Pendente:** padronizar visualmente os 61 manuais "genéricos" (template
+    `manual-2025.css`, sem imagem/breadcrumb) para o nível dos 5 "premium"
+    (`article.css` próprio, imagens, breadcrumb, CTA).
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
+- [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 
 ## Convenções de trabalho
 

@@ -1,82 +1,480 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataCob - Documentação</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Erros recorrentes DataCob com busca rapida, checklist e links de manuais para apoio ao suporte." />
+  <title>Erros recorrentes DataCob | Arriba Platform</title>
+  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --ink: #171412;
+      --muted: #706a64;
+      --line: #ded7cf;
+      --bg: #f6f3ef;
+      --panel: #fff;
+      --red: #c74634;
+      --orange: #f45124;
+      --blue: #2d6f8f;
+      --green: #297a55;
+      --dark: #17191d;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .portal-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .portal-header-inner {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      color: var(--red);
+      font-size: 1.5rem;
+      font-weight: 950;
+      letter-spacing: -.06em;
+      text-decoration: none;
+    }
+
+    .portal-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .portal-nav a,
+    .portal-nav button {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      min-height: 38px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: .88rem;
+    }
+
+    .portal-nav a:hover,
+    .portal-nav button:hover {
+      border-color: rgba(199,70,52,.35);
+      background: rgba(199,70,52,.08);
+    }
+
+    .hero {
+      background:
+        linear-gradient(90deg, rgba(23,25,29,.94), rgba(23,25,29,.78)),
+        url("../assets/img/capas-wallpaper-menus/datacob-man-min.webp") center/cover no-repeat;
+      color: #fff;
+      padding: clamp(42px, 6vw, 76px) 0;
+    }
+
+    .hero h1 {
+      max-width: 820px;
+      font-size: clamp(2.2rem, 5vw, 4.6rem);
+      line-height: 1.02;
+      letter-spacing: -.04em;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: rgba(255,255,255,.78);
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+
+    .search-panel {
+      margin-top: -34px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .search-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 18px 42px rgba(39,31,25,.12);
+      padding: 18px;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 0 14px;
+      min-height: 54px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      font-size: 1rem;
+    }
+
+    .quick-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .quick-tags button {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      min-height: 34px;
+      padding: 0 12px;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+
+    .quick-tags button:hover {
+      background: #231f20;
+      color: #fff;
+    }
+
+    .section-kicker {
+      color: var(--red);
+      font-size: .76rem;
+      font-weight: 950;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .issue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .issue-card {
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 12px 28px rgba(39,31,25,.08);
+    }
+
+    .issue-card h2 {
+      font-size: 1.16rem;
+      line-height: 1.24;
+      margin: 8px 0 10px;
+    }
+
+    .issue-card p {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .issue-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      background: rgba(199,70,52,.1);
+      color: var(--red);
+      padding: 6px 10px;
+      font-size: .72rem;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .path {
+      border-left: 3px solid var(--orange);
+      background: #f8f5f1;
+      padding: 10px 12px;
+      color: #332d29;
+      font-size: .9rem;
+      margin: 14px 0;
+    }
+
+    .checklist {
+      padding-left: 18px;
+      color: #332d29;
+    }
+
+    .checklist li {
+      margin-bottom: 6px;
+    }
+
+    .issue-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn-enterprise {
+      border: 1px solid #231f20;
+      border-radius: 8px;
+      background: #231f20;
+      color: #fff;
+      min-height: 38px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 850;
+      font-size: .88rem;
+    }
+
+    .btn-enterprise.secondary {
+      background: #fff;
+      color: #231f20;
+      border-color: var(--line);
+    }
+
+    .btn-enterprise:hover {
+      color: #fff;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .empty-result {
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--muted);
+      padding: 28px;
+      text-align: center;
+    }
+
+    @media (max-width: 991.98px) {
+      .issue-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      .portal-header-inner,
+      .portal-nav {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .portal-nav a,
+      .portal-nav button {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .issue-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header class="portal-header">
+    <div class="container portal-header-inner">
+      <a class="brand" href="../index.html">ARRIBA</a>
+      <nav class="portal-nav" aria-label="Navegacao de suporte">
+        <a href="../index.html"><i class="fa-solid fa-house"></i> Portal</a>
+        <a href="../pages/docs/help-center/index.html"><i class="fa-solid fa-book-open"></i> Help Center</a>
+        <a href="../tools/datacob/support-copilot/support-copilot.html"><i class="fa-solid fa-headset"></i> Copilot</a>
+        <a href="../tools/datacob/treinamento-cliente/index.html"><i class="fa-solid fa-graduation-cap"></i> Treinamento</a>
+      </nav>
+    </div>
+  </header>
 
-<main>
-    <section class="rw-page-hero">
-        <div class="rw-container">
-            <span class="rw-kicker">DataCob</span>
-            <h1>Documentação de cargas e erros.</h1>
-            <p>Guias para carga cadastral, contrato, parcela, combinada e abertura de chamados.</p>
-        </div>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <span class="section-kicker">Triagem DataCob</span>
+        <h1 class="mt-3">Erros recorrentes e solucoes rapidas para suporte.</h1>
+        <p class="mt-3 mb-0">
+          Pesquise por boleto, contrato, API, token, versao, juros, recepcao ou negativacao.
+          A pagina mostra resumo, caminho de tela, checklist e manual relacionado.
+        </p>
+      </div>
     </section>
 
-    <section class="rw-section rw-section-light">
-        <div class="rw-container rw-doc-layout">
-            <aside class="rw-doc-sidebar">
-                <a href="#visao-geral" class="active">Visão geral</a>
-                <a href="#cargas">Tipos de carga</a>
-                <a href="#erros">Erros comuns</a>
-                <a href="#chamado">Modelo de chamado</a>
-                <a href="/pages/docs/downloads/index.html" data-route>Downloads</a>
-            </aside>
-
-            <article>
-                <div class="rw-doc-highlight" id="visao-geral">
-                    <h2>DataCob operacional</h2>
-                    <p>Esta documentação organiza os fluxos de carga e troubleshooting para uso no suporte técnico.</p>
-                </div>
-
-                <div class="rw-doc-grid" id="cargas">
-                    <div class="rw-doc-link-card">
-                        <h3>Titular</h3>
-                        <p>Carga cadastral com documento, nome e dados complementares.</p>
-                        <a href="../../../tools/datacob/arriba-csv-generator/csv-template-generator.html">Abrir gerador</a>
-                    </div>
-                    <div class="rw-doc-link-card">
-                        <h3>Contrato</h3>
-                        <p>Carga vinculada ao documento do titular e credor.</p>
-                        <a href="../../../tools/datacob/arriba-csv-generator/csv-template-generator.html">Gerar contrato</a>
-                    </div>
-                    <div class="rw-doc-link-card">
-                        <h3>Parcela</h3>
-                        <p>Carga vinculada ao número do contrato para batimento.</p>
-                        <a href="../../../tools/datacob/arriba-csv-generator/csv-template-generator.html">Gerar parcela</a>
-                    </div>
-                </div>
-
-                <div class="rw-doc-card mt-4" id="erros">
-                    <h2>Erros comuns</h2>
-                    <p>Consulte o blog técnico para detalhes, checklist e evidências recomendadas.</p>
-                    <a href="/pages/docs/blog/index.html" data-route>Ver blog de troubleshooting</a>
-                </div>
-
-                <div class="rw-doc-card mt-4" id="chamado">
-                    <h2>Modelo recomendado para abertura de chamado</h2>
-                    <pre>Cliente:
-Rotina:
-Erro apresentado:
-Passo a passo para reproduzir:
-Impacto:
-Prints/anexos:
-Urgência:</pre>
-                </div>
-            </article>
-
-            <aside class="rw-doc-feedback">
-                <p>Este artigo foi útil?</p>
-                <button type="button">👍</button>
-                <button type="button">👎</button>
-                <small>Atualizado em 2026</small>
-            </aside>
+    <section class="container search-panel" aria-label="Busca de erros recorrentes">
+      <div class="search-box">
+        <label class="section-kicker mb-2" for="issueSearch">Busca unica de suporte</label>
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass text-secondary"></i>
+          <input id="issueSearch" type="search" placeholder="Ex.: erro ao importar contrato, gerar token API, boleto, negativacao..." autocomplete="off" />
         </div>
+        <div class="quick-tags" id="quickTags"></div>
+      </div>
     </section>
-</main>
 
+    <section class="container py-5">
+      <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mb-4">
+        <div>
+          <span class="section-kicker">Base local</span>
+          <h2 class="h3 mt-2 mb-0">Assuntos encontrados</h2>
+        </div>
+        <span class="text-secondary" id="resultCount"></span>
+      </div>
+
+      <div class="issue-grid" id="issueGrid"></div>
+      <div class="empty-result d-none" id="emptyResult">
+        <h3 class="h5">Nenhum assunto encontrado.</h3>
+        <p class="mb-3">Tente outro termo ou abra o Copilot para gerar uma analise manual.</p>
+        <a class="btn-enterprise" href="../tools/datacob/support-copilot/support-copilot.html">
+          <i class="fa-solid fa-headset"></i> Abrir Support Copilot
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from "../assets/data/datacob-knowledge-base.js";
+
+    const grid = document.getElementById("issueGrid");
+    const search = document.getElementById("issueSearch");
+    const count = document.getElementById("resultCount");
+    const empty = document.getElementById("emptyResult");
+    const quickTags = document.getElementById("quickTags");
+
+    const normalize = (value) => String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    const searchableText = (item) => normalize([
+      item.titulo,
+      item.produto,
+      item.categoria,
+      item.perguntaExemplo,
+      item.caminhoTela,
+      item.resumo,
+      item.tipoFreshdeskSugerido,
+      item.quandoEncaminharDev,
+      ...(item.palavrasChave || []),
+      ...(item.passos || []),
+      ...(item.checklist || [])
+    ].join(" "));
+
+    function rank(item, query) {
+      if (!query) return 1;
+      const terms = normalize(query).split(/\s+/).filter(Boolean);
+      const text = searchableText(item);
+      return terms.reduce((score, term) => score + (text.includes(term) ? 1 : 0), 0);
+    }
+
+    function render(items) {
+      grid.innerHTML = items.map((item) => `
+        <article class="issue-card">
+          <div class="issue-meta">
+            <span class="pill">${escapeHtml(item.categoria)}</span>
+            <small class="text-secondary">${escapeHtml(item.tipoFreshdeskSugerido)}</small>
+          </div>
+          <h2>${escapeHtml(item.titulo)}</h2>
+          <p>${escapeHtml(item.resumo)}</p>
+          <div class="path"><strong>Caminho:</strong> ${escapeHtml(item.caminhoTela)}</div>
+          <strong>Checklist rapido</strong>
+          <ul class="checklist mt-2">
+            ${(item.checklist || []).slice(0, 4).map((check) => `<li>${escapeHtml(check)}</li>`).join("")}
+          </ul>
+          <div class="issue-actions">
+            <a class="btn-enterprise" href="${item.linkManual}"><i class="fa-solid fa-book-open"></i> Abrir manual</a>
+            <button class="btn-enterprise secondary" type="button" data-copy="${item.id}"><i class="fa-regular fa-copy"></i> Copiar triagem</button>
+          </div>
+        </article>
+      `).join("");
+
+      count.textContent = `${items.length} assunto${items.length === 1 ? "" : "s"}`;
+      empty.classList.toggle("d-none", items.length > 0);
+    }
+
+    function filter(query) {
+      const ranked = DATACOB_KNOWLEDGE_BASE
+        .map((item) => ({ item, score: rank(item, query) }))
+        .filter(({ score }) => !query || score > 0)
+        .sort((a, b) => b.score - a.score || a.item.titulo.localeCompare(b.item.titulo))
+        .map(({ item }) => item);
+
+      render(ranked);
+    }
+
+    function copyIssue(id) {
+      const item = DATACOB_KNOWLEDGE_BASE.find((entry) => entry.id === id);
+      if (!item) return;
+      const text = [
+        `Assunto: ${item.titulo}`,
+        `Resumo: ${item.resumo}`,
+        `Caminho: ${item.caminhoTela}`,
+        "",
+        "Checklist:",
+        ...(item.checklist || []).map((check) => `- ${check}`),
+        "",
+        `Manual: ${item.linkManual}`,
+        `Encaminhar DEV: ${item.quandoEncaminharDev}`
+      ].join("\n");
+
+      navigator.clipboard?.writeText(text);
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    quickTags.innerHTML = DATACOB_QUICK_TOPICS.map((topic) => `<button type="button">${escapeHtml(topic)}</button>`).join("");
+    quickTags.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      search.value = button.textContent.trim();
+      filter(search.value);
+      search.focus();
+    });
+
+    grid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-copy]");
+      if (!button) return;
+      copyIssue(button.dataset.copy);
+      button.innerHTML = '<i class="fa-solid fa-check"></i> Copiado';
+      window.setTimeout(() => {
+        button.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar triagem';
+      }, 1400);
+    });
+
+    search.addEventListener("input", () => filter(search.value));
+
+    const initialQuery = new URLSearchParams(window.location.search).get("q") || "";
+    search.value = initialQuery;
+    filter(initialQuery);
+  </script>
 </body>
 </html>

@@ -88,7 +88,7 @@ export const DATACOB_KNOWLEDGE_BASE = [
       "Cliente ciente do impacto da virada.",
       "Evidencia do checklist registrada."
     ],
-    linkManual: "/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/",
+    linkManual: "/tools/datacob/support-copilot/docs/datacob-manuais/versao/agendamento-automatico-de-versao/",
     tipoFreshdeskSugerido: "Versao",
     quandoEncaminharDev: "Encaminhar para DEV apenas se houver falha tecnica no processo de checklist ou agendamento."
   },
@@ -117,7 +117,7 @@ export const DATACOB_KNOWLEDGE_BASE = [
       "Em erro 400, validar payload, login, senha e API Key.",
       "Em erro 403, validar permissao do usuario/token."
     ],
-    linkManual: "/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/",
+    linkManual: "/tools/datacob/support-copilot/docs/datacob-manuais/api/cadastro-token-usuarios-datacob/",
     tipoFreshdeskSugerido: "Integracao",
     quandoEncaminharDev: "Encaminhar para DEV se login, API Key, permissao e payload estiverem corretos e a API continuar retornando erro inesperado."
   },
@@ -145,7 +145,7 @@ export const DATACOB_KNOWLEDGE_BASE = [
       "Arquivo de retorno recepcionado quando aplicavel.",
       "Logs e status anexados ao chamado."
     ],
-    linkManual: "/tools/datacob/support-copilot/docs/datacob/acoes-em-massa/negativacao/",
+    linkManual: "/tools/datacob/support-copilot/docs/datacob-manuais/acoes-em-massa/negativacao/",
     tipoFreshdeskSugerido: "Negativacao",
     quandoEncaminharDev: "Encaminhar para DEV se configuracao e retorno estiverem corretos, mas o status permanecer divergente ou houver erro sistemico."
   },
@@ -172,7 +172,7 @@ export const DATACOB_KNOWLEDGE_BASE = [
       "Modelo de carta boleto conferido.",
       "Teste realizado em contrato de exemplo."
     ],
-    linkManual: "/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/",
+    linkManual: "/tools/datacob/support-copilot/docs/datacob-manuais/carteira/cadastro-nova-carteira-datacob/",
     tipoFreshdeskSugerido: "Duvida",
     quandoEncaminharDev: "Encaminhar para DEV se a parametrizacao estiver correta e o boleto/acordo apresentar erro tecnico reproduzivel."
   }

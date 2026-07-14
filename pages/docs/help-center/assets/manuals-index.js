@@ -8,7 +8,7 @@ window.ARRIBA_MANUALS_INDEX = [
     module: "Ações em Massa / Bureaus",
     kind: "Manual geral",
     client: "Geral",
-    url: "/tools/datacob/support-copilot/docs/datacob/acoes-em-massa/negativacao/",
+    url: "/tools/datacob/support-copilot/docs/datacob-manuais/acoes-em-massa/negativacao/",
     keywords: ["ações em massa", "acoes em massa", "negativação", "negativacao", "bureau", "bureaus", "serasa", "boa vista", "scpc", "spc", "retorno bureau", "arquivo retorno", "detalhes negativação", "status negativação", "logs"],
     summary: "Guia de triagem para negativação em massa no DataCob: bureau, configuração, estratégia, envio, retorno, logs e status.",
     checklist: ["Confirmar tipo da solicitação", "Validar Grupo/Cliente/Fase", "Confirmar bureau", "Validar estratégia/filtros", "Conferir retorno e logs", "Abrir manual antes de escalar"]
@@ -38,7 +38,7 @@ window.ARRIBA_MANUALS_INDEX = [
     module: "Versão",
     kind: "Manual geral",
     client: "Geral",
-    url: "/tools/datacob/support-copilot/docs/datacob/versao/agendamento-automatico-de-versao/",
+    url: "/tools/datacob/support-copilot/docs/datacob-manuais/versao/agendamento-automatico-de-versao/",
     keywords: ["versão", "atualização", "agendamento", "checklist versão", "homologação", "produção", "virada"],
     summary: "Guia para orientar atualização/virada de versão, checklist em homologação, regras de horário e exceções.",
     checklist: ["Confirmar ambiente de homologação", "Orientar acesso ao Checklist versão", "Validar data/hora da virada", "Verificar regra das 17h"]
@@ -53,7 +53,7 @@ window.ARRIBA_MANUALS_INDEX = [
     module: "Parâmetros / Grupo Cliente Fase",
     kind: "Manual geral",
     client: "Geral",
-    url: "/tools/datacob/support-copilot/docs/datacob/carteira/cadastro-nova-carteira-datacob/",
+    url: "/tools/datacob/support-copilot/docs/datacob-manuais/carteira/cadastro-nova-carteira-datacob/",
     keywords: ["nova carteira", "carteira de cobrança", "grupo cliente fase", "grupo/cliente/fase", "régua", "sub-régua", "conta bancária", "boleto", "webservice boleto", "modelo de carta", "ocorrência", "feriado", "política de cálculo", "parâmetro de acordo", "recibo", "layout padrão"],
     summary: "Guia para configurar uma nova carteira de cobrança no DataCob, do Grupo/Cliente/Fase até cálculo, acordo, boleto e recibo.",
     checklist: ["Validar Grupo/Cliente/Fase", "Confirmar régua/sub-régua", "Validar banco/conta e boleto", "Conferir ocorrências, cálculo, acordo e recibo"]
@@ -69,7 +69,7 @@ window.ARRIBA_MANUALS_INDEX = [
     module: "API / Swagger / Usuários",
     kind: "Manual geral",
     client: "Geral",
-    url: "/tools/datacob/support-copilot/docs/datacob/api/cadastro-token-usuarios-datacob/",
+    url: "/tools/datacob/support-copilot/docs/datacob-manuais/api/cadastro-token-usuarios-datacob/",
     keywords: ["api datacob", "swagger", "token api", "gerar token", "api key", "apikey", "login api", "autenticação", "autenticacao", "controle de usuários", "controle de usuarios", "ativar usuário", "desativar usuário", "403", "400", "forbidden", "bad request"],
     summary: "Guia para gerar token de usuários API DataCob, acessar Swagger, obter API Key, realizar login e ativar/desativar usuários.",
     checklist: ["Validar usuário API", "Gerar Token API em Controle de Usuários", "Respeitar validade máxima de 1 ano", "Consultar Swagger em Ajuda > API Documentação"]

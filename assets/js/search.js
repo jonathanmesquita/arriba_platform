@@ -48,7 +48,7 @@ export function initSearchBox() {
         },
         {
             title: 'Erros DataCob',
-            url: 'erros/erros-datacob.html',
+            url: 'pages/docs/datacob/erros-datacob.html',
             keywords: ['erros', 'datacob', 'crm', 'falha', 'licenca', 'troubleshooting'],
             category: 'Documentação'
         },
@@ -332,7 +332,7 @@ function setActiveSuggestion(items, index) {
 
 function performSearch(query) {
     if (query.trim() === '') return;
-    window.location.href = 'erros/erros-datacob.html?q=' + encodeURIComponent(query.trim());
+    window.location.href = 'pages/docs/datacob/erros-datacob.html?q=' + encodeURIComponent(query.trim());
 }
 
 function escapeHtml(str) {
@@ -384,7 +384,7 @@ function getSearchDataFallback() {
         },
         {
             title: 'Erros DataCob',
-            url: 'erros/erros-datacob.html',
+            url: 'pages/docs/datacob/erros-datacob.html',
             keywords: ['erros', 'datacob', 'crm'],
             category: 'Documentação'
         }

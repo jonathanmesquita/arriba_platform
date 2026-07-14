@@ -10,7 +10,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Cadastro Nova Carteira.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/ajuda/cadastro-nova-carteira/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/ajuda/cadastro-nova-carteira/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -49,7 +49,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Agendamento automatico de versao.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/ajuda/agendamento-automatico-de-versao/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/ajuda/agendamento-automatico-de-versao/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -91,7 +91,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Willbank - Api - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/willbank-api-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/willbank-api-ph3a/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -133,7 +133,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Advise - Api - PH3A .pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/advise-api-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/advise-api-ph3a/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -175,7 +175,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "04-01 Manual de consulta de dívida Datacob_v2.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/04-01-manual-de-consulta-de-divida-datacob-v2/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/04-01-manual-de-consulta-de-divida-datacob-v2/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -222,7 +222,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "CobranSaaS - Api - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/cobransaas-api-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/cobransaas-api-ph3a/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -264,7 +264,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "API DataCob - DataCob - Cadastro Token Usuarios DataCob.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/api-datacob-datacob-cadastro-token-usuarios-datacob/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/api-datacob-datacob-cadastro-token-usuarios-datacob/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -307,7 +307,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "API DataCob - Negociacao-Acordo.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/api-datacob-negociacao-acordo/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/api-datacob-negociacao-acordo/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -350,7 +350,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Havan - Api - Negociador WhatsApp - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/havan-api-negociador-whatsapp-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/havan-api-negociador-whatsapp-ph3a/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -394,7 +394,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Wedoo - Api - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/api-datacob/wedoo-api-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/api-datacob/wedoo-api-ph3a/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -436,7 +436,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Cadastro de Números IP.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/cadastro-restricao-por-numero-de-ip/cadastro-de-numeros-ip/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/cadastro-restricao-por-numero-de-ip/cadastro-de-numeros-ip/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -477,7 +477,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual Chat de Sistemas DataCob - Incompleto.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/chat-datacob/manual-chat-de-sistemas-datacob-incompleto/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/chat-datacob/manual-chat-de-sistemas-datacob-incompleto/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -516,7 +516,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Cadastro Nova Carteira DataCob.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/cobranca/cadastro-nova-carteira-datacob/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/cobranca/cadastro-nova-carteira-datacob/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -555,7 +555,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Cadastro Contagem API - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/contagem/cadastro-contagem-api-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/contagem/cadastro-contagem-api-ph3a/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -594,7 +594,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Cadastro de Grupos e Usuários.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/controles/cadastro-de-grupos-e-usuarios/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/controles/cadastro-de-grupos-e-usuarios/",
     "freshdeskType": "Reset Senha",
     "priority": "Média",
     "keywords": [
@@ -636,7 +636,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "LOGIN_AD_CLIENTE.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/controles/login-ad-cliente/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/controles/login-ad-cliente/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -680,7 +680,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "LOGIN_AD_PH3A_INTERNO.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/controles/login-ad-ph3a-interno/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/controles/login-ad-ph3a-interno/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -724,7 +724,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual Permissao Complementar.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/controles/manual-permissao-complementar/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/controles/manual-permissao-complementar/",
     "freshdeskType": "Reset Senha",
     "priority": "Média",
     "keywords": [
@@ -764,7 +764,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Reset de senha por e-mail PDF.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/controles/reset-de-senha-por-e-mail-pdf/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/controles/reset-de-senha-por-e-mail-pdf/",
     "freshdeskType": "Reset Senha",
     "priority": "Média",
     "keywords": [
@@ -806,7 +806,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Guia do Usuário DataPact - 2022.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/datapact/guia-do-usuario-datapact-2022/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/datapact/guia-do-usuario-datapact-2022/",
     "freshdeskType": "Reset Senha",
     "priority": "Média",
     "keywords": [
@@ -846,7 +846,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Erro de não conexão com a 3CPlus devido a bloqueio do Microfone no Frame - site inseguro.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/discador/erro-de-nao-cone-x-ao-com-a-3cplus-devido-a-bloqueio-do-microfone-no-frame-site-inseguro/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/discador/erro-de-nao-cone-x-ao-com-a-3cplus-devido-a-bloqueio-do-microfone-no-frame-site-inseguro/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -894,7 +894,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "DBA-MN002 - Export Data V3_Cliente_Rev2.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/discador/dba-mn002-e-x-port-data-v3-cliente-rev2/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/discador/dba-mn002-e-x-port-data-v3-cliente-rev2/",
     "freshdeskType": "Relatório",
     "priority": "Média",
     "keywords": [
@@ -938,7 +938,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Nova API - Novo Discador Vonix Tecnologia.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/discador/nova-api-novo-discador-voni-x-tecnologia/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/discador/nova-api-novo-discador-voni-x-tecnologia/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -979,7 +979,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual Categorização de Contratos 2023.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/distribuicao/manual-categorizacao-de-contratos-2023/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/distribuicao/manual-categorizacao-de-contratos-2023/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -1019,7 +1019,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "DataCob - Distribuição de Contratos - Acompanhamento de estratégias.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/distribuicao/datacob-distribuicao-de-contratos-acompanhamento-de-estrategias/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/distribuicao/datacob-distribuicao-de-contratos-acompanhamento-de-estrategias/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -1059,7 +1059,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Distribuição Escob - ENTRE DATACOBS.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/distribuicao/distribuicao-escob-entre-datacobs/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/distribuicao/distribuicao-escob-entre-datacobs/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -1100,7 +1100,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Distribuição Escob API.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/distribuicao/distribuicao-escob-api/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/distribuicao/distribuicao-escob-api/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1140,7 +1140,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "E-mail Localizador DataCob.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/distribuicao/e-mail-localizador-datacob/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/distribuicao/e-mail-localizador-datacob/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -1180,7 +1180,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "CNAB444 ULTIMA ATUALIZAÇÃO SETEMBRO 19.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/e-x-portacao-de-arquivos/cnab444-ultima-atualizacao-setembro-19/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/e-x-portacao-de-arquivos/cnab444-ultima-atualizacao-setembro-19/",
     "freshdeskType": "Relatório",
     "priority": "Média",
     "keywords": [
@@ -1229,7 +1229,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "CNAB444 ULTIMA ATUALIZAÇÃO SETEMBRO 19.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/e-x-portacao-de-arquivos/cnab444-ultima-atualizacao-setembro-19/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/e-x-portacao-de-arquivos/cnab444-ultima-atualizacao-setembro-19/",
     "freshdeskType": "Relatório",
     "priority": "Média",
     "keywords": [
@@ -1278,7 +1278,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Api_Registro_Titulo_Cobranca_QR Code_Bradesco.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/api-registro-titulo-cobranca-qr-code-bradesco/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/api-registro-titulo-cobranca-qr-code-bradesco/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1325,7 +1325,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Gerar ClientID e Secret ID Bradesco.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/gerar-clientid-e-secret-id-bradesco/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/gerar-clientid-e-secret-id-bradesco/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1371,7 +1371,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual Tecnico e Layout - Registro Online v1.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/manual-tecnico-e-layout-registro-online-v1/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/manual-tecnico-e-layout-registro-online-v1/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1416,7 +1416,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual_CNAB240_Pagamentos.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/manual-cnab240-pagamentos/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/manual-cnab240-pagamentos/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1461,7 +1461,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual_CNAB400_Cobranca.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/manual-cnab400-cobranca/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/manual-cnab400-cobranca/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1506,7 +1506,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "BoleCode.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/bolecode/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/bolecode/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1550,7 +1550,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "COBRANÇA- 400 BYTES CNAB - NOV2021_BoleCode_SINALIZADO_v4.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/cobranca-400-bytes-cnab-nov2021-bolecode-sinalizado-v4/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/cobranca-400-bytes-cnab-nov2021-bolecode-sinalizado-v4/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1600,7 +1600,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual BoletoCode - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/manual-boletocode-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/manual-boletocode-ph3a/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1645,7 +1645,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "REQUESTS 1.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/requests-1/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/requests-1/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1692,7 +1692,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "RegistroItau.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/registroitau/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/registroitau/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1737,7 +1737,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Renovar Certificado Dinâmico Itaú.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/renovar-certificado-dinamico-itau/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/renovar-certificado-dinamico-itau/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1784,7 +1784,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Registro online Santander.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/registro-online-santander/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/registro-online-santander/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1827,7 +1827,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "DataCob - Integração-ViaCEP.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/datacob-integracao-viacep/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/datacob-integracao-viacep/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1867,7 +1867,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "GUIA DO USUARIO.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/guia-do-usuario/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/guia-do-usuario/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1912,7 +1912,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Layout_API_PIX.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/layout-api-pi-x/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/layout-api-pi-x/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -1957,7 +1957,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "PIX BMP.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/pi-x-bmp/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/pi-x-bmp/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -2001,7 +2001,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Amazon.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/amazon/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/amazon/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -2041,7 +2041,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "DataCob - Rflow-Robbu.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/datacob-rflow-robbu/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/datacob-rflow-robbu/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -2083,7 +2083,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "RobbuVoice-Rflow-Documentation-v2.2 (1).pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/integracoes-com-terceiros/robbuvoice-rflow-documentation-v2-2-1/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/integracoes-com-terceiros/robbuvoice-rflow-documentation-v2-2-1/",
     "freshdeskType": "Integração",
     "priority": "Média",
     "keywords": [
@@ -2127,7 +2127,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "DataCob Controle Pre Juridico - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/juridico/datacob-controle-pre-juridico-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/juridico/datacob-controle-pre-juridico-ph3a/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -2167,7 +2167,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Processamento Andamento.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/juridico/processamento-andamento/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/juridico/processamento-andamento/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -2207,7 +2207,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "E-mail Localizador.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/juridico/e-mail-localizador/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/juridico/e-mail-localizador/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -2247,7 +2247,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "DataCob - Ocorrência Telefone.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/ocorrencias/datacob-ocorrencia-telefone/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/ocorrencias/datacob-ocorrencia-telefone/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [
@@ -2287,7 +2287,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Recepção boleto original - PH3A.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/recepcao-boleto-original-ph3a/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/recepcao-boleto-original-ph3a/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2335,7 +2335,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual_CNAB240_Pagamentos.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/manual-cnab240-pagamentos/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/manual-cnab240-pagamentos/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2385,7 +2385,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Manual_CNAB400_Cobranca.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/manual-cnab400-cobranca/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/manual-cnab400-cobranca/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2435,7 +2435,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Layout_CNAB_400_V10 - BMP.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/layout-cnab-400-v10-bmp/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/layout-cnab-400-v10-bmp/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2485,7 +2485,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "H7815_Layout_Cobranca_CNAB_240_posicoes_padrao_Santander_Multibanco_Junho_2024_V.8.1_(Portugues).pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/h7815-layout-cobranca-cnab-240-posicoes-padrao-santander-multibanco-junho-2024-v-8-1-portugues/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/h7815-layout-cobranca-cnab-240-posicoes-padrao-santander-multibanco-junho-2024-v-8-1-portugues/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2543,7 +2543,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "EntradaSaidaArquivo - Automatizar Rotina de Carga.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/entradasaidaarquivo-automatizar-rotina-de-carga/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/entradasaidaarquivo-automatizar-rotina-de-carga/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2588,7 +2588,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Rotina_Recepçao_ETL.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/rotina-recepcao-etl/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/rotina-recepcao-etl/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2634,7 +2634,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "Recepção de Arquivo.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/recepcao-de-arquivo/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/recepcao-de-arquivo/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2677,7 +2677,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "CNAB444 ULTIMA ATUALIZAÇÃO SETEMBRO 19.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/recepcao-de-arquivos/cnab444-ultima-atualizacao-setembro-19/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/recepcao-de-arquivos/cnab444-ultima-atualizacao-setembro-19/",
     "freshdeskType": "Recepção de Arquivo",
     "priority": "Média",
     "keywords": [
@@ -2725,7 +2725,7 @@ window.ARRIBA_MANUALS_2025_ADDITIONS = [
     "client": "Geral",
     "source": "Manuais DataCob 2025",
     "sourceFile": "DATACOB - Especificação e Dimensionamento de Servidores.pdf",
-    "url": "/tools/datacob/support-copilot/docs/datacob/requisicoes-instalacao-datacob/datacob-especificacao-e-dimensionamento-de-servidores/",
+    "url": "/tools/datacob/support-copilot/docs/datacob-manuais/requisicoes-instalacao-datacob/datacob-especificacao-e-dimensionamento-de-servidores/",
     "freshdeskType": "Dúvida",
     "priority": "Média",
     "keywords": [

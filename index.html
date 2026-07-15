@@ -6,6 +6,17 @@
     <meta name="description" content="Arriba Platform: portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
     <title>Arriba Platform | PH3A AI Portfolio</title>
     <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Arriba Platform" />
+    <meta property="og:title" content="Arriba Platform | PH3A AI Portfolio" />
+    <meta property="og:description" content="Portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
+    <meta property="og:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/datacob-man-min.webp" />
+    <meta property="og:url" content="https://arriba.jm.dev.br/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Arriba Platform | PH3A AI Portfolio" />
+    <meta name="twitter:description" content="Portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
+    <meta name="twitter:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/datacob-man-min.webp" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="assets/css/tokens.css" />
@@ -950,6 +961,7 @@
             <div class="rw-container">
                 <div class="category-grid">
                     <a class="category-tile" href="pages/docs/help-center/index.html" data-route>Help Center</a>
+                    <a class="category-tile" href="tools/datacob/support-copilot/docs/datacob-manuais/">Base de Conhecimento</a>
                     <a class="category-tile" href="tools/datacob/support-copilot/support-copilot.html">AI Support Copilot</a>
                     <a class="category-tile" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">DataCob CSV</a>
                     <a class="category-tile" href="tools/datacob/massa-dados/massa-dados.html">Massa de dados</a>
@@ -1045,6 +1057,13 @@
                             <span>Conhecimento</span>
                             <h3>Help Center</h3>
                             <p>Busca em manuais, pacotes, artigos e materiais tecnicos para suporte.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/datacob/support-copilot/docs/datacob-manuais/">
+                            <i class="fa-solid fa-folder-tree"></i>
+                            <span>Base de Conhecimento</span>
+                            <h3>Manuais DataCob por categoria</h3>
+                            <p>65 manuais internos organizados em 20 categorias, navegaveis sem depender so de busca.</p>
                         </a>
 
                         <a class="portfolio-card" href="tools/datacob/treinamento-cliente/index.html">
@@ -1231,48 +1250,6 @@
 
             const slides = [
                 {
-                    eyebrow: "PH3A com IA",
-                    title: "A proxima geracao da Arriba Platform com IA",
-                    copy: "Uma vitrine fullstack inspirada em produtos corporativos: suporte com IA, automacao DataCob, base de conhecimento, dashboards de atendimento e storytelling tecnico para entrevista.",
-                    primary: { label: "Conhecer plataforma", href: "pages/case-study/arriba-platform.html", icon: "fa-wand-magic-sparkles" },
-                    secondary: { label: "Abrir Copilot", href: "tools/datacob/support-copilot/support-copilot.html" },
-                    cover: "assets/img/capas-wallpaper-menus/sc24-ai-database.webp",
-                    coverLabel: "Arriba Platform com IA",
-                    dashboard: "Suporte com IA, base local e dashboards de atendimento",
-                    question: "Como a Arriba ajuda o suporte hoje?",
-                    accent: "#73c9c7",
-                    deep: "#102b38",
-                    summary: "Support Copilot, base de conhecimento e IA aplicada ao atendimento."
-                },
-                {
-                    eyebrow: "Portal DataCob para cliente",
-                    title: "Treinamento DataCob com passos claros e reutilizaveis",
-                    copy: "Nova area para transformar prints, videos e regras de suporte em uma jornada de treinamento para clientes, com modulos, checklists e documentacao guiada.",
-                    primary: { label: "Abrir treinamento", href: "tools/datacob/treinamento-cliente/index.html", icon: "fa-graduation-cap" },
-                    secondary: { label: "Abrir Help Center", href: "pages/docs/help-center/index.html" },
-                    cover: "assets/img/capas-wallpaper-menus/cv-home-tag.webp",
-                    coverLabel: "Treinamento DataCob",
-                    dashboard: "Onboarding com trilha visual e progresso do cliente",
-                    question: "Qual rotina do DataCob deve virar treinamento?",
-                    accent: "#f45124",
-                    deep: "#231f20",
-                    summary: "Treinamento DataCob para cliente, padrao de portal e conteudo operacional."
-                },
-                {
-                    eyebrow: "Manual interativo DataCob",
-                    title: "Manual interativo DataCob",
-                    copy: "O chatbot consulta manuais, rotinas, caminhos de tela e links mesmo sem banco de dados, reduzindo retrabalho e acelerando orientacoes praticas.",
-                    primary: { label: "Abrir Help Center", href: "pages/docs/help-center/index.html", icon: "fa-book-open" },
-                    secondary: { label: "Perguntar ao bot", href: "#chatbot" },
-                    cover: "assets/img/capas-wallpaper-menus/cv-home-cob.webp",
-                    coverLabel: "Manual interativo",
-                    dashboard: "Base local encontra artigos, passos e checklist",
-                    question: "Como cadastrar juros sobre a divida?",
-                    accent: "#e7b85b",
-                    deep: "#243a34",
-                    summary: "Help Center, chatbot DataCob e fallback local para suporte."
-                },
-                {
                     eyebrow: "Ferramentas de operacao",
                     title: "Ferramentas de operacao",
                     copy: "Gerador CSV, massa de dados, JSON, artigos Freshdesk e materiais tecnicos organizados em uma experiencia consistente para portfolio e uso real.",
@@ -1298,15 +1275,18 @@
             const assistantQuestion = hero.querySelector(".assistant-question span");
             const showcase = hero.querySelector(".ai-showcase");
             const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            const isCarousel = slides.length > 1;
             let current = 0;
             let timer = null;
             let paused = false;
 
-            hero.setAttribute("aria-roledescription", "carousel");
-            hero.setAttribute("aria-live", "polite");
-            showcase?.setAttribute("role", "button");
-            showcase?.setAttribute("tabindex", "0");
-            showcase?.setAttribute("aria-label", "Avancar slide do portal");
+            if (isCarousel) {
+                hero.setAttribute("aria-roledescription", "carousel");
+                hero.setAttribute("aria-live", "polite");
+                showcase?.setAttribute("role", "button");
+                showcase?.setAttribute("tabindex", "0");
+                showcase?.setAttribute("aria-label", "Avancar slide do portal");
+            }
 
             const cover = document.createElement("button");
             cover.type = "button";
@@ -1315,23 +1295,31 @@
             cover.innerHTML = '<img alt=""><span></span>';
             showcase?.appendChild(cover);
 
-            const controls = document.createElement("div");
-            controls.className = "hero-carousel-controls";
-            controls.innerHTML = `
-                <div class="hero-carousel-copy" id="heroCarouselSummary"></div>
-                <div class="hero-carousel-dots" role="tablist" aria-label="Destaques do portal"></div>
-                <div class="hero-carousel-nav">
-                    <button type="button" class="hero-carousel-btn" data-hero-prev aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button type="button" class="hero-carousel-btn" data-hero-next aria-label="Proximo slide"><i class="fa-solid fa-chevron-right"></i></button>
-                    <button type="button" class="hero-carousel-btn hero-carousel-toggle" data-hero-toggle aria-label="Pausar carousel"><i class="fa-solid fa-pause"></i></button>
-                </div>
-            `;
-            hero.appendChild(controls);
+            let controls = null;
+            let dotsWrap = null;
+            let summary = null;
+            let toggleBtn = null;
 
-            const dotsWrap = controls.querySelector(".hero-carousel-dots");
-            const summary = controls.querySelector("#heroCarouselSummary");
-            const toggleBtn = controls.querySelector("[data-hero-toggle]");
-            const dots = slides.map((slide, index) => {
+            if (isCarousel) {
+                controls = document.createElement("div");
+                controls.className = "hero-carousel-controls";
+                controls.innerHTML = `
+                    <div class="hero-carousel-copy" id="heroCarouselSummary"></div>
+                    <div class="hero-carousel-dots" role="tablist" aria-label="Destaques do portal"></div>
+                    <div class="hero-carousel-nav">
+                        <button type="button" class="hero-carousel-btn" data-hero-prev aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button type="button" class="hero-carousel-btn" data-hero-next aria-label="Proximo slide"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button type="button" class="hero-carousel-btn hero-carousel-toggle" data-hero-toggle aria-label="Pausar carousel"><i class="fa-solid fa-pause"></i></button>
+                    </div>
+                `;
+                hero.appendChild(controls);
+
+                dotsWrap = controls.querySelector(".hero-carousel-dots");
+                summary = controls.querySelector("#heroCarouselSummary");
+                toggleBtn = controls.querySelector("[data-hero-toggle]");
+            }
+
+            const dots = isCarousel ? slides.map((slide, index) => {
                 const dot = document.createElement("button");
                 dot.type = "button";
                 dot.className = "hero-carousel-dot";
@@ -1340,7 +1328,7 @@
                 dot.addEventListener("click", () => goTo(index, true));
                 dotsWrap.appendChild(dot);
                 return dot;
-            });
+            }) : [];
 
             function setLink(link, config) {
                 if (!link || !config) return;
@@ -1393,7 +1381,7 @@
                 timer = null;
             }
             function start() {
-                if (reducedMotion || paused || timer) return;
+                if (!isCarousel || reducedMotion || paused || timer) return;
                 timer = window.setInterval(() => next(false), 5000);
             }
             function restart() {
@@ -1406,20 +1394,22 @@
                 toggleBtn.innerHTML = paused ? '<i class="fa-solid fa-play"></i>' : '<i class="fa-solid fa-pause"></i>';
             }
 
-            controls.querySelector("[data-hero-prev]")?.addEventListener("click", previous);
-            controls.querySelector("[data-hero-next]")?.addEventListener("click", () => next(true));
+            controls?.querySelector("[data-hero-prev]")?.addEventListener("click", previous);
+            controls?.querySelector("[data-hero-next]")?.addEventListener("click", () => next(true));
             toggleBtn?.addEventListener("click", () => {
                 paused = !paused;
                 if (paused) stop();
                 else start();
                 syncToggle();
             });
-            cover.addEventListener("click", () => next(true));
+            if (isCarousel) cover.addEventListener("click", () => next(true));
             showcase?.addEventListener("click", (event) => {
+                if (!isCarousel) return;
                 if (event.target.closest(".assistant-search button, .hero-cover-card")) return;
                 next(true);
             });
             showcase?.addEventListener("keydown", (event) => {
+                if (!isCarousel) return;
                 if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     next(true);

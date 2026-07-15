@@ -171,6 +171,25 @@
             gap: 16px;
         }
 
+        .category-group-title {
+            grid-row: 1;
+            color: var(--enterprise-muted);
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin: 0 0 4px;
+        }
+
+        .category-group-title--infra { grid-column: 1 / 5; }
+        .category-group-title--apps { grid-column: 5 / 9; }
+
+        @media (max-width: 1100px) {
+            .category-group-title--infra,
+            .category-group-title--apps {
+                grid-column: 1 / -1;
+                grid-row: auto;
+            }
+        }
+
         .category-tile {
             min-height: 118px;
             border: 1px solid var(--enterprise-line);
@@ -960,16 +979,18 @@
         <section class="category-band" aria-label="Categorias principais">
             <div class="rw-container">
                 <div class="category-grid">
+                    <h2 class="category-group-title category-group-title--infra">Infraestrutura</h2>
+                    <h2 class="category-group-title category-group-title--apps">Aplicações</h2>
+
+                    <a class="category-tile" href="tools/datacob/cnab400-bradesco/cnab400-bradesco.html">CNAB 400 Bradesco</a>
+                    <a class="category-tile" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">DataCob CSV</a>
+                    <a class="category-tile" href="tools/datacob/massa-dados/massa-dados.html">Massa de dados</a>
+                    <a class="category-tile" href="pages/case-study/deploy-cloud.html" data-route>Cloud</a>
+
                     <a class="category-tile" href="pages/docs/help-center/index.html" data-route>Help Center</a>
                     <a class="category-tile" href="tools/datacob/support-copilot/docs/datacob-manuais/">Base de Conhecimento</a>
                     <a class="category-tile" href="tools/datacob/support-copilot/support-copilot.html">AI Support Copilot</a>
-                    <a class="category-tile" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">DataCob CSV</a>
-                    <a class="category-tile" href="tools/datacob/massa-dados/massa-dados.html">Massa de dados</a>
                     <a class="category-tile" href="tools/datacob/treinamento-cliente/index.html">Treinamento DataCob</a>
-                    <a class="category-tile" href="tools/dados/json-validator/json_validator.html">JSON</a>
-                    <a class="category-tile" href="pages/docs/datacob/erros-datacob.html">Erros recorrentes</a>
-                    <a class="category-tile" href="tools/datacob/cnab400-bradesco/cnab400-bradesco.html">CNAB 400 Bradesco</a>
-                    <a class="category-tile" href="pages/case-study/deploy-cloud.html" data-route>Cloud</a>
                 </div>
             </div>
         </section>

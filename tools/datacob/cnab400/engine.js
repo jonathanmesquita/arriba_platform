@@ -184,8 +184,13 @@ export function gerarArquivo(config, dados) {
 
   if (config.trailerFields) {
     seq += 1;
-    const totalKey = config.trailerTotalKey || "valorTitulo";
-    const valorTotal = detalhes.reduce((sum, d) => sum + (Number(d[totalKey]) || 0), 0);
+    // Cada banco decide como somar o total do trailer: por padrão soma
+    // config.trailerTotalKey (default "valorTitulo"); se o banco precisar de
+    // uma regra diferente (ex.: valor pago quando existir, senão o título),
+    // pode fornecer trailerTotalFn(detalhe) => number.
+    const totalFn = config.trailerTotalFn
+      || (det => Number(det[config.trailerTotalKey || "valorTitulo"]) || 0);
+    const valorTotal = detalhes.reduce((sum, d) => sum + totalFn(d), 0);
     linhas.push(buildLine(config.trailerFields, {
       quantidadeTitulos: detalhes.length,
       valorTotal,

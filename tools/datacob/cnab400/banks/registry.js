@@ -9,4 +9,8 @@
    `config` segue o formato descrito em CLAUDE.md / PROMPT 0.
    ===================================================================== */
 
-export const BANKS = [];
+import { bradesco } from "./bradesco.js";
+
+export const BANKS = [
+  { code: bradesco.code, nome: bradesco.nome, config: bradesco }
+];

@@ -121,18 +121,98 @@
     }
     .empty-form-area i { font-size: 1.8rem; margin-bottom: 10px; display: block; color: var(--gold); }
 
+    label { display: block; font-weight: 850; margin-bottom: 6px; font-size: .94rem; }
+
+    .form-control, .form-select {
+      min-height: 43px; border-radius: 6px; border-color: #cfc8c1;
+      width: 100%; max-width: 100%; min-width: 0;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--red); box-shadow: 0 0 0 .22rem rgba(199, 70, 52, .14);
+    }
+
+    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
     .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
     .btn-red-arriba { background: var(--red); color: #fff; }
     .btn-red-arriba:hover { background: var(--red-ink, #a93225); color: #fff; }
     .btn-red-arriba:disabled { background: var(--muted); cursor: not-allowed; }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
+    .btn-dark-arriba:hover { background: #000; color: #fff; }
     .btn-dark-arriba:disabled { background: var(--muted); cursor: not-allowed; }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+
+    .validation-msg {
+      border-left: 4px solid var(--warn);
+      background: rgba(181, 129, 0, .09);
+      padding: 12px 14px; border-radius: 7px; line-height: 1.45; margin-top: 14px;
+    }
+    .validation-msg.ok { border-left-color: var(--ok); background: rgba(25, 135, 84, .08); }
+    .validation-msg.error { border-left-color: var(--danger); background: rgba(220, 53, 69, .08); }
+
+    .drop-zone {
+      border: 1px dashed #a99d94; border-radius: 10px; padding: 26px 18px;
+      background: #fff; color: var(--muted); text-align: center; transition: .18s ease;
+      cursor: pointer; margin-bottom: 14px;
+    }
+    .drop-zone.drag { border-color: var(--red); background: #fff6f4; color: var(--ink); }
+    .drop-zone i { font-size: 1.6rem; color: var(--red); display: block; margin-bottom: 6px; }
+
+    .cnab-textarea {
+      min-height: 140px; font-family: Consolas, Monaco, monospace; font-size: .8rem;
+    }
+
+    .summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .summary-item {
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      min-height: 62px;
+    }
+    .summary-item span { display: block; color: var(--muted); font-size: .82rem; }
+    .summary-item strong { display: block; font-size: 1.02rem; line-height: 1.1; }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin-top: 16px; }
+    table.cnab-table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    table.cnab-table th, table.cnab-table td { padding: 9px 11px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+    table.cnab-table th { background: var(--surface-soft); font-weight: 850; }
+    table.cnab-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: .76rem; font-weight: 800; }
+    .pill.ok { background: rgba(25,135,84,.14); color: #146c43; }
+    .pill.warn { background: rgba(181,129,0,.16); color: #8a6400; }
+    .pill.bad { background: rgba(220,53,69,.14); color: #b02a37; }
+
+    .det-title { font-size: 1.05rem; font-weight: 800; margin: 20px 0 10px; }
+    .det-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 40px;
+      gap: 8px; align-items: end;
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 12px; margin-bottom: 10px; background: var(--surface-soft);
+    }
+    .det-row label { font-size: .76rem; margin-bottom: 3px; }
+    .det-row .form-control, .det-row .form-select { min-height: 38px; font-size: .82rem; }
+    .det-remove { background: #fff; border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger); }
+
+    .gen-preview {
+      background: #101010; color: #f3f3f3; border-radius: 8px; padding: 16px; margin-top: 16px;
+      min-height: 120px; overflow: auto;
+      font-family: Consolas, Monaco, monospace; font-size: .78rem;
+      white-space: pre; max-width: 100%;
+    }
 
     .hidden { display: none !important; }
 
     @media (max-width: 900px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { position: static; }
+      .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -184,50 +264,13 @@
     </aside>
 
     <main class="main-stack">
-      <section class="panel card-section" id="formArea">
-        <h2>Nenhum banco selecionado</h2>
-        <p class="hint">Escolha um banco na barra lateral para carregar o formulário correspondente.</p>
-        <div class="empty-form-area">
-          <i class="fa-solid fa-building-columns"></i>
-          Os campos deste banco aparecerão aqui — motor e formulário são construídos a partir de
-          <code>banks/&lt;banco&gt;.js</code>, sem tocar nesta tela.
-        </div>
-      </section>
-
-      <section class="panel card-section">
-        <h2>Ações</h2>
-        <p class="hint">Ficam desabilitadas até um banco estar cadastrado e selecionado.</p>
-        <div class="actions">
-          <button type="button" class="btn-arriba btn-red-arriba" id="btnValidar" disabled>
-            <i class="fa-solid fa-magnifying-glass me-2"></i>Validar
-          </button>
-          <button type="button" class="btn-arriba btn-dark-arriba" id="btnGerar" disabled>
-            <i class="fa-solid fa-file-export me-2"></i>Gerar .txt
-          </button>
-        </div>
-      </section>
+      <section class="panel card-section" id="formArea"></section>
     </main>
   </div>
 
   <script type="module">
-    import { BANKS } from "./banks/registry.js";
-
-    const select = document.getElementById("bankSelect");
-    const sideNote = document.getElementById("sideNote");
-
-    BANKS.forEach(bank => {
-      const opt = document.createElement("option");
-      opt.value = bank.code;
-      opt.textContent = `${bank.nome} (${bank.code})`;
-      select.appendChild(opt);
-    });
-
-    if (BANKS.length > 0) {
-      sideNote.innerHTML = "Selecione um banco para liberar o formulário e as ações.";
-    }
-
-    // A montagem do formulário por banco (ui.js) e a chamada ao engine.js
-    // (parseArquivo / gerarArquivo) entram quando o primeiro banco for cadastrado.
+    import { initUI } from "./ui.js";
+    initUI();
   </script>
 </body>
 

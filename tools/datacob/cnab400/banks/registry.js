@@ -10,7 +10,9 @@
    ===================================================================== */
 
 import { bradesco } from "./bradesco.js";
+import { itau } from "./itau.js";
 
 export const BANKS = [
-  { code: bradesco.code, nome: bradesco.nome, config: bradesco }
+  { code: bradesco.code, nome: bradesco.nome, config: bradesco },
+  { code: itau.code, nome: itau.nome, config: itau }
 ];

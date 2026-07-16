@@ -1,72 +1,101 @@
 /* =====================================================================
-   CNAB 400 - UI genérica (agnóstica de banco)
+   CNAB 400 - UI genérica (agnóstica de banco e de direção)
 
-   Lê o banco selecionado (banks/registry.js) e monta o formulário a
-   partir de config.formFields + config.headerFields/detalheFields —
-   nenhum HTML aqui é específico de um banco. O motor (engine.js) faz
-   todo o parse/geração; este arquivo só lê a tela e desenha o resultado.
+   Lê o banco selecionado (banks/registry.js) e a direção (Remessa ou
+   Retorno) e monta o formulário a partir de config[direcao].formFields
+   + headerFields/detalheFields — nenhum HTML aqui é específico de um
+   banco. O motor (engine.js) faz todo o parse/geração; este arquivo só
+   lê a tela e desenha o resultado.
+
+   Ajuda de preenchimento: cada campo listado em formFields pode ter
+   `obrigatorio`/`ajuda`/`exemplo` no seu field def. A UI só lê essas
+   propriedades — nenhum texto de ajuda fica hard-coded aqui.
    ===================================================================== */
 
 import { BANKS } from "./banks/registry.js";
 import { parseArquivo, gerarArquivo } from "./engine.js";
 
 let currentBank = null; // { code, nome, config }
+let currentDirecao = "retorno"; // "remessa" | "retorno"
 let currentMode = "reader"; // "reader" | "generator"
 let lastGeneratedLines = null;
 
+function direcaoConfig() {
+  return currentBank ? currentBank.config[currentDirecao] : null;
+}
+
 export function initUI() {
-  const select = document.getElementById("bankSelect");
+  const bankSelect = document.getElementById("bankSelect");
   BANKS.forEach(bank => {
     const opt = document.createElement("option");
     opt.value = bank.code;
     opt.textContent = `${bank.nome} (${bank.code})`;
-    select.appendChild(opt);
+    bankSelect.appendChild(opt);
   });
 
-  select.addEventListener("change", () => {
-    currentBank = BANKS.find(b => b.code === select.value) || null;
+  bankSelect.addEventListener("change", () => {
+    currentBank = BANKS.find(b => b.code === bankSelect.value) || null;
     currentMode = "reader";
-    syncModeButtons();
+    syncControls();
+    renderArea();
+  });
+
+  document.getElementById("direcaoSelect").addEventListener("change", e => {
+    currentDirecao = e.target.value;
+    syncControls();
     renderArea();
   });
 
   document.getElementById("btnModeReader").addEventListener("click", () => setMode("reader"));
   document.getElementById("btnModeGenerator").addEventListener("click", () => setMode("generator"));
+  document.getElementById("btnComoPreencher").addEventListener("click", openHelpPanel);
+  document.getElementById("helpPanelClose").addEventListener("click", closeHelpPanel);
+  document.getElementById("helpPanelBackdrop").addEventListener("click", closeHelpPanel);
 
-  syncModeButtons();
+  syncControls();
   renderArea();
 }
 
 function setMode(mode) {
   if (!currentBank) return;
   currentMode = mode;
-  syncModeButtons();
+  syncControls();
   renderArea();
 }
 
-function syncModeButtons() {
+function syncControls() {
+  const direcaoSelect = document.getElementById("direcaoSelect");
   const btnReader = document.getElementById("btnModeReader");
   const btnGenerator = document.getElementById("btnModeGenerator");
+  const btnHelp = document.getElementById("btnComoPreencher");
   const enabled = Boolean(currentBank);
+
+  direcaoSelect.disabled = !enabled;
+  direcaoSelect.value = currentDirecao;
   btnReader.disabled = !enabled;
   btnGenerator.disabled = !enabled;
+  btnHelp.disabled = !enabled;
   btnReader.classList.toggle("active", currentMode === "reader");
   btnGenerator.classList.toggle("active", currentMode === "generator");
 
   const sideNote = document.getElementById("sideNote");
   sideNote.innerHTML = enabled
-    ? `<strong>${escHtml(currentBank.nome)} (${escHtml(currentBank.code)})</strong><br>Formulário e ações liberados abaixo.`
+    ? `<strong>${escHtml(currentBank.nome)} (${escHtml(currentBank.code)})</strong> · ${currentDirecao === "remessa" ? "Remessa" : "Retorno"}<br>Formulário e ações liberados abaixo.`
     : (BANKS.length
       ? "Selecione um banco para liberar o formulário e as ações."
       : "<strong>Nenhum banco disponível ainda.</strong><br>Cadastre um banco em <code>banks/</code> e registre em <code>registry.js</code>.");
 }
+
+/* ---------------------------------------------------------------------
+   Área principal (Validar / Gerar)
+   --------------------------------------------------------------------- */
 
 function renderArea() {
   const area = document.getElementById("formArea");
   if (!currentBank) {
     area.innerHTML = `
       <h2>Nenhum banco selecionado</h2>
-      <p class="hint">Escolha um banco na barra lateral para carregar o formulário correspondente.</p>
+      <p class="hint">Escolha um banco e uma direção (Remessa ou Retorno) na barra lateral.</p>
       <div class="empty-form-area">
         <i class="fa-solid fa-building-columns"></i>
         Os campos deste banco aparecerão aqui.
@@ -77,13 +106,17 @@ function renderArea() {
   wireViewEvents();
 }
 
+function directionLabel() {
+  return currentDirecao === "remessa" ? "Remessa" : "Retorno";
+}
+
 /* ---------------------------------------------------------------------
    Modo Validar (leitor)
    --------------------------------------------------------------------- */
 
 function readerViewHtml() {
   return `
-    <h2>Validar retorno — ${escHtml(currentBank.nome)}</h2>
+    <h2>Validar ${directionLabel().toLowerCase()} — ${escHtml(currentBank.nome)}</h2>
     <p class="hint">Cole o conteúdo do arquivo ou envie um .RET/.TXT. Nada é enviado a servidor.</p>
 
     <div class="drop-zone" id="dropZone">
@@ -91,14 +124,14 @@ function readerViewHtml() {
       <input type="file" id="fileInput" class="hidden" accept=".ret,.txt">
     </div>
 
-    <textarea id="rawInput" class="form-control cnab-textarea" placeholder="Cole aqui o conteúdo do retorno..." spellcheck="false"></textarea>
+    <textarea id="rawInput" class="form-control cnab-textarea" placeholder="Cole aqui o conteúdo do arquivo..." spellcheck="false"></textarea>
 
     <div class="actions">
       <button type="button" class="btn-arriba btn-red-arriba" id="btnParse"><i class="fa-solid fa-magnifying-glass me-2"></i>Validar e extrair</button>
       <button type="button" class="btn-arriba btn-light-arriba" id="btnClearReader">Limpar</button>
     </div>
 
-    <div class="validation-msg" id="readerMsg">Aguardando arquivo de retorno.</div>
+    <div class="validation-msg" id="readerMsg">Aguardando arquivo de ${directionLabel().toLowerCase()}.</div>
 
     <div id="readerResult" class="hidden">
       <div class="summary-grid">
@@ -142,12 +175,32 @@ function readFile(file) {
   reader.readAsText(file, "ISO-8859-1"); // CNAB é ASCII/Latin-1
 }
 
+// Marcador universal do CNAB 400: posição 3-9 do Header diz "REMESSA" ou
+// "RETORNO" — isso NÃO é específico de banco, então mora na UI, não no config.
+function detectarDirecaoPeloHeader(texto) {
+  const primeiraLinha = texto.replace(/\r\n|\r|\n/g, "\n").split("\n")[0] || "";
+  const marcador = primeiraLinha.slice(2, 9).trim().toUpperCase();
+  if (marcador === "REMESSA") return "remessa";
+  if (marcador === "RETORNO") return "retorno";
+  return null;
+}
+
 function runParse() {
   const text = document.getElementById("rawInput").value;
   if (!text.trim()) { setMsg("readerMsg", "Cole o conteúdo ou envie um arquivo.", "error"); return; }
 
+  const direcaoDetectada = detectarDirecaoPeloHeader(text);
+  if (direcaoDetectada && direcaoDetectada !== currentDirecao) {
+    setMsg(
+      "readerMsg",
+      `Este arquivo parece ser de ${direcaoDetectada === "remessa" ? "Remessa" : "Retorno"}, mas você selecionou ${directionLabel()}. Troque a direção na barra lateral e valide novamente.`,
+      "error"
+    );
+    return;
+  }
+
   try {
-    const data = parseArquivo(text, currentBank.config);
+    const data = parseArquivo(text, direcaoConfig());
 
     document.getElementById("chipLines").textContent = data.totalLinhas;
     document.getElementById("chipTitulos").textContent = data.titulos.length;
@@ -177,10 +230,15 @@ function runParse() {
 function renderTitulos(titulos) {
   const body = document.getElementById("retBody");
   body.innerHTML = "";
+  // Nem todo banco chama o campo de "valor pago" da mesma forma (ex.: Itaú
+  // usa valorPrincipal) — cada config de retorno pode apontar a chave real
+  // via valorPagoKey; sem isso, cai no nome padrão "valorPago" (Bradesco).
+  const valorPagoKey = direcaoConfig()?.valorPagoKey || "valorPago";
   titulos.forEach((t, i) => {
-    const motivos = t.motivosList.length
+    const motivos = t.motivosList && t.motivosList.length
       ? t.motivosList.map(m => `${m.cod} (${escHtml(m.desc)})`).join("<br>")
       : "—";
+    const valorPago = t[valorPagoKey];
     const ocPill = t.ocorrencia === "06" ? "ok" : (["03", "27", "30", "32"].includes(t.ocorrencia) ? "bad" : "warn");
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -189,7 +247,7 @@ function renderTitulos(titulos) {
       <td><span class="pill ${ocPill}">${escHtml(t.ocorrencia)}</span> ${escHtml(t.ocorrenciaDesc || "")}</td>
       <td>${escHtml(t.dataVencimento) || "—"}</td>
       <td class="num">${money(t.valorTitulo)}</td>
-      <td class="num">${money(t.valorPago)}</td>
+      <td class="num">${valorPago !== undefined ? money(valorPago) : "—"}</td>
       <td>${escHtml(t.dataCredito) || "—"}</td>
       <td>${motivos}</td>`;
     body.appendChild(tr);
@@ -199,7 +257,7 @@ function renderTitulos(titulos) {
 function clearReader() {
   document.getElementById("rawInput").value = "";
   document.getElementById("readerResult").classList.add("hidden");
-  setMsg("readerMsg", "Aguardando arquivo de retorno.", "");
+  setMsg("readerMsg", `Aguardando arquivo de ${directionLabel().toLowerCase()}.`, "");
 }
 
 /* ---------------------------------------------------------------------
@@ -207,43 +265,71 @@ function clearReader() {
    --------------------------------------------------------------------- */
 
 function fieldDef(key, kind) {
-  const list = kind === "header" ? currentBank.config.headerFields : currentBank.config.detalheFields;
+  const cfg = direcaoConfig();
+  const list = kind === "header" ? cfg.headerFields : cfg.detalheFields;
   return list.find(d => d.key === key);
+}
+
+function helpButtonHtml(def) {
+  const tamanho = def.fim - def.ini + 1;
+  return `<button type="button" class="field-help-btn" data-help
+    data-nome="${escHtml(def.nome || def.key)}"
+    data-posicao="${def.ini}–${def.fim}"
+    data-tamanho="${tamanho}"
+    data-ajuda="${escHtml(def.ajuda || "Sem ajuda cadastrada para este campo.")}"
+    data-exemplo="${escHtml(def.exemplo || "")}"
+    aria-label="Ajuda sobre ${escHtml(def.nome || def.key)}">?</button>`;
 }
 
 function headerFieldInputHtml(key) {
   const def = fieldDef(key, "header");
-  const label = def?.nome || key;
+  if (!def) return "";
+  const label = def.nome || key;
   const id = `gen_${key}`;
-  if (def?.fmt === "data") {
-    return `<div class="field"><label for="${id}">${escHtml(label)}</label><input type="date" class="form-control" id="${id}" data-k="${key}"></div>`;
-  }
-  return `<div class="field"><label for="${id}">${escHtml(label)}</label><input class="form-control" id="${id}" data-k="${key}"></div>`;
+  const req = def.obrigatorio ? '<span class="req-mark">*</span>' : "";
+  const input = def.fmt === "data"
+    ? `<input type="date" class="form-control" id="${id}" data-k="${key}">`
+    : `<input class="form-control" id="${id}" data-k="${key}" placeholder="${escHtml(def.exemplo || "")}">`;
+  return `<div class="field">
+    <label for="${id}">${escHtml(label)}${req} ${helpButtonHtml(def)}</label>
+    ${input}
+    <div class="field-help-box hidden"></div>
+  </div>`;
 }
 
 function detalheFieldInputHtml(key) {
   const def = fieldDef(key, "detalhe");
-  const label = def?.nome || key;
+  if (!def) return "";
+  const label = def.nome || key;
+  const req = def.obrigatorio ? '<span class="req-mark">*</span>' : "";
+  const cfg = direcaoConfig();
 
-  if (key === "ocorrencia" && currentBank.config.ocorrencias) {
-    const options = Object.entries(currentBank.config.ocorrencias)
+  let input;
+  if (key === "ocorrencia" && cfg.ocorrencias) {
+    const options = Object.entries(cfg.ocorrencias)
       .map(([code, desc]) => `<option value="${code}">${code} — ${escHtml(desc)}</option>`).join("");
-    return `<div><label>${escHtml(label)}</label><select class="form-select" data-k="${key}">${options}</select></div>`;
+    input = `<select class="form-select" data-k="${key}">${options}</select>`;
+  } else if (def.fmt === "data") {
+    input = `<input type="date" class="form-control" data-k="${key}">`;
+  } else if (def.fmt === "valor") {
+    input = `<input class="form-control" data-k="${key}" placeholder="0,00">`;
+  } else {
+    input = `<input class="form-control" data-k="${key}" placeholder="${escHtml(def.exemplo || "")}">`;
   }
-  if (def?.fmt === "data") {
-    return `<div><label>${escHtml(label)}</label><input type="date" class="form-control" data-k="${key}"></div>`;
-  }
-  if (def?.fmt === "valor") {
-    return `<div><label>${escHtml(label)}</label><input class="form-control" data-k="${key}" placeholder="0,00"></div>`;
-  }
-  return `<div><label>${escHtml(label)}</label><input class="form-control" data-k="${key}"></div>`;
+
+  return `<div>
+    <label>${escHtml(label)}${req} ${helpButtonHtml(def)}</label>
+    ${input}
+    <div class="field-help-box hidden"></div>
+  </div>`;
 }
 
 function generatorViewHtml() {
-  const headerFields = (currentBank.config.formFields?.header || []).map(headerFieldInputHtml).join("");
+  const cfg = direcaoConfig();
+  const headerFields = (cfg.formFields?.header || []).map(headerFieldInputHtml).join("");
   return `
-    <h2>Gerar arquivo — ${escHtml(currentBank.nome)}</h2>
-    <p class="hint">Preencha o cabeçalho e adicione um ou mais títulos. Valores em reais (ex.: 1.234,56).</p>
+    <h2>Gerar ${directionLabel().toLowerCase()} — ${escHtml(currentBank.nome)}</h2>
+    <p class="hint">Preencha o cabeçalho e adicione um ou mais títulos. Campos com <span class="req-mark">*</span> são obrigatórios. Use o "?" ao lado de cada campo para ver posição, tamanho e exemplo.</p>
 
     <div class="form-grid">${headerFields}</div>
 
@@ -262,9 +348,10 @@ function generatorViewHtml() {
 
 function addDetRow() {
   const wrap = document.getElementById("detRows");
+  const cfg = direcaoConfig();
   const row = document.createElement("div");
   row.className = "det-row";
-  const inputs = (currentBank.config.formFields?.detalhe || []).map(detalheFieldInputHtml).join("");
+  const inputs = (cfg.formFields?.detalhe || []).map(detalheFieldInputHtml).join("");
   row.innerHTML = `${inputs}<button type="button" class="det-remove" title="Remover"><i class="fa-solid fa-trash"></i></button>`;
   row.querySelector(".det-remove").addEventListener("click", () => row.remove());
   wrap.appendChild(row);
@@ -284,6 +371,19 @@ function collectFields(container, kind) {
   return values;
 }
 
+// Marca em vermelho os campos obrigatórios vazios; devolve true se tudo ok.
+function validarObrigatorios(container, kind) {
+  let ok = true;
+  container.querySelectorAll("[data-k]").forEach(el => {
+    const def = fieldDef(el.dataset.k, kind);
+    const vazio = !String(el.value || "").trim();
+    const invalido = Boolean(def?.obrigatorio) && vazio;
+    el.classList.toggle("field-invalid", invalido);
+    if (invalido) ok = false;
+  });
+  return ok;
+}
+
 function collectGenerator() {
   const header = collectFields(document.querySelector(".form-grid"), "header");
   const detalhes = [...document.querySelectorAll("#detRows .det-row")].map(row => collectFields(row, "detalhe"));
@@ -291,16 +391,17 @@ function collectGenerator() {
 }
 
 function runGenerate() {
-  const { header, detalhes } = collectGenerator();
-  const requiredHeader = currentBank.config.formFields?.header || [];
-  const errs = [];
-  requiredHeader.forEach(key => {
-    if (!header[key]) errs.push(`Campo obrigatório: ${fieldDef(key, "header")?.nome || key}.`);
-  });
-  if (!detalhes.length) errs.push("Adicione ao menos um título.");
-  if (errs.length) { setMsg("genMsg", errs.join(" "), "error"); return; }
+  const headerContainer = document.querySelector(".form-grid");
+  const rows = [...document.querySelectorAll("#detRows .det-row")];
 
-  const linhas = gerarArquivo(currentBank.config, { header, detalhes });
+  const headerOk = validarObrigatorios(headerContainer, "header");
+  const rowsOk = rows.every(row => validarObrigatorios(row, "detalhe"));
+
+  if (!rows.length) { setMsg("genMsg", "Adicione ao menos um título.", "error"); return; }
+  if (!headerOk || !rowsOk) { setMsg("genMsg", "Preencha os campos obrigatórios destacados em vermelho.", "error"); return; }
+
+  const { header, detalhes } = collectGenerator();
+  const linhas = gerarArquivo(direcaoConfig(), { header, detalhes });
   const allOk = linhas.every(l => l.length === 400);
   const preview = document.getElementById("genPreview");
   preview.textContent = linhas.join("\n");
@@ -322,9 +423,72 @@ function downloadFile() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `CB-${currentBank.code}-retorno-teste.txt`;
+  a.download = `CB-${currentBank.code}-${currentDirecao}-teste.txt`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+/* ---------------------------------------------------------------------
+   Ajuda de preenchimento: botão "?" por campo + painel "Como preencher"
+   --------------------------------------------------------------------- */
+
+function wireHelpButtons(root) {
+  root.querySelectorAll("[data-help]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const box = btn.closest("div").querySelector(".field-help-box");
+      if (!box) return;
+      const isOpen = !box.classList.contains("hidden");
+      if (isOpen) {
+        box.classList.add("hidden");
+        return;
+      }
+      const { nome, posicao, tamanho, ajuda, exemplo } = btn.dataset;
+      box.innerHTML = `
+        <strong>${escHtml(nome)}</strong> · posição ${escHtml(posicao)} · ${escHtml(tamanho)} caractere(s)<br>
+        ${escHtml(ajuda)}
+        ${exemplo ? `<br><em>Exemplo: ${escHtml(exemplo)}</em>` : ""}`;
+      box.classList.remove("hidden");
+    });
+  });
+}
+
+function openHelpPanel() {
+  if (!currentBank) return;
+  const cfg = direcaoConfig();
+  const panel = document.getElementById("helpPanelBody");
+  const rows = [];
+  ["header", "detalhe"].forEach(kind => {
+    (cfg.formFields?.[kind] || []).forEach(key => {
+      const def = fieldDef(key, kind);
+      if (!def) return;
+      rows.push(`
+        <tr>
+          <td>${escHtml(def.nome || def.key)}</td>
+          <td>${def.ini}–${def.fim}</td>
+          <td>${def.fim - def.ini + 1}</td>
+          <td>${def.obrigatorio ? '<span class="pill bad">Sim</span>' : '<span class="pill warn">Não</span>'}</td>
+          <td>${escHtml(def.ajuda || "—")}</td>
+          <td>${escHtml(def.exemplo || "—")}</td>
+        </tr>`);
+    });
+  });
+
+  panel.innerHTML = `
+    <h3>${escHtml(currentBank.nome)} — ${directionLabel()}</h3>
+    <div class="table-wrap">
+      <table class="cnab-table">
+        <thead><tr><th>Campo</th><th>Posição</th><th>Tamanho</th><th>Obrigatório</th><th>Ajuda</th><th>Exemplo</th></tr></thead>
+        <tbody>${rows.join("")}</tbody>
+      </table>
+    </div>`;
+
+  document.getElementById("helpPanel").classList.remove("hidden");
+  document.getElementById("helpPanelBackdrop").classList.remove("hidden");
+}
+
+function closeHelpPanel() {
+  document.getElementById("helpPanel").classList.add("hidden");
+  document.getElementById("helpPanelBackdrop").classList.add("hidden");
 }
 
 /* ---------------------------------------------------------------------
@@ -332,14 +496,19 @@ function downloadFile() {
    --------------------------------------------------------------------- */
 
 function wireViewEvents() {
+  const area = document.getElementById("formArea");
   if (currentMode === "reader") {
     wireReaderEvents();
   } else {
-    document.getElementById("btnAddRow").addEventListener("click", addDetRow);
+    document.getElementById("btnAddRow").addEventListener("click", () => {
+      addDetRow();
+      wireHelpButtons(document.getElementById("detRows"));
+    });
     document.getElementById("btnGenerate").addEventListener("click", runGenerate);
     document.getElementById("btnDownload").addEventListener("click", downloadFile);
     addDetRow(); // primeira linha
   }
+  wireHelpButtons(area);
 }
 
 function setMsg(id, msg, kind) {
@@ -353,5 +522,5 @@ function money(v) {
 }
 
 function escHtml(s) {
-  return String(s ?? "").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }

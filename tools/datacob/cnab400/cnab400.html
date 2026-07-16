@@ -206,6 +206,45 @@
       white-space: pre; max-width: 100%;
     }
 
+    .btn-como-preencher { width: 100%; margin: 4px 0 18px; text-align: center; }
+    .btn-como-preencher:disabled { opacity: .45; cursor: not-allowed; }
+
+    .req-mark { color: var(--danger); font-weight: 900; }
+
+    .field-help-btn {
+      display: inline-grid; place-items: center;
+      width: 20px; height: 20px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--surface-soft);
+      color: var(--muted); font-size: .72rem; font-weight: 900;
+      cursor: pointer; line-height: 1; padding: 0;
+    }
+    .field-help-btn:hover { border-color: var(--red); color: var(--red); }
+
+    .field-help-box {
+      margin-top: 6px; padding: 10px 12px; border-radius: 7px;
+      border-left: 4px solid var(--gold); background: #fff8df;
+      color: #3a332b; font-size: .82rem; line-height: 1.5;
+    }
+
+    .field-invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 .18rem rgba(220, 53, 69, .16) !important; }
+
+    .help-panel-backdrop {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 90;
+    }
+    .help-panel {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 91;
+      width: min(720px, 92vw); background: var(--surface);
+      box-shadow: -18px 0 48px rgba(0, 0, 0, .18);
+      padding: 26px 24px; overflow-y: auto;
+    }
+    .help-panel h3 { font-size: 1.2rem; font-weight: 800; margin: 0 0 14px; }
+    .help-panel-close {
+      position: absolute; top: 18px; right: 18px;
+      width: 34px; height: 34px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--surface-soft);
+      cursor: pointer; color: var(--ink);
+    }
+
     .hidden { display: none !important; }
 
     @media (max-width: 900px) {
@@ -228,25 +267,31 @@
       <span class="kicker">DataCob · CNAB 400 · Multi-banco</span>
       <h1>CNAB 400 Multi-Banco</h1>
       <p>
-        Escolha o banco para liberar os campos daquele layout, valide um arquivo de <strong>Retorno</strong> ou
-        gere um <strong>.txt</strong> de teste (Header + Detalhes + Trailer). Processamento 100% local no
-        navegador — nenhum dado sai da máquina.
+        Escolha o banco e a direção (<strong>Remessa</strong> ou <strong>Retorno</strong>) para liberar os
+        campos daquele layout, valide um arquivo ou gere um <strong>.txt</strong> de teste (Header + Detalhes +
+        Trailer). Ajuda de preenchimento campo a campo. Processamento 100% local no navegador.
       </p>
     </div>
   </section>
 
   <div class="container-page layout">
-    <aside class="panel sidebar" aria-label="Banco e modo">
+    <aside class="panel sidebar" aria-label="Banco, direção e modo">
       <p class="side-title">Banco</p>
       <select class="form-select bank-select" id="bankSelect" aria-label="Selecionar banco">
         <option value="">Selecione um banco…</option>
+      </select>
+
+      <p class="side-title">Direção</p>
+      <select class="form-select bank-select" id="direcaoSelect" aria-label="Selecionar direção" disabled>
+        <option value="retorno">Retorno (banco → empresa)</option>
+        <option value="remessa">Remessa (empresa → banco)</option>
       </select>
 
       <p class="side-title">Modo</p>
       <div class="side-list">
         <button type="button" class="side-item active" data-mode="reader" id="btnModeReader" disabled>
           <span class="side-icon"><i class="fa-solid fa-file-import"></i></span>
-          <span>Validar Retorno</span>
+          <span>Validar arquivo</span>
           <span>›</span>
         </button>
         <button type="button" class="side-item" data-mode="generator" id="btnModeGenerator" disabled>
@@ -255,6 +300,10 @@
           <span>›</span>
         </button>
       </div>
+
+      <button type="button" class="btn-arriba btn-outline-arriba btn-como-preencher" id="btnComoPreencher" disabled>
+        <i class="fa-solid fa-circle-question me-2"></i>Como preencher
+      </button>
 
       <div class="side-note" id="sideNote">
         <strong>Nenhum banco disponível ainda.</strong><br>
@@ -267,6 +316,14 @@
       <section class="panel card-section" id="formArea"></section>
     </main>
   </div>
+
+  <div class="help-panel-backdrop hidden" id="helpPanelBackdrop"></div>
+  <aside class="help-panel hidden" id="helpPanel" aria-label="Como preencher">
+    <button type="button" class="help-panel-close" id="helpPanelClose" aria-label="Fechar">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div id="helpPanelBody"></div>
+  </aside>
 
   <script type="module">
     import { initUI } from "./ui.js";

@@ -3,13 +3,13 @@
 import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from '../data/datacob-knowledge-base.js';
 
 const MASCOT_FRAMES = {
-    idle: 'chat_ph3a_idle.png',
-    think: 'chat_ph3a_think.png',
-    jump: 'chat_ph3a_jump.png',
-    love: 'chat_ph3a_love.png',
-    music: 'chat_ph3a_music.png',
-    angry: 'chat_ph3a_angry.png',
-    crybaby: 'chat_ph3a_crybaby.png'
+    idle: 'sapolingo_idle.png',
+    think: 'sapolingo_think.png',
+    jump: 'Sapolingo_jump.png',
+    love: 'sapolingo_love.png',
+    music: 'sapolingo_music.png',
+    angry: 'sapolingo_angry.png',
+    crybaby: 'sapolingo_crybaby.png'
 };
 
 const MASCOT_ROTATION = ['idle', 'think', 'music', 'love', 'jump'];
@@ -595,6 +595,6 @@ Portais uteis:
 
     function getMascotSrc(mood) {
         const filename = MASCOT_FRAMES[mood] || MASCOT_FRAMES.idle;
-        return new URL(`../img/frames_chat-ph3a/${filename}`, import.meta.url).href;
+        return new URL(`../img/frames_sapolingo/${filename}`, import.meta.url).href;
     }
 }

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decodificador Universal - Arriba Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero {
+      background:
+        radial-gradient(circle at 90% 10%, rgba(199, 70, 52, .08), transparent 28%),
+        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+      border-bottom: 1px solid var(--line);
+      padding: 48px 0 34px;
+    }
+
+    .container-page { width: min(1180px, calc(100% - 44px)); margin-inline: auto; }
+
+    .kicker {
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-weight: 900;
+      font-size: .78rem;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    h1 { font-size: clamp(2.7rem, 6vw, 5.5rem); line-height: .95; letter-spacing: -.07em; font-weight: 300; margin: 0 0 20px; }
+    .hero p { color: var(--muted); font-size: 1.08rem; line-height: 1.65; max-width: 900px; margin: 0; }
+
+    .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; padding: 28px 0 60px; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .sidebar { position: sticky; top: 86px; height: fit-content; padding: 18px; }
+    .side-title { color: var(--red); text-transform: uppercase; letter-spacing: .14em; font-weight: 900; font-size: .76rem; margin: 18px 0 12px; }
+    .side-title:first-child { margin-top: 0; }
+
+    .side-list { display: grid; gap: 8px; }
+
+    .side-item {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 9px;
+      padding: 13px 12px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .side-item.active { background: var(--surface-soft); color: var(--ink); }
+
+    .side-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .side-toggle button {
+      border: 1px solid var(--line); background: #fff; color: var(--muted);
+      border-radius: 8px; padding: 9px 8px; font-weight: 850; font-size: .86rem; cursor: pointer;
+    }
+    .side-toggle button.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .side-toggle button:disabled { opacity: .45; cursor: not-allowed; }
+
+    .btn-detectar { width: 100%; margin-top: 14px; }
+
+    .side-note {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--gold);
+      background: #fff8df;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.5;
+    }
+
+    .main-stack { display: grid; gap: 20px; min-width: 0; }
+    .card-section { padding: 24px; }
+    .card-section h2 { font-size: 1.3rem; font-weight: 800; margin: 0 0 6px; }
+    .card-section p.hint { color: var(--muted); margin: 0 0 18px; }
+
+    label { display: block; font-weight: 850; margin-bottom: 6px; font-size: .94rem; }
+
+    .form-control, .form-select {
+      min-height: 43px; border-radius: 6px; border-color: #cfc8c1;
+      width: 100%; max-width: 100%; min-width: 0;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--red); box-shadow: 0 0 0 .22rem rgba(199, 70, 52, .14);
+    }
+
+    .cnab-textarea {
+      min-height: 160px; font-family: Consolas, Monaco, monospace; font-size: .82rem; word-break: break-all;
+    }
+
+    .drop-zone {
+      border: 1px dashed #a99d94; border-radius: 10px; padding: 20px; margin-top: 12px;
+      background: #fff; color: var(--muted); text-align: center; transition: .18s ease; cursor: pointer;
+    }
+    .drop-zone.drag { border-color: var(--red); background: #fff6f4; color: var(--ink); }
+    .drop-zone i { font-size: 1.4rem; color: var(--red); }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
+    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba:hover { background: var(--red-ink, #a93225); color: #fff; }
+    .btn-dark-arriba { background: var(--dark); color: #fff; }
+    .btn-dark-arriba:hover { background: #000; color: #fff; }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
+    .btn-arriba:disabled { opacity: .45; cursor: not-allowed; }
+
+    .validation-msg {
+      border-left: 4px solid var(--warn);
+      background: rgba(181, 129, 0, .09);
+      padding: 12px 14px; border-radius: 7px; line-height: 1.45; margin-top: 14px;
+    }
+    .validation-msg.ok { border-left-color: var(--ok); background: rgba(25, 135, 84, .08); }
+    .validation-msg.error { border-left-color: var(--danger); background: rgba(220, 53, 69, .08); }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para plataforma</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Dados · Conversor · Decodificador</span>
+      <h1>Decodificador Universal</h1>
+      <p>
+        Base64, URL, HTML Entities, Hexadecimal, Binário, ROT13, Unicode Escape e JWT — tudo em um só lugar.
+        Escolha o formato (ou deixe a ferramenta detectar sozinha), cole o conteúdo e decodifique ou codifique.
+        Processamento 100% local no navegador — nenhum dado sai da máquina.
+      </p>
+    </div>
+  </section>
+
+  <div class="container-page layout">
+    <aside class="panel sidebar" aria-label="Formato e ação">
+      <p class="side-title">Formato</p>
+      <div class="side-list" id="formatList">
+        <button type="button" class="side-item active" data-formato="base64"><span><i class="fa-solid fa-code"></i></span><span>Base64</span><span>›</span></button>
+        <button type="button" class="side-item" data-formato="url"><span><i class="fa-solid fa-link"></i></span><span>URL</span><span>›</span></button>
+        <button type="button" class="side-item" data-formato="html"><span><i class="fa-solid fa-code-compare"></i></span><span>HTML Entities</span><span>›</span></button>
+        <button type="button" class="side-item" data-formato="hex"><span><i class="fa-solid fa-hashtag"></i></span><span>Hexadecimal</span><span>›</span></button>
+        <button type="button" class="side-item" data-formato="binary"><span><i class="fa-solid fa-microchip"></i></span><span>Binário</span><span>›</span></button>
+        <button type="button" class="side-item" data-formato="rot13"><span><i class="fa-solid fa-rotate"></i></span><span>ROT13</span><span>›</span></button>
+        <button type="button" class="side-item" data-formato="unicode"><span><i class="fa-solid fa-font"></i></span><span>Unicode Escape</span><span>›</span></button>
+        <button type="button" class="side-item" data-formato="jwt"><span><i class="fa-solid fa-key"></i></span><span>JWT</span><span>›</span></button>
+      </div>
+
+      <p class="side-title">Ação</p>
+      <div class="side-toggle">
+        <button type="button" class="active" data-acao="decode" id="btnAcaoDecode">Decodificar</button>
+        <button type="button" data-acao="encode" id="btnAcaoEncode">Codificar</button>
+      </div>
+
+      <button type="button" class="btn-arriba btn-outline-arriba btn-detectar" id="btnDetectar">
+        <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Detectar automaticamente
+      </button>
+
+      <div class="side-note" id="sideNote">
+        Selecione um formato e cole o conteúdo na área principal.
+      </div>
+    </aside>
+
+    <main class="main-stack">
+      <section class="panel card-section">
+        <h2 id="tituloAcao">Decodificar — Base64</h2>
+        <p class="hint" id="descricaoFormato">Aceita texto Base64 puro (com ou sem quebras de linha).</p>
+
+        <label for="inputText">Entrada</label>
+        <textarea id="inputText" class="form-control cnab-textarea" placeholder="Cole aqui o conteúdo..." spellcheck="false"></textarea>
+
+        <div class="drop-zone" id="dropZone">
+          <i class="fa-solid fa-file-arrow-up"></i> Arraste um arquivo .txt ou clique para selecionar
+          <input type="file" id="fileInput" class="hidden" accept=".txt,text/plain">
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-arriba btn-red-arriba" id="btnRun"><i class="fa-solid fa-play me-2"></i>Executar</button>
+          <button type="button" class="btn-arriba btn-outline-arriba" id="btnSwap"><i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Usar saída como entrada</button>
+          <button type="button" class="btn-arriba btn-light-arriba" id="btnClear">Limpar</button>
+        </div>
+
+        <div class="validation-msg hidden" id="msg"></div>
+
+        <label for="outputText" style="margin-top:18px">Saída</label>
+        <textarea id="outputText" class="form-control cnab-textarea" placeholder="O resultado aparece aqui..." spellcheck="false" readonly></textarea>
+
+        <div class="actions">
+          <button type="button" class="btn-arriba btn-dark-arriba" id="btnCopy"><i class="fa-solid fa-copy me-2"></i>Copiar saída</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

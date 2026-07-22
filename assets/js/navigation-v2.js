@@ -41,6 +41,7 @@ const menuData = {
                     ["CSV para JSON", "tools/dados/csv-to-json/csv-to-json.html"],
                     ["Calculadora de Hash", "tools/dados/hash-generator/hash-generator.html"],
                     ["Boleto Base64 → PDF", "tools/dados/base64-pdf/base64-pdf.html"],
+                    ["Decodificador Universal", "tools/dados/decodificador/decodificador.html"],
                 ]
             },
             datacobtools: {
@@ -196,6 +197,7 @@ const searchItems = [
     ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
     ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true],
     ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
+    ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
 ];
 
 function normalizeSearch(value = "") {

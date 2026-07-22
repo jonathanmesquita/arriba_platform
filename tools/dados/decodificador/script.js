@@ -143,6 +143,22 @@ function decodeJwt(txt) {
 }
 
 /* ---------------------------------------------------------------------
+   Exemplos prontos (um par decode/encode por formato) — usados pelo
+   botão "Carregar exemplo" para o usuário ver a ferramenta funcionando
+   sem precisar digitar nada.
+   --------------------------------------------------------------------- */
+const EXEMPLOS = {
+  base64: { decode: "QXJyaWJhIFBsYXRmb3JtIQ==", encode: "Arriba Platform!" },
+  url: { decode: "Ol%C3%A1%2C%20mundo%21%20%3Fq%3Dteste%26x%3D1", encode: "Olá, mundo! ?q=teste&x=1" },
+  html: { decode: "Suporte &amp; Manuten&ccedil;&atilde;o &lt;VIP&gt;", encode: '<script>alert("XSS")</script> & \'aspas\'' },
+  hex: { decode: "41727269626121", encode: "Arriba!" },
+  binary: { decode: "01000001 01110010 01110010 01101001 01100010 01100001 00100001", encode: "Arriba!" },
+  rot13: { decode: "Neevon Cyngsbez!", encode: "Arriba Platform!" },
+  unicode: { decode: "Arriba \\u2192 Plataforma", encode: "Arriba → Plataforma" },
+  jwt: { decode: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" }
+};
+
+/* ---------------------------------------------------------------------
    Detecção automática de formato (heurística por "assinatura" do texto)
    --------------------------------------------------------------------- */
 function detectarFormato(texto) {
@@ -177,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnAcaoDecode").addEventListener("click", () => setAcao("decode"));
   document.getElementById("btnAcaoEncode").addEventListener("click", () => setAcao("encode"));
   document.getElementById("btnDetectar").addEventListener("click", runDetectar);
+  document.getElementById("btnExemplo").addEventListener("click", runExemplo);
   document.getElementById("btnRun").addEventListener("click", runExecutar);
   document.getElementById("btnSwap").addEventListener("click", runSwap);
   document.getElementById("btnClear").addEventListener("click", runClear);
@@ -241,6 +258,18 @@ function runDetectar() {
   currentAcao = "decode";
   syncUI();
   setMsg(`Formato detectado: ${FORMATOS[formato].label}. Ajustado automaticamente.`, "ok");
+  runExecutar();
+}
+
+function runExemplo() {
+  const cfg = FORMATOS[currentFormato];
+  const valor = EXEMPLOS[currentFormato]?.[currentAcao];
+  if (!valor) {
+    setMsg(`Sem exemplo de ${currentAcao === "decode" ? "decodificação" : "codificação"} cadastrado para ${cfg.label}.`, "error");
+    return;
+  }
+  document.getElementById("inputText").value = valor;
+  document.getElementById("outputText").value = "";
   runExecutar();
 }
 

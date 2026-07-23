@@ -148,7 +148,7 @@ function decodeJwt(txt) {
    sem precisar digitar nada.
    --------------------------------------------------------------------- */
 const EXEMPLOS = {
-  base64: { decode: "QXJyaWJhIFBsYXRmb3JtIQ==", encode: "Arriba Platform!" },
+  base64: { decode: "dXN1YXJpbzpzZW5oYTEyMw==", encode: "usuario:senha123" },
   url: { decode: "Ol%C3%A1%2C%20mundo%21%20%3Fq%3Dteste%26x%3D1", encode: "Olá, mundo! ?q=teste&x=1" },
   html: { decode: "Suporte &amp; Manuten&ccedil;&atilde;o &lt;VIP&gt;", encode: '<script>alert("XSS")</script> & \'aspas\'' },
   hex: { decode: "41727269626121", encode: "Arriba!" },

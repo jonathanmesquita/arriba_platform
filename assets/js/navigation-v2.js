@@ -57,6 +57,7 @@ const menuData = {
                     ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
                      ["CNAB 400 (multi-banco)", "tools/datacob/cnab400/cnab400.html"],
                      ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
+                     ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
                      ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
                     ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
                 ]
@@ -198,6 +199,7 @@ const searchItems = [
     ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true],
     ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
     ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
+    ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
 ];
 
 function normalizeSearch(value = "") {

@@ -2632,7 +2632,20 @@ async function handleAnalyzeFreshdesk() {
   } catch (error) {
     stopFlowPlayback();
     updateFlowStatus("knowledge");
-    showCopilotError("Análise não concluída", error, "Base → Análise");
+
+    // A analise (base de conhecimento/IA) falhou por completo, sem cair em
+    // nenhum fallback interno de analyzeFreshdeskTicket. Mesmo assim, tenta
+    // mostrar ao menos os dados crus do ticket buscados no Freshdesk, em vez
+    // de descartar tudo e exibir so o erro.
+    try {
+      const contextData = await fetchFreshdeskContext(ticketId);
+      fillForm({ ...contextData.ticket, company: contextData.context?.company, agent: contextData.context?.agent });
+      renderContact(contextData.context || {}, contextData.ticket || {}, {});
+      renderTickets(contextData.context || {});
+      showCopilotError("Não foi possível gerar a análise, mas o ticket foi carregado", error, "Base → Análise");
+    } catch (ticketError) {
+      showCopilotError("Análise não concluída", error, "Base → Análise");
+    }
   }
 }
 

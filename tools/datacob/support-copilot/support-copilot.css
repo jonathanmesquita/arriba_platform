@@ -405,6 +405,12 @@ body.theme-light .quick-knowledge-topics button:focus-visible {
   border-color: #231f20;
 }
 
+body.theme-light .quick-knowledge-topics button.active {
+  color: #fff;
+  background: #c74634;
+  border-color: #c74634;
+}
+
 body.theme-light .recurrence-bar-label {
   color: #4b4038;
 }
@@ -1632,6 +1638,20 @@ body.presentation-mode .brand-link::after {
 .manual-suggestion-card p {
   color: var(--muted, #9ca3af);
   margin-bottom: 10px;
+}
+
+.predefined-preview {
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.quick-knowledge-topics button.active {
+  background: rgba(244,81,36,.9);
+  color: #fff;
+  border-color: rgba(244,81,36,.9);
 }
 
 .manual-suggestion-actions {

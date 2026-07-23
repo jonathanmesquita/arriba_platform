@@ -3,6 +3,8 @@ const LOCAL_LOG_KEY = "arribaSupportCopilotLocalLogs";
 const DATACOB_MANUAL_INDEX = window.DATACOB_MANUAL_INDEX || [];
 let DATACOB_SUPPORT_KB = [];
 let DATACOB_SUPPORT_TOPICS = [];
+let DATACOB_PREDEFINED_RESPONSES = [];
+let predefinedGroupFilter = "todos";
 
 const supportHeroSlides = [
   {
@@ -128,6 +130,91 @@ async function loadDatacobSupportKnowledge() {
     DATACOB_SUPPORT_KB = [];
     DATACOB_SUPPORT_TOPICS = [];
   }
+}
+
+async function loadPredefinedResponses() {
+  try {
+    const module = await import("../../../assets/data/respostas-predefinidas.js");
+    DATACOB_PREDEFINED_RESPONSES = Array.isArray(module.RESPOSTAS_PREDEFINIDAS) ? module.RESPOSTAS_PREDEFINIDAS : [];
+  } catch (error) {
+    console.warn("Respostas predefinidas indisponiveis no Copilot.", error);
+    DATACOB_PREDEFINED_RESPONSES = [];
+  }
+}
+
+function findPredefinedResponse(grupoId, respostaId) {
+  const grupo = DATACOB_PREDEFINED_RESPONSES.find((g) => g.id === grupoId);
+  return grupo?.respostas.find((r) => r.id === respostaId) || null;
+}
+
+function renderPredefinedGroupChips() {
+  const container = getEl("predefinedGroupChips");
+  if (!container) return;
+  const chips = [{ id: "todos", nome: "Todos", icone: "🗂️" }, ...DATACOB_PREDEFINED_RESPONSES];
+  container.innerHTML = chips.map((grupo) => `
+    <button type="button" class="${grupo.id === predefinedGroupFilter ? "active" : ""}" data-predefined-group="${escapeHtml(grupo.id)}">
+      ${escapeHtml(grupo.icone || "")} ${escapeHtml(grupo.nome)}
+    </button>
+  `).join("");
+}
+
+function renderPredefinedResponses(term = "") {
+  const target = getEl("predefinedResponsesList");
+  if (!target) return;
+
+  const query = normalizeText(term);
+  const grupos = predefinedGroupFilter === "todos"
+    ? DATACOB_PREDEFINED_RESPONSES
+    : DATACOB_PREDEFINED_RESPONSES.filter((g) => g.id === predefinedGroupFilter);
+
+  const cards = [];
+  grupos.forEach((grupo) => {
+    grupo.respostas.forEach((resposta) => {
+      if (query) {
+        const haystack = normalizeText(`${resposta.titulo} ${resposta.mensagem} ${grupo.nome}`);
+        if (!haystack.includes(query)) return;
+      }
+      cards.push({ grupo, resposta });
+    });
+  });
+
+  if (!cards.length) {
+    target.innerHTML = `<div class="empty-mini">Nenhuma resposta pronta encontrada para esse filtro.</div>`;
+    return;
+  }
+
+  target.innerHTML = cards.map(({ grupo, resposta }) => `
+    <article class="manual-suggestion-card">
+      <div>
+        <span class="knowledge-source">${escapeHtml(grupo.icone || "")} ${escapeHtml(grupo.nome)}</span>
+        <h4>${escapeHtml(resposta.titulo)}</h4>
+        <p class="predefined-preview">${escapeHtml(resposta.mensagem)}</p>
+      </div>
+      <div class="manual-suggestion-actions">
+        <button class="btn btn-sm btn-danger" type="button" data-predefined-use="${escapeHtml(grupo.id)}:${escapeHtml(resposta.id)}">Usar como resposta</button>
+        <button class="btn btn-sm btn-outline-light" type="button" data-predefined-copy="${escapeHtml(grupo.id)}:${escapeHtml(resposta.id)}">Copiar</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function applyPredefinedResponse(grupoId, respostaId) {
+  const resposta = findPredefinedResponse(grupoId, respostaId);
+  if (!resposta) return;
+  getEl("emptyState")?.classList.add("d-none");
+  getEl("resultContent")?.classList.remove("d-none");
+  safeSet("outPredefined", resposta.titulo);
+  safeSet("outTemplateReason", "Modelo: resposta predefinida (selecionada manualmente)");
+  safeSet("outResponse", resposta.mensagem);
+  activateTab("responseTab");
+  showToast("Resposta predefinida aplicada na aba Resposta. Revise antes de enviar ao cliente.");
+}
+
+async function copyPredefinedResponse(grupoId, respostaId) {
+  const resposta = findPredefinedResponse(grupoId, respostaId);
+  if (!resposta) return;
+  await navigator.clipboard.writeText(resposta.mensagem);
+  showToast("Resposta pronta copiada.");
 }
 
 function scoreKnowledgeItem(term = "", item = {}) {
@@ -2660,6 +2747,9 @@ async function setupEvents() {
   if (savedApi && getEl("apiBase")) getEl("apiBase").value = savedApi;
   await loadDatacobSupportKnowledge();
   renderQuickKnowledgeTopics();
+  await loadPredefinedResponses();
+  renderPredefinedGroupChips();
+  renderPredefinedResponses();
   initSupportTheme();
   initSupportHeroCarousel();
   if (getEl("dynamicManualResults")) {
@@ -2692,6 +2782,11 @@ async function setupEvents() {
   getEl("topClearBtn")?.addEventListener("click", () => getEl("clearBtn")?.click());
   getEl("emptyFocusTicketBtn")?.addEventListener("click", () => focusTicketEntry());
   getEl("emptyLoadDemoBtn")?.addEventListener("click", () => getEl("loadDemoBtn")?.click());
+  getEl("emptyOpenPredefinedBtn")?.addEventListener("click", () => {
+    getEl("emptyState")?.classList.add("d-none");
+    getEl("resultContent")?.classList.remove("d-none");
+    activateTab("predefinedTab");
+  });
   getEl("addNoteBtn")?.addEventListener("click", handleAddNote);
   getEl("refreshQualityBtn")?.addEventListener("click", handleRefreshQuality);
   getEl("copyRecurrenceMarkdownBtn")?.addEventListener("click", () => copyTextFromElement("outRecurrenceMarkdown", "Ainda nao ha relatorio de recorrencia para copiar."));
@@ -2706,6 +2801,27 @@ async function setupEvents() {
     if (getEl("manualSearchInput")) getEl("manualSearchInput").value = topic;
     handleKnowledgeSearch();
     handleManualSearch();
+  });
+  getEl("predefinedSearchInput")?.addEventListener("input", (event) => renderPredefinedResponses(event.target.value));
+  getEl("predefinedGroupChips")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-predefined-group]");
+    if (!button) return;
+    predefinedGroupFilter = button.dataset.predefinedGroup;
+    renderPredefinedGroupChips();
+    renderPredefinedResponses(getEl("predefinedSearchInput")?.value || "");
+  });
+  getEl("predefinedResponsesList")?.addEventListener("click", (event) => {
+    const useButton = event.target.closest("[data-predefined-use]");
+    if (useButton) {
+      const [grupoId, respostaId] = useButton.dataset.predefinedUse.split(":");
+      applyPredefinedResponse(grupoId, respostaId);
+      return;
+    }
+    const copyButton = event.target.closest("[data-predefined-copy]");
+    if (copyButton) {
+      const [grupoId, respostaId] = copyButton.dataset.predefinedCopy.split(":");
+      copyPredefinedResponse(grupoId, respostaId);
+    }
   });
   getEl("manualSearchBtn")?.addEventListener("click", handleManualSearch);
   getEl("packageSearchBtn")?.addEventListener("click", handlePackageSearch);

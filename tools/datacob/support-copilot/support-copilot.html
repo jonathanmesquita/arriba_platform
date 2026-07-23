@@ -305,6 +305,7 @@
               <div class="empty-state-actions">
                 <button class="mini-link-btn" type="button" id="emptyFocusTicketBtn">Informar ticket</button>
                 <button class="mini-link-btn" type="button" id="emptyLoadDemoBtn">Ver demo</button>
+                <button class="mini-link-btn" type="button" id="emptyOpenPredefinedBtn">Respostas prontas</button>
               </div>
             </div>
 
@@ -342,6 +343,7 @@
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ticketsTab" type="button">Tickets</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#knowledgeTab" type="button">Base</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#responseTab" type="button">Resposta</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#predefinedTab" type="button">Respostas Prontas</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#checklistTab" type="button">Checklist</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#devTab" type="button">DEV</button></li>
                 <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#noteTab" type="button">Nota interna</button></li>
@@ -444,6 +446,22 @@
                     <button class="btn btn-sm btn-outline-light copy-btn" data-copy-target="outResponse"><i class="fa-regular fa-copy me-1"></i>Copiar</button>
                   </div>
                   <pre id="outResponse" class="copy-box"></pre>
+                </div>
+
+                <div class="tab-pane fade" id="predefinedTab">
+                  <div class="d-flex justify-content-between align-items-center gap-2 mb-2 flex-wrap">
+                    <div>
+                      <h3 class="h5 mb-0">Biblioteca de respostas prontas</h3>
+                      <small class="text-secondary">Modelos fixos por grupo, independentes da analise do ticket. "Usar como resposta" preenche a aba Resposta; "Copiar" so copia o texto.</small>
+                    </div>
+                  </div>
+                  <div class="knowledge-search-box mb-3">
+                    <div class="input-group input-group-sm">
+                      <input id="predefinedSearchInput" class="form-control" placeholder="Buscar resposta pronta: boas-vindas, cnab, agendamento..." />
+                    </div>
+                    <div class="quick-knowledge-topics mt-2" id="predefinedGroupChips" aria-label="Filtrar por grupo"></div>
+                  </div>
+                  <div id="predefinedResponsesList" class="manual-suggestions"></div>
                 </div>
 
                 <div class="tab-pane fade" id="checklistTab">

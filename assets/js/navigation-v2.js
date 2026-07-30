@@ -179,7 +179,7 @@ const menuData = {
     }
 };
 
-const searchItems = [
+export const searchItems = [
     ["PH3A Support Copilot", "Freshdesk suporte IA chamados triagem templates anotacao desenvolvimento especificacao", "tools/datacob/support-copilot/support-copilot.html"],
     ["Case Support Copilot", "case study suporte clientes Freshdesk IA", "pages/case-study/ph3a-support-copilot.html", true],
     ["API Freshdesk Status", "status api freshdesk render node", "https://api.arriba.jm.dev.br/freshdesk/status"],

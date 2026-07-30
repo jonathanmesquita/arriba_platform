@@ -1,4 +1,28 @@
 // js/search.js
+//
+// Fonte unica: os itens buscaveis vem de navigation-v2.js (searchItems),
+// o mesmo array usado pela busca do mega-menu. Nada aqui duplica dados
+// de ferramentas - so adapta o formato para o que o Fuse.js espera.
+import { searchItems } from './navigation-v2.js';
+
+function inferCategory(url) {
+    if (/^https?:\/\//.test(url)) return 'APIs';
+    if (url.startsWith('tools/datacob/')) return 'DataCob';
+    if (url.startsWith('tools/dados/')) return 'Ferramentas';
+    if (url.startsWith('pages/case-study/')) return 'Portfólio';
+    if (url.startsWith('pages/docs/')) return 'Documentação';
+    return 'Geral';
+}
+
+function buildSearchData() {
+    return searchItems.map(([title, keywords, url]) => ({
+        title,
+        url,
+        keywords: String(keywords || '').split(/\s+/).filter(Boolean),
+        category: inferCategory(url)
+    }));
+}
+
 export function initSearchBox() {
     const searchToggleBtnDesktop = document.getElementById('searchToggleBtn');
     const searchCloseBtnDesktop = document.getElementById('searchCloseBtn');
@@ -9,74 +33,7 @@ export function initSearchBox() {
     const searchInputMobile = document.getElementById('searchInputMobile');
     const searchCloseBtnMobile = document.getElementById('searchCloseBtnMobile');
 
-    const searchData = [
-        {
-            title: 'Help Center',
-            url: 'pages/docs/help-center/index.html',
-            keywords: ['help center', 'manual', 'manuais', 'documentacao', 'base', 'conhecimento', 'datacob'],
-            category: 'Conhecimento'
-        },
-        {
-            title: 'AI Support Copilot',
-            url: 'tools/datacob/support-copilot/support-copilot.html',
-            keywords: ['copilot', 'ia', 'ticket', 'freshdesk', 'suporte', 'checklist', 'resposta', 'analise'],
-            category: 'Suporte'
-        },
-        {
-            title: 'Treinamento DataCob',
-            url: 'tools/datacob/treinamento-cliente/index.html',
-            keywords: ['treinamento', 'cliente', 'datacob', 'passo a passo', 'onboarding', 'aula'],
-            category: 'Treinamento'
-        },
-        {
-            title: 'Validador JSON',
-            url: 'tools/dados/json-validator/json_validator.html',
-            keywords: ['json', 'validar', 'formatar', 'api', 'estrutura'],
-            category: 'Ferramentas'
-        },
-        {
-            title: 'Gerador CSV Dock v.1',
-            url: 'tools/datacob/arriba-csv-generator/csv-template-generator.html',
-            keywords: ['csv', 'dock', 'massa', 'dados', 'contrato', 'parcela', 'financiado', 'avalista'],
-            category: 'Ferramentas'
-        },
-        {
-            title: 'Massa de Dados (Gerador Fictício CPF/CNPJ)',
-            url: 'tools/datacob/massa-dados/massa-dados.html',
-            keywords: ['cpf', 'cnpj', 'massa', 'dados', 'ficticio', 'json', 'teste', 'mock'],
-            category: 'Ferramentas'
-        },
-        {
-            title: 'Erros DataCob',
-            url: 'pages/docs/datacob/erros-datacob.html',
-            keywords: ['erros', 'datacob', 'crm', 'falha', 'licenca', 'troubleshooting'],
-            category: 'Documentação'
-        },
-        {
-            title: 'API de Notificações',
-            url: '#',
-            keywords: ['api', 'notificacoes', 'webhook', 'mensagens'],
-            category: 'APIs'
-        },
-        {
-            title: 'API de Pagamentos (Mock)',
-            url: '#',
-            keywords: ['api', 'pagamentos', 'mock', 'teste'],
-            category: 'APIs'
-        },
-        {
-            title: 'API de Clima',
-            url: '#',
-            keywords: ['api', 'clima', 'tempo', 'weather'],
-            category: 'APIs'
-        },
-        {
-            title: 'API de Cotação de Moedas',
-            url: '#',
-            keywords: ['api', 'cotacao', 'moedas', 'cambio'],
-            category: 'APIs'
-        }
-    ];
+    const searchData = buildSearchData();
 
     if (typeof Fuse === 'undefined') {
         console.warn('Fuse.js não foi carregado. Adicione o CDN antes do main.js.');
@@ -345,50 +302,7 @@ function escapeHtml(str) {
 }
 
 function getSearchDataFallback() {
-    return [
-        {
-            title: 'Help Center',
-            url: 'pages/docs/help-center/index.html',
-            keywords: ['help center', 'manual', 'manuais', 'documentacao', 'datacob'],
-            category: 'Conhecimento'
-        },
-        {
-            title: 'AI Support Copilot',
-            url: 'tools/datacob/support-copilot/support-copilot.html',
-            keywords: ['copilot', 'ia', 'ticket', 'freshdesk', 'suporte'],
-            category: 'Suporte'
-        },
-        {
-            title: 'Treinamento DataCob',
-            url: 'tools/datacob/treinamento-cliente/index.html',
-            keywords: ['treinamento', 'cliente', 'datacob', 'passo a passo'],
-            category: 'Treinamento'
-        },
-        {
-            title: 'Validador JSON',
-            url: 'tools/dados/json-validator/json_validator.html',
-            keywords: ['json', 'validar', 'formatar', 'api'],
-            category: 'Ferramentas'
-        },
-        {
-            title: 'Gerador CSV Dock v.1',
-            url: 'tools/datacob/arriba-csv-generator/csv-template-generator.html',
-            keywords: ['csv', 'dock', 'massa', 'dados', 'contrato', 'parcela'],
-            category: 'Ferramentas'
-        },
-        {
-            title: 'Massa de Dados (Gerador Fictício CPF/CNPJ)',
-            url: 'tools/datacob/massa-dados/massa-dados.html',
-            keywords: ['cpf', 'cnpj', 'massa', 'dados', 'ficticio'],
-            category: 'Ferramentas'
-        },
-        {
-            title: 'Erros DataCob',
-            url: 'pages/docs/datacob/erros-datacob.html',
-            keywords: ['erros', 'datacob', 'crm'],
-            category: 'Documentação'
-        }
-    ];
+    return buildSearchData();
 }
 
 let suggestionStylesInjected = false;

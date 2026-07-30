@@ -326,6 +326,15 @@
 
     .hidden { display: none !important; }
 
+    /* #datacobPanels/#bmpPanels só existem para poder trocar de layout com
+       classList.toggle("hidden") - "display: contents" faz a div "desaparecer"
+       do grid do .main-stack, deixando as <section> voltarem a ser item direto
+       do grid (mesmo comportamento de antes, quando não havia essa div, e por
+       isso já herdavam min-width:0 da regra "section" mais abaixo). Sem isso,
+       a própria div (sem min-width:0) crescia para caber o <pre> largo do
+       preview e quebrava o layout para a direita. */
+    #datacobPanels, #bmpPanels { display: contents; }
+
     @media (max-width: 1080px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { position: static; }

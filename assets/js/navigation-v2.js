@@ -59,6 +59,7 @@ const menuData = {
                      ["CNAB 400 (multi-banco)", "tools/datacob/cnab400/cnab400.html"],
                      ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
                      ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
+                     ["Track 7 · T-SQL com DataCob", "tools/datacob/treinamento-sql/treinamento-sql.html"],
                      ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
                     ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
                 ]
@@ -202,6 +203,7 @@ const searchItems = [
     ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
     ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
     ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
+    ["Track 7 · T-SQL com DataCob", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],
 ];
 
 function normalizeSearch(value = "") {

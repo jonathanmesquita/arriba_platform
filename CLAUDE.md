@@ -24,7 +24,9 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 
 - **Menu + busca:** `assets/js/navigation-v2.js`. O mega-menu é **gerado por JS**, não é
   HTML fixo. Adicionar item ao menu = adicionar em `datacobtools.links`/`dados.links`;
-  adicionar à busca = adicionar em `searchItems`. Rode `node --check` após editar.
+  adicionar à busca = adicionar em `searchItems` (exportado). `assets/js/search.js` (busca
+  da home) **importa** esse mesmo `searchItems` — não duplicar dados de ferramentas lá,
+  só adicionar em `navigation-v2.js`. Rode `node --check` após editar.
 - **Cores / design tokens:** `assets/css/tokens.css`. Define os tokens canônicos `--rw-*`
   e aliases curtos (`--bg`, `--red`, ...). Ferramentas devem **linkar tokens.css e remover
   o `:root{}` inline** — os aliases garantem que nada quebra durante a migração.
@@ -41,13 +43,33 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 
 ## Gotchas específicos
 
-- **CNAB 400** (`tools/datacob/cnab400-bradesco/`): posições do manual são **1-indexadas e
-  inclusivas**; `slice()` é 0-indexado exclusivo → usar `slice(ini-1, fim)`. Já validado
-  byte a byte contra o layout Bradesco e arquivos reais. Não "consertar" as posições.
-- **Base64** (`tools/dados/base64/` e `base64-pdf/`): decode 100% no browser; detecta tipo
-  por magic bytes (`%PDF`). O `base64-pdf` extrai Base64 embutido em JSON automaticamente.
+- **CNAB 400** (`tools/datacob/cnab400/`): motor genérico multi-banco (`engine.js` +
+  `banks/<banco>.js`, hoje Bradesco e Itaú). Posições do manual são **1-indexadas e
+  inclusivas**; `slice()` é 0-indexado exclusivo → usar `slice(ini-1, fim)`. Bradesco já
+  validado byte a byte contra o layout e arquivos reais; Itaú só contra o manual (nenhuma
+  linha real de Remessa/Retorno confirmada ainda). Ferramenta antiga `cnab400-bradesco/`
+  foi aposentada — não recriar.
+- **Base64** (`tools/dados/base64-pdf/` e `decodificador/`): decode 100% no browser.
+  `base64-pdf` extrai Base64 embutido em JSON automaticamente (detecta por magic bytes
+  `%PDF`). `decodificador/` é o conversor universal (Base64, URL, HTML entities, hex,
+  binário, ROT13, JWT, Unicode escape) com detecção automática de formato e exemplos
+  prontos por formato.
 - **Dados que parecem código são dados:** `assets/data/datacob-knowledge-base.js` é usado
-  pela página de erros, pelo chatbot e pelo support-copilot. Não remover.
+  pela página de erros, pelo chatbot e pelo support-copilot. `assets/data/respostas-predefinidas.js`
+  é usado pelo support-copilot (aba "Respostas Prontas") e pela página standalone em
+  `tools/datacob/respostas-predefinidas/`. `assets/data/tracks/track-7-sql*.js` alimenta o
+  Track 7. Não remover nenhum desses.
+- **Geradores de dados fictícios BR** (nome/CPF válido/celular/CEP/endereço/e-mail) ficam
+  em `assets/js/fake-data-br.js` (módulo sem dependência de DOM, mesmo algoritmo de CPF já
+  usado em `massa-dados/script.js`). Reusar esse módulo em vez de reescrever geradores.
+- **Gamificação de trilhas** (pontos/badges/progresso) é genérica em `assets/js/gamification.js`,
+  100% `localStorage`, sem backend — track-agnóstica (recebe `trackId`). O Track 7
+  (`tools/datacob/treinamento-sql/`) é o primeiro consumidor; futuras trilhas reusam o
+  mesmo motor em vez de criar um novo.
+- **Sandbox SQL do Track 7** roda via AlaSQL 100% no navegador contra um dataset
+  FICTÍCIO (`assets/data/tracks/track-7-sql-dataset.js`) — nenhuma conexão com o SQL
+  Server real do DataCob. O SQL Query Builder (`tools/datacob/query-builder/`) também é
+  só um gerador de texto de query + preview fictício, não executa nada contra o banco real.
 
 ## Status por partes
 
@@ -69,6 +91,18 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   - [ ] **Pendente:** padronizar visualmente os 61 manuais "genéricos" (template
     `manual-2025.css`, sem imagem/breadcrumb) para o nível dos 5 "premium"
     (`article.css` próprio, imagens, breadcrumb, CTA).
+- [x] **Parte 5 — Ferramentas e trilha nova (jul/2026).** Itaú (341) adicionado ao CNAB 400
+  multi-banco (`banks/itau.js`); Decodificador Universal (`tools/dados/decodificador/`);
+  Respostas Predefinidas — aba no Support Copilot + página standalone, fonte única em
+  `assets/data/respostas-predefinidas.js`; Track 7 "T-SQL com DataCob" (15 lições,
+  sandbox AlaSQL, gamificação) em `tools/datacob/treinamento-sql/`; SQL Query Builder
+  (`tools/datacob/query-builder/`, recebido com Tailwind/jsx/docs redundantes — refeito no
+  padrão do site); `search.js` da home deixou de duplicar dados de ferramentas (importa
+  `searchItems` de `navigation-v2.js`).
+  - [ ] **Pendente:** `arriba-api` (`/chat` e `/support/copilot/analyze`) está sempre em
+    `source: "local-fallback"` — integração OpenAI parece fora do ar no Render (fora deste
+    repo, precisa checar env vars/logs do serviço). O fallback local de conhecimento também
+    retornou artigo errado num teste (relevância ruim), vale investigar no `arriba-api`.
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

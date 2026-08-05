@@ -1,16 +1,18 @@
 :root {
-  --or-bg: #111111;
-  --or-surface: #1a1a1a;
-  --or-card: #202020;
+  /* Paleta escura Redwood/terrosa — esta faixa é sempre escura por design,
+     independente do toggle de tema do site; espelha o dark mode de tokens.css. */
+  --or-bg: #17150f;
+  --or-surface: #221e18;
+  --or-card: #2a251e;
   --or-border: rgba(255,255,255,.14);
-  --or-text: #f5f5f5;
-  --or-muted: #a7a7a7;
-  --or-red: #ef3b2d;
-  --or-gold: #f5b642;
+  --or-text: #f3efe8;
+  --or-muted: #a89f94;
+  --or-red: var(--rw-red, #c74634);
+  --or-gold: var(--rw-gold, #f0c75e);
 }
 
 .arriba-manual-router {
-  background: radial-gradient(circle at top right, rgba(239,59,45,.14), transparent 34%), linear-gradient(180deg, #151515 0%, #0d0d0d 100%);
+  background: radial-gradient(circle at top right, rgba(199,70,52,.14), transparent 34%), linear-gradient(180deg, #1c1712 0%, #17150f 100%);
   color: var(--or-text);
   border-top: 1px solid var(--or-border);
   padding: 56px clamp(18px, 4vw, 64px);
@@ -31,7 +33,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #ff7b6d;
+  color: #e06a58;
   font-size: .78rem;
   font-weight: 800;
   letter-spacing: .16em;
@@ -80,7 +82,7 @@
 .manual-search-row select {
   width: 100%;
   border: 1px solid var(--or-border);
-  background: #0f0f0f;
+  background: var(--or-surface);
   color: var(--or-text);
   border-radius: 12px;
   padding: 12px 14px;
@@ -124,7 +126,7 @@
 
 .manual-chip {
   border: 1px solid var(--or-border);
-  background: #181818;
+  background: var(--or-surface);
   color: var(--or-text);
   border-radius: 999px;
   padding: 8px 10px;
@@ -134,8 +136,8 @@
 
 .manual-chip:hover,
 .manual-chip.active {
-  border-color: rgba(239,59,45,.85);
-  background: rgba(239,59,45,.14);
+  border-color: rgba(199,70,52,.85);
+  background: rgba(199,70,52,.14);
 }
 
 .manual-stat-grid {
@@ -194,7 +196,7 @@
   border-radius: 999px;
   padding: 5px 8px;
   font-size: .76rem;
-  color: #ddd;
+  color: var(--or-text);
   background: rgba(255,255,255,.04);
 }
 
@@ -244,7 +246,7 @@
 }
 
 .package-router-section {
-  background: radial-gradient(circle at top left, rgba(245,182,66,.12), transparent 32%), linear-gradient(180deg, #111 0%, #090909 100%);
+  background: radial-gradient(circle at top left, rgba(240,199,94,.12), transparent 32%), linear-gradient(180deg, #1c1712 0%, #100e0a 100%);
   border-top: 1px solid var(--or-border);
 }
 
@@ -252,7 +254,7 @@
   border: 1px solid var(--or-border);
   border-radius: 16px;
   padding: 14px;
-  background: rgba(245,182,66,.08);
+  background: rgba(240,199,94,.08);
   color: var(--or-muted);
 }
 

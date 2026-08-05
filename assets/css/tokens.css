@@ -39,6 +39,8 @@
   --rw-dark:      #1f1b19;   /* charcoal — botões escuros/rodapé */
   --rw-dark-2:    #312d2a;
 
+  --rw-accent-teal: #73c9c7; /* acento secundário — hero da home */
+
   /* ---- Semânticos ---- */
   --rw-ok:        #198754;
   --rw-warn:      #b58100;

@@ -32,7 +32,7 @@
             --enterprise-dark: #16191d;
             --enterprise-red: #c74634;
             --enterprise-teal: #73c9c7;
-            --enterprise-sage: #c9d8d2;
+            --enterprise-forest: #16332b;
             --enterprise-gold: #e7b85b;
         }
 
@@ -193,7 +193,7 @@
         .category-tile {
             min-height: 118px;
             border: 1px solid var(--enterprise-line);
-            border-radius: 8px;
+            border-radius: 4px;
             background: #fff;
             color: var(--enterprise-ink);
             display: grid;
@@ -202,14 +202,14 @@
             text-align: center;
             text-decoration: none;
             font-weight: 800;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, .11);
-            transition: transform .18s ease, border-color .18s ease;
+            box-shadow: none;
+            transition: border-color .18s ease, background-color .18s ease;
         }
 
         .category-tile:hover {
             color: var(--enterprise-ink);
             border-color: var(--enterprise-red);
-            transform: translateY(-3px);
+            background: #fafafa;
         }
 
         .portfolio-hero {
@@ -644,25 +644,25 @@
         .portfolio-card {
             min-height: 250px;
             border: 1px solid var(--enterprise-line);
-            border-radius: 8px;
+            border-radius: 4px;
             background: #fff;
             color: var(--enterprise-ink);
             padding: 24px;
             text-decoration: none;
-            box-shadow: 0 16px 36px rgba(0, 0, 0, .08);
-            transition: transform .18s ease, border-color .18s ease;
+            box-shadow: none;
+            transition: border-color .18s ease, background-color .18s ease;
         }
 
         .portfolio-card:hover {
             color: var(--enterprise-ink);
             border-color: var(--enterprise-red);
-            transform: translateY(-4px);
+            background: #fafafa;
         }
 
         .portfolio-card i {
             width: 44px;
             height: 44px;
-            border-radius: 6px;
+            border-radius: 4px;
             background: #f0ebe5;
             color: var(--enterprise-red);
             display: grid;
@@ -739,10 +739,15 @@
         }
 
         .architecture-board {
+            position: relative;
             border-radius: 8px;
-            background: #102b38;
+            background: var(--enterprise-forest);
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(255, 255, 255, .07) 0, transparent 46%),
+                radial-gradient(circle at 88% 82%, rgba(255, 255, 255, .06) 0, transparent 50%);
             color: #fff;
             padding: 30px;
+            overflow: hidden;
         }
 
         .architecture-row {

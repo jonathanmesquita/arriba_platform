@@ -131,6 +131,7 @@
       margin: 0 0 14px;
     }
 
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
     .btn-arriba { min-height: 40px; border-radius: 5px; border: 1px solid transparent; padding: 8px 16px; font-weight: 900; cursor: pointer; }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-dark-arriba:hover { background: #000; color: #fff; }
@@ -144,6 +145,38 @@
       color: var(--muted);
     }
     .empty-msg i { font-size: 1.8rem; margin-bottom: 10px; display: block; color: var(--gold); }
+
+    .sessao-tag { color: var(--ok); text-transform: uppercase; letter-spacing: .1em; font-weight: 900; font-size: .68rem; margin-left: 8px; }
+
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
+    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba:hover { background: #a93225; color: #fff; }
+
+    #composerPanel label { display: block; font-weight: 800; font-size: .84rem; margin: 14px 0 6px; }
+    #composerPanel label:first-of-type { margin-top: 0; }
+    .composer-textarea { min-height: 160px; font-family: Consolas, Monaco, monospace; font-size: .86rem; resize: vertical; }
+    .composer-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .placeholder-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .placeholder-tab {
+      border: 1px solid var(--line); background: #fff; color: var(--muted);
+      border-radius: 999px; padding: 6px 14px; font-weight: 850; cursor: pointer; font-size: .82rem;
+    }
+    .placeholder-tab.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .placeholder-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .placeholder-btn {
+      border: 1px solid var(--line); background: #fff; color: var(--ink);
+      border-radius: 7px; padding: 7px 12px; font-size: .8rem; font-weight: 700; cursor: pointer;
+    }
+    .placeholder-btn:hover { border-color: var(--red); color: var(--red); }
+    .placeholder-btn small { display: block; color: var(--muted); font-weight: 600; font-family: Consolas, Monaco, monospace; }
+
+    .preview-box {
+      border: 1px solid var(--line); border-radius: 8px; padding: 14px; background: var(--surface-soft);
+      white-space: pre-line; line-height: 1.55; font-size: .92rem;
+    }
+    .preview-box mark { background: #fff3cd; padding: 0 2px; border-radius: 3px; }
 
     .hidden { display: none !important; }
 
@@ -178,11 +211,59 @@
       <p class="side-title">Buscar</p>
       <input type="text" id="buscaInput" class="form-control" placeholder="titulo, palavra-chave...">
 
+      <button type="button" class="btn-arriba btn-red-arriba" id="btnNovaResposta" style="width:100%;margin-top:14px">
+        <i class="fa-solid fa-plus me-2"></i>Nova resposta
+      </button>
+
       <p class="side-title">Grupo</p>
       <div class="side-list" id="listaGrupos"></div>
     </aside>
 
-    <main class="main-stack" id="listaRespostas"></main>
+    <main class="main-stack">
+      <section class="panel card-section hidden" id="composerPanel">
+        <h2 style="font-size:1.4rem;font-weight:800;margin:0 0 4px">Editar Resposta Predefinida</h2>
+        <p style="color:var(--muted);margin:0 0 6px">
+          Monte a resposta com as variáveis do Freshdesk e exporte em Markdown — não conecta na conta real, é só
+          um rascunho para colar depois em <a href="https://suporte.ph3a.com.br/a/admin/canned_responses/folders" target="_blank" rel="noopener">Admin → Respostas Predefinidas</a>.
+        </p>
+
+        <label for="composerTitulo">Título da resposta *</label>
+        <input type="text" id="composerTitulo" class="form-control" placeholder="Ex.: @Anotações - Informação Interna">
+
+        <div class="composer-row-2">
+          <div>
+            <label for="composerGrupo">Grupo (só organiza aqui na tela)</label>
+            <select id="composerGrupo" class="form-control"></select>
+          </div>
+          <div>
+            <label for="composerShortcode">Short code (opcional)</label>
+            <input type="text" id="composerShortcode" class="form-control" placeholder="Ex.: setup">
+          </div>
+        </div>
+
+        <label for="composerMensagem">Mensagem *</label>
+        <textarea id="composerMensagem" class="form-control composer-textarea" placeholder="Ex.: Olá {{contact.name}}, sobre o ticket {{ticket.id}}..."></textarea>
+
+        <div class="actions">
+          <button type="button" class="btn-arriba btn-outline-arriba" id="btnTogglePlaceholders"><i class="fa-solid fa-code me-2"></i>Espaço reservado</button>
+          <button type="button" class="btn-arriba btn-light-arriba" id="btnVisualizar"><i class="fa-regular fa-eye me-2"></i>Visualizar</button>
+          <button type="button" class="btn-arriba btn-dark-arriba" id="btnAdicionarLista"><i class="fa-solid fa-check me-2"></i>Adicionar à lista</button>
+          <button type="button" class="btn-arriba btn-red-arriba" id="btnExportarMd"><i class="fa-solid fa-download me-2"></i>Exportar .md</button>
+        </div>
+
+        <div id="placeholderPanel" class="hidden" style="margin-top:16px">
+          <div class="placeholder-tabs" id="placeholderTabs"></div>
+          <div class="placeholder-grid" id="placeholderGrid"></div>
+        </div>
+
+        <div id="previewPanel" class="hidden" style="margin-top:16px">
+          <p class="side-title" style="margin-top:0">Visualizar (com dados de exemplo)</p>
+          <div class="preview-box" id="previewBox"></div>
+        </div>
+      </section>
+
+      <div class="main-stack" id="listaRespostas"></div>
+    </main>
   </div>
 
   <script type="module" src="script.js"></script>

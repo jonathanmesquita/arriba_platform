@@ -65,6 +65,23 @@
     .filtro-check { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--muted); }
     .filtro-check input { accent-color: var(--red); }
 
+    .regra-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; margin-bottom: 6px;
+      background: #fff; cursor: pointer; font-size: .84rem; font-weight: 700;
+    }
+    .regra-item:hover { border-color: var(--red); }
+    .regra-item.active { border-color: var(--red); background: rgba(199, 70, 52, .06); color: var(--red); }
+    .regra-nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .rule-editor label { display: block; font-weight: 800; font-size: .84rem; margin: 0 0 5px; }
+    .rule-editor select, .rule-editor input[type="text"] { width: 100%; min-height: 38px; border-radius: 6px; border-color: #cfc8c1; margin-bottom: 14px; }
+    .rule-editor .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .rule-editor .check-line { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: .88rem; margin-bottom: 14px; }
+    .rule-editor .check-line input { accent-color: var(--red); width: 16px; height: 16px; }
+    .rule-block-title { font-weight: 850; font-size: .92rem; margin: 4px 0 8px; color: var(--red); text-transform: uppercase; letter-spacing: .08em; font-size: .74rem; }
+    #existsBlock { border: 1px dashed #cfc8c1; border-radius: 10px; padding: 14px; margin-bottom: 14px; background: var(--surface-soft); }
+
     .view-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
     .view-tab {
       border: 1px solid var(--line); background: #fff; color: var(--muted);
@@ -139,10 +156,10 @@
       <p class="side-title">Tabelas</p>
       <div id="tablesList"></div>
 
-      <p class="side-title">Filtros</p>
-      <div id="filtersList"></div>
-      <button type="button" class="btn-arriba btn-outline-arriba" id="btnAddFiltro" style="width:100%;margin-top:6px">
-        <i class="fa-solid fa-plus me-2"></i>Adicionar filtro
+      <p class="side-title">Regras (CASE WHEN)</p>
+      <div id="rulesList"></div>
+      <button type="button" class="btn-arriba btn-outline-arriba" id="btnAddRule" style="width:100%;margin-top:6px">
+        <i class="fa-solid fa-plus me-2"></i>Nova regra
       </button>
     </aside>
 
@@ -150,6 +167,7 @@
       <section class="panel card-section">
         <div class="view-tabs">
           <button type="button" class="view-tab active" data-view="diagram">📐 Diagrama</button>
+          <button type="button" class="view-tab" data-view="rules">🧩 Regras</button>
           <button type="button" class="view-tab" data-view="query">📝 Query</button>
           <button type="button" class="view-tab" data-view="preview">👁️ Preview</button>
           <button type="button" class="view-tab" data-view="export">📥 Exportar</button>
@@ -160,23 +178,94 @@
           <div class="diagram-grid" id="diagramContent"></div>
         </div>
 
+        <div id="viewRules" class="hidden">
+          <h2 style="font-size:1.3rem;font-weight:800;margin:0 0 14px">Construtor de regra (CASE WHEN)</h2>
+
+          <p id="ruleEditorEmpty" class="hidden" style="color:var(--muted)">
+            Nenhuma regra selecionada. Clique em <strong>Nova regra</strong> na barra lateral para começar.
+          </p>
+
+          <div id="ruleEditorWrap" class="rule-editor">
+            <div class="form-row-2">
+              <div>
+                <label for="ruleAlias">Nome da coluna (alias)</label>
+                <input type="text" id="ruleAlias" placeholder="Ex.: Entrada_Diferenciada">
+              </div>
+              <div>
+                <label for="ruleLogic">Lógica entre as condições abaixo</label>
+                <select id="ruleLogic">
+                  <option value="AND">Todas verdadeiras (AND)</option>
+                  <option value="OR">Qualquer uma verdadeira (OR)</option>
+                </select>
+              </div>
+            </div>
+
+            <p class="rule-block-title">Condições principais</p>
+            <div id="ruleConditions"></div>
+            <button type="button" class="btn-arriba btn-outline-arriba" id="btnAddRuleCondition" style="width:100%;margin-bottom:16px">
+              <i class="fa-solid fa-plus me-2"></i>Adicionar condição
+            </button>
+
+            <label class="check-line"><input type="checkbox" id="ruleUseExists">Verificar também em outra tabela (EXISTS)</label>
+
+            <div id="existsBlock" class="hidden">
+              <label class="check-line"><input type="checkbox" id="ruleExistsNegate">Inverter (NOT EXISTS)</label>
+
+              <div class="form-row-2">
+                <div>
+                  <label for="existsTable">Tabela relacionada</label>
+                  <select id="existsTable"></select>
+                </div>
+                <div>
+                  <label for="existsField">Campo de ligação (nessa tabela)</label>
+                  <select id="existsField"></select>
+                </div>
+              </div>
+              <div class="form-row-2">
+                <div>
+                  <label for="existsBaseTable">Corresponde à tabela</label>
+                  <select id="existsBaseTable"></select>
+                </div>
+                <div>
+                  <label for="existsBaseField">Corresponde ao campo</label>
+                  <select id="existsBaseField"></select>
+                </div>
+              </div>
+              <p style="color:var(--muted);font-size:.78rem;margin:-8px 0 14px">
+                Se "Tabela relacionada" e "Corresponde à tabela" forem a mesma tabela (ex.: comparar duas parcelas
+                do mesmo acordo), use as condições extras abaixo para diferenciar a linha — sem isso a comparação
+                de ligação fica sempre verdadeira.
+              </p>
+
+              <p class="rule-block-title">Condições extras nessa tabela relacionada</p>
+              <div id="existsConditions"></div>
+              <button type="button" class="btn-arriba btn-outline-arriba" id="btnAddExistsCondition" style="width:100%">
+                <i class="fa-solid fa-plus me-2"></i>Adicionar condição extra
+              </button>
+            </div>
+
+            <div class="form-row-2" style="margin-top:16px">
+              <div>
+                <label for="ruleThen">Resultado se verdadeiro (THEN)</label>
+                <input type="text" id="ruleThen">
+              </div>
+              <div>
+                <label for="ruleElse">Resultado se falso (ELSE)</label>
+                <input type="text" id="ruleElse">
+              </div>
+            </div>
+
+            <p class="rule-block-title">CASE WHEN gerado (só esta regra)</p>
+            <pre class="code-block acento" id="ruleCaseOutput"></pre>
+          </div>
+        </div>
+
         <div id="viewQuery" class="hidden">
           <h2 style="font-size:1.3rem;font-weight:800;margin:0 0 14px">Consulta T-SQL gerada</h2>
+          <p style="color:var(--muted);font-size:.88rem;margin:-8px 0 14px">
+            Inclui uma coluna calculada para cada regra da barra lateral. Edite as regras na aba 🧩 Regras.
+          </p>
           <pre class="code-block" id="queryOutput"></pre>
-
-          <div id="caseWhenSection" class="hidden">
-            <div class="case-config">
-              <label for="caseLogic">Lógica entre condições</label>
-              <select id="caseLogic">
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
-              </select>
-              <label for="caseResult">Resultado do THEN</label>
-              <input type="text" id="caseResult" value="Sim - Entrada Diferente">
-            </div>
-            <h3 style="font-size:1rem;font-weight:800;margin:0 0 8px">CASE WHEN gerado</h3>
-            <pre class="code-block acento" id="caseWhenOutput"></pre>
-          </div>
         </div>
 
         <div id="viewPreview" class="hidden">

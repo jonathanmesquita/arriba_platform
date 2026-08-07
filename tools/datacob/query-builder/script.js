@@ -8,9 +8,15 @@
 
    NOTA: a query gerada (generateFullQuery) segue um template fixo
    (Contrato + Parcela + Cliente) - marcar/desmarcar tabelas na barra
-   lateral afeta o diagrama e as opcoes de filtro, mas nao adiciona
-   JOINs dinamicamente na query. Isso é uma limitacao conhecida da
-   versao atual, mantida igual ao protótipo original.
+   lateral afeta o diagrama, mas nao adiciona JOINs dinamicamente na
+   query. Isso e uma limitacao conhecida, mantida igual ao prototipo
+   original.
+
+   Regras (CASE WHEN): cada regra e uma coluna calculada independente,
+   no espirito do "Nova Formula" da tela real de Extracao de Dados do
+   DataCob - alias, condicoes (AND/OR) e, opcionalmente, uma verificacao
+   EXISTS/NOT EXISTS em outra tabela (para casos como "parcela com
+   multiplos acordos", "cliente com todas as parcelas pagas" etc.).
    ===================================================================== */
 
 "use strict";
@@ -38,7 +44,7 @@ const TABLES_STRUCTURE = {
   },
   Parcela_Acordo: {
     schema: "Cob",
-    fields: ["Id_Parcela_Acordo", "Id_Parcela", "Id_Acordo", "Dt_Vencimento", "Vl_Parcela"],
+    fields: ["Id_Parcela_Acordo", "Id_Parcela", "Id_Acordo", "Nr_Parcela", "Dt_Vencimento", "Vl_Parcela"],
     relationships: ["Parcela", "Acordo"]
   },
   Cliente: {
@@ -50,22 +56,43 @@ const TABLES_STRUCTURE = {
 
 const FILTER_OPERATORS = [
   { id: "no_filter", label: "Não Filtrar", template: "" },
-  { id: "null", label: "Nulos", template: "IS NULL" },
-  { id: "not_null", label: "Não Nulos", template: "IS NOT NULL" },
-  { id: "equal", label: "Igual", template: "= {value}" },
-  { id: "different", label: "Diferente", template: "<> {value}" },
-  { id: "greater", label: "Maior", template: "> {value}" },
-  { id: "between", label: "Entre", template: "BETWEEN {min} AND {max}" },
-  { id: "in", label: "Na Lista", template: "IN ({values})" },
-  { id: "like_contains", label: "Contendo", template: "LIKE '%{value}%'" }
+  { id: "null", label: "Nulos (IS NULL)", template: "IS NULL" },
+  { id: "not_null", label: "Não Nulos (IS NOT NULL)", template: "IS NOT NULL" },
+  { id: "equal", label: "Igual (=)", template: "= {value}" },
+  { id: "different", label: "Diferente (<>)", template: "<> {value}" },
+  { id: "greater", label: "Maior (>)", template: "> {value}" },
+  { id: "greater_equal", label: "Maior ou igual (>=)", template: ">= {value}" },
+  { id: "less", label: "Menor (<)", template: "< {value}" },
+  { id: "less_equal", label: "Menor ou igual (<=)", template: "<= {value}" },
+  { id: "between", label: "Entre (BETWEEN)", template: "BETWEEN {min} AND {max}" },
+  { id: "in", label: "Na lista (IN)", template: "IN ({values})" },
+  { id: "like_contains", label: "Contendo (LIKE)", template: "LIKE '%{value}%'" }
 ];
 
 let selectedTables = ["Contrato", "Parcela"];
-let conditions = [
-  { field: "Nr_Parcela", table: "Parcela", operator: "equal", value: "1", caseWhen: true }
+let ruleIdCounter = 1;
+let rules = [
+  {
+    id: ruleIdCounter++,
+    alias: "Contrato_Com_Parcela_Pendente",
+    logic: "AND",
+    conditions: [
+      { table: "Contrato", field: "Id_Contrato", operator: "not_null", value: "" }
+    ],
+    useExists: true,
+    existsNegate: false,
+    existsTable: "Parcela",
+    existsBaseTable: "Contrato",
+    existsBaseField: "Id_Contrato",
+    existsField: "Id_Contrato",
+    existsConditions: [
+      { field: "Tipo_Parcela", operator: "different", value: "'Paga'" }
+    ],
+    thenText: "Sim - Tem parcela pendente",
+    elseText: "Não"
+  }
 ];
-let caseWhenLogic = "AND";
-let caseWhenResult = "Sim - Entrada Diferente";
+let activeRuleId = rules[0].id;
 let queryResult = [];
 
 function escapeHtml(value = "") {
@@ -73,6 +100,12 @@ function escapeHtml(value = "") {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
   }[c]));
 }
+
+function findRule(id) {
+  return rules.find((r) => r.id === id);
+}
+
+/* ---------------------------- Tabelas ---------------------------- */
 
 function renderTables() {
   const container = document.getElementById("tablesList");
@@ -97,61 +130,6 @@ function toggleTable(table) {
   updateQuery();
 }
 
-function renderFilters() {
-  const container = document.getElementById("filtersList");
-  container.innerHTML = conditions.map((cond, idx) => `
-    <div class="filtro-card" data-idx="${idx}">
-      <div class="filtro-topo">
-        <select data-prop="table">
-          ${selectedTables.map((t) => `<option value="${t}" ${cond.table === t ? "selected" : ""}>${t}</option>`).join("")}
-        </select>
-        <button type="button" class="btn-remove-filtro" data-remove>✕</button>
-      </div>
-      <select data-prop="field">
-        ${(TABLES_STRUCTURE[cond.table]?.fields || []).map((f) => `<option value="${f}" ${cond.field === f ? "selected" : ""}>${f}</option>`).join("")}
-      </select>
-      <select data-prop="operator">
-        ${FILTER_OPERATORS.map((op) => `<option value="${op.id}" ${cond.operator === op.id ? "selected" : ""}>${op.label}</option>`).join("")}
-      </select>
-      ${["null", "not_null", "no_filter"].includes(cond.operator) ? "" : `
-        <input type="text" data-prop="value" value="${escapeHtml(cond.value || "")}" placeholder="Valor">
-      `}
-      <label class="filtro-check">
-        <input type="checkbox" data-prop="caseWhen" ${cond.caseWhen ? "checked" : ""}>
-        Usar em CASE WHEN
-      </label>
-    </div>
-  `).join("");
-
-  container.querySelectorAll(".filtro-card").forEach((card) => {
-    const idx = Number(card.dataset.idx);
-    card.querySelector("[data-remove]").addEventListener("click", () => removeCondition(idx));
-    card.querySelectorAll("[data-prop]").forEach((el) => {
-      el.addEventListener("change", () => {
-        const valor = el.type === "checkbox" ? el.checked : el.value;
-        updateCondition(idx, el.dataset.prop, valor);
-      });
-    });
-  });
-}
-
-function updateCondition(idx, prop, value) {
-  conditions[idx][prop] = value;
-  renderFilters();
-  updateQuery();
-}
-
-function addCondition() {
-  conditions.push({ field: "Id_Parcela", table: selectedTables[0] || "Contrato", operator: "equal", value: "", caseWhen: true });
-  renderFilters();
-}
-
-function removeCondition(idx) {
-  conditions.splice(idx, 1);
-  renderFilters();
-  updateQuery();
-}
-
 function renderDiagram() {
   const container = document.getElementById("diagramContent");
   container.innerHTML = selectedTables.map((table) => {
@@ -171,61 +149,294 @@ function renderDiagram() {
   }).join("");
 }
 
-function generateCaseWhen() {
-  const caseConditions = conditions.filter((c) => c.caseWhen);
-  if (!caseConditions.length) return "";
+/* --------------------------- Regras (sidebar) --------------------------- */
 
-  const condStrings = caseConditions.map((c) => {
-    const op = FILTER_OPERATORS.find((o) => o.id === c.operator);
-    const condicao = (op?.template || "").replace("{value}", c.value || "");
-    return `[${c.table}].[${c.field}] ${condicao}`;
+function renderRulesList() {
+  const container = document.getElementById("rulesList");
+  if (!rules.length) {
+    container.innerHTML = `<p style="font-size:.8rem;color:var(--muted);margin:0">Nenhuma regra ainda.</p>`;
+    return;
+  }
+  container.innerHTML = rules.map((rule) => `
+    <div class="regra-item ${rule.id === activeRuleId ? "active" : ""}" data-rule="${rule.id}">
+      <span class="regra-nome">${escapeHtml(rule.alias || "(sem nome)")}</span>
+      <button type="button" class="btn-remove-filtro" data-remove-rule title="Remover regra">✕</button>
+    </div>
+  `).join("");
+
+  container.querySelectorAll(".regra-item").forEach((item) => {
+    const id = Number(item.dataset.rule);
+    item.addEventListener("click", (event) => {
+      if (event.target.closest("[data-remove-rule]")) return;
+      selectRule(id);
+    });
+    item.querySelector("[data-remove-rule]").addEventListener("click", () => removeRule(id));
+  });
+}
+
+function addRule() {
+  const novaRegra = {
+    id: ruleIdCounter++,
+    alias: `Regra_${rules.length + 1}`,
+    logic: "AND",
+    conditions: [{ table: selectedTables[0] || "Contrato", field: TABLES_STRUCTURE[selectedTables[0] || "Contrato"].fields[0], operator: "equal", value: "" }],
+    useExists: false,
+    existsNegate: false,
+    existsTable: "",
+    existsBaseTable: selectedTables[0] || "Contrato",
+    existsBaseField: "",
+    existsField: "",
+    existsConditions: [],
+    thenText: "Sim",
+    elseText: "Não"
+  };
+  rules.push(novaRegra);
+  selectRule(novaRegra.id);
+}
+
+function removeRule(id) {
+  rules = rules.filter((r) => r.id !== id);
+  if (activeRuleId === id) activeRuleId = rules[0]?.id ?? null;
+  renderRulesList();
+  renderRuleEditor();
+  updateQuery();
+}
+
+function selectRule(id) {
+  activeRuleId = id;
+  setViewMode("rules");
+  renderRulesList();
+  renderRuleEditor();
+}
+
+/* --------------------------- Editor de regra --------------------------- */
+
+function conditionRowHtml(cond, idx, tableOptions, prefix) {
+  const fields = TABLES_STRUCTURE[cond.table]?.fields || [];
+  return `
+    <div class="filtro-card" data-idx="${idx}">
+      <div class="filtro-topo">
+        ${tableOptions ? `
+          <select data-prop="table">
+            ${tableOptions.map((t) => `<option value="${t}" ${cond.table === t ? "selected" : ""}>${t}</option>`).join("")}
+          </select>
+        ` : ""}
+        <button type="button" class="btn-remove-filtro" data-remove-${prefix}>✕</button>
+      </div>
+      <select data-prop="field">
+        ${fields.map((f) => `<option value="${f}" ${cond.field === f ? "selected" : ""}>${f}</option>`).join("")}
+      </select>
+      <select data-prop="operator">
+        ${FILTER_OPERATORS.map((op) => `<option value="${op.id}" ${cond.operator === op.id ? "selected" : ""}>${op.label}</option>`).join("")}
+      </select>
+      ${cond.operator === "between" ? `
+        <input type="text" data-prop="min" value="${escapeHtml(cond.min || "")}" placeholder="Valor mínimo" style="margin-bottom:6px">
+        <input type="text" data-prop="max" value="${escapeHtml(cond.max || "")}" placeholder="Valor máximo">
+      ` : ["null", "not_null", "no_filter"].includes(cond.operator) ? "" : `
+        <input type="text" data-prop="value" value="${escapeHtml(cond.value || "")}" placeholder="${cond.operator === "in" ? "Ex.: 'Ativo','Pendente'" : "Valor"}">
+      `}
+    </div>
+  `;
+}
+
+function renderRuleEditor() {
+  const wrap = document.getElementById("ruleEditorWrap");
+  const empty = document.getElementById("ruleEditorEmpty");
+  const rule = findRule(activeRuleId);
+
+  if (!rule) {
+    wrap.classList.add("hidden");
+    empty.classList.remove("hidden");
+    return;
+  }
+  wrap.classList.remove("hidden");
+  empty.classList.add("hidden");
+
+  document.getElementById("ruleAlias").value = rule.alias;
+  document.getElementById("ruleLogic").value = rule.logic;
+  document.getElementById("ruleThen").value = rule.thenText;
+  document.getElementById("ruleElse").value = rule.elseText;
+  document.getElementById("ruleUseExists").checked = rule.useExists;
+  document.getElementById("existsBlock").classList.toggle("hidden", !rule.useExists);
+  document.getElementById("ruleExistsNegate").checked = rule.existsNegate;
+
+  document.getElementById("ruleConditions").innerHTML = rule.conditions
+    .map((cond, idx) => conditionRowHtml(cond, idx, selectedTables, "cond")).join("");
+  wireConditionRows("ruleConditions", "cond", rule.conditions, () => { renderRuleEditor(); updateQuery(); });
+
+  const existsTableOptions = Object.keys(TABLES_STRUCTURE);
+  document.getElementById("existsTable").innerHTML = existsTableOptions
+    .map((t) => `<option value="${t}" ${rule.existsTable === t ? "selected" : ""}>${t}</option>`).join("");
+  document.getElementById("existsBaseTable").innerHTML = selectedTables
+    .map((t) => `<option value="${t}" ${rule.existsBaseTable === t ? "selected" : ""}>${t}</option>`).join("");
+  document.getElementById("existsBaseField").innerHTML = (TABLES_STRUCTURE[rule.existsBaseTable]?.fields || [])
+    .map((f) => `<option value="${f}" ${rule.existsBaseField === f ? "selected" : ""}>${f}</option>`).join("");
+  document.getElementById("existsField").innerHTML = (TABLES_STRUCTURE[rule.existsTable]?.fields || [])
+    .map((f) => `<option value="${f}" ${rule.existsField === f ? "selected" : ""}>${f}</option>`).join("");
+
+  document.getElementById("existsConditions").innerHTML = rule.existsConditions
+    .map((cond, idx) => conditionRowHtml({ ...cond, table: rule.existsTable }, idx, null, "exists")).join("");
+  wireConditionRows("existsConditions", "exists", rule.existsConditions, () => { renderRuleEditor(); updateQuery(); }, true);
+
+  document.getElementById("ruleCaseOutput").textContent = generateRuleCaseWhen(rule);
+}
+
+function wireConditionRows(containerId, prefix, list, onChange, noTableProp) {
+  const container = document.getElementById(containerId);
+  container.querySelectorAll(".filtro-card").forEach((card) => {
+    const idx = Number(card.dataset.idx);
+    card.querySelector(`[data-remove-${prefix}]`).addEventListener("click", () => {
+      list.splice(idx, 1);
+      onChange();
+    });
+    card.querySelectorAll("[data-prop]").forEach((el) => {
+      el.addEventListener("change", () => {
+        const prop = el.dataset.prop;
+        if (prop === "table" && noTableProp) return;
+        list[idx][prop] = el.value;
+        if (prop === "table") {
+          list[idx].field = (TABLES_STRUCTURE[el.value]?.fields || [])[0] || "";
+        }
+        onChange();
+      });
+    });
+  });
+}
+
+function bindRuleFieldInputs() {
+  const bind = (id, prop, isCheckbox) => {
+    document.getElementById(id).addEventListener("change", (event) => {
+      const rule = findRule(activeRuleId);
+      if (!rule) return;
+      rule[prop] = isCheckbox ? event.target.checked : event.target.value;
+      if (prop === "useExists") document.getElementById("existsBlock").classList.toggle("hidden", !rule.useExists);
+      if (prop === "existsTable") {
+        rule.existsField = (TABLES_STRUCTURE[rule.existsTable]?.fields || [])[0] || "";
+      }
+      if (prop === "existsBaseTable") {
+        rule.existsBaseField = (TABLES_STRUCTURE[rule.existsBaseTable]?.fields || [])[0] || "";
+      }
+      renderRulesList();
+      renderRuleEditor();
+      updateQuery();
+    });
+  };
+  bind("ruleAlias", "alias");
+  bind("ruleLogic", "logic");
+  bind("ruleThen", "thenText");
+  bind("ruleElse", "elseText");
+  bind("ruleUseExists", "useExists", true);
+  bind("ruleExistsNegate", "existsNegate", true);
+  bind("existsTable", "existsTable");
+  bind("existsBaseTable", "existsBaseTable");
+  bind("existsBaseField", "existsBaseField");
+  bind("existsField", "existsField");
+
+  document.getElementById("btnAddRuleCondition").addEventListener("click", () => {
+    const rule = findRule(activeRuleId);
+    if (!rule) return;
+    const table = selectedTables[0] || "Contrato";
+    rule.conditions.push({ table, field: TABLES_STRUCTURE[table].fields[0], operator: "equal", value: "" });
+    renderRuleEditor();
+    updateQuery();
   });
 
-  return `CASE\n  WHEN ${condStrings.join(` ${caseWhenLogic} `)}\n  THEN "${caseWhenResult}"\n  ELSE "Não"\nEND`;
+  document.getElementById("btnAddExistsCondition").addEventListener("click", () => {
+    const rule = findRule(activeRuleId);
+    if (!rule || !rule.existsTable) return;
+    rule.existsConditions.push({ field: TABLES_STRUCTURE[rule.existsTable].fields[0], operator: "equal", value: "" });
+    renderRuleEditor();
+    updateQuery();
+  });
+}
+
+/* ------------------------------ Geração SQL ------------------------------ */
+
+function conditionToSql(cond) {
+  const op = FILTER_OPERATORS.find((o) => o.id === cond.operator);
+  let clause = op?.template || "";
+  if (cond.operator === "between") {
+    clause = clause.replace("{min}", cond.min || "").replace("{max}", cond.max || "");
+  } else if (cond.operator === "in") {
+    clause = clause.replace("{values}", cond.value || "");
+  } else {
+    clause = clause.replace("{value}", cond.value || "");
+  }
+  return `[${cond.table}].[${cond.field}] ${clause}`.trim();
+}
+
+// NOTA: a geracao nao usa alias de tabela (mesmo padrao do resto do arquivo).
+// Se "Tabela relacionada" e "Corresponde à tabela" forem a MESMA tabela (um
+// self-join, ex.: comparar duas parcelas do mesmo acordo), a condicao de
+// ligacao vira uma tautologia ([T].[Campo] = [T].[Campo]) sem alias - nesse
+// caso o EXISTS so funciona de verdade se as condicoes extras forem
+// suficientes para distinguir a linha interna da externa.
+function generateExistsSql(rule) {
+  if (!rule.useExists || !rule.existsTable || !rule.existsBaseField || !rule.existsField) return "";
+
+  const linkClause = `[${rule.existsTable}].[${rule.existsField}] = [${rule.existsBaseTable}].[${rule.existsBaseField}]`;
+  const extra = rule.existsConditions.map((c) => conditionToSql({ ...c, table: rule.existsTable }));
+  const todasCondicoes = [linkClause, ...extra].join("\n        AND ");
+
+  return `${rule.existsNegate ? "NOT " : ""}EXISTS (\n      SELECT 1 FROM [${TABLES_STRUCTURE[rule.existsTable]?.schema || "Cob"}].[${rule.existsTable}]\n      WHERE ${todasCondicoes}\n    )`;
+}
+
+function generateRuleCaseWhen(rule) {
+  const partesPrincipais = rule.conditions.map(conditionToSql);
+  const existsSql = generateExistsSql(rule);
+  const todasPartes = existsSql ? [...partesPrincipais, existsSql] : partesPrincipais;
+  if (!todasPartes.length) return "";
+
+  return `CASE\n  WHEN ${todasPartes.join(`\n    ${rule.logic} `)}\n  THEN "${rule.thenText}"\n  ELSE "${rule.elseText}"\nEND`;
 }
 
 function generateFullQuery() {
-  const caseWhen = generateCaseWhen();
+  const colunasRegras = rules
+    .map((rule) => {
+      const caseSql = generateRuleCaseWhen(rule);
+      return caseSql ? `  ${caseSql.replace(/\n/g, "\n  ")} AS [${rule.alias || "Regra"}],` : "";
+    })
+    .filter(Boolean)
+    .join("\n");
+
   return `SELECT
   [Contrato].[Id_Contrato],
   [Contrato].[Numero_Contrato],
   [Parcela].[Id_Parcela],
   [Parcela].[Dt_Vencimento],
   [Parcela].[Tipo_Parcela],
-  ${caseWhen ? `${caseWhen} AS [Entrada_Diferenciada],` : ""}
-  [Cliente].[Nome_Ren]
+${colunasRegras ? colunasRegras + "\n" : ""}  [Cliente].[Nome_Ren]
 FROM [Cob].[Contrato]
 INNER JOIN [Cob].[Parcela] ON [Contrato].[Id_Contrato] = [Parcela].[Id_Contrato]
 INNER JOIN [Par].[Cliente] ON [Contrato].[Id_Cliente] = [Cliente].[Id_Cliente]`;
 }
 
 function updateQuery() {
-  caseWhenLogic = document.getElementById("caseLogic")?.value || "AND";
-  caseWhenResult = document.getElementById("caseResult")?.value || "Sim - Entrada Diferente";
-
   document.getElementById("queryOutput").textContent = generateFullQuery();
-
-  const secaoCaseWhen = document.getElementById("caseWhenSection");
-  if (conditions.some((c) => c.caseWhen)) {
-    secaoCaseWhen.classList.remove("hidden");
-    document.getElementById("caseWhenOutput").textContent = generateCaseWhen();
-  } else {
-    secaoCaseWhen.classList.add("hidden");
+  const editorAtivo = findRule(activeRuleId);
+  if (editorAtivo) {
+    const output = document.getElementById("ruleCaseOutput");
+    if (output) output.textContent = generateRuleCaseWhen(editorAtivo);
   }
 }
+
+/* ------------------------------- Preview -------------------------------- */
 
 function generateMockData() {
   queryResult = Array.from({ length: 10 }, (_, index) => {
     const i = index + 1;
-    return {
+    const row = {
       Id_Contrato: 1000 + i,
       Numero_Contrato: `CT-2024-${String(i).padStart(5, "0")}`,
       Id_Parcela: i,
       Dt_Vencimento: `2024-${String((i % 12) + 1).padStart(2, "0")}-15`,
-      Tipo_Parcela: i === 1 ? "Entrada" : "Parcela",
-      Entrada_Diferenciada: i === 1 ? "Sim - Entrada Diferente" : "Não",
-      Nome_Ren: `Cliente ${i}`
+      Tipo_Parcela: i === 1 ? "Entrada" : "Parcela"
     };
+    rules.forEach((rule) => {
+      row[rule.alias || "Regra"] = i === 1 ? rule.thenText : rule.elseText;
+    });
+    row.Nome_Ren = `Cliente ${i}`;
+    return row;
   });
   renderPreview();
 }
@@ -254,8 +465,10 @@ function exportCsv() {
   link.click();
 }
 
+/* ------------------------------- Navegação ------------------------------- */
+
 function setViewMode(mode) {
-  ["diagram", "query", "preview", "export"].forEach((v) => {
+  ["diagram", "query", "rules", "preview", "export"].forEach((v) => {
     document.getElementById(`view${capitalize(v)}`).classList.toggle("hidden", v !== mode);
   });
   document.querySelectorAll(".view-tab").forEach((btn) => {
@@ -263,7 +476,8 @@ function setViewMode(mode) {
   });
 
   if (mode === "query") updateQuery();
-  if (mode === "preview") renderPreview();
+  if (mode === "rules") renderRuleEditor();
+  if (mode === "preview") { generateMockData(); }
 }
 
 function capitalize(text) {
@@ -273,12 +487,15 @@ function capitalize(text) {
 document.querySelectorAll(".view-tab").forEach((btn) => {
   btn.addEventListener("click", () => setViewMode(btn.dataset.view));
 });
-document.getElementById("btnAddFiltro").addEventListener("click", addCondition);
+document.getElementById("btnAddRule").addEventListener("click", addRule);
 document.getElementById("btnExportXlsx").addEventListener("click", exportXlsx);
 document.getElementById("btnExportCsv").addEventListener("click", exportCsv);
 document.getElementById("btnGoPreview").addEventListener("click", () => setViewMode("preview"));
 
 renderTables();
-renderFilters();
+renderRulesList();
+bindRuleFieldInputs();
+renderRuleEditor();
 renderDiagram();
 generateMockData();
+updateQuery();

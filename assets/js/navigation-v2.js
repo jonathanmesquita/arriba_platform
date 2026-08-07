@@ -201,6 +201,7 @@ export const searchItems = [
     ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
     ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true],
     ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
+    ["Validador de JSON", "json validador validar formatar indentar sintaxe erro parse", "tools/dados/json-validator/json_validator.html"],
     ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
     ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
     ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],

@@ -1,5 +1,5 @@
 /* =====================================================================
-   Track 7 - T-SQL com DataCob (Arriba Platform)
+   Track 7 - Treinamento SQL (Arriba Platform)
 
    Player de licoes generico (nao acopla nada especifico do Track 7 alem
    dos dados importados) + sandbox SQL via AlaSQL rodando 100% no

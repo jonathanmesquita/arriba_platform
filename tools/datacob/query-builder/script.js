@@ -1,5 +1,5 @@
 /* =====================================================================
-   SQL Query Builder DataCob - Arriba Platform
+   SQL Query T-SQL - Relatórios - Arriba Platform
 
    Monta visualmente uma consulta T-SQL de referencia (schema Cob/Par do
    DataCob) e mostra um preview com dados FICTICIOS - nao conecta a

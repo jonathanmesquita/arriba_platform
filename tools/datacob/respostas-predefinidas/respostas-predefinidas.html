@@ -147,6 +147,8 @@
     .empty-msg i { font-size: 1.8rem; margin-bottom: 10px; display: block; color: var(--gold); }
 
     .sessao-tag { color: var(--ok); text-transform: uppercase; letter-spacing: .1em; font-weight: 900; font-size: .68rem; margin-left: 8px; }
+    .interna-tag { color: var(--warn); text-transform: uppercase; letter-spacing: .1em; font-weight: 900; font-size: .68rem; margin-left: 8px; }
+    .composer-hint { color: var(--muted); font-size: .78rem; margin: 4px 0 0; }
 
     .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
@@ -227,8 +229,15 @@
           um rascunho para colar depois em <a href="https://suporte.ph3a.com.br/a/admin/canned_responses/folders" target="_blank" rel="noopener">Admin → Respostas Predefinidas</a>.
         </p>
 
+        <label for="composerTipo">Tipo de resposta</label>
+        <select id="composerTipo" class="form-control">
+          <option value="publica">Pública (vai para o cliente)</option>
+          <option value="interna">Nota interna — prefixo "@Anotações -" (não vai para o cliente)</option>
+        </select>
+
         <label for="composerTitulo">Título da resposta *</label>
-        <input type="text" id="composerTitulo" class="form-control" placeholder="Ex.: @Anotações - Informação Interna">
+        <input type="text" id="composerTitulo" class="form-control" placeholder="Ex.: Informação Interna">
+        <p class="composer-hint" id="composerTituloPreview"></p>
 
         <div class="composer-row-2">
           <div>

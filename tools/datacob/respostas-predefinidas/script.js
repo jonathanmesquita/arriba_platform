@@ -83,6 +83,22 @@ const PLACEHOLDER_GROUPS = [
 ];
 let placeholderTabAtiva = PLACEHOLDER_GROUPS[0].nome;
 
+/* Padrao de titulo: prefixo "@Anotações - " marca nota interna (não vai
+   para o cliente), no mesmo formato usado no admin real do Freshdesk
+   (ex.: "@Anotações - Informação Interna"). Sem prefixo = resposta
+   pública, igual às respostas já cadastradas em respostas-predefinidas.js. */
+const PREFIXO_INTERNO = "@Anotações - ";
+
+function ehTituloInterno(titulo = "") {
+  return normalizeText(titulo).startsWith(normalizeText(PREFIXO_INTERNO).trim());
+}
+
+function tituloFinal(tipo, tituloDigitado) {
+  const texto = String(tituloDigitado || "").trim();
+  if (!texto || tipo !== "interna" || ehTituloInterno(texto)) return texto;
+  return `${PREFIXO_INTERNO}${texto}`;
+}
+
 function normalizeText(value = "") {
   return String(value)
     .toLowerCase()
@@ -165,6 +181,7 @@ function renderRespostas() {
     <article class="resposta-card">
       <span class="grupo-tag">${escapeHtml(grupo.icone || "")} ${escapeHtml(grupo.nome)}</span>
       ${resposta.sessao ? `<span class="sessao-tag">Nesta sessão</span>` : ""}
+      ${ehTituloInterno(resposta.titulo) ? `<span class="interna-tag">Interno</span>` : ""}
       <h3>${escapeHtml(resposta.titulo)}</h3>
       <p class="resposta-msg">${escapeHtml(resposta.mensagem)}</p>
       <button type="button" class="btn-arriba btn-dark-arriba" data-copiar="${escapeHtml(grupo.id)}:${escapeHtml(resposta.id)}">
@@ -273,8 +290,10 @@ function substituirComExemplos(mensagem) {
 }
 
 function lerComposer() {
+  const tipo = document.getElementById("composerTipo").value;
   return {
-    titulo: document.getElementById("composerTitulo").value.trim(),
+    tipo,
+    titulo: tituloFinal(tipo, document.getElementById("composerTitulo").value),
     grupoId: document.getElementById("composerGrupo").value,
     shortcode: document.getElementById("composerShortcode").value.trim(),
     mensagem: document.getElementById("composerMensagem").value
@@ -282,9 +301,19 @@ function lerComposer() {
 }
 
 function limparComposer() {
+  document.getElementById("composerTipo").value = "publica";
   document.getElementById("composerTitulo").value = "";
   document.getElementById("composerShortcode").value = "";
   document.getElementById("composerMensagem").value = "";
+  atualizarPreviewTitulo();
+}
+
+function atualizarPreviewTitulo() {
+  const tipo = document.getElementById("composerTipo").value;
+  const digitado = document.getElementById("composerTitulo").value;
+  const preview = document.getElementById("composerTituloPreview");
+  const final = tituloFinal(tipo, digitado);
+  preview.textContent = final ? `Título final: ${final}` : "";
 }
 
 function slugify(texto) {
@@ -339,8 +368,12 @@ function adicionarAListaSessao() {
 document.getElementById("btnNovaResposta").addEventListener("click", () => {
   preencherSelectGrupo();
   toggleComposer(true);
+  atualizarPreviewTitulo();
   document.getElementById("composerPanel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
+
+document.getElementById("composerTipo").addEventListener("change", atualizarPreviewTitulo);
+document.getElementById("composerTitulo").addEventListener("input", atualizarPreviewTitulo);
 
 document.getElementById("btnTogglePlaceholders").addEventListener("click", () => {
   const painel = document.getElementById("placeholderPanel");

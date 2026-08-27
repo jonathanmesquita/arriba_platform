@@ -353,9 +353,13 @@ export const bradesco = {
     motivos: MOTIVOS_RETORNO,
     // Regra original do script.js: soma valorPago quando existir, senão cai para valorTitulo.
     trailerTotalFn: det => Number(det.valorPago) || Number(det.valorTitulo) || 0,
+    // Só os campos marcados obrigatorio:true nos mapas acima — o resto
+    // (avisoBancario, dataCredito, motivosRejeicao...) fica de fora do
+    // formulário rápido e sai em branco/zero na linha gerada, que ainda
+    // assim é um retorno válido (são campos que o próprio banco preenche).
     formFields: {
-      header: ["codEmpresa", "nomeEmpresa", "dataGravacao", "avisoBancario", "dataCredito"],
-      detalhe: ["nossoNumero", "carteira", "ocorrencia", "numDocumento", "dataVencimento", "valorTitulo", "valorPago", "dataCredito", "motivosRejeicao"]
+      header: ["codEmpresa", "nomeEmpresa", "dataGravacao"],
+      detalhe: ["nossoNumero", "carteira", "ocorrencia", "numDocumento", "dataVencimento", "valorTitulo", "valorPago"]
     }
   },
 

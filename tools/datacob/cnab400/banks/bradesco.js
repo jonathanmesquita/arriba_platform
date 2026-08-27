@@ -318,14 +318,26 @@ const REMESSA_TRAILER_FIELDS = [
 
 // Ocorrências (instruções) da Remessa — significado diferente das do
 // Retorno, mesmo quando o código numérico coincide.
+// Lista completa conforme o manual oficial (item 6, "Identificação de
+// Ocorrência" da Remessa) — antes só tinha 7 dos 17 códigos.
 const OCORRENCIAS_REMESSA = {
-  "01": "Entrada de Título",
+  "01": "Remessa (Entrada de Título)",
   "02": "Pedido de Baixa",
   "04": "Concessão de Abatimento",
-  "05": "Cancelamento de Abatimento",
+  "05": "Cancelamento de Abatimento Concedido",
   "06": "Alteração de Vencimento",
-  "09": "Protestar Título",
-  "18": "Sustar Protesto"
+  "07": "Alteração do Controle do Participante",
+  "08": "Alteração de Seu Número",
+  "09": "Pedido de Protesto",
+  "18": "Sustar Protesto e Baixar Título",
+  "19": "Sustar Protesto e Manter em Carteira",
+  "22": "Transferência Cessão de Crédito (Id. Prod. 10)",
+  "23": "Transferência entre Carteiras",
+  "24": "Dev. Transferência entre Carteiras",
+  "31": "Alteração de Outros Dados",
+  "35": "Desagendamento do Débito Automático",
+  "68": "Acerto nos Dados do Rateio de Crédito",
+  "69": "Cancelamento do Rateio de Crédito"
 };
 
 export const bradesco = {

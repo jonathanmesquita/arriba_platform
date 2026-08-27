@@ -44,10 +44,13 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 ## Gotchas específicos
 
 - **CNAB 400** (`tools/datacob/cnab400/`): motor genérico multi-banco (`engine.js` +
-  `banks/<banco>.js`, hoje Bradesco e Itaú). Posições do manual são **1-indexadas e
-  inclusivas**; `slice()` é 0-indexado exclusivo → usar `slice(ini-1, fim)`. Bradesco já
-  validado byte a byte contra o layout e arquivos reais; Itaú só contra o manual (nenhuma
-  linha real de Remessa/Retorno confirmada ainda). Ferramenta antiga `cnab400-bradesco/`
+  `banks/<banco>.js`, hoje Bradesco e Itaú), com leitor (`parseArquivo`) e gerador
+  (`gerarArquivo`) — a UI (`ui.js`) já tem modo "Gerar" para as duas direções, baixando
+  `.REM`/`.RET`. Posições do manual são **1-indexadas e inclusivas**; `slice()` é
+  0-indexado exclusivo → usar `slice(ini-1, fim)`. Bradesco Retorno **e** Remessa
+  (header/detalhe/trailer) validados byte a byte contra planilhas reais
+  (`VALIDADOR_CNAB400_BRADESCO*.xlsx`) via round-trip parse→gerarArquivo; Itaú só contra
+  o manual (nenhuma linha real de Remessa/Retorno confirmada ainda). Ferramenta antiga `cnab400-bradesco/`
   foi aposentada — não recriar.
 - **Base64** (`tools/dados/base64-pdf/` e `decodificador/`): decode 100% no browser.
   `base64-pdf` extrai Base64 embutido em JSON automaticamente (detecta por magic bytes

@@ -51,15 +51,39 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 
 ## Gotchas específicos
 
-- **CNAB 400** (`tools/datacob/cnab400/`): motor genérico multi-banco (`engine.js` +
-  `banks/<banco>.js`, hoje Bradesco e Itaú), com leitor (`parseArquivo`) e gerador
-  (`gerarArquivo`) — a UI (`ui.js`) já tem modo "Gerar" para as duas direções, baixando
-  `.REM`/`.RET`. Posições do manual são **1-indexadas e inclusivas**; `slice()` é
-  0-indexado exclusivo → usar `slice(ini-1, fim)`. Bradesco Retorno **e** Remessa
-  (header/detalhe/trailer) validados byte a byte contra planilhas reais
-  (`VALIDADOR_CNAB400_BRADESCO*.xlsx`) via round-trip parse→gerarArquivo; Itaú só contra
-  o manual (nenhuma linha real de Remessa/Retorno confirmada ainda). Ferramenta antiga `cnab400-bradesco/`
-  foi aposentada — não recriar.
+- **Validador CNAB 400** (`tools/datacob/cnab400/`, renomeado de "CNAB 400 (multi-banco)"
+  em ago/2026 — nome mais direto, alinhado a ferramentas concorrentes tipo ValidaCNAB):
+  motor genérico multi-banco (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú e BMP
+  Money Plus), com leitor (`parseArquivo`) e gerador (`gerarArquivo`) — a UI (`ui.js`) já
+  tem modo "Gerar" para as duas direções, baixando `.REM`/`.RET`. Posições do manual são
+  **1-indexadas e inclusivas**; `slice()` é 0-indexado exclusivo → usar `slice(ini-1, fim)`.
+  Bradesco Retorno **e** Remessa (header/detalhe/trailer) validados byte a byte contra
+  planilhas reais (`VALIDADOR_CNAB400_BRADESCO*.xlsx`) via round-trip parse→gerarArquivo;
+  Itaú só contra o manual (nenhuma linha real de Remessa/Retorno confirmada ainda). BMP
+  Money Plus (274, `banks/bmp.js`) validado contra 2 planilhas VALIDADOR próprias +
+  3 arquivos `.RET` reais distintos do cliente (round-trip byte a byte OK em 93 linhas
+  de detalhe: 15 + 42 + 36) — **não confirmado contra manual oficial do BMP** (não
+  disponibilizado ainda); onde planilha e arquivo real divergiram, o arquivo real venceu:
+  além da largura do valorTotal do trailer, o campo 293-295 do detalhe de Retorno (que a
+  planilha marcava inteiro como "brancos") na verdade é brancos (293-294) + 1 dígito fixo
+  "0" (295) antes da Data do Crédito. Um arquivo de teste recebido depois (`..._Nuevo.RET`)
+  veio truncado (linha de detalhe com 392 de 400 posições, trailer com contagem de títulos
+  inconsistente com o conteúdo) — descartado da validação, não é dado confiável. Trailer
+  de Retorno tem só posições 1-39 e 395-400 confirmadas, resto é filler `naoConfirmado`.
+  Tabelas de ocorrência do BMP reaproveitadas do Bradesco (padrão FEBRABAN comum), não
+  confirmadas especificamente contra o BMP. Ferramenta antiga `cnab400-bradesco/` foi
+  aposentada — não recriar.
+  Ícone pequeno do banco na UI (`ui.js`, `BANK_ICONS`) usa SVGs em
+  `tools/datacob/cnab400/assets/icons/` (curados a partir de `assets/img/bancos/`, ver
+  abaixo) — ao adicionar um banco novo, copiar o SVG correspondente para essa pasta e
+  registrar em `BANK_ICONS`. Modo "Validar" tem botão "Editar e gerar novo arquivo"
+  (`ui.js`, `editAndRegenerate`) — depois de ler um arquivo com sucesso, leva header +
+  títulos extraídos para o modo "Gerar" já preenchidos (só os campos que aparecem no
+  formulário, i.e. `formFields`), para o usuário ajustar valores e baixar uma nova
+  versão sem redigitar tudo do zero. O modo "Gerar" também tem sua própria zona de
+  importação (`ui.js`, `importarArquivoNoGerador`) — dá pra soltar/selecionar um
+  .REM/.RET direto ali, sem precisar passar pelo "Validar" antes; ambos os caminhos
+  reaproveitam `preencherGeradorComDados()` pra preencher o formulário.
 - **Base64** (`tools/dados/base64-pdf/` e `decodificador/`): decode 100% no browser.
   `base64-pdf` extrai Base64 embutido em JSON automaticamente (detecta por magic bytes
   `%PDF`). `decodificador/` é o conversor universal (Base64, URL, HTML entities, hex,
@@ -81,6 +105,12 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   FICTÍCIO (`assets/data/tracks/track-7-sql-dataset.js`) — nenhuma conexão com o SQL
   Server real do DataCob. O SQL Query Builder (`tools/datacob/query-builder/`) também é
   só um gerador de texto de query + preview fictício, não executa nada contra o banco real.
+- **Biblioteca de logos de bancos** (`assets/img/bancos/`, ago/2026): cópia integral do
+  repositório [Bancos-em-SVG](https://github.com/Tgentil/Bancos-em-SVG) (87 bancos, SVG),
+  guardada como fonte para quando novos bancos forem adicionados a ferramentas do site
+  (hoje só o Validador CNAB 400 usa, ver acima). Não é gerada nem processada por build —
+  são arquivos estáticos; copiar o SVG desejado para a pasta `assets/icons/` da ferramenta
+  em vez de referenciar `assets/img/bancos/` diretamente.
 
 ## Status por partes
 
@@ -121,11 +151,26 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   ponta a ponta no navegador: preencher formulário → gerar → baixar `.REM`/`.RET`). Menu
   reorganizado: "DataCob" (item direto em Ferramentas) virou "CRMs" com abas — ver
   `crms.tabs` acima — preparando o site para ferramentas de outros CRMs além do DataCob.
-  - [ ] **Pendente (roadmap, sem trabalho iniciado):** mais bancos no CNAB 400 (BMP, Banco
-    do Brasil, Santander...) — a arquitetura já suporta (só criar `banks/<banco>.js` e
+  - [ ] **Pendente (roadmap, sem trabalho iniciado):** mais bancos no CNAB 400 (Banco do
+    Brasil, Santander...) — a arquitetura já suporta (só criar `banks/<banco>.js` e
     registrar em `banks/registry.js`), falta manual/planilha validadora de cada banco para
     implementar com o mesmo rigor usado no Bradesco (não estimar posições "prováveis").
     Também falta a primeira ferramenta de "Outros CRM" (aba já existe, vazia).
+- [x] **Parte 7 — BMP Money Plus + rename + ícones de banco (ago/2026).** BMP (274)
+  adicionado ao CNAB 400 (`banks/bmp.js`) usando 2 planilhas VALIDADOR próprias + 3
+  arquivos `.RET` reais do cliente (sem manual oficial ainda — documentado no código e
+  aqui). Ferramenta renomeada de "CNAB 400 (multi-banco)" para "Validador CNAB 400"
+  (menu, busca, título, hero). Ícone pequeno do banco adicionado ao lado do nome na UI
+  (Bradesco/Itaú/BMP), sem alterar o layout existente — biblioteca de logos completa
+  (87 bancos) salva em `assets/img/bancos/` para uso futuro.
+- [x] **Parte 8 — Editar/importar arquivo no modo Gerar + 3º arquivo real do BMP
+  (ago/2026).** Botão "Editar e gerar novo arquivo" no modo Validar e zona de
+  importação própria dentro do modo Gerar (ambos levam cabeçalho + títulos de um
+  .REM/.RET lido direto para o formulário de gerar, ver gotcha do CNAB 400 acima).
+  BMP Money Plus revalidado com mais um arquivo `.RET` real (36 títulos) — achou e
+  corrigiu um campo do detalhe de Retorno que a planilha marcava errado como
+  "brancos" (293-295; na real são 2 brancos + 1 dígito fixo "0"); um outro arquivo
+  de teste recebido no processo veio truncado e foi descartado (ver gotcha).
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

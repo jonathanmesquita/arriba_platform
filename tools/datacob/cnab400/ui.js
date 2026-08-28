@@ -19,6 +19,7 @@ let currentBank = null; // { code, nome, config }
 let currentDirecao = "retorno"; // "remessa" | "retorno"
 let currentMode = "reader"; // "reader" | "generator"
 let lastGeneratedLines = null;
+let lastParsedData = null; // { header, titulos } do último arquivo lido com sucesso
 
 function direcaoConfig() {
   return currentBank ? currentBank.config[currentDirecao] : null;
@@ -36,12 +37,14 @@ export function initUI() {
   bankSelect.addEventListener("change", () => {
     currentBank = BANKS.find(b => b.code === bankSelect.value) || null;
     currentMode = "reader";
+    lastParsedData = null;
     syncControls();
     renderArea();
   });
 
   document.getElementById("direcaoSelect").addEventListener("change", e => {
     currentDirecao = e.target.value;
+    lastParsedData = null;
     syncControls();
     renderArea();
   });
@@ -80,10 +83,24 @@ function syncControls() {
 
   const sideNote = document.getElementById("sideNote");
   sideNote.innerHTML = enabled
-    ? `<strong>${escHtml(currentBank.nome)} (${escHtml(currentBank.code)})</strong> · ${currentDirecao === "remessa" ? "Remessa" : "Retorno"}<br>Formulário e ações liberados abaixo.`
+    ? `<strong>${bankIconHtml(currentBank.code)}${escHtml(currentBank.nome)} (${escHtml(currentBank.code)})</strong> · ${currentDirecao === "remessa" ? "Remessa" : "Retorno"}<br>Formulário e ações liberados abaixo.`
     : (BANKS.length
       ? "Selecione um banco para liberar o formulário e as ações."
       : "<strong>Nenhum banco disponível ainda.</strong><br>Cadastre um banco em <code>banks/</code> e registre em <code>registry.js</code>.");
+}
+
+// Ícone pequeno de identificação do banco (só visual, não muda o
+// formulário/select). Sem ícone cadastrado ainda = sem imagem, sem quebrar
+// nada — cadastrar aqui conforme novos bancos entrarem em banks/registry.js.
+const BANK_ICONS = {
+  "237": "assets/icons/bradesco.svg",
+  "341": "assets/icons/itau.svg",
+  "274": "assets/icons/bmp.svg"
+};
+
+function bankIconHtml(code) {
+  const src = BANK_ICONS[code];
+  return src ? `<img src="${src}" alt="" class="bank-icon-badge">` : "";
 }
 
 /* ---------------------------------------------------------------------
@@ -139,6 +156,11 @@ function readerViewHtml() {
         <div class="summary-item"><span>Títulos</span><strong id="chipTitulos">-</strong></div>
         <div class="summary-item"><span>Header</span><strong id="chipHeader">-</strong></div>
       </div>
+      <div class="actions">
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnEditGenerate">
+          <i class="fa-solid fa-pen-to-square me-2"></i>Editar e gerar novo arquivo
+        </button>
+      </div>
       <div class="table-wrap">
         <table class="cnab-table">
           <thead>
@@ -164,6 +186,7 @@ function wireReaderEvents() {
 
   document.getElementById("btnParse").addEventListener("click", runParse);
   document.getElementById("btnClearReader").addEventListener("click", clearReader);
+  document.getElementById("btnEditGenerate").addEventListener("click", editAndRegenerate);
 }
 
 function readFile(file) {
@@ -201,6 +224,7 @@ function runParse() {
 
   try {
     const data = parseArquivo(text, direcaoConfig());
+    lastParsedData = data;
 
     document.getElementById("chipLines").textContent = data.totalLinhas;
     document.getElementById("chipTitulos").textContent = data.titulos.length;
@@ -223,6 +247,7 @@ function runParse() {
     }
     setMsg("readerMsg", msg, kind);
   } catch (err) {
+    lastParsedData = null;
     setMsg("readerMsg", "Erro ao processar: " + err.message, "error");
   }
 }
@@ -258,6 +283,106 @@ function clearReader() {
   document.getElementById("rawInput").value = "";
   document.getElementById("readerResult").classList.add("hidden");
   setMsg("readerMsg", `Aguardando arquivo de ${directionLabel().toLowerCase()}.`, "");
+  lastParsedData = null;
+}
+
+// Leva os dados do último arquivo lido (Validar) para o modo Gerar, com
+// cabeçalho e um título por linha de detalhe já preenchidos — permite
+// corrigir/ajustar valores do arquivo enviado e baixar uma nova versão.
+function editAndRegenerate() {
+  if (!lastParsedData) return;
+
+  currentMode = "generator";
+  syncControls();
+  renderArea(); // desenha o formulário de gerar (já cria a 1ª linha vazia)
+
+  const n = preencherGeradorComDados(lastParsedData);
+  setMsg(
+    "genMsg",
+    `Arquivo carregado para edição: ${n} título(s). Ajuste os campos e clique em "Gerar e validar".`,
+    ""
+  );
+}
+
+// Preenche o formulário de Gerar (já renderizado na tela) com o cabeçalho e
+// os títulos de um arquivo lido — usado tanto ao vir do modo Validar quanto
+// ao importar um arquivo direto na tela de Gerar. Devolve a quantidade de
+// títulos preenchidos.
+function preencherGeradorComDados(data) {
+  const headerContainer = document.querySelector(".form-grid");
+  if (headerContainer && data.header) {
+    headerContainer.querySelectorAll("[data-k]").forEach(el => {
+      preencherCampoComDadoLido(el, fieldDef(el.dataset.k, "header"), data.header[el.dataset.k]);
+    });
+  }
+
+  const detRows = document.getElementById("detRows");
+  detRows.innerHTML = "";
+  const titulos = data.titulos && data.titulos.length ? data.titulos : [{}];
+  titulos.forEach(titulo => {
+    addDetRow();
+    const row = detRows.lastElementChild;
+    row.querySelectorAll("[data-k]").forEach(el => {
+      preencherCampoComDadoLido(el, fieldDef(el.dataset.k, "detalhe"), titulo[el.dataset.k]);
+    });
+  });
+  wireHelpButtons(detRows);
+  return titulos.length;
+}
+
+// Importa um arquivo diretamente na tela de Gerar (sem precisar passar pelo
+// modo Validar antes) e já preenche o formulário com o conteúdo lido.
+function importarArquivoNoGerador(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = reader.result;
+    const direcaoDetectada = detectarDirecaoPeloHeader(text);
+    if (direcaoDetectada && direcaoDetectada !== currentDirecao) {
+      setMsg(
+        "genMsg",
+        `Este arquivo parece ser de ${direcaoDetectada === "remessa" ? "Remessa" : "Retorno"}, mas você selecionou ${directionLabel()}. Troque a direção na barra lateral e importe novamente.`,
+        "error"
+      );
+      return;
+    }
+    try {
+      const data = parseArquivo(text, direcaoConfig());
+      lastParsedData = data;
+      const n = preencherGeradorComDados(data);
+      const hValid = data.header && data.header._valido;
+      const msg = hValid
+        ? `Arquivo importado: ${n} título(s) carregado(s) para edição. Ajuste os campos e clique em "Gerar e validar".`
+        : `Arquivo importado com header fora do padrão esperado — confira os campos antes de gerar. ${n} título(s) carregado(s).`;
+      setMsg("genMsg", msg, hValid ? "ok" : "error");
+    } catch (err) {
+      setMsg("genMsg", "Erro ao importar arquivo: " + err.message, "error");
+    }
+  };
+  reader.readAsText(file, "ISO-8859-1"); // CNAB é ASCII/Latin-1
+}
+
+// Converte o valor já interpretado pelo parser (número, "DD/MM/AAAA" etc.)
+// de volta para o formato que cada tipo de input do formulário espera.
+function preencherCampoComDadoLido(el, def, valorLido) {
+  if (!def || valorLido === undefined || valorLido === null || valorLido === "") return;
+  if (el.tagName === "SELECT") {
+    el.value = valorLido;
+    return;
+  }
+  if (def.fmt === "valor") {
+    el.value = Number(valorLido).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  } else if (def.fmt === "data") {
+    el.value = dataBrParaIso(valorLido);
+  } else {
+    el.value = valorLido;
+  }
+}
+
+// "DD/MM/AAAA" -> "AAAA-MM-DD" (formato exigido por <input type="date">)
+function dataBrParaIso(dataBr) {
+  if (!dataBr || !/^\d{2}\/\d{2}\/\d{4}$/.test(dataBr)) return "";
+  const [d, m, y] = dataBr.split("/");
+  return `${y}-${m}-${d}`;
 }
 
 /* ---------------------------------------------------------------------
@@ -331,6 +456,11 @@ function generatorViewHtml() {
     <h2>Gerar ${directionLabel().toLowerCase()} — ${escHtml(currentBank.nome)}</h2>
     <p class="hint">Preencha o cabeçalho e adicione um ou mais títulos. Campos com <span class="req-mark">*</span> são obrigatórios. Use o "?" ao lado de cada campo para ver posição, tamanho e exemplo.</p>
 
+    <div class="drop-zone" id="genDropZone">
+      <i class="fa-solid fa-file-arrow-up"></i> Já tem um arquivo .REM/.RET? Arraste ou clique para importar e editar os campos abaixo
+      <input type="file" id="genFileInput" class="hidden" accept=".ret,.rem,.txt">
+    </div>
+
     <div class="form-grid">${headerFields}</div>
 
     <h3 class="det-title">Títulos</h3>
@@ -342,7 +472,7 @@ function generatorViewHtml() {
       <button type="button" class="btn-arriba btn-dark-arriba" id="btnDownload" disabled><i class="fa-solid fa-download me-2"></i>Baixar arquivo</button>
     </div>
 
-    <div class="validation-msg" id="genMsg">Preencha os campos e gere o arquivo.</div>
+    <div class="validation-msg" id="genMsg">Preencha os campos e gere o arquivo, ou importe um arquivo acima para editar.</div>
     <pre class="gen-preview hidden" id="genPreview"></pre>`;
 }
 
@@ -501,6 +631,17 @@ function wireViewEvents() {
   if (currentMode === "reader") {
     wireReaderEvents();
   } else {
+    const genDropZone = document.getElementById("genDropZone");
+    const genFileInput = document.getElementById("genFileInput");
+    genDropZone.addEventListener("click", () => genFileInput.click());
+    genDropZone.addEventListener("dragover", e => { e.preventDefault(); genDropZone.classList.add("drag"); });
+    genDropZone.addEventListener("dragleave", () => genDropZone.classList.remove("drag"));
+    genDropZone.addEventListener("drop", e => {
+      e.preventDefault(); genDropZone.classList.remove("drag");
+      if (e.dataTransfer.files[0]) importarArquivoNoGerador(e.dataTransfer.files[0]);
+    });
+    genFileInput.addEventListener("change", e => { if (e.target.files[0]) importarArquivoNoGerador(e.target.files[0]); });
+
     document.getElementById("btnAddRow").addEventListener("click", () => {
       addDetRow();
       wireHelpButtons(document.getElementById("detRows"));

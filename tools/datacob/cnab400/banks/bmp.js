@@ -104,7 +104,11 @@ const RETORNO_DETALHE_FIELDS = [
     obrigatorio: true, ajuda: "Valor efetivamente pago pelo sacado, em reais.", exemplo: "194,02" },
   { ini: 267, fim: 279, key: "jurosMora",       nome: "Juros de Mora",              type: "N", fmt: "valor" },
   { ini: 280, fim: 292, key: "outrosCreditos",  nome: "Outros Créditos",            type: "N", fmt: "valor" },
-  { ini: 293, fim: 295, key: "brancos1",        nome: "Brancos",                    type: "A" },
+  { ini: 293, fim: 294, key: "brancos1",        nome: "Brancos",                    type: "A" },
+  // Confirmado em 51 linhas de detalhe reais (CP0508000497 + CP0608002681): a
+  // posição 295 nunca varia, é sempre "0" — não é branco (a planilha original
+  // marcava 293-295 como um único campo em branco de 3 posições).
+  { ini: 295, fim: 295, key: "zeroFixo295",     nome: "Zero fixo",                  type: "N", fixo: "0" },
   { ini: 296, fim: 301, key: "dataCredito",     nome: "Data do Crédito",            type: "N", fmt: "data",
     ajuda: "Data em que o valor pago foi creditado à empresa.", exemplo: "2024-11-07" },
   { ini: 302, fim: 304, key: "origemPagamento", nome: "Origem Pagamento",           type: "A" },

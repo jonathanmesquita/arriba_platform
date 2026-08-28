@@ -61,13 +61,18 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   planilhas reais (`VALIDADOR_CNAB400_BRADESCO*.xlsx`) via round-trip parse→gerarArquivo;
   Itaú só contra o manual (nenhuma linha real de Remessa/Retorno confirmada ainda). BMP
   Money Plus (274, `banks/bmp.js`) validado contra 2 planilhas VALIDADOR próprias +
-  3 arquivos `.RET` reais do cliente (round-trip OK em 57 linhas de detalhe) — **não
-  confirmado contra manual oficial do BMP** (não disponibilizado ainda); onde planilha e
-  arquivo real divergiram (largura do campo valorTotal do trailer), o arquivo real venceu
-  — trailer de Retorno tem só posições 1-39 e 395-400 confirmadas, resto é filler
-  `naoConfirmado`. Tabelas de ocorrência do BMP reaproveitadas do Bradesco (padrão FEBRABAN
-  comum), não confirmadas especificamente contra o BMP. Ferramenta antiga `cnab400-bradesco/`
-  foi aposentada — não recriar.
+  3 arquivos `.RET` reais distintos do cliente (round-trip byte a byte OK em 93 linhas
+  de detalhe: 15 + 42 + 36) — **não confirmado contra manual oficial do BMP** (não
+  disponibilizado ainda); onde planilha e arquivo real divergiram, o arquivo real venceu:
+  além da largura do valorTotal do trailer, o campo 293-295 do detalhe de Retorno (que a
+  planilha marcava inteiro como "brancos") na verdade é brancos (293-294) + 1 dígito fixo
+  "0" (295) antes da Data do Crédito. Um arquivo de teste recebido depois (`..._Nuevo.RET`)
+  veio truncado (linha de detalhe com 392 de 400 posições, trailer com contagem de títulos
+  inconsistente com o conteúdo) — descartado da validação, não é dado confiável. Trailer
+  de Retorno tem só posições 1-39 e 395-400 confirmadas, resto é filler `naoConfirmado`.
+  Tabelas de ocorrência do BMP reaproveitadas do Bradesco (padrão FEBRABAN comum), não
+  confirmadas especificamente contra o BMP. Ferramenta antiga `cnab400-bradesco/` foi
+  aposentada — não recriar.
   Ícone pequeno do banco na UI (`ui.js`, `BANK_ICONS`) usa SVGs em
   `tools/datacob/cnab400/assets/icons/` (curados a partir de `assets/img/bancos/`, ver
   abaixo) — ao adicionar um banco novo, copiar o SVG correspondente para essa pasta e
@@ -158,6 +163,14 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   (menu, busca, título, hero). Ícone pequeno do banco adicionado ao lado do nome na UI
   (Bradesco/Itaú/BMP), sem alterar o layout existente — biblioteca de logos completa
   (87 bancos) salva em `assets/img/bancos/` para uso futuro.
+- [x] **Parte 8 — Editar/importar arquivo no modo Gerar + 3º arquivo real do BMP
+  (ago/2026).** Botão "Editar e gerar novo arquivo" no modo Validar e zona de
+  importação própria dentro do modo Gerar (ambos levam cabeçalho + títulos de um
+  .REM/.RET lido direto para o formulário de gerar, ver gotcha do CNAB 400 acima).
+  BMP Money Plus revalidado com mais um arquivo `.RET` real (36 títulos) — achou e
+  corrigiu um campo do detalhe de Retorno que a planilha marcava errado como
+  "brancos" (293-295; na real são 2 brancos + 1 dígito fixo "0"); um outro arquivo
+  de teste recebido no processo veio truncado e foi descartado (ver gotcha).
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

@@ -291,12 +291,24 @@ function clearReader() {
 // corrigir/ajustar valores do arquivo enviado e baixar uma nova versão.
 function editAndRegenerate() {
   if (!lastParsedData) return;
-  const data = lastParsedData;
 
   currentMode = "generator";
   syncControls();
   renderArea(); // desenha o formulário de gerar (já cria a 1ª linha vazia)
 
+  const n = preencherGeradorComDados(lastParsedData);
+  setMsg(
+    "genMsg",
+    `Arquivo carregado para edição: ${n} título(s). Ajuste os campos e clique em "Gerar e validar".`,
+    ""
+  );
+}
+
+// Preenche o formulário de Gerar (já renderizado na tela) com o cabeçalho e
+// os títulos de um arquivo lido — usado tanto ao vir do modo Validar quanto
+// ao importar um arquivo direto na tela de Gerar. Devolve a quantidade de
+// títulos preenchidos.
+function preencherGeradorComDados(data) {
   const headerContainer = document.querySelector(".form-grid");
   if (headerContainer && data.header) {
     headerContainer.querySelectorAll("[data-k]").forEach(el => {
@@ -315,12 +327,38 @@ function editAndRegenerate() {
     });
   });
   wireHelpButtons(detRows);
+  return titulos.length;
+}
 
-  setMsg(
-    "genMsg",
-    `Arquivo carregado para edição: ${titulos.length} título(s). Ajuste os campos e clique em "Gerar e validar".`,
-    ""
-  );
+// Importa um arquivo diretamente na tela de Gerar (sem precisar passar pelo
+// modo Validar antes) e já preenche o formulário com o conteúdo lido.
+function importarArquivoNoGerador(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = reader.result;
+    const direcaoDetectada = detectarDirecaoPeloHeader(text);
+    if (direcaoDetectada && direcaoDetectada !== currentDirecao) {
+      setMsg(
+        "genMsg",
+        `Este arquivo parece ser de ${direcaoDetectada === "remessa" ? "Remessa" : "Retorno"}, mas você selecionou ${directionLabel()}. Troque a direção na barra lateral e importe novamente.`,
+        "error"
+      );
+      return;
+    }
+    try {
+      const data = parseArquivo(text, direcaoConfig());
+      lastParsedData = data;
+      const n = preencherGeradorComDados(data);
+      const hValid = data.header && data.header._valido;
+      const msg = hValid
+        ? `Arquivo importado: ${n} título(s) carregado(s) para edição. Ajuste os campos e clique em "Gerar e validar".`
+        : `Arquivo importado com header fora do padrão esperado — confira os campos antes de gerar. ${n} título(s) carregado(s).`;
+      setMsg("genMsg", msg, hValid ? "ok" : "error");
+    } catch (err) {
+      setMsg("genMsg", "Erro ao importar arquivo: " + err.message, "error");
+    }
+  };
+  reader.readAsText(file, "ISO-8859-1"); // CNAB é ASCII/Latin-1
 }
 
 // Converte o valor já interpretado pelo parser (número, "DD/MM/AAAA" etc.)
@@ -418,6 +456,11 @@ function generatorViewHtml() {
     <h2>Gerar ${directionLabel().toLowerCase()} — ${escHtml(currentBank.nome)}</h2>
     <p class="hint">Preencha o cabeçalho e adicione um ou mais títulos. Campos com <span class="req-mark">*</span> são obrigatórios. Use o "?" ao lado de cada campo para ver posição, tamanho e exemplo.</p>
 
+    <div class="drop-zone" id="genDropZone">
+      <i class="fa-solid fa-file-arrow-up"></i> Já tem um arquivo .REM/.RET? Arraste ou clique para importar e editar os campos abaixo
+      <input type="file" id="genFileInput" class="hidden" accept=".ret,.rem,.txt">
+    </div>
+
     <div class="form-grid">${headerFields}</div>
 
     <h3 class="det-title">Títulos</h3>
@@ -429,7 +472,7 @@ function generatorViewHtml() {
       <button type="button" class="btn-arriba btn-dark-arriba" id="btnDownload" disabled><i class="fa-solid fa-download me-2"></i>Baixar arquivo</button>
     </div>
 
-    <div class="validation-msg" id="genMsg">Preencha os campos e gere o arquivo.</div>
+    <div class="validation-msg" id="genMsg">Preencha os campos e gere o arquivo, ou importe um arquivo acima para editar.</div>
     <pre class="gen-preview hidden" id="genPreview"></pre>`;
 }
 
@@ -588,6 +631,17 @@ function wireViewEvents() {
   if (currentMode === "reader") {
     wireReaderEvents();
   } else {
+    const genDropZone = document.getElementById("genDropZone");
+    const genFileInput = document.getElementById("genFileInput");
+    genDropZone.addEventListener("click", () => genFileInput.click());
+    genDropZone.addEventListener("dragover", e => { e.preventDefault(); genDropZone.classList.add("drag"); });
+    genDropZone.addEventListener("dragleave", () => genDropZone.classList.remove("drag"));
+    genDropZone.addEventListener("drop", e => {
+      e.preventDefault(); genDropZone.classList.remove("drag");
+      if (e.dataTransfer.files[0]) importarArquivoNoGerador(e.dataTransfer.files[0]);
+    });
+    genFileInput.addEventListener("change", e => { if (e.target.files[0]) importarArquivoNoGerador(e.target.files[0]); });
+
     document.getElementById("btnAddRow").addEventListener("click", () => {
       addDetRow();
       wireHelpButtons(document.getElementById("detRows"));

@@ -595,6 +595,6 @@ Portais uteis:
 
     function getMascotSrc(mood) {
         const filename = MASCOT_FRAMES[mood] || MASCOT_FRAMES.idle;
-        return new URL(`../img/frames_sapolingo/${filename}`, import.meta.url).href;
+        return new URL(`../img/frames_arriba/${filename}`, import.meta.url).href;
     }
 }

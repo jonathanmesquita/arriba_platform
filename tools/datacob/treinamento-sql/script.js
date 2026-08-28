@@ -1,5 +1,5 @@
 /* =====================================================================
-   Track 7 - T-SQL com DataCob (Arriba Platform)
+   Track 7 - Treinamento SQL (Arriba Platform)
 
    Player de licoes generico (nao acopla nada especifico do Track 7 alem
    dos dados importados) + sandbox SQL via AlaSQL rodando 100% no
@@ -17,6 +17,12 @@ import {
 
 const TRACK_ID = "track-7-sql";
 let licaoAtualId = TRACK_7_LICOES[0].id;
+
+const SANDBOX_TABLES = [
+  { nome: "boletos", total: BOLETOS_DEMO.length },
+  { nome: "remessas", total: REMESSAS_DEMO.length },
+  { nome: "retornos", total: RETORNOS_DEMO.length }
+];
 
 function seedSandbox() {
   try {
@@ -37,15 +43,15 @@ function executarSql(sql) {
   }
 }
 
-function formatarResultado(linhas) {
-  if (!linhas.length) return "(0 linhas)";
+function renderResultTable(linhas) {
+  if (!linhas.length) return `<p class="sql-empty">(0 linhas)</p>`;
   const colunas = Object.keys(linhas[0]);
-  const larguras = colunas.map((c) => Math.max(c.length, ...linhas.map((l) => String(l[c] ?? "").length)));
-  const linhaTexto = (valores) => valores.map((v, i) => String(v ?? "").padEnd(larguras[i])).join(" | ");
-  const cabecalho = linhaTexto(colunas);
-  const separador = larguras.map((w) => "-".repeat(w)).join("-+-");
-  const corpo = linhas.map((l) => linhaTexto(colunas.map((c) => l[c]))).join("\n");
-  return `${cabecalho}\n${separador}\n${corpo}\n\n(${linhas.length} linha${linhas.length === 1 ? "" : "s"})`;
+  const cabecalho = `<tr>${colunas.map((c) => `<th>${escapeHtml(c)}</th>`).join("")}</tr>`;
+  const corpo = linhas.map((linha) => `<tr>${colunas.map((c) => `<td>${escapeHtml(linha[c])}</td>`).join("")}</tr>`).join("");
+  return `
+    <div class="sql-result-meta">Número de registros: <strong>${linhas.length}</strong></div>
+    <div class="table-wrap"><table class="preview-table"><thead>${cabecalho}</thead><tbody>${corpo}</tbody></table></div>
+  `;
 }
 
 function escapeHtml(value = "") {
@@ -137,12 +143,23 @@ function renderLicao(licao) {
     <section class="panel card-section">
       <h3 style="font-size:1.15rem;font-weight:800;margin:0 0 6px">🧪 Try it yourself</h3>
       <p style="color:var(--muted);margin:0 0 12px">${escapeHtml(licao.tryIt.descricao)}</p>
-      <textarea class="sql-editor" id="sqlEditor">${escapeHtml(licao.tryIt.query)}</textarea>
-      <div class="actions">
-        <button type="button" class="btn-arriba btn-red-arriba" id="btnExecutar"><i class="fa-solid fa-play me-2"></i>Executar</button>
-        <button type="button" class="btn-arriba btn-light-arriba" id="btnResetQuery">Restaurar exemplo</button>
+      <div class="tryit-grid">
+        <div class="tryit-main">
+          <textarea class="sql-editor" id="sqlEditor">${escapeHtml(licao.tryIt.query)}</textarea>
+          <div class="actions">
+            <button type="button" class="btn-arriba btn-red-arriba" id="btnExecutar"><i class="fa-solid fa-play me-2"></i>Executar</button>
+            <button type="button" class="btn-arriba btn-light-arriba" id="btnResetQuery">Restaurar exemplo</button>
+          </div>
+          <div class="sql-result" id="sqlResultado">Clique em Executar para ver o resultado.</div>
+        </div>
+        <aside class="tryit-db">
+          <p class="tryit-db-title">Seu banco (sandbox)</p>
+          <div class="tryit-db-row"><strong>Tabela</strong><strong>Registros</strong></div>
+          ${SANDBOX_TABLES.map((t) => `
+            <div class="tryit-db-row"><a href="#" data-preview-table="${t.nome}">${t.nome}</a><span>${t.total}</span></div>
+          `).join("")}
+        </aside>
       </div>
-      <pre class="sql-result" id="sqlResultado">Clique em Executar para ver o resultado.</pre>
       ${licao.tryIt.notaSimulador ? `<div class="sim-nota">ℹ️ ${escapeHtml(licao.tryIt.notaSimulador)}</div>` : ""}
     </section>
 
@@ -214,21 +231,30 @@ function wireLicaoEvents(licao, anterior, proxima) {
   const editor = document.getElementById("sqlEditor");
   const resultado = document.getElementById("sqlResultado");
 
-  document.getElementById("btnExecutar")?.addEventListener("click", () => {
-    const { linhas, erro } = executarSql(editor.value);
-    resultado.textContent = erro ? `Erro: ${erro}` : formatarResultado(linhas);
-  });
+  function rodarQuery(sql) {
+    const { linhas, erro } = executarSql(sql);
+    resultado.innerHTML = erro ? `<p class="sql-error">Erro: ${escapeHtml(erro)}</p>` : renderResultTable(linhas);
+  }
+
+  document.getElementById("btnExecutar")?.addEventListener("click", () => rodarQuery(editor.value));
 
   document.getElementById("btnResetQuery")?.addEventListener("click", () => {
     editor.value = licao.tryIt.query;
     resultado.textContent = "Clique em Executar para ver o resultado.";
   });
 
+  document.querySelectorAll("[data-preview-table]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      editor.value = `SELECT * FROM ${link.dataset.previewTable};`;
+      rodarQuery(editor.value);
+    });
+  });
+
   document.querySelectorAll(".btn-testar-solucao").forEach((btn) => {
     btn.addEventListener("click", () => {
       editor.value = btn.dataset.solucao;
-      const { linhas, erro } = executarSql(editor.value);
-      resultado.textContent = erro ? `Erro: ${erro}` : formatarResultado(linhas);
+      rodarQuery(editor.value);
       editor.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   });

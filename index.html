@@ -189,8 +189,8 @@
             text-align: center;
             text-decoration: none;
             font-weight: 800;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, .11);
-            transition: transform .18s ease, border-color .18s ease;
+            box-shadow: none;
+            transition: border-color .18s ease, background-color .18s ease;
         }
 
         .category-tile:hover {
@@ -636,8 +636,8 @@
             color: var(--ink);
             padding: 24px;
             text-decoration: none;
-            box-shadow: 0 16px 36px rgba(0, 0, 0, .08);
-            transition: transform .18s ease, border-color .18s ease;
+            box-shadow: none;
+            transition: border-color .18s ease, background-color .18s ease;
         }
 
         .portfolio-card:hover {
@@ -649,7 +649,7 @@
         .portfolio-card i {
             width: 44px;
             height: 44px;
-            border-radius: 6px;
+            border-radius: 4px;
             background: #f0ebe5;
             color: var(--red);
             display: grid;
@@ -726,10 +726,15 @@
         }
 
         .architecture-board {
+            position: relative;
             border-radius: 8px;
-            background: #102b38;
+            background: #16332b;
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(255, 255, 255, .07) 0, transparent 46%),
+                radial-gradient(circle at 88% 82%, rgba(255, 255, 255, .06) 0, transparent 50%);
             color: #fff;
             padding: 30px;
+            overflow: hidden;
         }
 
         .architecture-row {
@@ -978,7 +983,7 @@
                     <a class="category-tile" href="tools/datacob/support-copilot/docs/datacob-manuais/">Base de Conhecimento</a>
                     <a class="category-tile" href="tools/datacob/support-copilot/support-copilot.html">AI Support Copilot</a>
                     <a class="category-tile" href="tools/datacob/treinamento-cliente/index.html">Treinamento DataCob</a>
-                    <a class="category-tile" href="tools/datacob/query-builder/query-builder.html">SQL Query Builder</a>
+                    <a class="category-tile" href="tools/datacob/query-builder/query-builder.html">SQL Query T-SQL - Relatórios</a>
                 </div>
             </div>
         </section>
@@ -1022,7 +1027,7 @@
 
                         <div class="assistant-card">
                             <div class="assistant-question">
-                                <img src="assets/img/frames_sapolingo/sapolingo_hack.png" alt="Mascote Sapolingo usando computador">
+                                <img src="assets/img/frames_arriba/sapolingo_hack.png" alt="Mascote Sapolingo usando computador">
                                 <span>Quais tickets precisam de acao tecnica hoje?</span>
                             </div>
                             <div class="assistant-search">

@@ -67,8 +67,8 @@ const menuData = {
                             ["CNAB 400 (multi-banco)", "tools/datacob/cnab400/cnab400.html"],
                             ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
                             ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
-                            ["Track 7 · T-SQL com DataCob", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-                            ["SQL Query Builder", "tools/datacob/query-builder/query-builder.html"],
+                            ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
+                            ["SQL Query T-SQL - Relatórios", "tools/datacob/query-builder/query-builder.html"],
                             ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
                             ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
                         ]
@@ -216,11 +216,12 @@ export const searchItems = [
     ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
     ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true],
     ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
+    ["Validador de JSON", "json validador validar formatar indentar sintaxe erro parse", "tools/dados/json-validator/json_validator.html"],
     ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
     ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
     ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
-    ["Track 7 · T-SQL com DataCob", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-    ["SQL Query Builder", "sql query builder datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
+    ["Track 7 · Treinamento SQL", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],
+    ["SQL Query T-SQL - Relatórios", "sql query builder relatorios datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
 ];
 
 function normalizeSearch(value = "") {

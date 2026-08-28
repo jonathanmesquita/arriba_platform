@@ -105,11 +105,11 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 - [x] **Parte 5 — Ferramentas e trilha nova (jul/2026).** Itaú (341) adicionado ao CNAB 400
   multi-banco (`banks/itau.js`); Decodificador Universal (`tools/dados/decodificador/`);
   Respostas Predefinidas — aba no Support Copilot + página standalone, fonte única em
-  `assets/data/respostas-predefinidas.js`; Track 7 "T-SQL com DataCob" (15 lições,
-  sandbox AlaSQL, gamificação) em `tools/datacob/treinamento-sql/`; SQL Query Builder
-  (`tools/datacob/query-builder/`, recebido com Tailwind/jsx/docs redundantes — refeito no
-  padrão do site); `search.js` da home deixou de duplicar dados de ferramentas (importa
-  `searchItems` de `navigation-v2.js`).
+  `assets/data/respostas-predefinidas.js`; Track 7 "Treinamento SQL" (15 lições,
+  sandbox AlaSQL, gamificação) em `tools/datacob/treinamento-sql/`; SQL Query T-SQL -
+  Relatórios (`tools/datacob/query-builder/`, recebido com Tailwind/jsx/docs redundantes —
+  refeito no padrão do site); `search.js` da home deixou de duplicar dados de ferramentas
+  (importa `searchItems` de `navigation-v2.js`).
   - [ ] **Pendente:** `arriba-api` (`/chat` e `/support/copilot/analyze`) está sempre em
     `source: "local-fallback"` — integração OpenAI parece fora do ar no Render (fora deste
     repo, precisa checar env vars/logs do serviço). O fallback local de conhecimento também

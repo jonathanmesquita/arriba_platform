@@ -6,12 +6,12 @@ export function initThemeToggle() {
     function applyTheme(theme) {
         if (theme === 'dark') {
             document.body.classList.add('dark-mode');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
+            themeIcon?.classList.remove('fa-moon');
+            themeIcon?.classList.add('fa-sun');
         } else {
             document.body.classList.remove('dark-mode');
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
+            themeIcon?.classList.remove('fa-sun');
+            themeIcon?.classList.add('fa-moon');
         }
     }
 

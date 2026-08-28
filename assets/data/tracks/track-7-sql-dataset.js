@@ -1,4 +1,4 @@
-// Dataset ficticio para o sandbox SQL do Track 7 (T-SQL com DataCob).
+// Dataset ficticio para o sandbox SQL do Track 7 (Treinamento SQL).
 // Dados 100% inventados - nenhuma relacao com clientes reais da PH3A.
 // Usado só para o simulador rodar queries no navegador (AlaSQL), sem
 // nenhuma conexao com o SQL Server real do DataCob.

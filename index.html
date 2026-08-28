@@ -23,22 +23,9 @@
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/oracle-inspired.css" />
     <style>
-        :root {
-            --enterprise-ink: #11110f;
-            --enterprise-muted: #5f5a55;
-            --enterprise-line: #d8d2ca;
-            --enterprise-panel: #ffffff;
-            --enterprise-bg: #f6f3ef;
-            --enterprise-dark: #16191d;
-            --enterprise-red: #c74634;
-            --enterprise-teal: #73c9c7;
-            --enterprise-forest: #16332b;
-            --enterprise-gold: #e7b85b;
-        }
-
         body.rw-body {
-            background: var(--enterprise-bg);
-            color: var(--enterprise-ink);
+            background: var(--bg);
+            color: var(--ink);
         }
 
         .portfolio-shell {
@@ -50,7 +37,7 @@
             top: 0;
             z-index: 1060;
             background: #fff;
-            border-bottom: 1px solid var(--enterprise-line);
+            border-bottom: 1px solid var(--line);
         }
 
         .enterprise-topbar-inner {
@@ -63,7 +50,7 @@
         }
 
         .enterprise-brand {
-            color: var(--enterprise-red);
+            color: var(--red);
             font-size: 1.55rem;
             font-weight: 900;
             letter-spacing: -0.06em;
@@ -72,7 +59,7 @@
         }
 
         .enterprise-brand small {
-            color: var(--enterprise-ink);
+            color: var(--ink);
             display: block;
             font-size: .68rem;
             font-weight: 800;
@@ -88,7 +75,7 @@
             border: 1px solid #cfc8c1;
             border-radius: 6px;
             background: #fff;
-            color: var(--enterprise-muted);
+            color: var(--muted);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -98,7 +85,7 @@
 
         .enterprise-search:hover,
         .enterprise-search:focus {
-            border-color: var(--enterprise-red);
+            border-color: var(--red);
             box-shadow: 0 0 0 3px rgba(199, 70, 52, .12);
         }
 
@@ -115,7 +102,7 @@
             border: 0;
             border-radius: 4px;
             background: transparent;
-            color: var(--enterprise-ink);
+            color: var(--ink);
             display: grid;
             place-items: center;
         }
@@ -126,7 +113,7 @@
         }
 
         .enterprise-nav {
-            background: var(--enterprise-dark);
+            background: var(--dark);
             color: #fff;
         }
 
@@ -156,12 +143,12 @@
         .enterprise-nav a:hover,
         .enterprise-nav a.active,
         .enterprise-nav button:hover {
-            border-bottom-color: var(--enterprise-teal);
+            border-bottom-color: var(--rw-accent-teal);
         }
 
         .category-band {
             background: #fff;
-            border-bottom: 1px solid var(--enterprise-line);
+            border-bottom: 1px solid var(--line);
             padding: 26px 0 24px;
         }
 
@@ -173,7 +160,7 @@
 
         .category-group-title {
             grid-row: 1;
-            color: var(--enterprise-muted);
+            color: var(--muted);
             font-size: 1.25rem;
             font-weight: 400;
             margin: 0 0 4px;
@@ -192,10 +179,10 @@
 
         .category-tile {
             min-height: 118px;
-            border: 1px solid var(--enterprise-line);
-            border-radius: 4px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
             background: #fff;
-            color: var(--enterprise-ink);
+            color: var(--ink);
             display: grid;
             place-items: center;
             padding: 16px;
@@ -207,13 +194,13 @@
         }
 
         .category-tile:hover {
-            color: var(--enterprise-ink);
-            border-color: var(--enterprise-red);
-            background: #fafafa;
+            color: var(--ink);
+            border-color: var(--red);
+            transform: translateY(-3px);
         }
 
         .portfolio-hero {
-            --hero-accent: var(--enterprise-teal);
+            --hero-accent: var(--rw-accent-teal);
             --hero-deep: #102b38;
             --hero-bg-image: url("assets/img/capas-wallpaper-menus/sc24-ai-database.webp");
             position: relative;
@@ -265,7 +252,7 @@
         }
 
         .hero-eyebrow {
-            color: var(--enterprise-teal);
+            color: var(--rw-accent-teal);
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -280,7 +267,7 @@
             content: "";
             width: 34px;
             height: 2px;
-            background: var(--enterprise-gold);
+            background: var(--gold);
         }
 
         .portfolio-hero h1 {
@@ -444,7 +431,7 @@
             border: 0;
             border-right: 1px solid rgba(0, 0, 0, .08);
             background: #fff;
-            color: var(--enterprise-muted);
+            color: var(--muted);
             display: flex;
             align-items: center;
             padding: 0 18px;
@@ -452,7 +439,7 @@
 
         .assistant-search button:last-child {
             justify-content: center;
-            background: var(--enterprise-red);
+            background: var(--red);
             color: #fff;
             font-size: 1.5rem;
         }
@@ -611,7 +598,7 @@
         }
 
         .section-heading span {
-            color: var(--enterprise-red);
+            color: var(--red);
             display: inline-block;
             font-size: .76rem;
             font-weight: 900;
@@ -630,7 +617,7 @@
         }
 
         .section-heading p {
-            color: var(--enterprise-muted);
+            color: var(--muted);
             font-size: 1.02rem;
             line-height: 1.75;
         }
@@ -643,10 +630,10 @@
 
         .portfolio-card {
             min-height: 250px;
-            border: 1px solid var(--enterprise-line);
-            border-radius: 4px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
             background: #fff;
-            color: var(--enterprise-ink);
+            color: var(--ink);
             padding: 24px;
             text-decoration: none;
             box-shadow: none;
@@ -654,9 +641,9 @@
         }
 
         .portfolio-card:hover {
-            color: var(--enterprise-ink);
-            border-color: var(--enterprise-red);
-            background: #fafafa;
+            color: var(--ink);
+            border-color: var(--red);
+            transform: translateY(-4px);
         }
 
         .portfolio-card i {
@@ -664,14 +651,14 @@
             height: 44px;
             border-radius: 4px;
             background: #f0ebe5;
-            color: var(--enterprise-red);
+            color: var(--red);
             display: grid;
             place-items: center;
             margin-bottom: 20px;
         }
 
         .portfolio-card span {
-            color: var(--enterprise-red);
+            color: var(--red);
             font-size: .72rem;
             font-weight: 900;
             letter-spacing: .12em;
@@ -687,7 +674,7 @@
         }
 
         .portfolio-card p {
-            color: var(--enterprise-muted);
+            color: var(--muted);
             line-height: 1.65;
             margin: 0;
         }
@@ -707,7 +694,7 @@
             background: #fff;
             border-radius: 8px;
             padding: 34px;
-            border: 1px solid var(--enterprise-line);
+            border: 1px solid var(--line);
         }
 
         .case-copy h2 {
@@ -718,7 +705,7 @@
         }
 
         .case-copy p {
-            color: var(--enterprise-muted);
+            color: var(--muted);
             line-height: 1.75;
         }
 
@@ -729,7 +716,7 @@
         }
 
         .metric-list div {
-            border-left: 4px solid var(--enterprise-red);
+            border-left: 4px solid var(--red);
             padding-left: 14px;
         }
 
@@ -741,7 +728,7 @@
         .architecture-board {
             position: relative;
             border-radius: 8px;
-            background: var(--enterprise-forest);
+            background: #16332b;
             background-image:
                 radial-gradient(circle at 12% 18%, rgba(255, 255, 255, .07) 0, transparent 46%),
                 radial-gradient(circle at 88% 82%, rgba(255, 255, 255, .06) 0, transparent 50%);
@@ -794,7 +781,7 @@
 
         .enterprise-footer {
             background: #fff;
-            border-top: 1px solid var(--enterprise-line);
+            border-top: 1px solid var(--line);
             padding: 24px 0;
         }
 
@@ -804,7 +791,7 @@
             gap: 16px 26px;
             align-items: center;
             justify-content: space-between;
-            color: var(--enterprise-muted);
+            color: var(--muted);
             font-size: .92rem;
             font-weight: 700;
         }

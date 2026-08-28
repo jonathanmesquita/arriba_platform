@@ -117,11 +117,11 @@ function directionLabel() {
 function readerViewHtml() {
   return `
     <h2>Validar ${directionLabel().toLowerCase()} — ${escHtml(currentBank.nome)}</h2>
-    <p class="hint">Cole o conteúdo do arquivo ou envie um .RET/.TXT. Nada é enviado a servidor.</p>
+    <p class="hint">Cole o conteúdo do arquivo ou envie um .RET/.REM/.TXT. Nada é enviado a servidor.</p>
 
     <div class="drop-zone" id="dropZone">
       <i class="fa-solid fa-file-arrow-up"></i> Arraste um arquivo ou clique para selecionar
-      <input type="file" id="fileInput" class="hidden" accept=".ret,.txt">
+      <input type="file" id="fileInput" class="hidden" accept=".ret,.rem,.txt">
     </div>
 
     <textarea id="rawInput" class="form-control cnab-textarea" placeholder="Cole aqui o conteúdo do arquivo..." spellcheck="false"></textarea>
@@ -423,7 +423,8 @@ function downloadFile() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `CB-${currentBank.code}-${currentDirecao}-teste.txt`;
+  const ext = currentDirecao === "remessa" ? "REM" : "RET";
+  a.download = `CB-${currentBank.code}-teste.${ext}`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }

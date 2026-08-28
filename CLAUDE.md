@@ -71,7 +71,11 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   Ícone pequeno do banco na UI (`ui.js`, `BANK_ICONS`) usa SVGs em
   `tools/datacob/cnab400/assets/icons/` (curados a partir de `assets/img/bancos/`, ver
   abaixo) — ao adicionar um banco novo, copiar o SVG correspondente para essa pasta e
-  registrar em `BANK_ICONS`.
+  registrar em `BANK_ICONS`. Modo "Validar" tem botão "Editar e gerar novo arquivo"
+  (`ui.js`, `editAndRegenerate`) — depois de ler um arquivo com sucesso, leva header +
+  títulos extraídos para o modo "Gerar" já preenchidos (só os campos que aparecem no
+  formulário, i.e. `formFields`), para o usuário ajustar valores e baixar uma nova
+  versão sem redigitar tudo do zero.
 - **Base64** (`tools/dados/base64-pdf/` e `decodificador/`): decode 100% no browser.
   `base64-pdf` extrai Base64 embutido em JSON automaticamente (detecta por magic bytes
   `%PDF`). `decodificador/` é o conversor universal (Base64, URL, HTML entities, hex,

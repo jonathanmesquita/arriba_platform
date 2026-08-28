@@ -19,6 +19,7 @@ let currentBank = null; // { code, nome, config }
 let currentDirecao = "retorno"; // "remessa" | "retorno"
 let currentMode = "reader"; // "reader" | "generator"
 let lastGeneratedLines = null;
+let lastParsedData = null; // { header, titulos } do último arquivo lido com sucesso
 
 function direcaoConfig() {
   return currentBank ? currentBank.config[currentDirecao] : null;
@@ -36,12 +37,14 @@ export function initUI() {
   bankSelect.addEventListener("change", () => {
     currentBank = BANKS.find(b => b.code === bankSelect.value) || null;
     currentMode = "reader";
+    lastParsedData = null;
     syncControls();
     renderArea();
   });
 
   document.getElementById("direcaoSelect").addEventListener("change", e => {
     currentDirecao = e.target.value;
+    lastParsedData = null;
     syncControls();
     renderArea();
   });
@@ -153,6 +156,11 @@ function readerViewHtml() {
         <div class="summary-item"><span>Títulos</span><strong id="chipTitulos">-</strong></div>
         <div class="summary-item"><span>Header</span><strong id="chipHeader">-</strong></div>
       </div>
+      <div class="actions">
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnEditGenerate">
+          <i class="fa-solid fa-pen-to-square me-2"></i>Editar e gerar novo arquivo
+        </button>
+      </div>
       <div class="table-wrap">
         <table class="cnab-table">
           <thead>
@@ -178,6 +186,7 @@ function wireReaderEvents() {
 
   document.getElementById("btnParse").addEventListener("click", runParse);
   document.getElementById("btnClearReader").addEventListener("click", clearReader);
+  document.getElementById("btnEditGenerate").addEventListener("click", editAndRegenerate);
 }
 
 function readFile(file) {
@@ -215,6 +224,7 @@ function runParse() {
 
   try {
     const data = parseArquivo(text, direcaoConfig());
+    lastParsedData = data;
 
     document.getElementById("chipLines").textContent = data.totalLinhas;
     document.getElementById("chipTitulos").textContent = data.titulos.length;
@@ -237,6 +247,7 @@ function runParse() {
     }
     setMsg("readerMsg", msg, kind);
   } catch (err) {
+    lastParsedData = null;
     setMsg("readerMsg", "Erro ao processar: " + err.message, "error");
   }
 }
@@ -272,6 +283,68 @@ function clearReader() {
   document.getElementById("rawInput").value = "";
   document.getElementById("readerResult").classList.add("hidden");
   setMsg("readerMsg", `Aguardando arquivo de ${directionLabel().toLowerCase()}.`, "");
+  lastParsedData = null;
+}
+
+// Leva os dados do último arquivo lido (Validar) para o modo Gerar, com
+// cabeçalho e um título por linha de detalhe já preenchidos — permite
+// corrigir/ajustar valores do arquivo enviado e baixar uma nova versão.
+function editAndRegenerate() {
+  if (!lastParsedData) return;
+  const data = lastParsedData;
+
+  currentMode = "generator";
+  syncControls();
+  renderArea(); // desenha o formulário de gerar (já cria a 1ª linha vazia)
+
+  const headerContainer = document.querySelector(".form-grid");
+  if (headerContainer && data.header) {
+    headerContainer.querySelectorAll("[data-k]").forEach(el => {
+      preencherCampoComDadoLido(el, fieldDef(el.dataset.k, "header"), data.header[el.dataset.k]);
+    });
+  }
+
+  const detRows = document.getElementById("detRows");
+  detRows.innerHTML = "";
+  const titulos = data.titulos && data.titulos.length ? data.titulos : [{}];
+  titulos.forEach(titulo => {
+    addDetRow();
+    const row = detRows.lastElementChild;
+    row.querySelectorAll("[data-k]").forEach(el => {
+      preencherCampoComDadoLido(el, fieldDef(el.dataset.k, "detalhe"), titulo[el.dataset.k]);
+    });
+  });
+  wireHelpButtons(detRows);
+
+  setMsg(
+    "genMsg",
+    `Arquivo carregado para edição: ${titulos.length} título(s). Ajuste os campos e clique em "Gerar e validar".`,
+    ""
+  );
+}
+
+// Converte o valor já interpretado pelo parser (número, "DD/MM/AAAA" etc.)
+// de volta para o formato que cada tipo de input do formulário espera.
+function preencherCampoComDadoLido(el, def, valorLido) {
+  if (!def || valorLido === undefined || valorLido === null || valorLido === "") return;
+  if (el.tagName === "SELECT") {
+    el.value = valorLido;
+    return;
+  }
+  if (def.fmt === "valor") {
+    el.value = Number(valorLido).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  } else if (def.fmt === "data") {
+    el.value = dataBrParaIso(valorLido);
+  } else {
+    el.value = valorLido;
+  }
+}
+
+// "DD/MM/AAAA" -> "AAAA-MM-DD" (formato exigido por <input type="date">)
+function dataBrParaIso(dataBr) {
+  if (!dataBr || !/^\d{2}\/\d{2}\/\d{4}$/.test(dataBr)) return "";
+  const [d, m, y] = dataBr.split("/");
+  return `${y}-${m}-${d}`;
 }
 
 /* ---------------------------------------------------------------------

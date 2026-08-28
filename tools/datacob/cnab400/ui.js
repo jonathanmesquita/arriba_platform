@@ -80,10 +80,24 @@ function syncControls() {
 
   const sideNote = document.getElementById("sideNote");
   sideNote.innerHTML = enabled
-    ? `<strong>${escHtml(currentBank.nome)} (${escHtml(currentBank.code)})</strong> · ${currentDirecao === "remessa" ? "Remessa" : "Retorno"}<br>Formulário e ações liberados abaixo.`
+    ? `<strong>${bankIconHtml(currentBank.code)}${escHtml(currentBank.nome)} (${escHtml(currentBank.code)})</strong> · ${currentDirecao === "remessa" ? "Remessa" : "Retorno"}<br>Formulário e ações liberados abaixo.`
     : (BANKS.length
       ? "Selecione um banco para liberar o formulário e as ações."
       : "<strong>Nenhum banco disponível ainda.</strong><br>Cadastre um banco em <code>banks/</code> e registre em <code>registry.js</code>.");
+}
+
+// Ícone pequeno de identificação do banco (só visual, não muda o
+// formulário/select). Sem ícone cadastrado ainda = sem imagem, sem quebrar
+// nada — cadastrar aqui conforme novos bancos entrarem em banks/registry.js.
+const BANK_ICONS = {
+  "237": "assets/icons/bradesco.svg",
+  "341": "assets/icons/itau.svg",
+  "274": "assets/icons/bmp.svg"
+};
+
+function bankIconHtml(code) {
+  const src = BANK_ICONS[code];
+  return src ? `<img src="${src}" alt="" class="bank-icon-badge">` : "";
 }
 
 /* ---------------------------------------------------------------------

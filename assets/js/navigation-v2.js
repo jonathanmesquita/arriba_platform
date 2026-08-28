@@ -45,24 +45,39 @@ const menuData = {
                     ["Descriptografador (MD5 + 3DES)", "https://decrypt.jm.dev.br/"],
                 ]
             },
-            datacobtools: {
-                label: "DataCob",
+            crms: {
+                label: "CRMs",
                 badge: "Operacao",
-                title: "Ferramentas DataCob",
-                description: "Geracao de CSV, massa ficticia, suporte e apoio operacional.",
-                links: [
-                    ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
-                    ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
-                    ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
-                    ["Treinamento DataCob Cliente", "tools/datacob/treinamento-cliente/index.html"],                
-                    ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
-                     ["CNAB 400 (multi-banco)", "tools/datacob/cnab400/cnab400.html"],
-                     ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
-                     ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
-                     ["Track 7 · T-SQL com DataCob", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-                     ["SQL Query Builder", "tools/datacob/query-builder/query-builder.html"],
-                     ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
-                    ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
+                title: "Ferramentas por CRM",
+                description: "Geracao de CSV, massa ficticia, suporte e apoio operacional, organizado por CRM.",
+                // Estrutura "por CRM": cada aba e um CRM. DataCob e o primeiro
+                // (unico com ferramentas hoje); "Outros CRM" fica vazia,
+                // pronta para quando surgir a primeira ferramenta de outro
+                // CRM — nao duplicar dados aqui, so adicionar a aba/links.
+                tabs: [
+                    {
+                        key: "datacob",
+                        label: "DataCob",
+                        links: [
+                            ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
+                            ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
+                            ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
+                            ["Treinamento DataCob Cliente", "tools/datacob/treinamento-cliente/index.html"],
+                            ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
+                            ["CNAB 400 (multi-banco)", "tools/datacob/cnab400/cnab400.html"],
+                            ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
+                            ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
+                            ["Track 7 · T-SQL com DataCob", "tools/datacob/treinamento-sql/treinamento-sql.html"],
+                            ["SQL Query Builder", "tools/datacob/query-builder/query-builder.html"],
+                            ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
+                            ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
+                        ]
+                    },
+                    {
+                        key: "outros",
+                        label: "Outros CRM",
+                        links: []
+                    }
                 ]
             },
             suporte: {
@@ -287,7 +302,7 @@ function renderSubmenu(sectionKey) {
     renderDetail(sectionKey, firstChild);
 }
 
-function renderDetail(sectionKey, childKey) {
+function renderDetail(sectionKey, childKey, activeTabKey) {
     const detail = document.getElementById("enterpriseMenuDetail");
     const item = menuData[sectionKey]?.children?.[childKey];
     if (!detail || !item) return;
@@ -296,16 +311,29 @@ function renderDetail(sectionKey, childKey) {
         button.classList.toggle("active", button.dataset.child === childKey);
     });
 
+    const hasTabs = Array.isArray(item.tabs);
+    const activeTab = hasTabs
+        ? (item.tabs.find(t => t.key === activeTabKey) || item.tabs[0])
+        : null;
+    const links = hasTabs ? activeTab.links : item.links;
+
     detail.innerHTML = `
         <div class="enterprise-menu-detail-panel active">
             <span class="enterprise-menu-badge">${item.badge}</span>
             <h2>${item.title}</h2>
             <p>${item.description}</p>
 
-            <div class="enterprise-menu-detail-list">
-                ${item.links.map(([label, href, route]) => `
-                    <a href="${href}" ${route ? "data-route" : ""}>${label}</a>
+            ${hasTabs ? `
+            <div class="enterprise-menu-tabs" role="tablist">
+                ${item.tabs.map(tab => `
+                    <button type="button" class="enterprise-menu-tab ${tab.key === activeTab.key ? "active" : ""}" data-tab="${tab.key}">${tab.label}</button>
                 `).join("")}
+            </div>` : ""}
+
+            <div class="enterprise-menu-detail-list">
+                ${links.length ? links.map(([label, href, route]) => `
+                    <a href="${href}" ${route ? "data-route" : ""}>${label}</a>
+                `).join("") : `<span class="enterprise-menu-empty">Em breve: ferramentas para outros CRMs.</span>`}
             </div>
 
             <div class="enterprise-menu-note">
@@ -313,6 +341,15 @@ function renderDetail(sectionKey, childKey) {
             </div>
         </div>
     `;
+
+    if (hasTabs) {
+        detail.querySelectorAll("[data-tab]").forEach(button => {
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+                renderDetail(sectionKey, childKey, button.dataset.tab);
+            });
+        });
+    }
 }
 
 function setupEnterpriseMenu() {

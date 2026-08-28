@@ -556,6 +556,40 @@ body.dark-mode .rw-doc-card {
     margin-bottom: 12px;
 }
 
+.enterprise-menu-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 4px 0 18px;
+    border-bottom: 1px solid var(--rw-line);
+}
+
+.enterprise-menu-tab {
+    border: 0;
+    background: transparent;
+    padding: 8px 4px;
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+    color: var(--rw-muted);
+    font-weight: 800;
+    font-size: .92rem;
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+}
+
+.enterprise-menu-tab:hover {
+    color: var(--rw-ink);
+}
+
+.enterprise-menu-tab.active {
+    color: var(--rw-red);
+    border-bottom-color: var(--rw-red);
+}
+
+.enterprise-menu-empty {
+    color: var(--rw-muted);
+    font-size: .95rem;
+}
+
 .enterprise-menu-note {
     margin-top: 24px;
     padding: 16px;

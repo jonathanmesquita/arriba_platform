@@ -23,10 +23,18 @@ Evoluindo **por partes** rumo a um visual Oracle Redwood (terroso, minimalista).
 Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a fonte:
 
 - **Menu + busca:** `assets/js/navigation-v2.js`. O mega-menu é **gerado por JS**, não é
-  HTML fixo. Adicionar item ao menu = adicionar em `datacobtools.links`/`dados.links`;
-  adicionar à busca = adicionar em `searchItems` (exportado). `assets/js/search.js` (busca
-  da home) **importa** esse mesmo `searchItems` — não duplicar dados de ferramentas lá,
-  só adicionar em `navigation-v2.js`. Rode `node --check` após editar.
+  HTML fixo. Adicionar item ao menu = adicionar em `dados.links` (grupos sem CRM) ou dentro
+  de `crms.tabs[].links` (grupo "CRMs" → aba do CRM, ver abaixo); adicionar à busca =
+  adicionar em `searchItems` (exportado). `assets/js/search.js` (busca da home) **importa**
+  esse mesmo `searchItems` — não duplicar dados de ferramentas lá, só adicionar em
+  `navigation-v2.js`. Rode `node --check` após editar.
+- **Grupo "CRMs" (multi-CRM, ago/2026):** `menuData.ferramentas.children.crms` usa `tabs`
+  (não `links` direto) — cada aba é um CRM (`{ key, label, links }`). Hoje só "DataCob" tem
+  ferramentas; "Outros CRM" existe vazia (mensagem "Em breve..."), pronta para quando surgir
+  a primeira ferramenta de outro CRM — só adicionar um novo objeto em `tabs[]` ou preencher
+  `links` da aba "outros". `renderDetail()` em `navigation-v2.js` já sabe renderizar `tabs`
+  (com botões estilo aba) ou `links` plano (usado por Dados/Suporte/Cloud) — não duplicar essa
+  lógica em outro lugar.
 - **Cores / design tokens:** `assets/css/tokens.css`. Define os tokens canônicos `--rw-*`
   e aliases curtos (`--bg`, `--red`, ...). Ferramentas devem **linkar tokens.css e remover
   o `:root{}` inline** — os aliases garantem que nada quebra durante a migração.
@@ -106,6 +114,18 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     `source: "local-fallback"` — integração OpenAI parece fora do ar no Render (fora deste
     repo, precisa checar env vars/logs do serviço). O fallback local de conhecimento também
     retornou artigo errado num teste (relevância ruim), vale investigar no `arriba-api`.
+- [x] **Parte 6 — CNAB Bradesco real + menu multi-CRM (ago/2026).** Retorno e Remessa
+  Bradesco corrigidos com dados reais (planilhas `VALIDADOR_CNAB400_BRADESCO*.xlsx` +
+  manual oficial "Layout da Cobrança Bradesco" v05/2008) — Remessa estava quase toda com
+  campos "não confirmado"; agora bate byte a byte com fonte real e oficial (testado
+  ponta a ponta no navegador: preencher formulário → gerar → baixar `.REM`/`.RET`). Menu
+  reorganizado: "DataCob" (item direto em Ferramentas) virou "CRMs" com abas — ver
+  `crms.tabs` acima — preparando o site para ferramentas de outros CRMs além do DataCob.
+  - [ ] **Pendente (roadmap, sem trabalho iniciado):** mais bancos no CNAB 400 (BMP, Banco
+    do Brasil, Santander...) — a arquitetura já suporta (só criar `banks/<banco>.js` e
+    registrar em `banks/registry.js`), falta manual/planilha validadora de cada banco para
+    implementar com o mesmo rigor usado no Bradesco (não estimar posições "prováveis").
+    Também falta a primeira ferramenta de "Outros CRM" (aba já existe, vazia).
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

@@ -62,17 +62,36 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   Itaú só contra o manual (nenhuma linha real de Remessa/Retorno confirmada ainda). BMP
   Money Plus (274, `banks/bmp.js`) validado contra 2 planilhas VALIDADOR próprias +
   3 arquivos `.RET` reais distintos do cliente (round-trip byte a byte OK em 93 linhas
-  de detalhe: 15 + 42 + 36) — **não confirmado contra manual oficial do BMP** (não
-  disponibilizado ainda); onde planilha e arquivo real divergiram, o arquivo real venceu:
-  além da largura do valorTotal do trailer, o campo 293-295 do detalhe de Retorno (que a
-  planilha marcava inteiro como "brancos") na verdade é brancos (293-294) + 1 dígito fixo
-  "0" (295) antes da Data do Crédito. Um arquivo de teste recebido depois (`..._Nuevo.RET`)
-  veio truncado (linha de detalhe com 392 de 400 posições, trailer com contagem de títulos
-  inconsistente com o conteúdo) — descartado da validação, não é dado confiável. Trailer
-  de Retorno tem só posições 1-39 e 395-400 confirmadas, resto é filler `naoConfirmado`.
-  Tabelas de ocorrência do BMP reaproveitadas do Bradesco (padrão FEBRABAN comum), não
-  confirmadas especificamente contra o BMP. Ferramenta antiga `cnab400-bradesco/` foi
-  aposentada — não recriar.
+  de detalhe: 15 + 42 + 36) **e agora também contra o manual oficial do BMP**
+  (bmpdocs.moneyp.com.br/baas/layouts-de-cnab/cnab-400, v13.1 05/2026) — o manual
+  confirmou a tabela completa de Header+Detalhe da Remessa e trouxe as tabelas oficiais
+  de Ocorrência/Motivo (Remessa e Retorno) — o BMP foi o primeiro banco com motivo
+  escopado por ocorrência (mesmo código de motivo significa coisas diferentes em
+  ocorrências diferentes), então `engine.js`/`parseDetalhe` passou a aceitar
+  `config.motivos[ocorrencia][cod]` (objeto aninhado) além do mapa plano
+  `config.motivos[cod]` já usado pelo Bradesco — checa aninhado primeiro, cai pro
+  plano se não achar, sem quebrar os bancos existentes. O Detalhe da Retorno segue
+  confirmado só por
+  planilha+arquivo real (o manual não trouxe a tabela completa da Retorno). Ordem de
+  confiança quando fontes divergem: **arquivo real > planilha com amostra própria >
+  manual oficial** (tabela sem amostra, mais sujeita a erro de transcrição) — ex.: o
+  manual descreve a posição 021-037 do Detalhe como um campo único "fornecido pela
+  BMP", mas planilha (com amostra real "0001"/"1005113"/"09") e arquivo real confirmam
+  que é decomposto em zero+carteira+agência+conta+dígito, então a decomposição foi
+  mantida. Também corrigido nessa rodada: `nossoNumero` da Remessa (071-081) era tipo
+  alfanumérico (bug — gerava com espaços em vez de zeros à esquerda), confirmado
+  numérico pela amostra da planilha ("00000000002") e pelo manual. O campo 293-295 do
+  detalhe de Retorno (que a planilha marcava inteiro como "brancos") na verdade é
+  brancos (293-294) + 1 dígito fixo "0" (295) antes da Data do Crédito — real venceu
+  aqui também (a amostra do manual dizia "brancos" nos 3, mas 51 linhas reais
+  discordam). Um arquivo de teste recebido no processo (`..._Nuevo.RET`) veio truncado
+  (linha de detalhe com 392 de 400 posições, trailer com contagem de títulos
+  inconsistente com o conteúdo) — descartado da validação, não é dado confiável.
+  Trailer de Retorno tem só posições 1-39 e 395-400 confirmadas — o manual sugere um
+  detalhamento por ocorrência a partir da posição ~40 (igual ao do Bradesco), mas
+  todos os arquivos reais disponíveis só têm ocorrência 06, insuficiente pra confirmar
+  as posições das outras ocorrências nesse detalhamento; resto fica `naoConfirmado`.
+  Ferramenta antiga `cnab400-bradesco/` foi aposentada — não recriar.
   Ícone pequeno do banco na UI (`ui.js`, `BANK_ICONS`) usa SVGs em
   `tools/datacob/cnab400/assets/icons/` (curados a partir de `assets/img/bancos/`, ver
   abaixo) — ao adicionar um banco novo, copiar o SVG correspondente para essa pasta e

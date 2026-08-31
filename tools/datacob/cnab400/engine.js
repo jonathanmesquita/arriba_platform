@@ -125,11 +125,21 @@ function parseDetalhe(line, numLinha, config) {
   t.motivosList = [];
   if (config.ocorrenciaComMotivo && config.motivos
       && config.ocorrenciaComMotivo.includes(t.ocorrencia) && t.motivosRejeicao) {
+    // O código de motivo só é inequívoco combinado com a ocorrência (o
+    // mesmo código "07", por exemplo, significa coisas diferentes em
+    // ocorrências diferentes) — se config.motivos[ocorrencia] existir como
+    // objeto, usa a tabela escopada por ocorrência; senão cai no mapa
+    // plano config.motivos[cod] (formato usado por outros bancos).
+    const tabelaOcorrencia = config.motivos[t.ocorrencia];
     const raw = String(t.motivosRejeicao).padEnd(10, "0");
     for (let i = 0; i < 10; i += 2) {
       const cod = raw.slice(i, i + 2);
       if ((cod && cod !== "00") || i === 0) {
-        if (/^\d{2}$/.test(cod)) t.motivosList.push({ cod, desc: config.motivos[cod] || "—" });
+        if (/^\d{2}$/.test(cod)) {
+          const desc = (tabelaOcorrencia && typeof tabelaOcorrencia === "object" ? tabelaOcorrencia[cod] : undefined)
+            ?? config.motivos[cod];
+          t.motivosList.push({ cod, desc: desc || "—" });
+        }
       }
     }
   }

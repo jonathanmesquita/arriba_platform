@@ -1,30 +1,40 @@
 /* =====================================================================
    CNAB 400 - BMP Money Plus (274) | Config para o motor genérico (engine.js)
 
-   FONTE: duas planilhas validadoras fornecidas pelo usuário
-   (Validador_CNAB_400_Remessa__Banco_Money_Plus.xlsx e
-   Validador_CNAB_400_Retorno__Banco_Money_Plus.xlsx), cada uma com uma
-   linha real de exemplo embutida — todo campo abaixo foi conferido via
-   slice(ini-1, ini-1+tamanho) contra essa linha antes de entrar aqui.
-   Retorno foi cruzado ainda contra 3 arquivos .RET reais do próprio
-   usuário (bank 274 / MONEYPLUS): contagem de títulos e valor total do
-   Trailer batem exatamente com os detalhes de cada arquivo.
+   FONTES:
+   1) Duas planilhas validadoras fornecidas pelo usuário
+      (Validador_CNAB_400_Remessa__Banco_Money_Plus.xlsx e
+      Validador_CNAB_400_Retorno__Banco_Money_Plus.xlsx), cada uma com uma
+      linha real de exemplo embutida — todo campo abaixo foi conferido via
+      slice(ini-1, ini-1+tamanho) contra essa linha antes de entrar aqui.
+   2) 3 arquivos .RET reais do próprio usuário (bank 274 / MONEYPLUS):
+      round-trip byte a byte OK em 93 linhas de detalhe (15+42+36).
+   3) Manual oficial do BMP (bmpdocs.moneyp.com.br/baas/layouts-de-cnab/
+      cnab-400, versão 13.1 de 05/2026) — confirmou a tabela completa de
+      Header + Detalhe (Tipo 1) da REMESSA, e trouxe as tabelas oficiais
+      de Ocorrências e Motivos (RETORNO e REMESSA), usadas para substituir
+      o que antes era só um "reaproveitado do Bradesco".
 
-   NÃO é um manual oficial do BMP — é a mesma planilha "VALIDADOR" que já
-   usamos pro Bradesco, só que para este banco. Onde a planilha e os
-   arquivos reais divergiram (ver RETORNO_TRAILER_FIELDS), o arquivo real
-   ganhou — mesma regra usada no Bradesco.
+   Onde as fontes divergiram, a ordem de confiança foi: arquivo real >
+   planilha (com amostra própria embutida) > manual oficial (tabelas sem
+   amostra, mais sujeitas a erro de transcrição/OCR) — mesma regra usada
+   no Bradesco. Ex.: o manual oficial dá "021 a 037" do Detalhe como um
+   campo único "fornecido pela BMP", mas TANTO a planilha (com amostra
+   real "0001"/"1005113"/"09") QUANTO os arquivos reais confirmam que é
+   decomposto em zero+carteira+agência+conta+dígito — manteve-se a
+   decomposição. Já o campo 295 do Detalhe de Retorno, a planilha marca
+   como "Brancos" mas 51 linhas de arquivo real confirmam ser sempre "0"
+   — arquivo real venceu (ver comentário em `zeroFixo295` abaixo).
 
-   Header, Detalhe (Remessa) e Ocorrências batem quase campo a campo com
-   o Bradesco (mesmo envelope FEBRABAN) — só o Retorno tem uma diferença
-   notável: 021-037 do Detalhe é dividido em carteira/agência/conta/dígito
-   (como no Itaú), não um "código da empresa" único de 20 dígitos como no
-   Bradesco.
-
-   OCORRENCIAS/MOTIVOS: a planilha não trouxe uma tabela de códigos —
-   reaproveitado o padrão FEBRABAN já usado no Bradesco (mesmos códigos
-   costumam valer entre bancos), NÃO confirmado especificamente contra
-   documentação do BMP. Marcar como tal até surgir uma fonte própria.
+   Header/Detalhe da Remessa e as tabelas de Ocorrência/Motivo (Remessa e
+   Retorno) agora são confirmados contra o manual oficial. O Detalhe da
+   Retorno segue confirmado só por planilha+arquivo real (o manual não
+   trouxe a tabela completa da Retorno, só texto complementar de campos
+   específicos) — e o Trailer da Retorno segue com boa parte "não
+   confirmado": o manual sugere um detalhamento por ocorrência (igual ao
+   do Bradesco) a partir da posição ~40, mas todos os arquivos reais que
+   temos só contêm ocorrência 06, então não dá pra confirmar as posições
+   das outras ocorrências nesse detalhamento.
    ===================================================================== */
 
 "use strict";
@@ -142,31 +152,181 @@ const RETORNO_TRAILER_FIELDS = [
   { ini: 395, fim: 400, key: "seqRegistro",      nome: "Nº Seqüencial de Registro", type: "N" }
 ];
 
-// Reaproveitado do Bradesco (padrão FEBRABAN comum entre bancos) — não
-// confirmado especificamente contra documentação do BMP.
+// Tabela oficial do manual BMP (posições 109-110 do Detalhe de Retorno).
 const OCORRENCIAS_RETORNO = {
   "02": "Entrada Confirmada",
   "03": "Entrada Rejeitada",
   "06": "Liquidação Normal",
   "09": "Baixado Automaticamente via Arquivo",
-  "10": "Baixado conforme instruções da Agência",
-  "11": "Em Ser (Títulos pendentes)",
+  "10": "Baixado conforme Instrução da Agência",
+  "11": "Em Ser (Arquivo de Títulos Pendentes)",
   "12": "Abatimento Concedido",
   "13": "Abatimento Cancelado",
-  "14": "Vencimento Alterado",
-  "15": "Liquidação em Cartório",
-  "17": "Liquidação após baixa / não registrado",
-  "19": "Confirmação Receb. Instrução de Protesto",
-  "20": "Confirmação Receb. Instrução Sustação Protesto",
+  "14": "Protesto do Título",
+  "16": "Protesto do Título Rejeitado",
+  "17": "Liquidação após Baixa ou Título não Registrado",
+  "18": "Acerto de Depositária",
+  "21": "Acerto do Controle do Participante",
+  "22": "Título com Pagamento Cancelado",
   "24": "Entrada Rejeitada por CEP Irregular",
   "27": "Baixa Rejeitada",
-  "28": "Débito de Tarifas / Custas",
-  "30": "Alteração de Outros Dados Rejeitados",
+  "28": "Débito de Tarifas/Custas",
+  "29": "Ocorrências do Pagador",
   "32": "Instrução Rejeitada",
-  "35": "Desagendamento do Débito Automático"
+  "40": "Estorno de Pagamento"
 };
 
-const OCORRENCIA_COM_MOTIVO_RETORNO = ["02", "03", "09", "10", "24", "27", "28", "30", "32", "35"];
+// Ocorrências que o manual documenta com motivo(s) na posição 319-328
+// (inclui "06" — o manual dá motivos 00/15/18 pra Liquidação, mesmo sem
+// marcar isso na lista-resumo de ocorrências).
+const OCORRENCIA_COM_MOTIVO_RETORNO = ["02", "03", "06", "09", "10", "16", "17", "24", "27", "28", "29", "32"];
+
+// Motivos por ocorrência (posições 319-328 do Detalhe de Retorno), copiados
+// do manual oficial do BMP. Nem toda ocorrência com motivo tem tabela aqui:
+// "29 - Ocorrências do Pagador" é citada na lista-resumo mas o manual não
+// chegou a detalhar seus motivos nesta versão — fica pendente.
+const MOTIVOS_RETORNO = {
+  "02": {
+    "00": "Ocorrência aceita", "01": "Código do banco inválido",
+    "02": "Pendente de autorização (autorização débito automático)",
+    "03": "Pendente de ação do pagador (autorização débito automático – data vencimento)",
+    "04": "Código do movimento não permitido para a carteira",
+    "15": "Características da cobrança incompatíveis",
+    "17": "Data de vencimento anterior à data de emissão",
+    "21": "Espécie do título inválido", "24": "Data da emissão inválida",
+    "27": "Valor/taxa de juros de mora inválido",
+    "43": "Prazo para baixa e devolução inválido",
+    "45": "Nome do pagador inválido", "46": "Tipo/número de inscrição do pagador inválidos",
+    "47": "Endereço do pagador não informado", "48": "CEP inválido",
+    "50": "CEP referente a banco correspondente",
+    "53": "Número de inscrição do pagador/avalista inválidos (CPF/CNPJ)",
+    "54": "Pagador/avalista não informado", "86": "Seu número do documento inválido",
+    "87": "Título baixado por coobrigação e devolvido para carteira"
+  },
+  "03": {
+    "02": "Código do registro detalhe inválido", "03": "Código da ocorrência inválida",
+    "04": "Código de ocorrência não permitida para a carteira",
+    "05": "Código de ocorrência não numérico", "06": "Dados cadastrais do beneficiário incompletos",
+    "07": "Agência/conta/dígito inválido", "08": "Nosso número inválido",
+    "09": "Nosso número duplicado", "10": "Carteira inválida", "11": "Cadastro rejeitado",
+    "13": "Identificação da emissão do boleto inválida", "16": "Data de vencimento inválida",
+    "18": "Vencimento fora do prazo de operação", "20": "Valor do título inválido",
+    "21": "Espécie do título inválida", "22": "Espécie não permitida para a carteira",
+    "23": "Tipo pagamento não contratado", "24": "Data de emissão inválida",
+    "27": "Valor/taxa de juros mora inválido", "28": "Código do desconto inválido",
+    "29": "Valor desconto ≥ valor título", "30": "O boleto não pode haver mais do que três descontos",
+    "31": "O código de desconto do boleto deve ser igual em todos os registros de desconto informados",
+    "32": "Não pode ser informada mais que uma ocorrência de desconto para o código de desconto informado",
+    "34": "Valor do abatimento maior ou igual ao valor do título",
+    "35": "Informe um código juros título válido", "36": "Informe um código multa título válido",
+    "37": "Informe um UF do pagador válido", "38": "UF do beneficiário inválido",
+    "39": "As datas de desconto informadas não podem se repetir dentro do grupo de desconto",
+    "40": "Data de desconto deve ser maior ou igual à data de emissão do título",
+    "44": "Código da moeda inválido", "45": "Nome do pagador não informado",
+    "46": "Tipo/número de inscrição do pagador inválidos", "47": "Endereço do pagador não informado",
+    "48": "CEP inválido", "49": "CEP sem praça de cobrança",
+    "50": "CEP irregular - banco correspondente", "51": "Tipo sacador/avalista inválido",
+    "52": "Identificador do sacador/avalista inválido",
+    "53": "Nome/razão social do sacador/avalista não informado",
+    "59": "Valor/percentual da multa inválido", "61": "Parceiro não autorizado para esta conta",
+    "62": "O operador não possui permissão para registrar boleto nessa conta",
+    "63": "Entrada para título já cadastrado", "65": "Limite excedido",
+    "79": "Data de juros de mora inválida", "80": "Data do desconto inválida",
+    "86": "Seu número inválido", "87": "Data de multa inválida",
+    "88": "Documento do beneficiário inválido",
+    "89": "Boleto de proposta ou depósito e aporte deve ser isento de juros",
+    "90": "Boleto de proposta ou depósito e aporte deve ser isento de multa",
+    "91": "Para registrar um boleto híbrido, a conta do cedente deve ter ao menos uma chave PIX registrada",
+    "92": "Para boleto híbrido, a data de vencimento deve ser maior que a data atual",
+    "93": "Para boleto híbrido, a data de expiração deve ser maior que a data de vencimento",
+    "94": "Para boleto híbrido, a data do desconto deve ser maior que a data atual e menor que a do vencimento",
+    "95": "Saldo insuficiente para registrar o boleto",
+    "96": "Código de juros percentual dias corridos não permitido para o tipo de modelo de cálculo 01",
+    "97": "Código de barras já utilizado",
+    "98": "O conteúdo do texto informativo do cliente beneficiário é inválido",
+    "99": "Erro genérico"
+  },
+  "06": { "00": "Crédito disponível", "15": "Crédito indisponível", "18": "Pagamento parcial" },
+  "09": { "00": "Ocorrência aceita", "10": "Baixa comandada pelo cliente" },
+  "10": {
+    "00": "Baixado conforme instrução da agência", "14": "Título protestado",
+    "16": "Título baixado pelo banco por decurso de prazo",
+    "20": "Título baixado e transferido para desconto"
+  },
+  "16": {
+    "02": "Operador não configurado para esta integração",
+    "03": "Não foram informados códigos de barras válidos para protesto de boleto",
+    "04": "O boleto possui endereço do pagador incompleto",
+    "05": "O boleto possui endereço ou dados do beneficiário original incompletos",
+    "06": "O boleto não está disponível para protesto (aguarde 1 dia após o vencimento)",
+    "07": "A situação atual do boleto não permite protesto",
+    "08": "O boleto está com a data limite de pagamento alcançada — atualize para prosseguir",
+    "09": "O boleto possui uma alteração pendente",
+    "10": "O parâmetro de protesto manual para o vínculo Cedente–Carteira não está habilitado",
+    "11": "O boleto está em negociação com outro cedente", "12": "O boleto não pertence a este cedente",
+    "13": "As contas pagamento não possuem tarifário configurado para protesto",
+    "14": "Saldo insuficiente para protestar o boleto"
+  },
+  "17": { "00": "Crédito disponível", "15": "Crédito indisponível" },
+  "24": { "00": "Ocorrência aceita", "48": "CEP inválido", "49": "CEP sem praça de cobrança" },
+  "27": {
+    "02": "Código do registro detalhe inválido",
+    "04": "Código de ocorrência não permitido para a carteira",
+    // O manual lista "06" e "07" nesta ocorrência de forma ambígua/duplicada
+    // (06-Nosso número inválido, depois 07-Agência/conta/dígito inválidos e
+    // também 07-Nosso número duplicado) — provável erro de transcrição do
+    // documento fonte. Mantido "07" = Agência/conta/dígito (consistente com
+    // o mesmo código na ocorrência 03); "Nosso número duplicado" não foi
+    // incluído por falta de código confiável.
+    "06": "Nosso número inválido", "07": "Agência/conta/dígito inválidos",
+    "10": "Carteira inválida", "15": "Carteira/agência/conta/nosso número inválidos",
+    "16": "Data de vencimento inválida", "18": "Vencimento fora do prazo de operação",
+    "20": "Valor do título inválido", "41": "Título com ordem de protesto emitido",
+    "42": "Código para baixa/devolução inválido", "43": "Título não registrado",
+    "45": "Nome do sacado não informado ou inválido",
+    "46": "Tipo/número de inscrição do sacado inválido",
+    "47": "Endereço do sacado não informado", "48": "CEP inválido", "60": "Título baixado",
+    "77": "Transferência para desconto não permitido para a carteira",
+    "85": "Título com pagamento vinculado", "86": "Seu número inválido", "99": "Erro genérico"
+  },
+  "28": {
+    "02": "Tarifa de permanência título cadastrado", "12": "Tarifa de registro",
+    "13": "Tarifa título pago", "14": "Tarifa título pago compensação",
+    "15": "Tarifa título baixado não pago", "17": "Tarifa concessão abatimento",
+    "18": "Tarifa cancelamento de abatimento", "19": "Tarifa concessão desconto",
+    "20": "Tarifa cancelamento desconto", "40": "Baixa registro em duplicidade",
+    "41": "Tarifa título baixado decurso prazo", "43": "Tarifa título baixado via remessa",
+    "45": "Tarifa título baixado conf. pedido", "99": "Tarifa título baixado por decurso prazo"
+  },
+  "32": {
+    "01": "Código do banco inválido", "02": "Código registro detalhe inválido",
+    "04": "Código de ocorrência não permitido para a carteira",
+    "05": "Código de ocorrência não numérico", "07": "Não há alterações para o boleto",
+    "08": "Nosso número inválido", "09": "Já existe instrução pendente para o título",
+    "10": "Carteira inválida", "14": "Boleto cedido para outro cedente",
+    "15": "Características da cobrança incompatíveis", "16": "Data de vencimento inválida",
+    "17": "Data de vencimento anterior à data de emissão",
+    "18": "Vencimento fora do prazo de operação", "19": "Ação sobre boleto de outra conta",
+    "20": "Valor do título inválido", "21": "Espécie do título inválida",
+    "22": "Espécie não permitida para a carteira", "23": "Tipo pagamento não contratado",
+    "24": "Data de emissão inválida", "26": "Código juros mora inválido",
+    "27": "Valor/taxa juros mora inválido", "28": "Código de desconto inválido",
+    "29": "Valor do desconto maior/igual ao valor do título",
+    "30": "Desconto a conceder não confere",
+    "31": "Concessão de desconto - já existe desconto anterior",
+    "33": "Valor do abatimento inválido",
+    "34": "Valor do abatimento maior/igual ao valor do título",
+    "36": "Concessão abatimento - já existe abatimento anterior",
+    "41": "Título com ordem de protesto emitido", "43": "Título não registrado",
+    "45": "Nome do pagador não informado",
+    "46": "Tipo/número de inscrição do pagador inválidos",
+    "47": "Endereço do pagador não informado", "48": "CEP inválido",
+    "50": "CEP referente a um banco correspondente", "52": "Unidade da federação inválida",
+    "53": "Tipo de inscrição do pagador/avalista inválidos", "60": "Título baixado",
+    "65": "Limite excedido", "66": "Número autorização inexistente",
+    "85": "Título com pagamento vinculado", "86": "Seu número inválido", "99": "Erro genérico"
+  }
+};
 
 /* =====================================================================
    REMESSA
@@ -189,8 +349,7 @@ const REMESSA_HEADER_FIELDS = [
   { ini: 95,  fim: 100, key: "dataGravacao",         nome: "Data da Gravação",               type: "N", fmt: "data",
     obrigatorio: true, ajuda: "Data em que a empresa gerou o arquivo de remessa.", exemplo: "2024-11-08" },
   { ini: 101, fim: 108, key: "branco1",              nome: "Branco",                         type: "A" },
-  { ini: 109, fim: 110, key: "identificacaoSistema", nome: "Identificação do Sistema",       type: "A",
-    ajuda: "Código do sistema de origem (ex.: \"MX\").", exemplo: "MX" },
+  { ini: 109, fim: 110, key: "identificacaoSistema", nome: "Identificação do Sistema",       type: "A", fixo: "MX" },
   { ini: 111, fim: 117, key: "seqRemessa",           nome: "Nº Sequencial de Remessa",       type: "N",
     obrigatorio: true, ajuda: "Número sequencial desta remessa (controle da empresa). Zeros à esquerda; 7 posições.", exemplo: "1" },
   { ini: 118, fim: 394, key: "branco2",              nome: "Branco",                         type: "A" },
@@ -208,14 +367,17 @@ const REMESSA_DETALHE_FIELDS = [
   { ini: 38,  fim: 52,  key: "controleParticip",   nome: "Nº Controle do Participante",            type: "A" },
   { ini: 53,  fim: 62,  key: "brancoFuturo",       nome: "Brancos (Uso Futuro)",                   type: "A" },
   { ini: 63,  fim: 65,  key: "codBancoDebito",     nome: "Código do Banco a Debitar (Compensação)", type: "N" },
-  { ini: 66,  fim: 66,  key: "campoMulta",         nome: "Campo de Multa",                         type: "N" },
-  { ini: 67,  fim: 70,  key: "percentualMulta",    nome: "Percentual de Multa",                    type: "N" },
-  { ini: 71,  fim: 81,  key: "nossoNumero",        nome: "Nosso Número",                           type: "A",
-    obrigatorio: true, ajuda: "Nosso número escolhido pela empresa para este título (sem o DAC). Espaços à direita; 11 posições.", exemplo: "2" },
+  { ini: 66,  fim: 66,  key: "campoMulta",         nome: "Campo de Multa",                         type: "N",
+    ajuda: "0 = sem multa. 2 = considerar o percentual de multa informado no campo seguinte.", exemplo: "0" },
+  { ini: 67,  fim: 70,  key: "percentualMulta",    nome: "Percentual de Multa",                    type: "N",
+    ajuda: "Percentual de multa por atraso, só usado se \"Campo de Multa\" = 2 (senão, preencher com zeros).", exemplo: "0000" },
+  { ini: 71,  fim: 81,  key: "nossoNumero",        nome: "Nosso Número",                           type: "N",
+    obrigatorio: true, ajuda: "Nosso número escolhido pela empresa para este título (sem o DAC). Zeros à esquerda; 11 posições.", exemplo: "2" },
   { ini: 82,  fim: 82,  key: "dac",                nome: "DAC do Nosso Número",                    type: "A",
     obrigatorio: true, ajuda: "Dígito verificador do Nosso Número (módulo 11, regra própria do BMP). Pode ser a letra \"P\". 1 posição.", exemplo: "P" },
   { ini: 83,  fim: 92,  key: "descontoBonifDia",   nome: "Desconto/Bonificação por Dia",           type: "N" },
-  { ini: 93,  fim: 93,  key: "condEmissaoPapeleta",nome: "Condição p/ Emissão da Papeleta",        type: "N" },
+  { ini: 93,  fim: 93,  key: "condEmissaoPapeleta",nome: "Condição p/ Emissão da Papeleta",        type: "N",
+    ajuda: "Se o Nosso Número não for informado, o BMP cria um automaticamente. Se = 2, a empresa emite o boleto e o banco só processa o registro — nesse caso é obrigatório informar o Nosso Número.", exemplo: "2" },
   { ini: 94,  fim: 94,  key: "emiteBoletoDebAuto", nome: "Emite Boleto p/ Débito Automático",      type: "A" },
   { ini: 95,  fim: 104, key: "idOperacaoBanco",    nome: "Identificação da Operação do Banco",     type: "A" },
   { ini: 105, fim: 105, key: "indRateio",          nome: "Indicador de Rateio Crédito (opcional)", type: "A" },
@@ -266,16 +428,16 @@ const REMESSA_TRAILER_FIELDS = [
   { ini: 395, fim: 400, key: "seqRegistro", nome: "Nº Seqüencial de Registro", type: "N" }
 ];
 
-// Reaproveitado do Bradesco (padrão FEBRABAN comum entre bancos) — não
-// confirmado especificamente contra documentação do BMP.
+// Tabela oficial do manual BMP (posições 109-110 do Detalhe de Remessa).
 const OCORRENCIAS_REMESSA = {
-  "01": "Entrada de Título",
+  "01": "Remessa (Entrada de Título)",
   "02": "Pedido de Baixa",
   "04": "Concessão de Abatimento",
   "05": "Cancelamento de Abatimento",
   "06": "Alteração de Vencimento",
-  "09": "Protestar Título",
-  "18": "Sustar Protesto"
+  "07": "Alteração do Controle do Participante",
+  "09": "Protesto",
+  "20": "Alteração do Valor"
 };
 
 export const bmp = {
@@ -288,7 +450,7 @@ export const bmp = {
     trailerFields: RETORNO_TRAILER_FIELDS,
     ocorrencias: OCORRENCIAS_RETORNO,
     ocorrenciaComMotivo: OCORRENCIA_COM_MOTIVO_RETORNO,
-    motivos: {},
+    motivos: MOTIVOS_RETORNO,
     trailerTotalFn: det => Number(det.valorPago) || Number(det.valorTitulo) || 0,
     formFields: {
       header: ["codEmpresa", "nomeEmpresa", "dataGravacao"],

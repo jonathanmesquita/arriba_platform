@@ -68,6 +68,7 @@ const menuData = {
                             ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
                             ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
                             ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
+                            ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
                             ["SQL Query T-SQL - Relatórios", "tools/datacob/query-builder/query-builder.html"],
                             ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
                             ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
@@ -221,6 +222,7 @@ export const searchItems = [
     ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
     ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
     ["Track 7 · Treinamento SQL", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],
+    ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema datacob financiado contrato parcela acordo negociacao historico telefone email endereco treinar praticar select join group by csv", "tools/datacob/sql-playground/sql-playground.html"],
     ["SQL Query T-SQL - Relatórios", "sql query builder relatorios datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
 ];
 

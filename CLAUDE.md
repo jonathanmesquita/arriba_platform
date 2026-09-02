@@ -124,6 +124,28 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   FICTÍCIO (`assets/data/tracks/track-7-sql-dataset.js`) — nenhuma conexão com o SQL
   Server real do DataCob. O SQL Query Builder (`tools/datacob/query-builder/`) também é
   só um gerador de texto de query + preview fictício, não executa nada contra o banco real.
+- **Semeadura do sandbox AlaSQL é fonte única em `assets/js/sql-sandbox.js`** —
+  `semearTabelas()` + `executarQuery()`. **Não use `SELECT * INTO tabela FROM ?`**: esse
+  comando NÃO funciona no AlaSQL 4 (estoura em `'xcolumns'`) e era exatamente o bug que
+  deixava o sandbox do Track 7 quebrado (nenhuma tabela criada → toda query respondia
+  "Table does not exist: boletos", com o erro escondido num `try/catch` que só logava
+  aviso). O que funciona é `DROP TABLE IF EXISTS` → `CREATE TABLE` → `INSERT INTO ...
+  SELECT * FROM ?` (idempotente, reload não duplica linha). Cuidado também com alias:
+  `AS Total` quebra o parser do AlaSQL (palavra reservada) — usar `Qtd_Linhas` e afins.
+- **SQL Playground** (`tools/datacob/sql-playground/`, set/2026): simulador SQL livre
+  ("Try it Yourself" fora das lições), com navegador de schema, exemplos prontos,
+  histórico, consultas salvas, estatísticas de uso e export CSV. Roda contra
+  `assets/data/datacob-sandbox-schema.js` — **as tabelas/colunas espelham o modelo real
+  do DataCob** (Cliente, Grupo, Financiado, Contrato, Parcela, Negociacao,
+  Negociacao_Parcela, Acordo, Parcela_Acordo, Historico, Ocorrencia_Sistema, Email,
+  Telefone, Endereco, extraídas do diagrama ER do banco), mas **os dados são 100%
+  inventados** (LGPD: nenhum nome/CPF/telefone/e-mail real). Continua sem nenhuma conexão
+  com o SQL Server real. Metadados de coluna/PK/FK e as consultas de exemplo saem do
+  mesmo arquivo (`DATACOB_SCHEMA`/`CONSULTAS_EXEMPLO`) — a UI não duplica lista de tabela.
+- **Histórico/consultas salvas de SQL** ficam em `assets/js/sql-query-store.js` — módulo
+  genérico por `toolId`, 100% `localStorage` (mesmo padrão do `gamification.js`, sem
+  backend). Usado pelo SQL Playground e também pelo sandbox das lições do Track 7, que
+  grava as execuções com o `toolId` da trilha.
 - **Biblioteca de logos de bancos** (`assets/img/bancos/`, ago/2026): cópia integral do
   repositório [Bancos-em-SVG](https://github.com/Tgentil/Bancos-em-SVG) (87 bancos, SVG),
   guardada como fonte para quando novos bancos forem adicionados a ferramentas do site

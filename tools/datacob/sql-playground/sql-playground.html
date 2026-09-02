@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQL Playground DataCob - Arriba Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px; background: #fff; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 22px; padding: 0 28px;
+      position: sticky; top: 0; z-index: 30;
+    }
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero {
+      background:
+        radial-gradient(circle at 90% 10%, rgba(74,144,226,.10), transparent 28%),
+        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+      border-bottom: 1px solid var(--line); padding: 44px 0 30px;
+    }
+    .container-page { width: min(1220px, calc(100% - 44px)); margin-inline: auto; }
+    .kicker { color: var(--red); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: clamp(2.3rem, 5vw, 4rem); line-height: .98; letter-spacing: -.06em; font-weight: 300; margin: 0 0 16px; }
+    .hero p { color: var(--muted); font-size: 1.02rem; line-height: 1.6; max-width: 860px; margin: 0; }
+
+    .layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 22px; padding: 26px 0 60px; align-items: start; }
+
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 0; }
+    .sidebar { position: sticky; top: 86px; padding: 18px; max-height: calc(100vh - 106px); overflow-y: auto; }
+
+    .side-title { color: var(--red); text-transform: uppercase; letter-spacing: .14em; font-weight: 900; font-size: .72rem; margin: 18px 0 8px; }
+    .side-title:first-of-type { margin-top: 0; }
+    .side-hint { color: var(--muted); font-size: .78rem; margin: 0 0 10px; line-height: 1.45; }
+
+    /* Navegador de schema */
+    .schema-group { color: var(--muted); font-weight: 850; font-size: .72rem; margin: 12px 0 6px 2px; text-transform: uppercase; letter-spacing: .06em; }
+    .schema-table { border: 1px solid var(--line); border-radius: 9px; margin-bottom: 6px; overflow: hidden; }
+    .schema-table > summary {
+      cursor: pointer; padding: 8px 10px; font-weight: 850; font-size: .85rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; list-style: none;
+    }
+    .schema-table > summary::-webkit-details-marker { display: none; }
+    .schema-table > summary:hover { background: var(--surface-soft); }
+    .schema-table[open] > summary { background: var(--surface-soft); border-bottom: 1px solid var(--line); }
+    .schema-table .qtd { color: var(--muted); font-size: .74rem; font-weight: 800; }
+    .schema-body { padding: 10px; font-size: .8rem; }
+    .schema-desc { color: var(--muted); margin: 0 0 8px; line-height: 1.45; }
+    .schema-col { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-family: Consolas, Monaco, monospace; font-size: .76rem; }
+    .schema-col .tag { font-family: system-ui, sans-serif; font-size: .62rem; font-weight: 900; padding: 1px 5px; border-radius: 4px; letter-spacing: .04em; }
+    .tag-pk { background: #fff8df; color: #7a6210; border: 1px solid var(--gold); }
+    .tag-fk { background: #e8f0fb; color: #2b5f9e; border: 1px solid #b8d0ee; }
+    .schema-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .mini-btn {
+      border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 6px;
+      padding: 4px 8px; font-size: .74rem; font-weight: 800; cursor: pointer;
+    }
+    .mini-btn:hover { background: var(--surface-soft); }
+    .mini-btn.danger { color: var(--danger); border-color: rgba(220,53,69,.35); }
+
+    /* Área principal */
+    .main-stack { display: grid; gap: 18px; min-width: 0; }
+    .card-section { padding: 24px; }
+    .card-section h2 { font-size: 1.35rem; font-weight: 800; margin: 0 0 4px; letter-spacing: -.02em; }
+    .card-section h3 { font-size: 1.1rem; font-weight: 800; margin: 0 0 10px; }
+    .hint { color: var(--muted); font-size: .9rem; line-height: 1.55; margin: 0 0 14px; }
+
+    pre.code-block, textarea.sql-editor {
+      font-family: Consolas, Monaco, monospace; font-size: .82rem; background: #101010; color: #e8e8e8;
+      border-radius: 8px; padding: 14px; overflow-x: auto; white-space: pre; margin: 0;
+    }
+    textarea.sql-editor { width: 100%; min-height: 170px; resize: vertical; border: 1px solid var(--line); }
+
+    .sql-result {
+      min-height: 50px; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px;
+      background: var(--surface-soft); padding: 12px 14px; font-size: .86rem; color: var(--muted);
+    }
+    .sql-result-meta { font-size: .8rem; color: var(--muted); margin-bottom: 8px; }
+    .sql-error { color: var(--danger); font-weight: 700; margin: 0; }
+    .sql-empty { margin: 0; color: var(--muted); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+    table.preview-table { width: 100%; border-collapse: collapse; font-size: .82rem; background: #fff; }
+    table.preview-table th { background: var(--surface-soft); padding: 8px 10px; text-align: left; font-weight: 850; border-bottom: 2px solid var(--line); white-space: nowrap; }
+    table.preview-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); }
+    table.preview-table tr:last-child td { border-bottom: 0; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .btn-arriba { min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
+    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba:hover { background: #a93225; }
+    .btn-dark-arriba { background: var(--dark); color: #fff; }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
+    .btn-arriba:disabled { opacity: .45; cursor: not-allowed; }
+
+    .validation-msg { border-left: 4px solid var(--warn); background: rgba(181,129,0,.09); padding: 10px 13px; border-radius: 7px; margin-top: 10px; font-size: .88rem; }
+    .validation-msg.ok { border-left-color: var(--ok); background: rgba(25,135,84,.08); }
+    .validation-msg.error { border-left-color: var(--danger); background: rgba(220,53,69,.08); }
+
+    .sim-nota { border-left: 4px solid var(--gold); background: #fff8df; padding: 10px 12px; border-radius: 7px; font-size: .84rem; color: #5b4d20; }
+
+    /* Exemplos */
+    .exemplo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+    .exemplo-card {
+      border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--surface-soft);
+      text-align: left; cursor: pointer; display: grid; gap: 4px;
+    }
+    .exemplo-card:hover { border-color: var(--red); }
+    .exemplo-card strong { font-size: .9rem; }
+    .exemplo-card span { color: var(--muted); font-size: .8rem; line-height: 1.45; }
+
+    /* Estatísticas */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+    .stat-item {
+      background: var(--surface-soft); border: 1px solid var(--line); border-radius: 10px;
+      padding: 12px 14px; text-align: center;
+    }
+    .stat-item strong { display: block; font-size: 1.45rem; font-weight: 900; line-height: 1.1; }
+    .stat-item span { color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+    .cmd-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .cmd-chip {
+      background: #fff; border: 1px solid var(--line); border-radius: 999px;
+      padding: 4px 11px; font-size: .78rem; font-weight: 800;
+    }
+    .cmd-chip em { color: var(--muted); font-style: normal; font-weight: 700; }
+
+    /* Histórico e salvas */
+    .lista-item {
+      border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; margin-bottom: 8px;
+      display: grid; gap: 6px;
+    }
+    .lista-item .meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .76rem; color: var(--muted); }
+    .lista-item pre {
+      font-family: Consolas, Monaco, monospace; font-size: .75rem; background: var(--surface-soft);
+      border-radius: 6px; padding: 8px 10px; margin: 0; white-space: pre-wrap; word-break: break-word;
+      max-height: 90px; overflow-y: auto;
+    }
+    .lista-item .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill { padding: 2px 8px; border-radius: 999px; font-size: .7rem; font-weight: 900; }
+    .pill.ok { background: rgba(25,135,84,.12); color: #14683f; }
+    .pill.bad { background: rgba(220,53,69,.12); color: #a52834; }
+    .lista-vazia { color: var(--muted); font-size: .86rem; margin: 0; }
+
+    .save-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    .save-row input {
+      flex: 1 1 220px; min-height: 42px; border: 1px solid var(--line); border-radius: 5px;
+      padding: 8px 12px; font-size: .9rem; background: #fff; color: var(--ink);
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; max-height: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para plataforma</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">DataCob · Simulador SQL</span>
+      <h1>SQL Playground</h1>
+      <p>
+        Escreva e rode consultas livres contra um banco de treino com a <strong>mesma estrutura de tabelas do
+        DataCob</strong> (Financiado, Contrato, Parcela, Acordo, Historico...), com dados 100% fictícios.
+        Roda inteiramente no seu navegador — nenhuma conexão com o SQL Server real, nada é enviado a servidor.
+        Seu histórico e suas consultas salvas ficam só nesta máquina.
+      </p>
+    </div>
+  </section>
+
+  <div class="container-page layout">
+    <aside class="panel sidebar" aria-label="Schema do banco de treino">
+      <p class="side-title">Tabelas</p>
+      <p class="side-hint">Clique numa tabela para ver colunas e chaves. Use os botões para jogar um SELECT no editor.</p>
+      <div id="schemaBrowser"></div>
+    </aside>
+
+    <main class="main-stack">
+      <section class="panel card-section">
+        <h2>Editor de consultas</h2>
+        <p class="hint">
+          Digite qualquer <code>SELECT</code> (JOIN, GROUP BY, subquery, CASE...) e clique em Executar.
+          O motor é o AlaSQL, que cobre a maior parte do T-SQL de leitura — funções muito específicas do
+          SQL Server podem não existir aqui.
+        </p>
+        <textarea class="sql-editor" id="sqlEditor" spellcheck="false"></textarea>
+        <div class="actions">
+          <button type="button" class="btn-arriba btn-red-arriba" id="btnExecutar"><i class="fa-solid fa-play me-2"></i>Executar</button>
+          <button type="button" class="btn-arriba btn-light-arriba" id="btnLimparEditor">Limpar editor</button>
+          <button type="button" class="btn-arriba btn-outline-arriba" id="btnExportarCsv" disabled><i class="fa-solid fa-file-csv me-2"></i>Baixar resultado (CSV)</button>
+        </div>
+        <div class="save-row">
+          <input type="text" id="nomeConsulta" placeholder="Nome para salvar esta consulta (ex.: Acordos do mês)" maxlength="80">
+          <button type="button" class="btn-arriba btn-dark-arriba" id="btnSalvarConsulta"><i class="fa-solid fa-bookmark me-2"></i>Salvar consulta</button>
+        </div>
+        <div class="validation-msg hidden" id="editorMsg"></div>
+        <div class="sql-result" id="sqlResultado">Escolha um exemplo abaixo ou escreva sua consulta e clique em Executar.</div>
+      </section>
+
+      <section class="panel card-section">
+        <h3>Exemplos prontos</h3>
+        <p class="hint">Consultas que resolvem perguntas reais do dia a dia da cobrança. Clique para carregar no editor.</p>
+        <div class="exemplo-grid" id="exemplosGrid"></div>
+      </section>
+
+      <section class="panel card-section">
+        <h3>Minhas consultas salvas</h3>
+        <div id="listaSalvas"></div>
+      </section>
+
+      <section class="panel card-section">
+        <h3>Histórico de execuções</h3>
+        <p class="hint">As últimas 50 execuções deste navegador, com resultado e tempo.</p>
+        <div class="actions" style="margin-top:0;margin-bottom:14px">
+          <button type="button" class="btn-arriba btn-light-arriba" id="btnLimparHistorico">Limpar histórico</button>
+        </div>
+        <div id="listaHistorico"></div>
+      </section>
+
+      <section class="panel card-section">
+        <h3>Estatísticas de uso</h3>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="cmd-list" id="cmdList"></div>
+        <div class="sim-nota" style="margin-top:14px">
+          ℹ️ Tudo aqui é gravado apenas no <code>localStorage</code> deste navegador — não há backend, conta de
+          usuário nem envio de dados. Limpar os dados do site apaga histórico e consultas salvas.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/alasql@4/dist/alasql.min.js"></script>
+  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+
+</html>

@@ -14,6 +14,8 @@ import {
   getProgress, marcarLicaoConcluida, licaoConcluida, registrarQuiz,
   verificarBadges, badgeDesbloqueado, calcularPercentualConcluido
 } from "../../../assets/js/gamification.js";
+import { registrarExecucao } from "../../../assets/js/sql-query-store.js";
+import { semearTabelas, executarQuery } from "../../../assets/js/sql-sandbox.js";
 
 const TRACK_ID = "track-7-sql";
 let licaoAtualId = TRACK_7_LICOES[0].id;
@@ -24,23 +26,34 @@ const SANDBOX_TABLES = [
   { nome: "retornos", total: RETORNOS_DEMO.length }
 ];
 
+// Semeadura via assets/js/sql-sandbox.js. Antes isso usava
+// "SELECT * INTO tabela FROM ?", que NÃO funciona no AlaSQL 4 (estoura
+// em 'xcolumns'): as tabelas nunca eram criadas e todo "Try it yourself"
+// respondia "Table does not exist: boletos". O erro ficava escondido num
+// try/catch que só logava aviso — agora a falha aparece na tela.
+let erroSandbox = null;
+
 function seedSandbox() {
-  try {
-    alasql("SELECT * INTO boletos FROM ?", [BOLETOS_DEMO]);
-    alasql("SELECT * INTO remessas FROM ?", [REMESSAS_DEMO]);
-    alasql("SELECT * INTO retornos FROM ?", [RETORNOS_DEMO]);
-  } catch (error) {
-    console.warn("Sandbox SQL (AlaSQL) ja estava semeado ou falhou ao iniciar.", error);
-  }
+  const { falhas } = semearTabelas([
+    { nome: "boletos", dados: BOLETOS_DEMO },
+    { nome: "remessas", dados: REMESSAS_DEMO },
+    { nome: "retornos", dados: RETORNOS_DEMO }
+  ]);
+  erroSandbox = falhas.length
+    ? `Não foi possível preparar o sandbox (${falhas.map((f) => f.tabela).join(", ")}). Recarregue a página.`
+    : null;
 }
 
+// Toda execução do sandbox das lições também entra no histórico do query
+// store (mesmo módulo do SQL Playground, só com toolId próprio) — assim o
+// aluno consegue revisitar o que já testou durante a trilha.
 function executarSql(sql) {
-  try {
-    const resultado = alasql(sql);
-    return { linhas: Array.isArray(resultado) ? resultado : [], erro: null };
-  } catch (error) {
-    return { linhas: null, erro: error.message || String(error) };
-  }
+  if (erroSandbox) return { linhas: null, erro: erroSandbox };
+  const { linhas, erro, duracaoMs } = executarQuery(sql);
+  registrarExecucao(TRACK_ID, {
+    sql, ok: !erro, linhas: linhas ? linhas.length : 0, erro, duracaoMs
+  });
+  return { linhas, erro };
 }
 
 function renderResultTable(linhas) {

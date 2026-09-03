@@ -111,8 +111,9 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 - **Dados que parecem código são dados:** `assets/data/datacob-knowledge-base.js` é usado
   pela página de erros, pelo chatbot e pelo support-copilot. `assets/data/respostas-predefinidas.js`
   é usado pelo support-copilot (aba "Respostas Prontas") e pela página standalone em
-  `tools/datacob/respostas-predefinidas/`. `assets/data/tracks/track-7-sql*.js` alimenta o
-  Track 7. Não remover nenhum desses.
+  `tools/datacob/respostas-predefinidas/`. `assets/data/tracks/track-7-sql.js` alimenta o
+  Track 7 e `assets/data/datacob-sandbox-schema.js` alimenta o sandbox das lições e o SQL
+  Playground. Não remover nenhum desses.
 - **Geradores de dados fictícios BR** (nome/CPF válido/celular/CEP/endereço/e-mail) ficam
   em `assets/js/fake-data-br.js` (módulo sem dependência de DOM, mesmo algoritmo de CPF já
   usado em `massa-dados/script.js`). Reusar esse módulo em vez de reescrever geradores.
@@ -120,10 +121,16 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   100% `localStorage`, sem backend — track-agnóstica (recebe `trackId`). O Track 7
   (`tools/datacob/treinamento-sql/`) é o primeiro consumidor; futuras trilhas reusam o
   mesmo motor em vez de criar um novo.
-- **Sandbox SQL do Track 7** roda via AlaSQL 100% no navegador contra um dataset
-  FICTÍCIO (`assets/data/tracks/track-7-sql-dataset.js`) — nenhuma conexão com o SQL
-  Server real do DataCob. O SQL Query Builder (`tools/datacob/query-builder/`) também é
-  só um gerador de texto de query + preview fictício, não executa nada contra o banco real.
+- **Sandbox SQL do Track 7** roda via AlaSQL 100% no navegador — nenhuma conexão com o SQL
+  Server real do DataCob. Desde set/2026 as 15 lições praticam contra o **schema real**
+  (`assets/data/datacob-sandbox-schema.js`, o mesmo do SQL Playground) com dados 100%
+  fictícios; o dataset genérico antigo (`track-7-sql-dataset.js`, tabelas
+  boletos/remessas/retornos que não existem no DataCob) foi removido depois da migração —
+  não recriar. Ao mexer no conteúdo das lições, **rode todas as queries contra o AlaSQL
+  antes de commitar**: `tryIt.query` e `exercicios[].solucao` das 15 lições (61 queries)
+  foram validadas uma a uma, e o simulador tem limites que o T-SQL real não tem (ver
+  gotcha da semeadura abaixo). O SQL Query Builder (`tools/datacob/query-builder/`) também
+  é só um gerador de texto de query + preview fictício, não executa nada contra o banco real.
 - **Semeadura do sandbox AlaSQL é fonte única em `assets/js/sql-sandbox.js`** —
   `semearTabelas()` + `executarQuery()`. **Não use `SELECT * INTO tabela FROM ?`**: esse
   comando NÃO funciona no AlaSQL 4 (estoura em `'xcolumns'`) e era exatamente o bug que

@@ -109,6 +109,18 @@ const menuData = {
     docs: {
         label: "Documentacao",
         children: {
+            aprender: {
+                label: "Aprender",
+                badge: "Trilhas",
+                title: "Centro de Aprendizado",
+                description: "Trilhas com teoria, exemplos e simulador para praticar na hora.",
+                links: [
+                    ["Centro de Aprendizado", "pages/aprender/index.html", true],
+                    ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
+                    ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
+                    ["Treinamento DataCob (produto)", "tools/datacob/treinamento-cliente/index.html"]
+                ]
+            },
             help: {
                 label: "Help Center",
                 badge: "Ajuda",
@@ -223,6 +235,7 @@ export const searchItems = [
     ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
     ["Track 7 · Treinamento SQL", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],
     ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema datacob financiado contrato parcela acordo negociacao historico telefone email endereco treinar praticar select join group by csv", "tools/datacob/sql-playground/sql-playground.html"],
+    ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself w3schools progresso pontos badges quiz exercicios simulador sql cnab base64 massa de dados datacob", "pages/aprender/index.html"],
     ["SQL Query T-SQL - Relatórios", "sql query builder relatorios datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
 ];
 

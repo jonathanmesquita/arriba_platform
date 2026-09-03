@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aprender - Centro de Aprendizado - Arriba Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px; background: #fff; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 22px; padding: 0 28px;
+      position: sticky; top: 0; z-index: 30;
+    }
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero {
+      background:
+        radial-gradient(circle at 88% 12%, rgba(74,144,226,.10), transparent 30%),
+        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+      border-bottom: 1px solid var(--line); padding: 48px 0 34px;
+    }
+    .container-page { width: min(1220px, calc(100% - 44px)); margin-inline: auto; }
+    .kicker { color: var(--red); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); line-height: .98; letter-spacing: -.06em; font-weight: 300; margin: 0 0 16px; }
+    .hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.6; max-width: 780px; margin: 0 0 22px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .section { padding: 34px 0; }
+    .section-head { margin-bottom: 18px; }
+    .section-head h2 { font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; margin: 0 0 6px; }
+    .section-head p { color: var(--muted); margin: 0; font-size: .95rem; line-height: 1.55; }
+
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+    /* ---- Progresso ---- */
+    .progresso-grid { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 18px; align-items: stretch; }
+    .progresso-main { padding: 22px 24px; }
+    .progresso-side { padding: 22px 24px; }
+    .stat-row { display: flex; flex-wrap: wrap; gap: 26px; margin-bottom: 16px; }
+    .stat { min-width: 96px; }
+    .stat strong { display: block; font-size: 1.9rem; font-weight: 900; line-height: 1; color: var(--red); }
+    .stat span { color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+    .progress-bar-track { height: 9px; background: var(--surface-soft); border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+    .progress-bar-fill { height: 100%; background: var(--red); border-radius: 999px; transition: width .35s ease; }
+    .progress-label { color: var(--muted); font-size: .84rem; margin-top: 8px; }
+    .badges-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .badge-icon {
+      width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px;
+      background: var(--surface-soft); font-size: 1.25rem; opacity: .32; border: 1px solid var(--line);
+    }
+    .badge-icon.unlocked { opacity: 1; background: #fff8df; border-color: var(--gold); }
+    .side-title { color: var(--red); text-transform: uppercase; letter-spacing: .14em; font-weight: 900; font-size: .72rem; margin: 0 0 10px; }
+
+    /* ---- Cards de tópico ---- */
+    .topicos { display: grid; gap: 18px; }
+    .topico {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: 22px; padding: 24px; align-items: start;
+    }
+    .topico-info h3 { font-size: 1.7rem; font-weight: 850; letter-spacing: -.03em; margin: 0 0 4px; }
+    .topico-tag { color: var(--muted); font-size: .95rem; line-height: 1.5; margin: 0 0 8px; }
+    .topico-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .chip {
+      background: var(--surface-soft); border: 1px solid var(--line); border-radius: 999px;
+      padding: 3px 10px; font-size: .74rem; font-weight: 800; color: var(--muted);
+    }
+    .chip.pronto { background: rgba(25,135,84,.09); border-color: rgba(25,135,84,.3); color: #14683f; }
+    .topico-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .exemplo { min-width: 0; }
+    .exemplo-title {
+      font-size: .74rem; font-weight: 900; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--muted); margin: 0 0 8px;
+    }
+    pre.code-block {
+      font-family: Consolas, Monaco, monospace; font-size: .78rem; background: #101010; color: #e8e8e8;
+      border-radius: 8px; padding: 14px; overflow-x: auto; white-space: pre; margin: 0 0 10px;
+      max-height: 260px; overflow-y: auto;
+    }
+
+    /* ---- Teste seus conhecimentos ---- */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+    .skill-card { padding: 20px 22px; display: grid; gap: 6px; align-content: start; }
+    .skill-card .ico { font-size: 1.5rem; color: var(--red); }
+    .skill-card strong { font-size: 1.02rem; }
+    .skill-card p { color: var(--muted); font-size: .88rem; line-height: 1.5; margin: 0 0 10px; }
+
+    /* ---- Botões (padrão do site) ---- */
+    .btn-arriba {
+      min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px;
+      font-weight: 900; cursor: pointer; text-decoration: none; display: inline-flex;
+      align-items: center; justify-content: center; font-size: .9rem;
+    }
+    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba:hover { background: #a93225; color: #fff; }
+    .btn-dark-arriba { background: var(--dark); color: #fff; }
+    .btn-dark-arriba:hover { color: #fff; opacity: .9; }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .btn-outline-arriba:hover { background: var(--dark); color: #fff; }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line); }
+
+    .nota {
+      border-left: 4px solid var(--gold); background: #fff8df; padding: 12px 14px;
+      border-radius: 7px; font-size: .86rem; color: #5b4d20; line-height: 1.55;
+    }
+
+    @media (max-width: 900px) {
+      .progresso-grid { grid-template-columns: 1fr; }
+      .topico { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../index.html" class="brand">ARRIBA</a>
+    <a href="../../index.html" class="back-link">← Voltar para plataforma</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Arriba · Centro de aprendizado</span>
+      <h1>Aprender fazendo</h1>
+      <p>
+        Trilhas e simuladores para o time de suporte: cada tópico traz a teoria, um exemplo de código
+        real e um ambiente para você <strong>testar na hora</strong>. Tudo roda no seu navegador, contra
+        dados fictícios — nada toca banco de produção.
+      </p>
+      <div class="hero-actions">
+        <a class="btn-arriba btn-red-arriba" href="../../tools/datacob/treinamento-sql/treinamento-sql.html">
+          <i class="fa-solid fa-graduation-cap me-2"></i>Começar pela trilha de SQL
+        </a>
+        <a class="btn-arriba btn-outline-arriba" href="../../tools/datacob/sql-playground/sql-playground.html">
+          <i class="fa-solid fa-flask me-2"></i>Ir direto ao simulador
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-page">
+    <!-- ============ SEU PROGRESSO ============ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Seu progresso</h2>
+        <p>
+          Calculado a partir do que você já fez neste navegador — pontos e lições da trilha, e execuções
+          no simulador. Fica salvo localmente, sem login e sem enviar nada a servidor.
+        </p>
+      </div>
+
+      <div class="progresso-grid">
+        <div class="panel progresso-main">
+          <div class="stat-row" id="statRow"></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="barra" style="width:0%"></div></div>
+          <div class="progress-label" id="barraLabel">0% da trilha de SQL concluída</div>
+          <div id="progressoVazio" class="nota" style="margin-top:16px; display:none">
+            Você ainda não começou nenhuma trilha neste navegador. Comece pela
+            <a href="../../tools/datacob/treinamento-sql/treinamento-sql.html">trilha de SQL</a> — a
+            primeira lição leva uns 20 minutos.
+          </div>
+        </div>
+
+        <aside class="panel progresso-side">
+          <p class="side-title">Conquistas</p>
+          <div class="badges-row" id="badgesRow"></div>
+          <p class="progress-label" id="badgesLabel" style="margin-top:12px"></p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ TÓPICOS ============ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Tópicos</h2>
+        <p>Cada card tem um exemplo real e um botão para abrir o ambiente onde você testa na hora.</p>
+      </div>
+      <div class="topicos" id="topicos"></div>
+    </section>
+
+    <!-- ============ TESTE SEUS CONHECIMENTOS ============ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Teste seus conhecimentos</h2>
+        <p>Depois da teoria, valide o que ficou.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="panel skill-card">
+          <span class="ico"><i class="fa-solid fa-list-check"></i></span>
+          <strong>Quizzes</strong>
+          <p>Perguntas de múltipla escolha ao fim de cada lição, com explicação da resposta certa e pontos de bônus por acertar tudo.</p>
+          <a class="btn-arriba btn-outline-arriba" href="../../tools/datacob/treinamento-sql/treinamento-sql.html">Abrir trilha</a>
+        </div>
+        <div class="panel skill-card">
+          <span class="ico"><i class="fa-solid fa-pen-to-square"></i></span>
+          <strong>Exercícios</strong>
+          <p>Enunciados práticos com solução comentada e um botão que joga a resposta direto no sandbox para você rodar e comparar.</p>
+          <a class="btn-arriba btn-outline-arriba" href="../../tools/datacob/treinamento-sql/treinamento-sql.html">Ver exercícios</a>
+        </div>
+        <div class="panel skill-card">
+          <span class="ico"><i class="fa-solid fa-terminal"></i></span>
+          <strong>Simulador livre</strong>
+          <p>Escreva qualquer consulta contra o schema do DataCob, com histórico, consultas salvas e export CSV.</p>
+          <a class="btn-arriba btn-outline-arriba" href="../../tools/datacob/sql-playground/sql-playground.html">Abrir simulador</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="nota">
+        ℹ️ <strong>Sobre os dados:</strong> os simuladores usam tabelas com a mesma estrutura do DataCob real,
+        mas com dados 100% inventados — nenhum nome, CPF/CNPJ, telefone ou e-mail de pessoa real. Não existe
+        nenhuma conexão com o SQL Server de produção, então você pode errar à vontade.
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+
+</html>

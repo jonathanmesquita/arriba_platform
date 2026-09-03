@@ -153,6 +153,16 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   genérico por `toolId`, 100% `localStorage` (mesmo padrão do `gamification.js`, sem
   backend). Usado pelo SQL Playground e também pelo sandbox das lições do Track 7, que
   grava as execuções com o `toolId` da trilha.
+- **Centro de Aprendizado** (`pages/aprender/`, set/2026): hub das trilhas/simuladores no
+  espírito do W3Schools — card por tópico com exemplo de código real + botão "Try it
+  Yourself", seção "Teste seus conhecimentos" e painel de progresso. Adicionar tópico =
+  adicionar um objeto em `TOPICOS` (em `pages/aprender/script.js`); nenhum card é escrito
+  à mão no HTML. O painel de progresso **não tem dados próprios**: soma o que
+  `gamification.js` (pontos/lições/badges) e `sql-query-store.js` (execuções/salvas) já
+  gravam — se entrar uma segunda trilha, é só somar ali. Feito a partir de um clone da
+  home do W3Schools enviado como referência, mas **sem** trazer marca, logo, imagens ou
+  paleta de lá: identidade Redwood do site, mesma decisão que foi tomada no query-builder
+  (recebido em Tailwind/jsx e refeito no padrão do site).
 - **Biblioteca de logos de bancos** (`assets/img/bancos/`, ago/2026): cópia integral do
   repositório [Bancos-em-SVG](https://github.com/Tgentil/Bancos-em-SVG) (87 bancos, SVG),
   guardada como fonte para quando novos bancos forem adicionados a ferramentas do site

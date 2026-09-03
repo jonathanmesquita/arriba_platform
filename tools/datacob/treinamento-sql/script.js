@@ -9,7 +9,7 @@
    ===================================================================== */
 
 import { TRACK_7_LICOES, TRACK_7_SECOES, TRACK_7_BADGES, RAFAEL, encontrarLicao } from "../../../assets/data/tracks/track-7-sql.js";
-import { BOLETOS_DEMO, REMESSAS_DEMO, RETORNOS_DEMO } from "../../../assets/data/tracks/track-7-sql-dataset.js";
+import { DATACOB_SCHEMA } from "../../../assets/data/datacob-sandbox-schema.js";
 import {
   getProgress, marcarLicaoConcluida, licaoConcluida, registrarQuiz,
   verificarBadges, badgeDesbloqueado, calcularPercentualConcluido
@@ -20,11 +20,9 @@ import { semearTabelas, executarQuery } from "../../../assets/js/sql-sandbox.js"
 const TRACK_ID = "track-7-sql";
 let licaoAtualId = TRACK_7_LICOES[0].id;
 
-const SANDBOX_TABLES = [
-  { nome: "boletos", total: BOLETOS_DEMO.length },
-  { nome: "remessas", total: REMESSAS_DEMO.length },
-  { nome: "retornos", total: RETORNOS_DEMO.length }
-];
+// Lista do painel "Seu banco" na lição — sai do próprio schema, sem
+// duplicar nome de tabela aqui.
+const SANDBOX_TABLES = DATACOB_SCHEMA.map((t) => ({ nome: t.tabela, total: t.dados.length }));
 
 // Semeadura via assets/js/sql-sandbox.js. Antes isso usava
 // "SELECT * INTO tabela FROM ?", que NÃO funciona no AlaSQL 4 (estoura
@@ -34,11 +32,7 @@ const SANDBOX_TABLES = [
 let erroSandbox = null;
 
 function seedSandbox() {
-  const { falhas } = semearTabelas([
-    { nome: "boletos", dados: BOLETOS_DEMO },
-    { nome: "remessas", dados: REMESSAS_DEMO },
-    { nome: "retornos", dados: RETORNOS_DEMO }
-  ]);
+  const { falhas } = semearTabelas(DATACOB_SCHEMA);
   erroSandbox = falhas.length
     ? `Não foi possível preparar o sandbox (${falhas.map((f) => f.tabela).join(", ")}). Recarregue a página.`
     : null;

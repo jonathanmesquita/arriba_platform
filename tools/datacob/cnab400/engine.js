@@ -146,6 +146,61 @@ function parseDetalhe(line, numLinha, config) {
   return t;
 }
 
+/* ---------------------------------------------------------------------
+   Conferência do Trailer
+
+   O próprio arquivo declara no Trailer quantos títulos e que valor total
+   ele carrega. Comparar isso com o que foi lido pega arquivo truncado ou
+   editado à mão — exatamente o que um validador precisa avisar (um
+   arquivo recebido de teste declarava 36 títulos e tinha 1 linha de
+   detalhe, e nada na tela dizia isso).
+
+   Só confere o que o config do banco declarar em `trailerConferencia`
+   ({ quantidadeKey, valorKey }); banco cujo Trailer tem outra forma
+   (ex.: Itaú, com totais separados por tipo de cobrança) simplesmente
+   não declara, e aí não há aviso falso. O valor esperado sai da MESMA
+   regra usada na geração (trailerTotalFn / trailerTotalKey), pra
+   validação e geração não divergirem com o tempo.
+   --------------------------------------------------------------------- */
+function conferirTrailer(result, config) {
+  if (!config.trailerFields) return;
+
+  if (!result.trailer) {
+    result.avisos.push("Arquivo sem registro Trailer (tipo 9) — provavelmente está incompleto.");
+    return;
+  }
+
+  const conf = config.trailerConferencia;
+  if (!conf) return;
+
+  if (conf.quantidadeKey) {
+    const declarada = Number(result.trailer[conf.quantidadeKey]);
+    if (Number.isFinite(declarada) && declarada !== result.titulos.length) {
+      result.avisos.push(
+        `Trailer declara ${declarada} título(s), mas o arquivo tem ${result.titulos.length} linha(s) de detalhe.`
+      );
+    }
+  }
+
+  if (conf.valorKey) {
+    const totalFn = config.trailerTotalFn
+      || (det => Number(det[config.trailerTotalKey || "valorTitulo"]) || 0);
+    const esperado = result.titulos.reduce((soma, det) => soma + totalFn(det), 0);
+    const declarado = Number(result.trailer[conf.valorKey]);
+    // Tolerância de 1 centavo: os valores vêm de inteiros em centavos, mas
+    // a soma em ponto flutuante pode fechar com resto mínimo.
+    if (Number.isFinite(declarado) && Math.abs(declarado - esperado) > 0.01) {
+      result.avisos.push(
+        `Trailer declara valor total de ${formatarReais(declarado)}, mas a soma dos títulos dá ${formatarReais(esperado)}.`
+      );
+    }
+  }
+}
+
+function formatarReais(valor) {
+  return `R$ ${(Number(valor) || 0).toFixed(2).replace(".", ",")}`;
+}
+
 // Lê um arquivo de retorno CNAB 400 conforme o config do banco escolhido.
 export function parseArquivo(texto, config) {
   const lines = String(texto || "")
@@ -172,6 +227,7 @@ export function parseArquivo(texto, config) {
     // outros tipos de registro (ex.: 3 - rateio) não são suportados nesta versão.
   });
 
+  conferirTrailer(result, config);
   return result;
 }
 

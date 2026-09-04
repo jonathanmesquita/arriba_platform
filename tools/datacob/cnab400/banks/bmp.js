@@ -451,7 +451,15 @@ export const bmp = {
     ocorrencias: OCORRENCIAS_RETORNO,
     ocorrenciaComMotivo: OCORRENCIA_COM_MOTIVO_RETORNO,
     motivos: MOTIVOS_RETORNO,
-    trailerTotalFn: det => Number(det.valorPago) || Number(det.valorTitulo) || 0,
+    // O Valor Total do Trailer é a soma do VALOR DO TÍTULO, não do valor
+    // pago. Confirmado em 3 arquivos reais com trailer, e nos dois em que
+    // pago != título a diferença é clara (2.833,41 vs 2.893,99 e
+    // 11.137,21 vs 11.298,19 — o trailer declarou o primeiro). Antes aqui
+    // somava valorPago, o que fazia o gerador escrever um trailer errado.
+    trailerTotalKey: "valorTitulo",
+    // Habilita a conferência do Trailer na leitura (ver conferirTrailer em
+    // engine.js): pega arquivo truncado ou editado à mão.
+    trailerConferencia: { quantidadeKey: "quantidadeTitulos", valorKey: "valorTotal" },
     formFields: {
       header: ["codEmpresa", "nomeEmpresa", "dataGravacao"],
       detalhe: ["nossoNumero", "carteira", "ocorrencia", "numDocumento", "dataVencimento", "valorTitulo", "valorPago"]

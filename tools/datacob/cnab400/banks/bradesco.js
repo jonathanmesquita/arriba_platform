@@ -353,6 +353,13 @@ export const bradesco = {
     motivos: MOTIVOS_RETORNO,
     // Regra original do script.js: soma valorPago quando existir, senão cai para valorTitulo.
     trailerTotalFn: det => Number(det.valorPago) || Number(det.valorTitulo) || 0,
+    // Confere só a QUANTIDADE de títulos declarada no Trailer (isso é
+    // inequívoco). O valor total fica de fora de propósito: no BMP os
+    // arquivos reais provaram que o Trailer soma valorTitulo, não
+    // valorPago, mas aqui não temos arquivo real de Bradesco com trailer
+    // pra confirmar qual das duas regras vale — habilitar `valorKey` com
+    // a fórmula errada só geraria aviso falso.
+    trailerConferencia: { quantidadeKey: "quantidadeTitulos" },
     // Só os campos marcados obrigatorio:true nos mapas acima — o resto
     // (avisoBancario, dataCredito, motivosRejeicao...) fica de fora do
     // formulário rápido e sai em branco/zero na linha gerada, que ainda

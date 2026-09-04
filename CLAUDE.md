@@ -86,7 +86,26 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   aqui também (a amostra do manual dizia "brancos" nos 3, mas 51 linhas reais
   discordam). Um arquivo de teste recebido no processo (`..._Nuevo.RET`) veio truncado
   (linha de detalhe com 392 de 400 posições, trailer com contagem de títulos
-  inconsistente com o conteúdo) — descartado da validação, não é dado confiável.
+  inconsistente com o conteúdo) — descartado da validação, não é dado confiável; depois
+  veio a versão corrigida dele (`...BaixaDataCob_CNAB400BMP.RET`, 2 títulos), que bate
+  byte a byte, elevando o total validado para **95 linhas de detalhe reais** (15+42+36+2).
+  Esse arquivo corrigido, porém, **não tem Trailer** — foi o que motivou a conferência de
+  Trailer descrita abaixo.
+- **Conferência do Trailer (`engine.js`, `conferirTrailer`)**: na leitura, compara o que o
+  Trailer declara (quantidade de títulos e valor total) com o que foi lido, e avisa se
+  não fecha ou se o Trailer não existe. Isso pega arquivo truncado/editado à mão — o
+  `..._Nuevo.RET` acima, por exemplo, hoje é sinalizado automaticamente (declarava 36
+  títulos com 1 linha de detalhe), antes só dava pra achar na mão. É opt-in por banco via
+  `config.trailerConferencia = { quantidadeKey, valorKey }`: BMP usa os dois, Bradesco só
+  a quantidade (não há arquivo real de Bradesco com trailer pra confirmar qual soma o
+  valor total usa) e Itaú não declara (Trailer com totais separados por tipo de cobrança —
+  habilitar ali geraria aviso falso). O valor esperado sai da mesma regra da geração
+  (`trailerTotalFn`/`trailerTotalKey`), pra validação e geração não divergirem.
+  **Atenção:** no BMP o valor total do Trailer é a soma de `valorTitulo`, NÃO de
+  `valorPago` — os 3 arquivos reais com trailer provam isso (2.833,41 vs 2.893,99 e
+  11.137,21 vs 11.298,19). O gerador somava `valorPago` e escrevia trailer errado; foi
+  corrigido. Bradesco segue somando `valorPago || valorTitulo` porque é a regra herdada e
+  não temos arquivo real pra contestar.
   Trailer de Retorno tem só posições 1-39 e 395-400 confirmadas — o manual sugere um
   detalhamento por ocorrência a partir da posição ~40 (igual ao do Bradesco), mas
   todos os arquivos reais disponíveis só têm ocorrência 06, insuficiente pra confirmar

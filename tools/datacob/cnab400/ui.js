@@ -149,6 +149,7 @@ function readerViewHtml() {
     </div>
 
     <div class="validation-msg" id="readerMsg">Aguardando arquivo de ${directionLabel().toLowerCase()}.</div>
+    <div class="validation-msg warn hidden" id="readerAvisos"></div>
 
     <div id="readerResult" class="hidden">
       <div class="summary-grid">
@@ -237,19 +238,34 @@ function runParse() {
     renderTitulos(data.titulos);
     document.getElementById("readerResult").classList.remove("hidden");
 
-    let msg = `Arquivo lido: ${data.titulos.length} título(s) extraído(s).`;
-    let kind = "ok";
-    if (!hValid) {
-      kind = "error";
-      msg = "Header inválido — " + data.header._erros.join("; ");
-    } else if (data.avisos.length) {
-      msg += " Avisos: " + data.avisos.slice(0, 3).join(" ");
-    }
-    setMsg("readerMsg", msg, kind);
+    const msg = hValid
+      ? `Arquivo lido: ${data.titulos.length} título(s) extraído(s).`
+      : "Header inválido — " + data.header._erros.join("; ");
+    setMsg("readerMsg", msg, hValid ? "ok" : "error");
+
+    // Avisos ganham bloco próprio, e TODOS aparecem: antes ficavam
+    // espremidos na mesma linha da mensagem, cortados nos 3 primeiros, e
+    // só apareciam quando o header era válido — ou seja, num arquivo com
+    // header ruim os problemas de estrutura ficavam invisíveis.
+    renderAvisos(data.avisos);
   } catch (err) {
     lastParsedData = null;
     setMsg("readerMsg", "Erro ao processar: " + err.message, "error");
   }
+}
+
+function renderAvisos(avisos = []) {
+  const box = document.getElementById("readerAvisos");
+  if (!box) return;
+  if (!avisos.length) {
+    box.classList.add("hidden");
+    box.innerHTML = "";
+    return;
+  }
+  box.classList.remove("hidden");
+  box.innerHTML = `
+    <strong>⚠️ ${avisos.length} ${avisos.length === 1 ? "aviso de estrutura" : "avisos de estrutura"}</strong>
+    <ul>${avisos.map(a => `<li>${escHtml(a)}</li>`).join("")}</ul>`;
 }
 
 function renderTitulos(titulos) {

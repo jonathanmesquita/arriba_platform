@@ -47,6 +47,27 @@ const TOPICOS = [
     ]
   },
   {
+    id: "web",
+    titulo: "HTML, CSS e JavaScript",
+    tagline: "Escrever a página e ver o resultado renderizando ao lado, na hora.",
+    chips: ["Editor com abas", "Preview ao vivo", "Roda no navegador"],
+    pronto: true,
+    exemploTitulo: "Exemplo: o clássico 'Try it Yourself'",
+    exemplo: `<h1>Olá, mundo!</h1>
+<button id="btn">Clique em mim</button>
+
+<style>
+  h1 { color: #c0392b; }
+</style>
+
+<script>
+  btn.onclick = () => alert("funcionou!");
+<\/script>`,
+    acoes: [
+      { label: "Try it Yourself", href: "../../tools/dados/editor-web/editor-web.html", estilo: "btn-red-arriba", icone: "fa-play" }
+    ]
+  },
+  {
     id: "relatorios",
     titulo: "Consultas para relatório",
     tagline: "Montar query de relatório por regras, sem escrever SQL do zero.",

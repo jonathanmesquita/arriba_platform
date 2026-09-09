@@ -182,6 +182,22 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   home do W3Schools enviado como referência, mas **sem** trazer marca, logo, imagens ou
   paleta de lá: identidade Redwood do site, mesma decisão que foi tomada no query-builder
   (recebido em Tailwind/jsx e refeito no padrão do site).
+- **Editor Web / "Try it Yourself"** (`tools/dados/editor-web/`, set/2026): o editor
+  HTML/CSS/JS com preview ao vivo, no estilo do W3Schools — três abas viram um documento
+  só, renderizado num `<iframe srcdoc>`. **O `sandbox` do iframe é de propósito
+  `allow-scripts allow-forms allow-modals allow-popups` SEM `allow-same-origin`**: assim o
+  JavaScript do usuário executa de verdade mas fica em origem opaca, sem alcançar o
+  `localStorage` nem o DOM da página (testado: `localStorage`/`parent.document` estouram
+  `SecurityError`). **Não adicione `allow-same-origin`** — junto com `allow-scripts` isso
+  anula o sandbox e o código digitado passaria a ler/escrever tudo do site. Como o iframe
+  está em outra origem, o console dele não é legível daqui: `PONTE_CONSOLE` (em `script.js`)
+  é injetada no documento gerado, sobrescreve `console.log/info/warn/error` e escuta
+  `error`/`unhandledrejection`, mandando tudo pro pai via `postMessage`; o pai valida a
+  mensagem por `evento.source === preview.contentWindow` (o `origin` vem `"null"`, então
+  não serve para conferir). O `.html` baixado / aberto em nova aba é montado **sem** a
+  ponte (`montarDocumento({ comPonte: false })`), pra não vazar código de instrumentação no
+  arquivo do usuário. Rascunho fica em `localStorage` (`arribaEditorWeb:rascunho`), mesmo
+  padrão sem backend do resto do site. Adicionar exemplo = adicionar objeto em `EXEMPLOS`.
 - **Biblioteca de logos de bancos** (`assets/img/bancos/`, ago/2026): cópia integral do
   repositório [Bancos-em-SVG](https://github.com/Tgentil/Bancos-em-SVG) (87 bancos, SVG),
   guardada como fonte para quando novos bancos forem adicionados a ferramentas do site
@@ -248,6 +264,13 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   corrigiu um campo do detalhe de Retorno que a planilha marcava errado como
   "brancos" (293-295; na real são 2 brancos + 1 dígito fixo "0"); um outro arquivo
   de teste recebido no processo veio truncado e foi descartado (ver gotcha).
+- [x] **Parte 9 — Centro de Aprendizado + SQL Playground + Editor Web (set/2026).** Hub
+  `pages/aprender/` no espírito do W3Schools; SQL Playground (simulador SQL livre) e
+  `sql-query-store.js` (histórico/consultas salvas); 15 lições do Track 7 migradas para o
+  schema real do DataCob (dados 100% fictícios) e semeadura do AlaSQL unificada em
+  `sql-sandbox.js` — que consertou o sandbox das lições, quebrado em produção; Editor Web
+  HTML/CSS/JS com preview ao vivo em `tools/dados/editor-web/` (ver gotcha acima),
+  fechando o "Try it Yourself" também para front-end, não só para SQL.
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

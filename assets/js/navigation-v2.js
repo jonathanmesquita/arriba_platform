@@ -42,6 +42,7 @@ const menuData = {
                     ["Calculadora de Hash", "tools/dados/hash-generator/hash-generator.html"],
                     ["Boleto Base64 → PDF", "tools/dados/base64-pdf/base64-pdf.html"],
                     ["Decodificador Universal", "tools/dados/decodificador/decodificador.html"],
+                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"],
                     ["Descriptografador (MD5 + 3DES)", "https://decrypt.jm.dev.br/"],
                 ]
             },
@@ -118,6 +119,7 @@ const menuData = {
                     ["Centro de Aprendizado", "pages/aprender/index.html", true],
                     ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
                     ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
+                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"],
                     ["Treinamento DataCob (produto)", "tools/datacob/treinamento-cliente/index.html"]
                 ]
             },
@@ -231,6 +233,7 @@ export const searchItems = [
     ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
     ["Validador de JSON", "json validador validar formatar indentar sintaxe erro parse", "tools/dados/json-validator/json_validator.html"],
     ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
+    ["Editor Web (HTML/CSS/JS)", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet w3schools aprender praticar", "tools/dados/editor-web/editor-web.html"],
     ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
     ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
     ["Track 7 · Treinamento SQL", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],

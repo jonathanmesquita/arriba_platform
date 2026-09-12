@@ -152,9 +152,15 @@
             padding: 26px 0 24px;
         }
 
+        /* Faixa de categorias: 8 colunas = 4 tiles por grupo, UMA linha so.
+           E o limite do layout (mesma ideia da faixa da Oracle que serviu de
+           referencia) - se entrar um tile novo aqui, outro precisa sair, senao
+           a grade quebra numa segunda linha e o alinhamento com os titulos
+           "Infraestrutura"/"Aplicacoes" se perde. Ferramenta nova entra no
+           mega-menu e na busca (navigation-v2.js), nao obrigatoriamente aqui. */
         .category-grid {
             display: grid;
-            grid-template-columns: repeat(9, minmax(100px, 1fr));
+            grid-template-columns: repeat(8, minmax(100px, 1fr));
             gap: 16px;
         }
 
@@ -167,7 +173,7 @@
         }
 
         .category-group-title--infra { grid-column: 1 / 5; }
-        .category-group-title--apps { grid-column: 5 / 10; }
+        .category-group-title--apps { grid-column: 5 / 9; }
 
         @media (max-width: 1100px) {
             .category-group-title--infra,
@@ -984,11 +990,7 @@
                     <a class="category-tile" href="pages/docs/help-center/index.html" data-route>Help Center</a>
                     <a class="category-tile" href="tools/datacob/support-copilot/docs/datacob-manuais/">Base de Conhecimento</a>
                     <a class="category-tile" href="tools/datacob/support-copilot/support-copilot.html">AI Support Copilot</a>
-                    <a class="category-tile" href="tools/datacob/treinamento-cliente/index.html">Treinamento DataCob</a>
-                    <a class="category-tile" href="tools/datacob/query-builder/query-builder.html">SQL Query T-SQL - Relatórios</a>
-                    <a class="category-tile" href="tools/datacob/sql-playground/sql-playground.html">SQL Playground</a>
                     <a class="category-tile" href="pages/aprender/index.html">Centro de Aprendizado</a>
-                    <a class="category-tile" href="tools/dados/editor-web/editor-web.html">Editor Web (HTML/CSS/JS)</a>
                 </div>
             </div>
         </section>

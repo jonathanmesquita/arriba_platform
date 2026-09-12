@@ -11,12 +11,12 @@
     <meta property="og:site_name" content="Arriba Platform" />
     <meta property="og:title" content="Arriba Platform | PH3A AI Portfolio" />
     <meta property="og:description" content="Portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
-    <meta property="og:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/datacob-man-min.webp" />
+    <meta property="og:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/arriba-hero-bg.webp" />
     <meta property="og:url" content="https://arriba.jm.dev.br/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Arriba Platform | PH3A AI Portfolio" />
     <meta name="twitter:description" content="Portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
-    <meta name="twitter:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/datacob-man-min.webp" />
+    <meta name="twitter:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/arriba-hero-bg.webp" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="assets/css/tokens.css" />
@@ -202,7 +202,7 @@
         .portfolio-hero {
             --hero-accent: var(--rw-accent-teal);
             --hero-deep: #102b38;
-            --hero-bg-image: url("assets/img/capas-wallpaper-menus/sc24-ai-database.webp");
+            --hero-bg-image: url("assets/img/capas-wallpaper-menus/arriba-hero-bg.webp");
             position: relative;
             background: #102b38;
             color: #fff;
@@ -218,7 +218,9 @@
             inset: 0;
             z-index: -2;
             background:
-                linear-gradient(90deg, rgba(10, 24, 31, .96) 0%, rgba(16, 43, 56, .88) 42%, rgba(16, 43, 56, .52) 100%),
+                /* Quase opaco a esquerda (onde fica o texto do hero) e leve a
+                   direita, para a arte de fundo aparecer sem afogar. */
+                linear-gradient(90deg, rgba(10, 24, 31, .96) 0%, rgba(16, 43, 56, .82) 42%, rgba(16, 43, 56, .32) 100%),
                 var(--hero-bg-image) center/cover no-repeat;
             transform: scale(1.02);
             transition: opacity .45s ease, transform 8s ease;
@@ -1272,7 +1274,8 @@
                     copy: "Gerador CSV, massa de dados, JSON, artigos Freshdesk e materiais tecnicos organizados em uma experiencia consistente para portfolio e uso real.",
                     primary: { label: "Ver ferramentas", href: "#tools-section", icon: "fa-table-list" },
                     secondary: { label: "Gerador CSV", href: "tools/datacob/arriba-csv-generator/csv-template-generator.html" },
-                    cover: "assets/img/capas-wallpaper-menus/datacob-man-min.webp",
+                    cover: "assets/img/capas-wallpaper-menus/arriba-hero-card.webp",
+                    bg: "assets/img/capas-wallpaper-menus/arriba-hero-bg.webp",
                     coverLabel: "Portal de ferramentas",
                     dashboard: "Ferramentas recorrentes centralizadas em um portal unico",
                     question: "Qual arquivo precisa ser validado agora?",

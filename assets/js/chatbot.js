@@ -2,19 +2,24 @@
 
 import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from '../data/datacob-knowledge-base.js';
 
-// Mascote (Sapolingo): 4 estados, um arquivo por estado em
-// assets/img/frames_arriba/. Era 7 ate set/2026 - reduzido para 4 porque
-// o novo desenho do mascote so tem estas quatro poses. Trocar a arte e
-// so substituir o PNG: os nomes de arquivo sao os mesmos.
-//   idle  - parado, bracos ao lado
-//   think - com o notebook, uma mao erguida
-//   hack  - debrucado no notebook (tambem usado no card da home)
-//   jump  - braco erguido, comemorando
+// Mascote do chat: 4 estados, um arquivo por estado em
+// assets/img/frames-arriba-sapo-laranja/ (sapo pixelado laranja, set/2026).
+// Eram 7 estados com o desenho anterior; o novo mascote tem estas quatro
+// poses, e MASCOT_ROTATION abaixo e o que anima o chat fechado.
+//   idle  - observando, parado
+//   think - bug encontrado (notebook, mao erguida)
+//   hack  - programando (debrucado no notebook; tambem no card da home)
+//   jump  - pequena vitoria (braco erguido)
+//
+// O desenho antigo (sapolingo_*.png) continua em assets/img/frames_arriba/
+// como BACKUP - nao e referenciado por nada, nao remover sem combinar.
+const MASCOT_DIR = 'frames-arriba-sapo-laranja';
+
 const MASCOT_FRAMES = {
-    idle: 'sapolingo_idle.png',
-    think: 'sapolingo_think.png',
-    hack: 'sapolingo_hack.png',
-    jump: 'Sapolingo_jump.png'
+    idle: 'sapo-pixelado-laranja-observando.png',
+    think: 'sapo-pixelado-laranja-bug-encontrado.png',
+    hack: 'sapo-pixelado-laranja-programando.png',
+    jump: 'sapo-pixelado-laranja-pequena-vitoria.png'
 };
 
 const MASCOT_ROTATION = ['idle', 'think', 'hack', 'jump'];
@@ -597,6 +602,6 @@ Portais uteis:
 
     function getMascotSrc(mood) {
         const filename = MASCOT_FRAMES[mood] || MASCOT_FRAMES.idle;
-        return new URL(`../img/frames_arriba/${filename}`, import.meta.url).href;
+        return new URL(`../img/${MASCOT_DIR}/${filename}`, import.meta.url).href;
     }
 }

@@ -10,6 +10,11 @@
             "request": "attach"
         },
         {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
             "name": "Launch index.html",
             "type": "firefox",
             "request": "launch",

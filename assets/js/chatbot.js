@@ -2,26 +2,28 @@
 
 import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from '../data/datacob-knowledge-base.js';
 
+// Mascote (Sapolingo): 4 estados, um arquivo por estado em
+// assets/img/frames_arriba/. Era 7 ate set/2026 - reduzido para 4 porque
+// o novo desenho do mascote so tem estas quatro poses. Trocar a arte e
+// so substituir o PNG: os nomes de arquivo sao os mesmos.
+//   idle  - parado, bracos ao lado
+//   think - com o notebook, uma mao erguida
+//   hack  - debrucado no notebook (tambem usado no card da home)
+//   jump  - braco erguido, comemorando
 const MASCOT_FRAMES = {
     idle: 'sapolingo_idle.png',
     think: 'sapolingo_think.png',
-    jump: 'Sapolingo_jump.png',
-    love: 'sapolingo_love.png',
-    music: 'sapolingo_music.png',
-    angry: 'sapolingo_angry.png',
-    crybaby: 'sapolingo_crybaby.png'
+    hack: 'sapolingo_hack.png',
+    jump: 'Sapolingo_jump.png'
 };
 
-const MASCOT_ROTATION = ['idle', 'think', 'music', 'love', 'jump'];
+const MASCOT_ROTATION = ['idle', 'think', 'hack', 'jump'];
 
 const MASCOT_LABELS = {
     idle: 'Pronto para ajudar',
     think: 'Pensando na melhor resposta',
-    jump: 'Resposta encontrada',
-    love: 'Tudo certo por aqui',
-    music: 'Modo leve ativado',
-    angry: 'Investigando erro',
-    crybaby: 'Nao consegui falar com a API'
+    hack: 'Trabalhando nisso',
+    jump: 'Resposta encontrada'
 };
 
 export function initChatbot() {
@@ -146,7 +148,7 @@ export function initChatbot() {
 
         } catch (error) {
             botTypingMsg.remove();
-            setMascotMood('crybaby');
+            setMascotMood('idle');
 
             appendMessage(
                 'Arriba Bot',
@@ -203,7 +205,7 @@ export function initChatbot() {
 
     function renderLocalKnowledgeResponse(query, result) {
         if (result.best && result.best.score >= 14) {
-            setMascotMood(result.best.item.id.includes('erro') ? 'angry' : 'love');
+            setMascotMood(result.best.item.id.includes('erro') ? 'think' : 'jump');
             appendRichBotMessage(renderKnowledgeCard(result.best.item, query));
             return;
         }
@@ -425,7 +427,7 @@ Antes de encaminhar para analise tecnica, valide os parametros e teste em um con
     async function copyText(text) {
         try {
             await navigator.clipboard.writeText(text);
-            setMascotMood('love');
+            setMascotMood('jump');
             appendMessage('Arriba Bot', 'Resposta copiada para a area de transferencia.', 'bot-message');
         } catch {
             appendMessage('Arriba Bot', 'Nao consegui copiar automaticamente. Selecione o texto do card e copie manualmente.', 'bot-message');
@@ -565,7 +567,7 @@ Portais uteis:
             datacob: 'think',
             sql: 'think',
             devops: 'jump',
-            produtividade: 'music',
+            produtividade: 'hack',
             geral: 'idle'
         };
         return moods[mode] || 'idle';
@@ -578,11 +580,11 @@ Portais uteis:
         const text = normalizeText(`${data.reply || ''} ${data.subject || ''} ${data.source || ''}`);
 
         if (data.source === 'local-fallback') return 'think';
-        if (/erro|falha|bug|incidente|urgente|bloqueio|problema/.test(text)) return 'angry';
-        if (/obrigado|sucesso|resolvido|aprovado|concluido|perfeito/.test(text)) return 'love';
+        if (/erro|falha|bug|incidente|urgente|bloqueio|problema/.test(text)) return 'think';
+        if (/obrigado|sucesso|resolvido|aprovado|concluido|perfeito/.test(text)) return 'jump';
         if (/checklist|validar|analise|duvida|sql|consulta/.test(text)) return 'think';
         if (/deploy|cloud|render|vercel|github|publicado/.test(text)) return 'jump';
-        if (/produtividade|rotina|organiza/.test(text)) return 'music';
+        if (/produtividade|rotina|organiza/.test(text)) return 'hack';
         return getMoodByMode(data.mode || currentMode);
     }
 

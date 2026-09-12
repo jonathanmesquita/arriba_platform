@@ -1358,7 +1358,10 @@
                 current = (index + slides.length) % slides.length;
                 const slide = slides[current];
                 hero.classList.add("is-changing");
-                hero.style.setProperty("--hero-bg-image", `url("${slide.cover}")`);
+                // `bg` e a arte de fundo (widescreen); `cover` e a miniatura do
+                // card. Sem `bg`, o fundo cai no `cover` - que e o comportamento
+                // antigo, mas estica uma imagem retrato na largura toda.
+                hero.style.setProperty("--hero-bg-image", `url("${slide.bg || slide.cover}")`);
                 hero.style.setProperty("--hero-accent", slide.accent);
                 hero.style.setProperty("--hero-deep", slide.deep);
                 hero.style.backgroundColor = slide.deep;

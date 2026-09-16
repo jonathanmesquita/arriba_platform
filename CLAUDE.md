@@ -198,6 +198,30 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   ponte (`montarDocumento({ comPonte: false })`), pra não vazar código de instrumentação no
   arquivo do usuário. Rascunho fica em `localStorage` (`arribaEditorWeb:rascunho`), mesmo
   padrão sem backend do resto do site. Adicionar exemplo = adicionar objeto em `EXEMPLOS`.
+- **Chatbot e provedores de IA** (`assets/js/chatbot.js` + `assets/js/llm-providers.js`,
+  set/2026): o chat **não chama mais o `arriba-api`**. O padrão agora é `local` — responde
+  pela base `datacob-knowledge-base.js` no próprio navegador, sem rede, sem chave, sem
+  custo (era o que o `/chat` já fazia na prática, preso em `source: "local-fallback"`).
+  IA de verdade é **opt-in**, configurada pelo usuário no painel da engrenagem do chat:
+  `ollama` (LLM na máquina de quem usa, modelo do artigo do Akita), `openai`, `anthropic`
+  e `gemini` (BYOK). `llm-providers.js` é a fonte única de provedor — quem quiser um novo
+  adiciona lá e nada mais muda. Ordem: base local primeiro (curada e instantânea);
+  provedor só quando a local não tem resposta; falha do provedor **sempre** cai na local,
+  nunca deixa o usuário sem resposta. Cada API tem formato próprio (system dentro ou fora
+  das mensagens, chave em header ou query, `assistant` vs `model`) — isso fica todo isolado
+  em `montarRequisicao()`. **A chave fica no localStorage de quem digitou** e a chamada sai
+  do navegador dela: não há backend aqui para guardar segredo. Por isso o painel avisa que
+  o texto sai da máquina e que não se deve colar dado de devedor, e o cabeçalho do chat
+  mostra qual provedor está ativo. Nunca commitar chave nem colocá-la em variável de build:
+  tudo que vai para um site estático é público. O histórico da conversa é só em memória —
+  conversa de suporte pode ter dado de chamado e não deve persistir.
+- **Integridade de CDN (SRI)** (set/2026): todas as 111 tags de `cdn.jsdelivr`/`cdnjs` têm
+  `integrity` + `crossorigin`. Ao adicionar biblioteca nova de CDN, **gerar o hash junto** —
+  sem ele, comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do
+  pacote npm correspondente (`npm pack <pkg>@<versão>` → `openssl dgst -sha384 -binary
+  <arquivo> | openssl base64 -A`), porque o endpoint `/npm/` do jsdelivr serve o arquivo do
+  tarball verbatim. **Sempre pinar versão exata**: `alasql@4` era tag flutuante e mudava
+  sozinha, o que impede fixar hash.
 - **Biblioteca de logos de bancos** (`assets/img/bancos/`, ago/2026): cópia integral do
   repositório [Bancos-em-SVG](https://github.com/Tgentil/Bancos-em-SVG) (87 bancos, SVG),
   guardada como fonte para quando novos bancos forem adicionados a ferramentas do site

@@ -8,7 +8,20 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!link) return;
 
         const pageUrl = link.getAttribute("href");
-        if (!pageUrl || pageUrl === "#" || pageUrl.startsWith("http")) return;
+        if (!pageUrl || pageUrl === "#") return;
+
+        // Conferir a ORIGEM, e nao o prefixo do texto. O teste antigo era
+        // `pageUrl.startsWith("http")`, que deixa passar "//outrodominio/x":
+        // protocolo-relativa nao comeca com "http", mas o fetch resolve para
+        // fora do site — e o HTML da resposta cairia direto no innerHTML
+        // abaixo. So navega por link do proprio dominio.
+        let destino;
+        try {
+            destino = new URL(pageUrl, location.href);
+        } catch {
+            return;
+        }
+        if (destino.origin !== location.origin) return;
 
         event.preventDefault();
 

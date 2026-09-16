@@ -54,6 +54,48 @@ export function formatData(isoDate) {
   return `${d}${m}${y.slice(-2)}`;
 }
 
+// "AAAAMMDD" -> "DD/MM/AAAA". Layouts fora do CNAB usam ano com 4 digitos
+// (o Serasa, por exemplo); aqui nao ha pivo de seculo pra errar.
+export function parseData8(raw) {
+  if (!raw || !/^\d{8}$/.test(raw) || raw === "00000000") return "";
+  const yyyy = raw.slice(0, 4), mm = raw.slice(4, 6), dd = raw.slice(6, 8);
+  if (+dd < 1 || +dd > 31 || +mm < 1 || +mm > 12) return raw;
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+// "AAAA-MM-DD" (input date) OU "DD/MM/AAAA" (saida do parseData8) -> "AAAAMMDD".
+// Aceitar as duas formas e de proposito: sem isso, reler um arquivo e gerar
+// de volta destroi a data (o parse devolve DD/MM/AAAA e o gerador esperava
+// ISO), que e exatamente o que o teste de round-trip pegou.
+// Vazio devolve "" para o padField decidir: campo N vira zeros, campo A
+// vira brancos - e assim um campo opcional em branco continua em branco.
+export function formatData8(valor) {
+  const v = String(valor || "").trim();
+  if (!v) return "";
+  if (v.includes("/")) {
+    const [d, m, y] = v.split("/");
+    return `${y}${m}${d}`;
+  }
+  const [y, m, d] = v.split("-");
+  return `${y}${m}${d}`;
+}
+
+// "000000003533,77" -> 3533.77. O REFIN grava o valor com virgula dentro
+// de um campo alfanumerico, diferente do PEFIN (numerico, 2 decimais
+// implicitas). Confirmado nas amostras reais das duas planilhas.
+export function parseValorVirgula(raw) {
+  const limpo = String(raw || "").trim().replace(/\s/g, "");
+  if (!limpo) return 0;
+  return Number(limpo.replace(/\./g, "").replace(",", ".")) || 0;
+}
+
+// 3533.77 -> "000000003533,77" em `size` posicoes
+export function formatValorVirgula(value, size) {
+  const n = Number(value) || 0;
+  const txt = n.toFixed(2).replace(".", ",");
+  return txt.padStart(size, "0").slice(-size);
+}
+
 // preenche um campo conforme o tipo (N = zeros à esq., A = espaços à dir.)
 export function padField(value, def) {
   const size = def.fim - def.ini + 1;
@@ -71,18 +113,25 @@ export function padField(value, def) {
 function resolveFieldValue(rawValue, def) {
   if (def.fixo !== undefined) return def.fixo;
   if (def.fmt === "valor") return formatValor(rawValue, def.fim - def.ini + 1);
+  if (def.fmt === "valorVirgula") return formatValorVirgula(rawValue, def.fim - def.ini + 1);
   if (def.fmt === "data") return formatData(rawValue);
+  if (def.fmt === "data8") return formatData8(rawValue);
   return rawValue;
 }
 
-// Monta uma linha de 400 posições a partir de um mapa de campos + valores.
-export function buildLine(fieldDefs, values) {
+// Tamanho do registro quando o layout nao diz outro. CNAB 400 e o caso
+// original; layouts posicionais de outro tamanho (ex.: Serasa, 600) so
+// precisam declarar `tamanhoRegistro` no config.
+export const TAMANHO_REGISTRO_PADRAO = 400;
+
+// Monta uma linha do tamanho do layout a partir de um mapa de campos + valores.
+export function buildLine(fieldDefs, values, tamanho = TAMANHO_REGISTRO_PADRAO) {
   let line = "";
   fieldDefs.forEach(def => {
     const raw = values[def.key];
     line += padField(resolveFieldValue(raw, def), def);
   });
-  return line.length === 400 ? line : line.padEnd(400, " ").slice(0, 400);
+  return line.length === tamanho ? line : line.padEnd(tamanho, " ").slice(0, tamanho);
 }
 
 /* =====================================================================
@@ -94,7 +143,9 @@ function parseRegistro(line, fieldDefs) {
   fieldDefs.forEach(def => {
     const raw = fld(line, def);
     if (def.fmt === "valor") obj[def.key] = parseValor(raw);
+    else if (def.fmt === "valorVirgula") obj[def.key] = parseValorVirgula(raw);
     else if (def.fmt === "data") obj[def.key] = parseData(raw);
+    else if (def.fmt === "data8") obj[def.key] = parseData8(raw);
     else obj[def.key] = raw.trim();
   });
   return obj;
@@ -210,11 +261,12 @@ export function parseArquivo(texto, config) {
 
   if (lines.length === 0) throw new Error("Arquivo vazio.");
 
+  const tamanho = config.tamanhoRegistro || TAMANHO_REGISTRO_PADRAO;
   const result = { header: null, titulos: [], trailer: null, avisos: [], totalLinhas: lines.length };
 
   lines.forEach((line, idx) => {
-    if (line.length !== 400) {
-      result.avisos.push(`Linha ${idx + 1}: tem ${line.length} caracteres (esperado 400).`);
+    if (line.length !== tamanho) {
+      result.avisos.push(`Linha ${idx + 1}: tem ${line.length} caracteres (esperado ${tamanho}).`);
     }
     const tipo = line.charAt(0);
     if (idx === 0 || tipo === "0") {
@@ -238,14 +290,15 @@ export function parseArquivo(texto, config) {
 // dados = { header: {...campos...}, detalhes: [{...campos...}, ...] }
 export function gerarArquivo(config, dados) {
   const { header = {}, detalhes = [] } = dados;
+  const tamanho = config.tamanhoRegistro || TAMANHO_REGISTRO_PADRAO;
   const linhas = [];
 
-  if (config.headerFields) linhas.push(buildLine(config.headerFields, header));
+  if (config.headerFields) linhas.push(buildLine(config.headerFields, header, tamanho));
 
   let seq = linhas.length;
   detalhes.forEach(det => {
     seq += 1;
-    linhas.push(buildLine(config.detalheFields, { ...det, seqRegistro: det.seqRegistro ?? seq }));
+    linhas.push(buildLine(config.detalheFields, { ...det, seqRegistro: det.seqRegistro ?? seq }, tamanho));
   });
 
   if (config.trailerFields) {
@@ -261,7 +314,7 @@ export function gerarArquivo(config, dados) {
       quantidadeTitulos: detalhes.length,
       valorTotal,
       seqRegistro: seq
-    }));
+    }, tamanho));
   }
 
   return linhas;

@@ -1217,3 +1217,89 @@ body.dark-mode .card-header, body.dark-mode .card-footer{ background:#171a21 !im
 body.dark-mode .req-badge{ background:#3a1f1f; color:#ff6b6b; }
 body.dark-mode .req .form-label{ color:#ff6b6b; }
 body.dark-mode .req .form-control, body.dark-mode .req .form-select{ border-color:#ff6b6b; }
+
+/* =====================================================================
+   Painel de configuração do provedor de IA do chat
+   (injetado por assets/js/chatbot.js — ver montarPainelConfig)
+   ===================================================================== */
+.chat-config {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-soft, #f7f5f2);
+  font-size: .86rem;
+}
+
+.chat-config-label {
+  display: block;
+  margin: 8px 0 3px;
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chat-config-input {
+  width: 100%;
+  min-height: 34px;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-size: .86rem;
+}
+
+.chat-config-hint {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+.chat-config-hint code {
+  font-size: .72rem;
+  word-break: break-all;
+}
+
+.chat-config-aviso {
+  margin-top: 10px;
+  padding: 9px 11px;
+  border-left: 3px solid var(--gold, #c9a227);
+  border-radius: 6px;
+  background: #fff8df;
+  color: #5b4d20;
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+.chat-config-aviso strong { display: block; margin-bottom: 4px; }
+.chat-config-aviso p { margin: 0 0 4px; }
+
+.chat-config-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.chat-config-status {
+  margin: 8px 0 0;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Engrenagem acesa quando há provedor externo ativo: sinaliza que o que
+   for digitado sai do navegador. */
+#btnConfigIA.active {
+  background: var(--red, #c74634);
+  border-color: var(--red, #c74634);
+  color: #fff;
+}
+
+body.dark-mode .chat-config { background: #1f1f1f; border-color: #333; }
+body.dark-mode .chat-config-input { background: #2a2a2a; color: #eee; border-color: #444; }

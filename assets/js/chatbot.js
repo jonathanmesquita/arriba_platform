@@ -2,6 +2,12 @@
 
 import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from '../data/datacob-knowledge-base.js';
 
+// Endereco da API, fixo. Antes vinha de window.ARRIBA_API_BASE com fallback:
+// um global sobrescrivivel decidindo para onde as mensagens do chat sao
+// enviadas. So era explorável com XSS previo, mas era um gancho sem uso -
+// o site nao tem multiplos ambientes configurados em runtime.
+const API_BASE = 'https://api.arriba.jm.dev.br';
+
 // Mascote do chat: 4 estados, um arquivo por estado em
 // assets/img/frames-arriba-sapo-laranja/ (sapo pixelado laranja, set/2026).
 // Eram 7 estados com o desenho anterior; o novo mascote tem estas quatro
@@ -123,10 +129,12 @@ export function initChatbot() {
         }
 
         try {
-            const apiBase = (window.ARRIBA_API_BASE || 'https://api.arriba.jm.dev.br').replace(/\/$/, '');
-            const response = await fetch(`${apiBase}/chat`, {
+            const response = await fetch(`${API_BASE}/chat`, {
                 method: 'POST',
-                credentials: 'include',
+                // O site nao tem login nem sessao: mandar cookie cross-origin
+                // nao traz nada e ainda obriga a API a abrir CORS com
+                // credenciais. 'omit' fecha essa porta.
+                credentials: 'omit',
                 headers: {
                     'Content-Type': 'application/json'
                 },

@@ -2,11 +2,14 @@
 
 import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from '../data/datacob-knowledge-base.js';
 
-// Endereco da API, fixo. Antes vinha de window.ARRIBA_API_BASE com fallback:
-// um global sobrescrivivel decidindo para onde as mensagens do chat sao
-// enviadas. So era explorável com XSS previo, mas era um gancho sem uso -
-// o site nao tem multiplos ambientes configurados em runtime.
-const API_BASE = 'https://api.arriba.jm.dev.br';
+import {
+    PROVEDORES, getConfig, salvarConfig, limparConfig,
+    configCompleta, conversar, testarConexao
+} from './llm-providers.js';
+
+// Quantas mensagens do historico vao junto a cada chamada. Segura o custo
+// por token e evita estourar a janela de contexto em modelo pequeno.
+const MAX_HISTORICO = 10;
 
 // Mascote do chat: 4 estados, um arquivo por estado em
 // assets/img/frames-arriba-sapo-laranja/ (sapo pixelado laranja, set/2026).
@@ -50,6 +53,9 @@ export function initChatbot() {
     let currentMood = 'idle';
     let isWaitingResponse = false;
     let rotationIndex = 0;
+    // Historico da conversa, so em memoria: fecha a aba, some. Conversa de
+    // suporte pode ter dado de chamado, entao nao persiste.
+    const historico = [];
     const knowledgeById = new Map(DATACOB_KNOWLEDGE_BASE.map((item) => [item.id, item]));
 
     if (!chatbotBtn || !chatbotPopup || !closeChatBtn || !chatInput || !sendChatBtn || !chatWindow) {
@@ -59,6 +65,7 @@ export function initChatbot() {
     const mascot = setupMascot();
     setMascotMood('idle');
     window.setInterval(rotateMascot, 6500);
+    montarPainelConfig();
 
     chatbotBtn.addEventListener('click', function () {
         chatbotPopup.classList.toggle('d-none');
@@ -128,51 +135,193 @@ export function initChatbot() {
             return;
         }
 
-        try {
-            const response = await fetch(`${API_BASE}/chat`, {
-                method: 'POST',
-                // O site nao tem login nem sessao: mandar cookie cross-origin
-                // nao traz nada e ainda obriga a API a abrir CORS com
-                // credenciais. 'omit' fecha essa porta.
-                credentials: 'omit',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message,
-                    mode: currentMode
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            botTypingMsg.remove();
-            setMascotMood(inferMoodFromResponse(data));
-
-            appendMessage(
-                'Arriba Bot',
-                data.reply || getOfflineMessage(),
-                'bot-message'
-            );
-
-        } catch (error) {
+        // A base local nao respondeu bem. Se houver provedor de IA
+        // configurado, e a vez dele; senao, mensagem offline de sempre.
+        const config = getConfig();
+        if (config.provedor === 'local' || !configCompleta(config)) {
             botTypingMsg.remove();
             setMascotMood('idle');
-
-            appendMessage(
-                'Arriba Bot',
-                getOfflineMessage(),
-                'bot-message'
-            );
-
-            console.error('Erro ao chamar API:', error);
-        } finally {
+            appendMessage('Arriba Bot', getOfflineMessage(), 'bot-message');
             isWaitingResponse = false;
+            return;
         }
+
+        historico.push({ role: 'user', content: message });
+
+        const r = await conversar({
+            config,
+            sistema: montarSistema(localResult),
+            mensagens: historico.slice(-MAX_HISTORICO)
+        });
+
+        botTypingMsg.remove();
+
+        if (r.ok) {
+            historico.push({ role: 'assistant', content: r.texto });
+            setMascotMood('jump');
+            appendMessage('Arriba Bot', r.texto, 'bot-message');
+        } else {
+            // Falha do provedor nao pode deixar o usuario sem resposta:
+            // cai na base local e diz por que caiu.
+            historico.pop();
+            setMascotMood('idle');
+            appendMessage('Arriba Bot', getOfflineMessage(), 'bot-message');
+            appendMessage('Arriba Bot',
+                `⚠️ ${PROVEDORES[config.provedor]?.nome || config.provedor}: ${r.erro}`,
+                'bot-message');
+        }
+        isWaitingResponse = false;
+    }
+
+    /* Contexto do sistema: quem o modelo e, e o que a base local sabe
+       sobre a pergunta. Mandar so os trechos relevantes (e nao a base
+       inteira) mantem o custo baixo e a resposta ancorada no DataCob. */
+    function montarSistema(localResult) {
+        const trechos = (localResult?.matches || []).slice(0, 3).map(m => {
+            const item = m.item || m;
+            return `- ${item.titulo || item.id}: ${(item.resumo || item.descricao || '').slice(0, 300)}`;
+        }).join('\n');
+
+        return [
+            'Voce e o assistente da Arriba Platform, da PH3A, e atende o time de suporte do CRM DataCob.',
+            'Responda em portugues do Brasil, de forma direta e objetiva.',
+            'Se nao souber, diga que nao sabe e sugira abrir chamado — nao invente passo de tela nem codigo de erro.',
+            'Nunca peca nem repita dado pessoal de devedor (CPF, nome completo, telefone, endereco).',
+            trechos ? `\nTrechos da base de conhecimento do DataCob que podem ajudar:\n${trechos}` : ''
+        ].filter(Boolean).join('\n');
+    }
+
+    /* ---------------------------------------------------------------
+       Painel de configuração do provedor de IA.
+
+       Injetado por JS, e não escrito no HTML: o widget do chat aparece em
+       mais de uma página e duplicar esse formulário em cada uma seria
+       exatamente o que a regra de fonte única do projeto evita.
+       --------------------------------------------------------------- */
+    function montarPainelConfig() {
+        const barra = chatbotPopup.querySelector('.chat-mode-bar');
+        if (!barra) return;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chat-mode-btn';
+        btn.id = 'btnConfigIA';
+        btn.title = 'Configurar provedor de IA';
+        btn.innerHTML = '<i class="fa-solid fa-gear"></i>';
+        barra.appendChild(btn);
+
+        const painel = document.createElement('div');
+        painel.id = 'painelConfigIA';
+        painel.className = 'chat-config d-none';
+        chatbotPopup.insertBefore(painel, chatbotPopup.querySelector('.chat-window'));
+
+        btn.addEventListener('click', () => {
+            painel.classList.toggle('d-none');
+            if (!painel.classList.contains('d-none')) renderPainelConfig(painel);
+        });
+
+        atualizarSeloProvedor();
+    }
+
+    function renderPainelConfig(painel) {
+        const cfg = getConfig();
+        const p = PROVEDORES[cfg.provedor];
+
+        painel.innerHTML = `
+            <label class="chat-config-label">Provedor</label>
+            <select id="cfgProvedor" class="chat-config-input">
+                ${Object.values(PROVEDORES).map(x => `
+                    <option value="${x.id}" ${x.id === cfg.provedor ? 'selected' : ''}>${escapeHtml(x.nome)}</option>`).join('')}
+            </select>
+            <p class="chat-config-hint">${escapeHtml(p.resumo)}</p>
+
+            ${p.id === 'local' ? '' : `
+                <label class="chat-config-label">Modelo</label>
+                <input id="cfgModelo" class="chat-config-input" list="cfgModelos"
+                       value="${escapeAttr(cfg.modelo)}" placeholder="${escapeAttr(p.modelos[0] || '')}">
+                <datalist id="cfgModelos">
+                    ${p.modelos.map(m => `<option value="${escapeAttr(m)}"></option>`).join('')}
+                </datalist>
+
+                ${p.precisaUrl ? `
+                    <label class="chat-config-label">Endereço</label>
+                    <input id="cfgUrl" class="chat-config-input" value="${escapeAttr(cfg.url || p.urlPadrao)}">` : ''}
+
+                ${p.precisaChave ? `
+                    <label class="chat-config-label">Chave de API</label>
+                    <input id="cfgChave" class="chat-config-input" type="password" autocomplete="off"
+                           value="${escapeAttr(cfg.chave)}" placeholder="cole sua chave">
+                    ${p.linkChave ? `<p class="chat-config-hint">
+                        <a href="${escapeAttr(p.linkChave)}" target="_blank" rel="noopener noreferrer">Onde pegar a chave</a>
+                    </p>` : ''}` : ''}
+
+                ${p.ajudaSetup ? `<p class="chat-config-hint"><code>${escapeHtml(p.ajudaSetup)}</code></p>` : ''}
+
+                <div class="chat-config-aviso">
+                    <strong>⚠️ Leia antes de ativar</strong>
+                    <p>${escapeHtml(p.privacidade)} Não cole dado pessoal de devedor (CPF, nome completo, telefone).</p>
+                    ${p.precisaChave ? '<p>A chave fica só neste navegador e é visível no devtools de quem usa este computador. Use uma chave com limite de gasto.</p>' : ''}
+                </div>`}
+
+            <div class="chat-config-acoes">
+                <button type="button" id="cfgSalvar" class="btn btn-sm btn-primary">Salvar</button>
+                <button type="button" id="cfgTestar" class="btn btn-sm btn-outline-secondary">Testar conexão</button>
+                <button type="button" id="cfgLimpar" class="btn btn-sm btn-link">Voltar ao local</button>
+            </div>
+            <p class="chat-config-status" id="cfgStatus"></p>`;
+
+        painel.querySelector('#cfgProvedor').addEventListener('change', (e) => {
+            // Troca de provedor limpa modelo/chave: chave de um servico nao
+            // vale no outro e deixar o campo preenchido so confunde.
+            salvarConfig({ provedor: e.target.value, modelo: '', chave: '', url: '' });
+            renderPainelConfig(painel);
+            atualizarSeloProvedor();
+        });
+
+        const lerForm = () => ({
+            provedor: painel.querySelector('#cfgProvedor').value,
+            modelo: painel.querySelector('#cfgModelo')?.value || '',
+            chave: painel.querySelector('#cfgChave')?.value || '',
+            url: painel.querySelector('#cfgUrl')?.value || ''
+        });
+        const status = painel.querySelector('#cfgStatus');
+
+        painel.querySelector('#cfgSalvar').addEventListener('click', () => {
+            const cfgNovo = salvarConfig(lerForm());
+            atualizarSeloProvedor();
+            status.textContent = configCompleta(cfgNovo)
+                ? '✓ Salvo. O chat passa a usar este provedor quando a base local não tiver a resposta.'
+                : '⚠ Faltou preencher modelo ou chave — o chat segue no local até completar.';
+        });
+
+        painel.querySelector('#cfgTestar').addEventListener('click', async () => {
+            status.textContent = 'Testando...';
+            const r = await testarConexao(salvarConfig(lerForm()));
+            status.textContent = (r.ok ? '✓ ' : '✗ ') + r.texto;
+            atualizarSeloProvedor();
+        });
+
+        painel.querySelector('#cfgLimpar').addEventListener('click', () => {
+            limparConfig();
+            renderPainelConfig(painel);
+            atualizarSeloProvedor();
+            status.textContent = 'Voltou para a base local.';
+        });
+    }
+
+    /* Deixa visível no cabeçalho qual provedor está ativo — quem digita
+       precisa saber se o que escreve sai ou não do navegador. */
+    function atualizarSeloProvedor() {
+        const cfg = getConfig();
+        const ativo = configCompleta(cfg) ? cfg.provedor : 'local';
+        const alvo = chatbotPopup.querySelector('.card-header span');
+        if (alvo) {
+            alvo.textContent = ativo === 'local'
+                ? 'Arriba Bot · local'
+                : `Arriba Bot · ${PROVEDORES[ativo].nome.split(' ')[0]}`;
+        }
+        const btn = document.getElementById('btnConfigIA');
+        if (btn) btn.classList.toggle('active', ativo !== 'local');
     }
 
     function appendMessage(sender, text, type, isTyping = false) {

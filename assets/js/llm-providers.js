@@ -174,7 +174,15 @@ export function configCompleta(config) {
 
 function baseUrl(config) {
   const p = PROVEDORES[config.provedor];
-  return (config.url || p.urlPadrao || "").replace(/\/+$/, "");
+  // `config.url` so vale para provedor que DECLARA precisar de endereco
+  // (hoje, o Ollama). Antes valia para todos, e o campo simplesmente nao
+  // aparecia na UI dos outros - mas a config vem do localStorage, que nao
+  // e caminho confiavel: uma entrada forjada apontaria o endpoint da
+  // OpenAI/Anthropic para outro host, e a CHAVE ia junto no cabecalho.
+  // Exige XSS para escrever no localStorage (e quem tem XSS ja le a chave),
+  // mas fechar essa rota de exfiltracao custa uma linha.
+  const url = p.precisaUrl ? config.url : "";
+  return (url || p.urlPadrao || "").replace(/\/+$/, "");
 }
 
 /* ---------------------------------------------------------------------

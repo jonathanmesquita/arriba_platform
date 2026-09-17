@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Callback OAuth - Arriba Platform</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/css/tokens.css" />
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px; background: #fff; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 22px; padding: 0 28px;
+    }
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero {
+      background: linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+      border-bottom: 1px solid var(--line); padding: 34px 0 24px;
+    }
+    .container-page { width: min(1100px, calc(100% - 44px)); margin-inline: auto; }
+    .kicker { color: var(--red); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .76rem; display: inline-block; margin-bottom: 10px; }
+    h1 { font-size: clamp(1.9rem, 4vw, 2.9rem); line-height: 1; letter-spacing: -.05em; font-weight: 300; margin: 0 0 12px; }
+    .hero p { color: var(--muted); font-size: .98rem; line-height: 1.6; max-width: 760px; margin: 0; }
+
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .card-section { padding: 20px; margin-bottom: 16px; }
+    .card-section h2 { font-size: .78rem; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 14px; }
+    .section { padding: 22px 0 50px; }
+    .hidden { display: none !important; }
+
+    label { display: block; font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 10px 0 4px; }
+    input, select {
+      width: 100%; min-height: 38px; padding: 6px 10px; border: 1px solid var(--line);
+      border-radius: 6px; background: #fff; color: var(--ink); font-size: .9rem;
+    }
+    .hint { color: var(--muted); font-size: .78rem; margin: 5px 0 0; line-height: 1.45; }
+
+    .btn-arriba {
+      min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px;
+      font-weight: 900; cursor: pointer; font-size: .9rem; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba:hover { background: #a93225; }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line); }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; align-items: center; }
+
+    .estado { border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; font-size: .92rem; line-height: 1.55; }
+    .estado.ok { border-left: 4px solid var(--ok); background: #eef8f2; color: #2c5545; }
+    .estado.erro { border-left: 4px solid var(--danger); background: #fdeeec; color: #7a2b20; }
+    .estado.aviso { border-left: 4px solid var(--gold); background: #fff8df; color: #5b4d20; }
+    .estado strong { display: block; margin-bottom: 4px; }
+
+    pre.bloco {
+      background: #101010; color: #e8e8e8; border-radius: 8px; padding: 14px;
+      font-family: Consolas, Monaco, monospace; font-size: .78rem; line-height: 1.5;
+      overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin: 0;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 900; }
+    td.chave { font-family: Consolas, Monaco, monospace; font-weight: 700; white-space: nowrap; }
+    td.valor { font-family: Consolas, Monaco, monospace; word-break: break-all; }
+
+    .nota {
+      border-left: 4px solid var(--gold); background: #fff8df; padding: 12px 14px;
+      border-radius: 7px; font-size: .85rem; color: #5b4d20; line-height: 1.55; margin-top: 18px;
+    }
+    .vazio { color: var(--muted); font-size: .88rem; margin: 0; }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../index.html" class="brand">ARRIBA</a>
+    <a href="../../index.html" class="back-link">← Voltar ao portal</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Arriba · OAuth</span>
+      <h1>Callback OAuth</h1>
+      <p>
+        Endereço de retorno do login (Microsoft Entra ID). Recebe o que o provedor devolve,
+        completa a troca do código pelo token via <strong>PKCE</strong> e mostra tudo
+        decodificado — para acompanhar e depurar o fluxo pelo navegador.
+      </p>
+    </div>
+  </section>
+
+  <div class="container-page section">
+    <!-- Resultado do callback (só aparece quando há retorno na URL) -->
+    <div id="blocoRetorno" class="hidden">
+      <div id="estadoRetorno" class="estado"></div>
+
+      <section class="panel card-section">
+        <h2>O que chegou na URL</h2>
+        <div id="tabelaParams"></div>
+      </section>
+
+      <section class="panel card-section hidden" id="secaoToken">
+        <h2>Token decodificado</h2>
+        <div id="tokenDecodificado"></div>
+      </section>
+    </div>
+
+    <!-- Configuração + início do fluxo -->
+    <section class="panel card-section">
+      <h2>Configuração do aplicativo</h2>
+      <label for="tenant">ID do diretório (locatário)</label>
+      <input id="tenant" placeholder="15c44a66-...  ou  organizations / common">
+      <p class="hint">Aparece na visão geral do registro no portal do Azure. Não é segredo.</p>
+
+      <label for="clientId">ID do aplicativo (cliente)</label>
+      <input id="clientId" placeholder="f027f7c9-...">
+      <p class="hint">Também público — vai na própria URL de autorização.</p>
+
+      <label for="scopes">Escopos</label>
+      <input id="scopes" value="openid profile email User.Read">
+
+      <label for="redirect">URI de redirecionamento</label>
+      <input id="redirect" readonly>
+      <p class="hint">
+        Registre <strong>exatamente</strong> esta URI no portal, em Autenticação →
+        Adicionar plataforma → <strong>Aplicativo de página única (SPA)</strong>.
+        Não use a plataforma “Web”: ela exige client secret, que um site estático não pode guardar.
+      </p>
+
+      <div class="acoes">
+        <button type="button" class="btn-arriba btn-red-arriba" id="btnEntrar">
+          <i class="fa-brands fa-microsoft"></i> Entrar com Microsoft
+        </button>
+        <button type="button" class="btn-arriba btn-light-arriba" id="btnSalvar">Salvar configuração</button>
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnSair">Limpar sessão</button>
+      </div>
+      <p class="hint" id="statusConfig"></p>
+    </section>
+
+    <section class="panel card-section">
+      <h2>Histórico de retornos <span id="contadorHist"></span></h2>
+      <div id="historico"></div>
+      <div class="acoes">
+        <button type="button" class="btn-arriba btn-light-arriba" id="btnLimparHist">Limpar histórico</button>
+      </div>
+    </section>
+
+    <div class="nota">
+      ℹ️ Tudo roda no seu navegador. O fluxo é <strong>Authorization Code + PKCE</strong>, sem client
+      secret — que é o correto para site estático, onde qualquer segredo embarcado seria público.
+      O <code>code_verifier</code> e o <code>state</code> ficam em <code>sessionStorage</code> (somem ao
+      fechar a aba); a configuração, que não é segredo, fica em <code>localStorage</code>.
+      <strong>O token é exibido mas não é guardado</strong>, e a assinatura dele não é verificada aqui —
+      validação de assinatura exige as chaves públicas do provedor e pertence a quem consome o token,
+      não a esta página.
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>

@@ -264,6 +264,21 @@ async function tratarRetorno(params) {
     }
 
     const claims = dados.id_token ? decodificarJwt(dados.id_token) : null;
+
+    // Conferir o nonce: ele amarra o id_token A ESTA requisicao. Sem essa
+    // checagem o nonce viraria enfeite - era enviado e nunca verificado.
+    // Vale notar o limite: como a assinatura nao e conferida aqui, isso
+    // detecta token de outra requisicao, nao token forjado. Ainda assim o
+    // certo e checar, e nao prometer no comentario o que o codigo nao faz.
+    if (claims && guardado.nonce && claims.nonce !== guardado.nonce) {
+      mostrarEstado("erro", "Nonce não confere",
+        "O id_token não corresponde ao login iniciado aqui. Descartado.");
+      registrarHistorico({ quando: agora, ok: false, detalhe: "nonce divergente — token descartado" });
+      renderHistorico();
+      sessionStorage.removeItem(PKCE_KEY);
+      return;
+    }
+
     const quem = claims?.preferred_username || claims?.name || claims?.email || "autenticado";
 
     mostrarEstado("ok", "Login concluído", `Token recebido para ${quem}. Ele é exibido abaixo e não fica guardado.`);

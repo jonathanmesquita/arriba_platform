@@ -21,6 +21,19 @@
         <span class="small text-secondary">Case Study / Suporte a Clientes</span>
       </div>
       <div class="d-flex align-items-center gap-2">
+        <!-- Sessao ativa: quem esta logado e se e usuario de suporte.
+             Preenchido por support-copilot.js a partir de /auth/status;
+             fica escondido enquanto nao existe sessao. -->
+        <div class="sessao-chip d-none" id="sessaoChip" aria-live="polite">
+          <i class="fa-regular fa-circle-user" aria-hidden="true"></i>
+          <span class="sessao-dados">
+            <strong id="sessaoUsuario">-</strong>
+            <small id="sessaoPapel"></small>
+          </span>
+          <button type="button" id="sessaoSairBtn" aria-label="Encerrar sessão">
+            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+          </button>
+        </div>
         <a href="../../../pages/docs/help-center/index.html" class="topbar-icon-action" aria-label="Abrir Help Center">
           <i class="fa-regular fa-circle-question"></i><span>Ajuda</span>
         </a>
@@ -583,7 +596,11 @@
           <i class="fa-solid fa-right-to-bracket me-2"></i> Entrar
         </button>
       </form>
-      <small>Quando a sessão expirar, o Copilot pausa a ação e pede login novamente.</small>
+      <small>
+        A sessão fica guardada em cookie e vale por 8 h. Após
+        <strong>30 min sem uso</strong> nesta aba o Copilot encerra por
+        segurança e pede login de novo (com aviso 2 min antes).
+      </small>
     </div>
   </div>
 

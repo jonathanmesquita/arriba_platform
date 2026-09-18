@@ -350,11 +350,76 @@ function apiBase() {
 }
 
 
+/* =====================================================================
+   Sessão do Copilot
+
+   Um HTTP 401 vindo da API pode ter duas origens muito diferentes:
+
+     1. a sessão DESTA ferramenta caiu — o backend responde com
+        `code: "AUTH_REQUIRED"`;
+     2. a Freshdesk devolveu 401/403 para o backend (API key sem
+        permissão, key trocada, Solutions restrito) — o backend repassa
+        o status 401/403 com `code: "FRESHDESK_API_ERROR"` ou
+        `permissionDenied: true`.
+
+   Tratar (2) como (1) era o bug relatado: o login dava certo, a
+   primeira consulta caía no caso (2) e a tela de login voltava, dando a
+   impressão de que a sessão não era guardada em cache. Agora só pedimos
+   login quando o 401 é da NOSSA sessão e, na dúvida, confirmamos em
+   /auth/status antes de interromper quem está trabalhando.
+   ===================================================================== */
+
+// Códigos que realmente significam "sua sessão aqui acabou".
+const CODIGOS_SESSAO = ["AUTH_REQUIRED", "SESSION_EXPIRED", "INVALID_CREDENTIALS"];
+// Códigos que são falha do upstream (Freshdesk), não da sessão.
+const CODIGOS_UPSTREAM = [
+  "FRESHDESK_API_ERROR",
+  "FRESHDESK_NOT_CONFIGURED",
+  "FRESHDESK_FETCH_FAILED",
+  "FRESHDESK_TIMEOUT",
+  "FRESHDESK_SOLUTIONS_PERMISSION_DENIED"
+];
+
+// Ociosidade: a sessão do backend vale 8 h (ARRIBA_AUTH_TTL_SECONDS),
+// mas uma aba aberta e esquecida no meio do suporte é risco. 30 min sem
+// interação encerra por aqui, com aviso 2 min antes — tempo padrão de
+// ferramenta interna, curto o bastante para proteger e longo o bastante
+// para não atrapalhar quem está lendo um chamado grande.
+const OCIOSIDADE_MS = 30 * 60 * 1000;
+const OCIOSIDADE_AVISO_MS = 2 * 60 * 1000;
+// Revalida a sessão no servidor de tempo em tempo (e ao voltar para a
+// aba), para detectar expiração do lado do backend sem travar a UI.
+const REVALIDA_SESSAO_MS = 5 * 60 * 1000;
+
+const sessao = {
+  ativa: false,
+  habilitada: false,
+  usuario: null,
+  ultimaAtividade: Date.now(),
+  ultimaChecagem: 0,
+  timerOcioso: null,
+  timerAviso: null,
+  timerRevalida: null,
+  avisou: false
+};
+
+function ehErroDeSessao(status, payload = {}) {
+  const code = String(payload.code || "").toUpperCase();
+  if (CODIGOS_UPSTREAM.includes(code)) return false;
+  if (payload.permissionDenied === true) return false;
+  if (CODIGOS_SESSAO.includes(code)) return true;
+  // Sem código: só considera sessão se a mensagem não apontar Freshdesk.
+  const texto = String(payload.error || payload.message || "");
+  return status === 401 && !/freshdesk|solutions|api key/i.test(texto);
+}
+
 function showAuthOverlay(message = "") {
   const overlay = getEl("authOverlay");
   const msg = getEl("authMessage");
   if (msg) msg.textContent = message || "";
   overlay?.classList.remove("d-none");
+  pararTimersSessao();
+  atualizarChipSessao(null);
   setTimeout(() => getEl("authUsername")?.focus(), 80);
 }
 
@@ -365,7 +430,194 @@ function hideAuthOverlay() {
 }
 
 async function fetchAuthStatus() {
-  return requestJson(`${apiBase()}/auth/status`);
+  // semTratarAuth evita recursão: esta é a rota usada justamente para
+  // decidir se o overlay deve aparecer.
+  return requestJson(`${apiBase()}/auth/status`, { semTratarAuth: true });
+}
+
+// Pergunta ao backend se a sessão caiu mesmo. Em caso de dúvida (rede
+// fora, rota ausente) não interrompe o usuário.
+async function sessaoRealmenteCaiu() {
+  try {
+    const status = await fetchAuthStatus();
+    aplicarStatusSessao(status);
+    return Boolean(status.enabled) && !status.authenticated;
+  } catch {
+    return false;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Quem está logado (e se é usuário de suporte)
+   --------------------------------------------------------------------- */
+
+// Papéis que dão acesso de suporte. O backend hoje emite role "admin"
+// na sessão; os outros ficam aqui para quando a API passar a devolver o
+// papel real do agente.
+const PAPEIS_SUPORTE = ["admin", "administrator", "suporte", "support", "agent", "agente", "analista"];
+
+function ehUsuarioSuporte(usuario = {}) {
+  if (typeof usuario.isSupport === "boolean") return usuario.isSupport;
+  const papeis = []
+    .concat(usuario.role || [], usuario.roles || [], usuario.papel || [])
+    .map((papel) => normalizeText(String(papel)));
+  return papeis.some((papel) => PAPEIS_SUPORTE.includes(papel));
+}
+
+function rotuloUsuario(usuario = {}) {
+  // O backend devolve { username, role }. Os demais campos existem para
+  // aproveitar automaticamente um payload mais rico (ex.: agente
+  // Freshdesk) se a API passar a expor isso.
+  return (
+    usuario.freshdesk?.name ||
+    usuario.name ||
+    usuario.nome ||
+    usuario.username ||
+    usuario.email ||
+    usuario.sub ||
+    "usuário"
+  );
+}
+
+function atualizarChipSessao(usuario) {
+  const chip = getEl("sessaoChip");
+  if (!chip) return;
+
+  if (!usuario) {
+    chip.classList.add("d-none");
+    chip.classList.remove("suporte", "ociosa");
+    return;
+  }
+
+  const suporte = ehUsuarioSuporte(usuario);
+  const papel = usuario.freshdesk?.role || usuario.role || usuario.papel || "";
+  const email = usuario.freshdesk?.email || usuario.email || "";
+
+  safeSet("sessaoUsuario", rotuloUsuario(usuario));
+  const detalhe = getEl("sessaoPapel");
+  if (detalhe) {
+    detalhe.textContent = suporte
+      ? `Suporte${papel ? ` · ${papel}` : ""}`
+      : (papel ? String(papel) : "Sem perfil de suporte");
+  }
+
+  chip.classList.remove("d-none", "ociosa");
+  chip.classList.toggle("suporte", suporte);
+  chip.title = [
+    `Sessão de ${rotuloUsuario(usuario)}`,
+    email ? `E-mail: ${email}` : "",
+    papel ? `Perfil: ${papel}` : "",
+    suporte ? "Acesso de suporte liberado." : "Este perfil não é de suporte.",
+    `Encerra após ${Math.round(OCIOSIDADE_MS / 60000)} min sem uso.`
+  ].filter(Boolean).join("\n");
+}
+
+function aplicarStatusSessao(status = {}) {
+  sessao.habilitada = Boolean(status.enabled);
+  sessao.ativa = Boolean(status.authenticated) || status.enabled === false;
+  sessao.usuario = status.user || null;
+  sessao.ultimaChecagem = Date.now();
+  atualizarChipSessao(sessao.ativa ? (status.user || { username: "sessão local", role: "" }) : null);
+  if (sessao.ativa) reiniciarTimersSessao();
+  else pararTimersSessao();
+}
+
+/* ---------------------------------------------------------------------
+   Ociosidade
+   --------------------------------------------------------------------- */
+
+function pararTimersSessao() {
+  clearTimeout(sessao.timerOcioso);
+  clearTimeout(sessao.timerAviso);
+  clearInterval(sessao.timerRevalida);
+  sessao.timerOcioso = null;
+  sessao.timerAviso = null;
+  sessao.timerRevalida = null;
+}
+
+function reiniciarTimersSessao() {
+  clearTimeout(sessao.timerOcioso);
+  clearTimeout(sessao.timerAviso);
+  sessao.avisou = false;
+  sessao.ultimaAtividade = Date.now();
+
+  sessao.timerAviso = setTimeout(() => {
+    sessao.avisou = true;
+    getEl("sessaoChip")?.classList.add("ociosa");
+    showCopilotNotice(
+      "warning",
+      "Sessão quase encerrada",
+      `Sem uso há ${Math.round((OCIOSIDADE_MS - OCIOSIDADE_AVISO_MS) / 60000)} min. Mexa na tela para continuar conectado.`,
+      "Sessão"
+    );
+  }, Math.max(0, OCIOSIDADE_MS - OCIOSIDADE_AVISO_MS));
+
+  sessao.timerOcioso = setTimeout(encerrarPorOciosidade, OCIOSIDADE_MS);
+
+  if (!sessao.timerRevalida) {
+    sessao.timerRevalida = setInterval(() => {
+      if (document.visibilityState === "visible") revalidarSessao();
+    }, REVALIDA_SESSAO_MS);
+  }
+}
+
+async function encerrarPorOciosidade() {
+  pararTimersSessao();
+  try {
+    await requestJson(`${apiBase()}/auth/logout`, { method: "POST", semTratarAuth: true });
+  } catch {
+    // Mesmo se o logout falhar, a tela trava o uso local.
+  }
+  sessao.ativa = false;
+  sessao.usuario = null;
+  showAuthOverlay(`Sessão encerrada após ${Math.round(OCIOSIDADE_MS / 60000)} min sem uso. Entre novamente.`);
+}
+
+async function revalidarSessao() {
+  if (Date.now() - sessao.ultimaChecagem < 30000) return;
+  try {
+    const status = await fetchAuthStatus();
+    aplicarStatusSessao(status);
+    if (status.enabled && !status.authenticated) {
+      showAuthOverlay("Sua sessão expirou no servidor. Entre novamente.");
+    }
+  } catch {
+    // Offline ou backend dormindo (cold start do Render): não bloqueia.
+  }
+}
+
+function registrarAtividade() {
+  if (!sessao.ativa) return;
+  // Só reinicia se passou tempo suficiente, para não recriar timers a
+  // cada movimento de mouse.
+  if (Date.now() - sessao.ultimaAtividade < 15000 && !sessao.avisou) return;
+  getEl("sessaoChip")?.classList.remove("ociosa");
+  reiniciarTimersSessao();
+}
+
+function setupSessaoEventos() {
+  ["click", "keydown", "scroll", "pointerdown"].forEach((evento) => {
+    document.addEventListener(evento, registrarAtividade, { passive: true });
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      registrarAtividade();
+      revalidarSessao();
+    }
+  });
+  getEl("sessaoSairBtn")?.addEventListener("click", handleAuthLogout);
+}
+
+async function handleAuthLogout() {
+  pararTimersSessao();
+  try {
+    await requestJson(`${apiBase()}/auth/logout`, { method: "POST", semTratarAuth: true });
+  } catch {
+    // Sem rede, encerra só do lado da tela.
+  }
+  sessao.ativa = false;
+  sessao.usuario = null;
+  showAuthOverlay("Sessão encerrada. Entre novamente para continuar.");
 }
 
 async function handleAuthLogin(event) {
@@ -382,13 +634,33 @@ async function handleAuthLogin(event) {
 
   await withLoading(getEl("authLoginBtn"), "Entrando...", async () => {
     try {
-      await requestJson(`${apiBase()}/auth/login`, {
+      const resposta = await requestJson(`${apiBase()}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
+        semTratarAuth: true
       });
       hideAuthOverlay();
-      showCopilotNotice("success", "Sessão iniciada", "Acesso liberado para consultar tickets e base de conhecimento.", "Auth → Copilot");
+      getEl("authPassword").value = "";
+
+      // Mostra no topo quem entrou e se o perfil é de suporte. O login
+      // já devolve o usuário; /auth/status confirma e traz o que houver.
+      aplicarStatusSessao({
+        enabled: true,
+        authenticated: true,
+        user: resposta?.user || { username, role: "" }
+      });
+      revalidarSessao();
+
+      const usuario = resposta?.user || { username };
+      showCopilotNotice(
+        "success",
+        `Sessão iniciada — ${rotuloUsuario(usuario)}`,
+        ehUsuarioSuporte(usuario)
+          ? "Perfil de suporte reconhecido. Acesso liberado para tickets e base de conhecimento."
+          : "Sessão criada, mas este perfil não está marcado como suporte na API.",
+        "Auth → Copilot"
+      );
     } catch (error) {
       if (message) message.textContent = getFriendlyErrorMessage(error);
       showCopilotNotice("warning", "Login não realizado", getFriendlyErrorMessage(error), "Auth");
@@ -399,6 +671,7 @@ async function handleAuthLogin(event) {
 async function checkAuthOnLoad() {
   try {
     const status = await fetchAuthStatus();
+    aplicarStatusSessao(status);
     if (status.enabled && !status.authenticated) {
       showAuthOverlay("Faça login para usar o Support Copilot.");
     }
@@ -774,17 +1047,29 @@ function buildLocalDevelopmentSpec(input, product, priority, developmentType, ch
 }
 
 async function requestJson(url, options = {}) {
+  // semTratarAuth: usado pelas próprias rotas de sessão (/auth/status,
+  // /auth/logout) para não cair em recursão ao decidir o overlay.
+  const { semTratarAuth = false, ...fetchOptions } = options;
+
   const response = await fetch(url, {
     credentials: "include",
-    ...options,
+    ...fetchOptions,
     headers: {
-      ...(options.headers || {})
+      ...(fetchOptions.headers || {})
     }
   });
   const payload = await response.json().catch(() => ({}));
 
-  if (response.status === 401 || payload?.code === "AUTH_REQUIRED") {
-    showAuthOverlay(payload?.message || payload?.error || "Faça login para continuar.");
+  const pareceSessao = !semTratarAuth
+    && (response.status === 401 || payload?.code === "AUTH_REQUIRED")
+    && ehErroDeSessao(response.status, payload || {});
+
+  if (pareceSessao) {
+    // Confirma no servidor antes de interromper: só pede login se a
+    // sessão realmente não está mais valendo.
+    if (payload?.code === "AUTH_REQUIRED" || await sessaoRealmenteCaiu()) {
+      showAuthOverlay(payload?.message || payload?.error || "Faça login para continuar.");
+    }
   }
 
   if (!response.ok) {
@@ -792,8 +1077,12 @@ async function requestJson(url, options = {}) {
     const error = new Error(message);
     error.status = response.status;
     error.payload = payload;
-    if (response.status === 401) error.authRequired = true;
-    if (response.status === 403 || payload.permissionDenied) error.permissionDenied = true;
+    if (pareceSessao) error.authRequired = true;
+    // 401/403 do Freshdesk é permissão da API key, não sessão daqui.
+    if (response.status === 403 || payload.permissionDenied
+      || (response.status === 401 && !pareceSessao)) {
+      error.permissionDenied = true;
+    }
     throw error;
   }
   return payload;
@@ -2202,7 +2491,10 @@ function getFriendlyErrorMessage(error) {
   }
 
   if (payload.permissionDenied || error?.permissionDenied || /401|403|unauthorized|forbidden|permissao negada|permiss?o negada/i.test(raw)) {
-    return payload.hint || "Permissao negada na base do Freshdesk. Use uma API key de agente com permissao em Solutions, especialmente para artigos em rascunho ou privados.";
+    // Deixa claro que NÃO é a sessão do Copilot: quem recusou foi a
+    // Freshdesk. Era justamente essa confusão que fazia a tela de login
+    // reaparecer depois de cada consulta.
+    return payload.hint || "Sua sessão continua valendo — quem recusou foi a Freshdesk. A API key configurada no backend (FRESHDESK_API_KEY) precisa ser de um agente com permissão em Solutions, especialmente para artigos em rascunho ou privados.";
   }
 
   if (error?.authRequired || payload.code === "AUTH_REQUIRED") {
@@ -2877,6 +3169,7 @@ async function setupEvents() {
   });
   renderQualityDashboard();
   updateFlowStatus("input");
+  setupSessaoEventos();
   checkAuthOnLoad();
 
   getEl("supportForm")?.addEventListener("submit", async (event) => {

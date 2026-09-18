@@ -39,6 +39,15 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   e aliases curtos (`--bg`, `--red`, ...). Ferramentas devem **linkar tokens.css e remover
   o `:root{}` inline** — os aliases garantem que nada quebra durante a migração.
 - **Dark mode:** ativado por `body.dark-mode` (ver `assets/js/theme.js`). Salvo em localStorage.
+- **Busca do topo (home):** o campo onde se digita é o `<input id="topbarSearchInput">` da
+  topbar em `index.html`; o painel de resultados (`setupSearchPanel()` em
+  `navigation-v2.js`) **não tem campo próprio** e é ancorado por JS embaixo do campo, com
+  a mesma largura. Antes a topbar era um `<button>` falso (um `<span>` com o texto de
+  placeholder) e o painel trazia um segundo `<input>` — ao clicar apareciam dois campos de
+  busca, um em cima do outro (set/2026). O fallback com campo dentro do painel só é criado
+  quando a página não tem `#topbarSearchInput` (páginas que só têm `#searchToggleBtn`).
+  Em `<input type="search">` o Esc limpa o campo e isso dispara `input` — o handler
+  cancela o comportamento nativo, senão o painel reabre sozinho ao fechar.
 
 ## Como adicionar uma ferramenta
 
@@ -215,6 +224,28 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   mostra qual provedor está ativo. Nunca commitar chave nem colocá-la em variável de build:
   tudo que vai para um site estático é público. O histórico da conversa é só em memória —
   conversa de suporte pode ter dado de chamado e não deve persistir.
+- **Sessão do Support Copilot** (`tools/datacob/support-copilot/support-copilot.js`,
+  set/2026): a autenticação é cookie `HttpOnly` emitido pelo `arriba-api`
+  (`/auth/login` → `/auth/status`), e o front sempre manda `credentials: "include"`.
+  **Um HTTP 401 da API tem duas origens completamente diferentes** e confundir as duas era
+  o bug de "pede login depois de cada consulta": (1) a sessão daqui caiu — vem com
+  `code: "AUTH_REQUIRED"`; (2) a **Freshdesk** recusou o backend (API key sem permissão em
+  Solutions, key trocada) — o `arriba-api` repassa o status 401/403 com
+  `code: "FRESHDESK_API_ERROR"` / `FRESHDESK_SOLUTIONS_PERMISSION_DENIED` /
+  `permissionDenied: true`. `requestJson` agora decide por `ehErroDeSessao()` e, quando o
+  401 é ambíguo (sem código), **confirma em `/auth/status` antes** de abrir o overlay de
+  login — nunca interromper quem está trabalhando por erro de upstream. Ao adicionar
+  código novo de erro no backend, registrar em `CODIGOS_SESSAO` ou `CODIGOS_UPSTREAM`.
+  Ociosidade é **client-side**: 30 min sem interação encerra a sessão (POST `/auth/logout`
+  + overlay), com aviso 2 min antes; o TTL do cookie no backend é 8 h
+  (`ARRIBA_AUTH_TTL_SECONDS`), então o limite curto vale só para a aba aberta. A sessão é
+  revalidada a cada 5 min e ao voltar para a aba (`visibilitychange`). O chip no topo
+  (`#sessaoChip`) mostra usuário + se o perfil é de suporte, lido de `/auth/status`
+  (`user.username`/`user.role`; hoje o backend emite sempre `role: "admin"`) — os campos
+  extras que `rotuloUsuario()`/`ehUsuarioSuporte()` aceitam (`user.freshdesk.name/email`,
+  `roles`, `isSupport`) existem para aproveitar sem mexer na UI se a API passar a expor o
+  agente Freshdesk real (hoje **não existe** rota para isso; precisaria de um
+  `GET /api/v2/agents/me` no `arriba-api`).
 - **Integridade de CDN (SRI)** (set/2026): todas as 111 tags de `cdn.jsdelivr`/`cdnjs` têm
   `integrity` + `crossorigin`. Ao adicionar biblioteca nova de CDN, **gerar o hash junto** —
   sem ele, comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do

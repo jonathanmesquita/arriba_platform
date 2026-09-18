@@ -70,6 +70,77 @@ body.support-copilot-page {
   transform: translateY(-1px);
 }
 
+/* Chip de sessao: usuario logado + se e usuario de suporte */
+.sessao-chip {
+  min-height: 34px;
+  border: 1px solid var(--arriba-border);
+  border-radius: 999px;
+  background: rgba(255,255,255,.055);
+  color: rgba(255,255,255,.92);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 6px 0 12px;
+  font-size: .82rem;
+}
+
+.sessao-chip > i { color: rgba(255,255,255,.62); }
+
+.sessao-dados {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.sessao-dados strong { font-weight: 850; }
+
+.sessao-dados small {
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.58);
+}
+
+.sessao-chip.suporte {
+  border-color: rgba(99, 190, 140, .48);
+  background: rgba(64, 160, 110, .16);
+}
+
+.sessao-chip.suporte .sessao-dados small { color: #9fe0bd; }
+
+.sessao-chip.ociosa {
+  border-color: rgba(226, 181, 82, .55);
+  background: rgba(214, 162, 48, .16);
+}
+
+.sessao-chip button {
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  color: inherit;
+  display: grid;
+  place-items: center;
+  font-size: .72rem;
+}
+
+.sessao-chip button:hover { background: rgba(199,70,52,.3); color: #fff; }
+
+body.theme-light .sessao-chip {
+  color: #211f1d;
+  background: rgba(255,255,255,.76);
+  border-color: rgba(41, 31, 24, .14);
+}
+
+body.theme-light .sessao-chip > i,
+body.theme-light .sessao-dados small { color: #6a645d; }
+
+body.theme-light .sessao-chip.suporte { background: rgba(64, 160, 110, .14); }
+body.theme-light .sessao-chip.suporte .sessao-dados small { color: #1f6b46; }
+body.theme-light .sessao-chip button { background: rgba(41, 31, 24, .08); }
+
 body.support-copilot-page.theme-light {
   --arriba-bg: #f7f4f1;
   --arriba-panel: #ffffff;

@@ -631,6 +631,9 @@ body.dark-mode .enterprise-submenu-item:hover {
 /* Search panel */
 .oracle-search-panel {
     position: fixed;
+    /* border-box: o JS ancora o painel com a largura do campo da topbar,
+       e sem isso o padding somaria por fora e o painel ficaria mais largo. */
+    box-sizing: border-box;
     top: 76px;
     left: 50%;
     transform: translateX(-50%);
@@ -655,6 +658,22 @@ body.dark-mode .enterprise-submenu-item:hover {
     border-radius: 4px;
     padding: 14px 16px;
     margin-bottom: 16px;
+}
+
+.oracle-search-panel > strong {
+    display: block;
+    font-size: .72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--rw-muted);
+}
+
+/* A lista rola dentro do painel: sem isso, uma busca com muitos
+   resultados escorre para fora da tela e o rodape fica inalcancavel. */
+.oracle-search-panel .quick-links {
+    max-height: min(52vh, 420px);
+    overflow-y: auto;
 }
 
 .quick-links {

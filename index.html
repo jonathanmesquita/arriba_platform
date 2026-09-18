@@ -84,9 +84,28 @@
         }
 
         .enterprise-search:hover,
-        .enterprise-search:focus {
+        .enterprise-search:focus-within {
             border-color: var(--red);
             box-shadow: 0 0 0 3px rgba(199, 70, 52, .12);
+        }
+
+        .enterprise-search input {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            border: 0;
+            outline: none;
+            background: transparent;
+            /* A topbar e a caixa de busca sao brancas nos dois temas (regra
+               acima), entao a cor do texto aqui e fixa - usar var(--ink)
+               deixaria o texto claro sobre branco no modo escuro. */
+            color: #2b2724;
+            font-size: .95rem;
+            font-family: inherit;
+        }
+
+        .enterprise-search input::placeholder {
+            color: #6d6863;
         }
 
         .enterprise-actions {
@@ -941,10 +960,16 @@
                     <small>PH3A AI</small>
                 </a>
 
-                <button class="enterprise-search" type="button" id="searchToggleBtn" aria-label="Pesquisar na Arriba Platform">
-                    <i class="fas fa-search"></i>
-                    <span>Pesquisar ferramentas, erros, tickets, DataCob ou IA</span>
-                </button>
+                <!-- Campo de busca real: quem digita aqui ja filtra. O painel de
+                     resultados (gerado por navigation-v2.js) abre logo abaixo e NAO
+                     tem campo proprio - antes tinha, e apareciam dois campos. -->
+                <div class="enterprise-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="topbarSearchInput" autocomplete="off" role="combobox"
+                        aria-label="Pesquisar na Arriba Platform"
+                        aria-expanded="false" aria-controls="oracleSearchResults"
+                        placeholder="Pesquisar ferramentas, erros, tickets, DataCob ou IA" />
+                </div>
 
                 <div class="enterprise-actions">
                     <button type="button" class="enterprise-flag-btn" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar pais ou regiao">

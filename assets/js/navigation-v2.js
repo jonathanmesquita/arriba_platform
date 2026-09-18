@@ -399,24 +399,37 @@ function setupEnterpriseMenu() {
     });
 }
 
+/* ---------------------------------------------------------------------
+   Busca do topo.
+
+   O campo onde se digita e o campo da topbar (#topbarSearchInput) — o
+   painel logo abaixo mostra SO os resultados. Antes a topbar era um
+   botao falso (um <span> com o texto de placeholder) e o painel trazia
+   um segundo <input>: ao clicar apareciam dois campos de busca, um em
+   cima do outro. Se a pagina nao tiver o input da topbar, o painel cria
+   o proprio campo (fallback para paginas que so tem #searchToggleBtn).
+   --------------------------------------------------------------------- */
 function setupSearchPanel() {
+    const topbarInput = document.getElementById("topbarSearchInput");
+    const trigger = document.getElementById("searchToggleBtn");
+    if (!topbarInput && !trigger) return;
+
     if (!document.getElementById("oracleSearchPanel")) {
         const panel = document.createElement("div");
         panel.className = "oracle-search-panel";
         panel.id = "oracleSearchPanel";
         panel.innerHTML = `
-            <input type="text" id="oracleSearchInput" placeholder="Pesquisar erro, documentacao, ferramenta ou case..." />
-            <strong>Resultados e links rapidos</strong>
+            ${topbarInput ? "" : '<input type="search" id="oracleSearchInput" placeholder="Pesquisar erro, documentação, ferramenta ou case..." autocomplete="off" />'}
+            <strong>Resultados e links rápidos</strong>
             <div class="quick-links" id="oracleSearchResults"></div>
         `;
         document.body.appendChild(panel);
     }
 
-    const trigger = document.getElementById("searchToggleBtn");
     const panel = document.getElementById("oracleSearchPanel");
-    const input = document.getElementById("oracleSearchInput");
+    const input = topbarInput || document.getElementById("oracleSearchInput");
     const results = document.getElementById("oracleSearchResults");
-    if (!panel || !results) return;
+    if (!panel || !results || !input) return;
 
     function renderResults(query = "") {
         const normalized = normalizeSearch(query);
@@ -429,34 +442,87 @@ function setupSearchPanel() {
             : `<span>Nenhum resultado encontrado. Tente "DataCob", "Freshdesk", "Cloud", "CSV" ou "IA".</span>`;
     }
 
+    // Ancora o painel embaixo do campo da topbar (mesma largura), em vez
+    // de deixa-lo centralizado na tela como o CSS padrao faz.
+    function posicionarPainel() {
+        if (!topbarInput) return;
+        const caixa = topbarInput.getBoundingClientRect();
+        panel.style.transform = "none";
+        panel.style.left = `${Math.max(12, caixa.left)}px`;
+        panel.style.top = `${caixa.bottom + 8}px`;
+        panel.style.width = `${caixa.width}px`;
+    }
+
+    function abrirPainel() {
+        renderResults(input.value);
+        posicionarPainel();
+        panel.classList.add("active");
+        input.setAttribute("aria-expanded", "true");
+    }
+
+    function fecharPainel() {
+        panel.classList.remove("active");
+        input.setAttribute("aria-expanded", "false");
+    }
+
     renderResults();
 
     trigger?.addEventListener("click", () => {
-        panel.classList.toggle("active");
-        renderResults();
-        if (panel.classList.contains("active")) input?.focus();
+        if (topbarInput) {
+            abrirPainel();
+            input.focus();
+            return;
+        }
+        if (panel.classList.contains("active")) fecharPainel();
+        else abrirPainel();
     });
 
-    input?.addEventListener("input", () => renderResults(input.value));
-    input?.addEventListener("keydown", event => {
+    if (topbarInput) {
+        topbarInput.addEventListener("focus", abrirPainel);
+        window.addEventListener("resize", () => {
+            if (panel.classList.contains("active")) posicionarPainel();
+        });
+        window.addEventListener("scroll", () => {
+            if (panel.classList.contains("active")) posicionarPainel();
+        }, { passive: true });
+    }
+
+    input.addEventListener("input", abrirPainel);
+    input.addEventListener("keydown", event => {
         if (event.key === "Enter") {
-            const first = results.querySelector("a");
-            if (first) first.click();
+            const primeiro = results.querySelector("a");
+            if (primeiro) primeiro.click();
+        }
+        if (event.key === "ArrowDown") {
+            const primeiro = results.querySelector("a");
+            if (primeiro) {
+                event.preventDefault();
+                primeiro.focus();
+            }
+        }
+        if (event.key === "Escape") {
+            // Em <input type="search"> o Esc limpa o campo por padrao, e essa
+            // limpeza dispara um evento "input" que reabriria o painel. Corta
+            // o comportamento nativo e fecha na mao.
+            event.preventDefault();
+            fecharPainel();
+            input.blur();
         }
     });
 
     document.addEventListener("click", event => {
-        if (panel.classList.contains("active") && !panel.contains(event.target) && !event.target.closest("#searchToggleBtn")) {
-            panel.classList.remove("active");
+        if (panel.classList.contains("active") && !panel.contains(event.target)
+            && event.target !== input && !event.target.closest("#searchToggleBtn")) {
+            fecharPainel();
         }
     });
 
     document.addEventListener("keydown", event => {
-        if (event.key === "Escape") panel.classList.remove("active");
+        if (event.key === "Escape") fecharPainel();
     });
 
     document.addEventListener("click", event => {
-        if (event.target.closest("#oracleSearchResults a")) panel.classList.remove("active");
+        if (event.target.closest("#oracleSearchResults a")) fecharPainel();
     });
 }
 

@@ -63,7 +63,6 @@ const menuData = {
                             ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
                             ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
                             ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
-                            ["Treinamento DataCob Cliente", "tools/datacob/treinamento-cliente/index.html"],
                             ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
                             ["Validador CNAB 400", "tools/datacob/cnab400/cnab400.html"],
                             ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
@@ -119,8 +118,7 @@ const menuData = {
                     ["Centro de Aprendizado", "pages/aprender/index.html", true],
                     ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
                     ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
-                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"],
-                    ["Treinamento DataCob (produto)", "tools/datacob/treinamento-cliente/index.html"]
+                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"]
                 ]
             },
             help: {
@@ -216,7 +214,6 @@ export const searchItems = [
     ["Gerador CSV DataCob", "Carga titular contrato parcela combinada", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
     ["Massa de Dados", "Dados ficticios CPF CNPJ DataCob CSV", "tools/datacob/massa-dados/massa-dados.html"],
     ["Gerador de Manual DataCob", "manual pdf documentacao rotina passo a passo freshdesk help center", "tools/datacob/manual-builder/manual-builder.html"],
-    ["Treinamento DataCob Cliente", "curso aula cliente onboarding passo a passo prints documentacao PH3A", "tools/datacob/treinamento-cliente/index.html"],
     ["Validador CNAB 400", "cnab 400 multi banco bradesco 237 itau 341 bmp money plus 274 santander banco do brasil retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo", "tools/datacob/cnab400/cnab400.html"],
     ["Help Center", "Ajuda documentacao suporte", "pages/docs/help-center/index.html", true],
     ["Base de Conhecimento DataCob", "manuais internos categorias api integracoes recepcao distribuicao controles discador suporte datacob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],

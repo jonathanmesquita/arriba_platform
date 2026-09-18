@@ -13,7 +13,7 @@ const supportHeroSlides = [
     copy: "Copiloto de IA para analisar chamados do Freshdesk, encontrar manuais, sugerir resposta e reduzir tempo de triagem.",
     image: "../../../assets/img/capas-wallpaper-menus/sc24-ai-database.webp",
     cta: "#analisar",
-    portal: "../treinamento-cliente/index.html",
+    portal: "docs/datacob-manuais/",
     kicker: "Fluxo principal",
     cardTitle: "Freshdesk + IA + Base"
   },
@@ -23,7 +23,7 @@ const supportHeroSlides = [
     copy: "A busca indexa a base local de manuais e renderiza o artigo sem recarregar, pronta para alimentar assistentes inteligentes.",
     image: "../../../assets/img/logos-assets/logo-datacob.png",
     cta: "#manual-dinamico",
-    portal: "../treinamento-cliente/index.html",
+    portal: "docs/datacob-manuais/",
     kicker: "Conhecimento operacional",
     cardTitle: "Manual vivo"
   },
@@ -33,7 +33,7 @@ const supportHeroSlides = [
     copy: "Filtros por agente, empresa e tema ajudam o suporte a enxergar volume, urgencia, recorrencia e possiveis lacunas na base.",
     image: "../../../assets/img/logos-assets/logo-ph3.webp",
     cta: "#ticketDashboard",
-    portal: "../treinamento-cliente/index.html",
+    portal: "docs/datacob-manuais/",
     kicker: "Dados para IA",
     cardTitle: "Tickets agrupados"
   }

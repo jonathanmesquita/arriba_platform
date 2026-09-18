@@ -158,8 +158,7 @@ const TOPICOS = [
 -- é a configuração que define o que o sistema
 -- vai cobrar, de quem e em que ordem`,
     acoes: [
-      { label: "Abrir treinamento", href: "../../tools/datacob/treinamento-cliente/index.html", estilo: "btn-red-arriba", icone: "fa-book-open" },
-      { label: "Base de conhecimento", href: "../../tools/datacob/support-copilot/docs/datacob-manuais/", estilo: "btn-outline-arriba", icone: "fa-folder-open" }
+      { label: "Base de conhecimento", href: "../../tools/datacob/support-copilot/docs/datacob-manuais/", estilo: "btn-red-arriba", icone: "fa-folder-open" }
     ]
   }
 ];

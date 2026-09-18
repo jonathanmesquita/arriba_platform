@@ -131,6 +131,35 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   importação (`ui.js`, `importarArquivoNoGerador`) — dá pra soltar/selecionar um
   .REM/.RET direto ali, sem precisar passar pelo "Validar" antes; ambos os caminhos
   reaproveitam `preencherGeradorComDados()` pra preencher o formulário.
+- **Negativação Serasa** (`tools/datacob/serasa/`, set/2026): mesma arquitetura do CNAB 400 e
+  **reusa o mesmo motor** (`import { parseArquivo, gerarArquivo } from "../cnab400/engine.js"`) —
+  o registro tem **600** posições, declaradas em `config.tamanhoRegistro`, e foi por isso que o
+  `engine.js` deixou de assumir 400 (ver `TAMANHO_REGISTRO_PADRAO`). Um arquivo por layout em
+  `layouts/` (hoje `pefin.js` e `refin.js`) + `registry.js`; bureau novo = criar o arquivo e
+  registrar na lista, sem tocar em motor nem UI. Os 112 campos foram **gerados por script** a
+  partir das planilhas de validação (não transcritos) e validados por round-trip
+  parse→gerar byte a byte contra as amostras reais das duas planilhas (6 registros, corpo 1-593
+  idêntico; 594-600 é a sequência da linha, que depende do tamanho do arquivo).
+  **PEFIN e REFIN não são o mesmo arquivo com outro nome:** identificador em 105-119 vs 19-33
+  (por isso `detectarLayout()` tenta cada layout na posição que ele mesmo declara, em vez de
+  olhar um lugar fixo), valor numérico com decimais implícitas vs alfanumérico **com vírgula**
+  (`fmt: "valorVirgula"`), motivo da baixa em 49-50 vs 443-444 e **60 posições de código de erro
+  (20 códigos) vs 45 (15 códigos)** — `decodificarErros()` percorre o tamanho do texto que
+  recebe, nunca 60 fixo. A planilha do REFIN descreve o identificador como "SERASA-CONVEM04",
+  mas a amostra real diz "SERASA-CONVEM01": valeu o real (mesma ordem de confiança do CNAB).
+  As fontes recebidas **não explicam a sigla REFIN** — o nome na UI usa o identificador em vez
+  de uma expansão adivinhada, e a tabela de "natureza da operação" (25-27) ficou de fora de
+  propósito porque as planilhas a tratam como anexa e a anexa não veio.
+  `layouts/codigos.js` é **arquivo gerado** (197 erros + 45 motivos de baixa, com assertiva de
+  contagem no gerador) — não editar à mão; regerar se a Serasa publicar tabela nova.
+  Regras de **processo** (sequência de status do DataCob, prazos, PEFIN vs REFIN em linguagem de
+  cliente) ficam em `tools/datacob/serasa/processo.js`, **fonte única** consumida tanto pela
+  ferramenta (que avisa antes de gerar quando a operação não combina com o status) quanto pela
+  página `pages/docs/datacob/negativacao-serasa.html` — não duplicar a tabela em nenhuma das
+  duas. A sequência é obrigatória: `NÃO NEGATIVADO` → nova negativação → `SOLICITADO
+  NEGATIVAÇÃO` → confirmar → `NEGATIVADO` → remover (exige motivo da baixa) → `NÃO NEGATIVADO`.
+  **LGPD:** as amostras das planilhas têm nome/CPF/RG/endereço reais e **não estão no repo** —
+  os `exemplo` dos campos e as fixtures de teste são fictícios, e o processamento é 100% local.
 - **Base64** (`tools/dados/base64-pdf/` e `decodificador/`): decode 100% no browser.
   `base64-pdf` extrai Base64 embutido em JSON automaticamente (detecta por magic bytes
   `%PDF`). `decodificador/` é o conversor universal (Base64, URL, HTML entities, hex,
@@ -326,6 +355,17 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   `sql-sandbox.js` — que consertou o sandbox das lições, quebrado em produção; Editor Web
   HTML/CSS/JS com preview ao vivo em `tools/dados/editor-web/` (ver gotcha acima),
   fechando o "Try it Yourself" também para front-end, não só para SQL.
+- [x] **Parte 10 — Negativação Serasa (set/2026).** Ferramenta `tools/datacob/serasa/`
+  (validar / gerar / tabelas de códigos) reusando o motor do CNAB 400, layouts PEFIN e REFIN
+  gerados das planilhas e validados por round-trip byte a byte, `layouts/codigos.js` gerado
+  (197 erros + 45 motivos), regras de processo em `processo.js` (fonte única) e página
+  explicativa para o cliente em `pages/docs/datacob/negativacao-serasa.html`. Registrado no
+  mega-menu, na busca e no Centro de Aprendizado. Ver gotcha acima.
+  - [ ] **Pendente:** tabela de "natureza da operação" (posições 25-27) — as planilhas dizem
+    "tabela anexa" e a anexa não veio; o campo está livre na UI até alguém mandar a tabela.
+    Também não há arquivo de **retorno real** da Serasa para conferir a decodificação dos
+    códigos de erro contra dado de produção (hoje conferida só com códigos plantados em
+    fixture fictícia).
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

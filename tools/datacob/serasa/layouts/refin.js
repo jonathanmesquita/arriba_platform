@@ -1,9 +1,12 @@
 /* =====================================================================
    Serasa REFIN - layout posicional de 600 posicoes (SERASA-CONVEM01)
 
-   REFIN = Refinanciamento: divida que foi renegociada. Se o acordo for
-   cumprido o registro e baixado; se for quebrado, a anotacao fica como
-   alerta do historico de renegociacao.
+   O segundo layout de negativacao usado pelo DataCob, informado por
+   instituicao financeira. ATENCAO: as fontes recebidas (planilha de
+   validacao + amostra) trazem o layout campo a campo, mas NAO explicam o
+   que a sigla REFIN significa - por isso nao afirmamos uma expansao dela
+   aqui nem na UI. O que e fato conferido: o identificador do arquivo e
+   SERASA-CONVEM01 e o layout difere do PEFIN nos pontos listados abaixo.
 
    FONTE: planilha "Validacao do Layout Serasa - REFIN.xlsx", com layout
    campo a campo e amostra real de 600 caracteres. Os 48 campos batem
@@ -83,10 +86,13 @@ const TRAILER_FIELDS = [
 
 export const REFIN = {
   code: "refin",
-  nome: "REFIN (Refinanciamento)",
+  // As fontes recebidas (planilha de validacao) nao explicam a sigla, so
+  // dao o layout. Por isso o nome fica pelo identificador do arquivo, que
+  // e fato conferido, em vez de uma expansao adivinhada da sigla.
+  nome: "REFIN (SERASA-CONVEM01)",
   identificador: "SERASA-CONVEM01",
   deteccao: { ini: 19, fim: 33 },
-  descricao: "Divida renegociada; alerta de historico de renegociacao.",
+  descricao: "Anotacao Serasa no layout REFIN, informada por instituicao financeira.",
   tamanhoRegistro: 600,
   headerFields: HEADER_FIELDS,
   detalheFields: DETALHE_FIELDS,

@@ -107,6 +107,30 @@ const TOPICOS = [
     ]
   },
   {
+    id: "serasa",
+    titulo: "Negativação Serasa",
+    tagline: "O arquivo de negativação e a sequência de status que o DataCob exige.",
+    chips: ["PEFIN", "REFIN", "600 posições", "Códigos de erro"],
+    pronto: true,
+    exemploTitulo: "Exemplo: a sequência que não pode ser pulada",
+    exemplo: `NÃO NEGATIVADO
+      └─ nova negativação (operação I)
+           ↓
+SOLICITADO NEGATIVAÇÃO
+      └─ confirmar negativação (operação I)
+           ↓
+NEGATIVADO
+      └─ remover negativação (operação E + motivo)
+           ↓
+NÃO NEGATIVADO
+
+-- ação fora dessa ordem não produz efeito`,
+    acoes: [
+      { label: "Entender o processo", href: "../docs/datacob/negativacao-serasa.html", estilo: "btn-red-arriba", icone: "fa-diagram-project" },
+      { label: "Abrir a ferramenta", href: "../../tools/datacob/serasa/serasa.html", estilo: "btn-outline-arriba", icone: "fa-file-shield" }
+    ]
+  },
+  {
     id: "codificacao",
     titulo: "Codificação de dados",
     tagline: "Base64, URL, hex, JWT e companhia — decodificar o que chega no chamado.",

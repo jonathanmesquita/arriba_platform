@@ -65,13 +65,15 @@ const menuData = {
                             ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
                             ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
                             ["Validador CNAB 400", "tools/datacob/cnab400/cnab400.html"],
+                            ["Negativação Serasa", "tools/datacob/serasa/serasa.html"],
                             ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
                             ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
                             ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
                             ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
                             ["SQL Query T-SQL - Relatórios", "tools/datacob/query-builder/query-builder.html"],
                             ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
-                            ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
+                            ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true],
+                            ["Como funciona a negativação Serasa", "pages/docs/datacob/negativacao-serasa.html", true]
                         ]
                     },
                     {
@@ -237,6 +239,8 @@ export const searchItems = [
     ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema datacob financiado contrato parcela acordo negociacao historico telefone email endereco treinar praticar select join group by csv", "tools/datacob/sql-playground/sql-playground.html"],
     ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself w3schools progresso pontos badges quiz exercicios simulador sql cnab base64 massa de dados datacob", "pages/aprender/index.html"],
     ["SQL Query T-SQL - Relatórios", "sql query builder relatorios datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
+    ["Negativação Serasa", "serasa negativacao negativar pefin refin spc bureau credito arquivo 600 posicoes layout posicional inclusao exclusao baixa motivo codigo erro retorno remessa convem04 convem01 divida vencida inadimplente validador gerador leitor", "tools/datacob/serasa/serasa.html"],
+    ["Como funciona a negativação Serasa", "negativacao serasa processo status nao negativado solicitado negativado remover confirmar prazo 5 dias uteis 5 anos decurso prazo pefin refin motivo baixa cliente explicacao", "pages/docs/datacob/negativacao-serasa.html", true],
 ];
 
 function normalizeSearch(value = "") {

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+
+# Client gerado pelo Prisma (sai de `prisma generate`, não vai para o git)
+server/generated/

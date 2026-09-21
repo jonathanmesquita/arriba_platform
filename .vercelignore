@@ -1,0 +1,5 @@
+# O site é estático e a Vercel publica a raiz do repositório. A pasta apps/
+# guarda aplicações que NÃO fazem parte do site (têm build próprio, backend e
+# banco) — sem esta linha, o código-fonte delas iria para o ar como arquivo
+# estático junto com o portal.
+apps/

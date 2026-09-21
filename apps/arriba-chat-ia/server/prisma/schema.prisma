@@ -1,0 +1,210 @@
+// =====================================================================
+// Arriba Chat IA — schema do banco
+//
+// Cinco assuntos, nesta ordem de dependência:
+//   1. quem entra       -> User (com papel)
+//   2. o que o admin configura -> ProviderConfig (credencial cifrada)
+//   3. o que o usuário conversa -> Conversation + Message
+//   4. o que ficou registrado  -> AuditLog
+//
+// Decisões que valem explicar:
+//
+// - A API key NUNCA tem coluna de texto puro. Só `apiKeyCipher` (AES-256-GCM,
+//   ver src/crypto/secretBox.ts) e `apiKeyLast4`, que existe para a tela do
+//   admin conseguir dizer "termina em 1234" sem nunca devolver o segredo.
+//   Decifrar é privilégio do servidor na hora de chamar o provedor.
+//
+// - Cada Message guarda o provedor/modelo que a produziu, não só a conversa.
+//   Sem isso, trocar o provedor ativo apaga o rastro de quem respondeu o quê
+//   — que é justamente a auditoria pedida.
+//
+// - `providerConfigId` em Message é SetNull: apagar uma configuração não pode
+//   apagar histórico de conversa. O par (provider, model) fica desnormalizado
+//   na própria mensagem para o registro sobreviver à exclusão da config.
+//
+// - Só UMA ProviderConfig pode estar ativa. O banco não tem "unique where
+//   true" portável, então a regra é aplicada em transação no serviço
+//   (src/admin/routes.ts) — e o índice em `isActive` deixa a leitura barata.
+// =====================================================================
+
+// Prisma 7: o gerador novo ("prisma-client") emite para um caminho nosso, e
+// a URL do banco NAO mora mais aqui - migrou para prisma.config.ts, e o
+// client recebe um driver adapter (ver src/db.ts). Tentar declarar `url`
+// nesta secao falha com P1012 nesta versao.
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// ANTHROPIC/OPENAI/GEMINI são os três pedidos. OLLAMA e OPENROUTER vêm da
+// recomendação do artigo do Akita ("Hello World de LLM", abr/2025): Ollama
+// para rodar modelo LOCAL — nenhum texto sai da rede da empresa, custo por
+// token zero — e OpenRouter como gateway, uma chave só para vários modelos.
+// OpenRouter fala o protocolo da OpenAI, então reaproveita aquele adapter
+// trocando a baseUrl; Ollama tem API própria e adapter próprio.
+enum ProviderKind {
+  ANTHROPIC
+  OPENAI
+  GEMINI
+  OLLAMA
+  OPENROUTER
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(USER)
+  isActive     Boolean  @default(true)
+
+  // Invalida todos os tokens já emitidos para este usuário quando muda
+  // (troca de senha, revogação, mudança de papel). O JWT carrega a versão;
+  // divergiu, a sessão morre — sem precisar de tabela de sessão.
+  tokenVersion Int      @default(0)
+
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  conversations   Conversation[]
+  auditLogs       AuditLog[]
+  providerConfigs ProviderConfig[] @relation("ProviderConfigAuthor")
+
+  @@map("users")
+}
+
+model ProviderConfig {
+  id       String       @id @default(cuid())
+  provider ProviderKind
+  label    String
+  model    String
+
+  // Credencial: só cifrada. Ver o comentário no topo.
+  // Opcional porque Ollama roda local e não usa chave — é justamente a
+  // vantagem dele (nada sai da rede, nada para vazar).
+  apiKeyCipher    String?
+  apiKeyLast4     String?
+  apiKeyUpdatedAt DateTime?
+
+  // Endpoint quando não é o oficial: Ollama (http://127.0.0.1:11434),
+  // OpenRouter, ou um gateway interno compatível com a API da OpenAI.
+  baseUrl String?
+
+  // Parâmetros opcionais. `temperature` não vale para todo modelo — os
+  // modelos de raciocínio atuais da Anthropic recusam o campo com HTTP 400.
+  // Quem decide se envia é o adapter, consultando o catálogo de modelos
+  // (src/providers/catalog.ts); guardar aqui não obriga a mandar.
+  temperature  Float?
+  maxTokens    Int?
+  systemPrompt String?
+
+  isEnabled Boolean @default(true)
+  isActive  Boolean @default(false)
+
+  // Último teste de conexão feito pelo admin — o botão "Testar conexão".
+  lastTestAt      DateTime?
+  lastTestOk      Boolean?
+  lastTestMessage String?
+
+  createdById String?
+  createdBy   User?   @relation("ProviderConfigAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+
+  @@index([isActive])
+  @@index([provider])
+  @@map("provider_configs")
+}
+
+model Conversation {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title      String    @default("Nova conversa")
+  archivedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+
+  @@index([userId, updatedAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  role    MessageRole
+  content String
+
+  // Rastro de quem respondeu. provider/model ficam desnormalizados de
+  // propósito: a config pode ser apagada, o histórico não muda.
+  providerConfigId String?
+  providerConfig   ProviderConfig? @relation(fields: [providerConfigId], references: [id], onDelete: SetNull)
+  provider         ProviderKind?
+  model            String?
+
+  promptTokens     Int?
+  completionTokens Int?
+  latencyMs        Int?
+
+  // Preenchidos quando a resposta falhou (rate limit, chave inválida,
+  // timeout). A mensagem fica no histórico com o erro, em vez de sumir.
+  errorCode    String?
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId, createdAt])
+  @@map("messages")
+}
+
+model AuditLog {
+  id     String  @id @default(cuid())
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Ex.: "auth.login", "provider.create", "provider.activate",
+  // "provider.test", "chat.completion", "chat.error".
+  action     String
+  targetType String?
+  targetId   String?
+
+  provider       ProviderKind?
+  model          String?
+  conversationId String?
+
+  success  Boolean  @default(true)
+  metadata Json?
+  ip       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([action, createdAt])
+  @@index([userId, createdAt])
+  @@map("audit_log")
+}

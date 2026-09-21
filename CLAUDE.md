@@ -14,6 +14,13 @@ Evoluindo **por partes** rumo a um visual Oracle Redwood (terroso, minimalista).
 - **Frontend:** HTML/CSS/JavaScript puro + Bootstrap 5 (via CDN). **Sem framework, sem
   build step** — decisão intencional (ferramentas pequenas, carregam instantâneo, deploy
   estático). Não introduza React/Vue/Tailwind/bundler sem pedido explícito.
+- **`apps/` é exceção à regra acima, e só ela** (set/2026). A pasta guarda aplicações que
+  **não fazem parte do site**: têm build próprio, backend e banco. A primeira é
+  `apps/arriba-chat-ia/` (React + Vite + Express + Prisma/Postgres — pedido explícito).
+  O site continua estático e sem build step; `.vercelignore` exclui `apps/` do deploy da
+  Vercel, senão o código-fonte dessas aplicações iria para o ar como arquivo estático.
+  Cada app tem o próprio README e o próprio `package.json` — **não** misture dependência
+  de app com o site, e não importe nada de `apps/` a partir de `assets/` ou `tools/`.
 - **Backend:** `arriba-api` — Node.js + Express, **API JSON pura** (sem template engine).
   Integrações OpenAI e Freshdesk. Hospedado no Render.
 - **Infra/DNS:** Cloudflare (`jm.dev.br`). Deploy do front na Vercel (push → deploy automático).

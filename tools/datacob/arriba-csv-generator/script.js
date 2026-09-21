@@ -1,3 +1,5 @@
+import { DATACOB_CSV_LAYOUTS } from "./layouts-datacob.js";
+
 const SEP = ";";
 const NL = "\r\n";
 
@@ -60,138 +62,40 @@ const FIELD_LABELS = {
   mensagemOperacao: "Mensagem"
 };
 
-const FILES = {
-  configuracao: {
-    label: "Configuração",
-    filename: "configuracao.csv",
-    required: ["devolucaoGeral"],
-    headers: [
-      "Tipo_Registro", "Devolucao_Geral", "Devolucao_Por_Contrato", "Redefinir_Agrupamento",
-      "Cadastrar_CPF_CNPJ_Invalido", "Batimento_Geral_Por_Cliente"
-    ]
-  },
-  loja: {
-    label: "Loja",
-    filename: "loja.csv",
-    required: ["recordCount", "cliente", "lojaCodLoja", "lojaNome"],
-    headers: ["Tipo_Registro", "Cliente", "Cod_Loja", "Nome_Loja", "Cnpj", "Regional"]
-  },
-  financiado: {
-    label: "Financiado",
-    filename: "financiado.csv",
-    required: ["recordCount", "cliente", "contratoInicial", "contratoSufixo", "nomeBase", "tipoPessoa", "documentMode"],
-    headers: [
-      "Tipo_Registro", "Nr_Contrato", "Nome", "Cpf_Cnpj", "Cliente", "Dt_Nascimento", "Sexo", "Tipo_Pessoa",
-      "Estado_Civil", "Conjuge", "Pai", "Mae", "Rg", "Rg_Orgao_Emiss", "Rg_Uf_Emiss", "Rg_Dt_Emiss",
-      "Score_Serasa", "Profissao", "Renda", "Score_Adicional"
-    ]
-  },
-  email: {
-    label: "E-mail",
-    filename: "email.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "documentMode", "emailValor"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Cpf_Cnpj", "Email", "Cliente"]
-  },
-  telefone: {
-    label: "Telefone",
-    filename: "telefone.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "documentMode", "dddTelefone", "telefoneNumero"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Cpf_Cnpj", "Tipo_Telefone", "DDD", "Fone", "Ramal", "Cliente"]
-  },
-  endereco: {
-    label: "Endereço",
-    filename: "endereco.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "documentMode", "logradouro", "cidade", "uf"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Cpf_Cnpj", "Tipo_Endereco", "Logradouro", "Numero", "Complemento", "Bairro", "Cidade", "UF", "CEP", "Cliente"]
-  },
-  contrato: {
-    label: "Contrato",
-    filename: "contrato.csv",
-    required: ["recordCount", "cliente", "contratoInicial", "contratoSufixo", "fase"],
-    headers: [
-      "Tipo_Registro", "Cliente", "Nr_Contrato", "Filial", "Plano", "Fase", "Regional", "Regua",
-      "Vl_Contrato", "Dt_Contrato", "Tx_Contrato", "Dt_Para_Notificacao", "Dt_Solicitacao_Documento",
-      "Dt_Ajuizamento", "Cod_Loja", "Grupo", "Moeda", "SubRegua", "Cpf_Cnpj"
-    ]
-  },
-  parcela: {
-    label: "Parcela",
-    filename: "parcela.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "dataVencimento", "valorOriginal", "tipoParcela", "numeroParcela"],
-    headers: [
-      "Tipo_Registro", "Nr_Contrato", "Dt_Vencimento", "Tipo_Parcela", "Nr_Parcela", "Vl_Original", "Vl_Saldo",
-      "Vl_Tarifa", "Cliente", "Dt_Inclusao", "Dt_Devolucao", "Dt_Inibicao", "Motivo", "Dt_Notificacao",
-      "Marcar_Dt_Lote", "Dt_Lote", "Documento", "Cpf_Cnpj", "Plano"
-    ]
-  },
-  historico: {
-    label: "Histórico",
-    filename: "historico.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "historicoTexto"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Historico", "Cliente"]
-  },
-  garantia: {
-    label: "Garantia",
-    filename: "garantia.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "tipoGarantia", "descricaoGarantia"],
-    headers: [
-      "Tipo_Registro", "Nr_Contrato", "Tipo_Garantia", "Marca", "Modelo", "Descricao", "Dt_Aquisicao", "Observacao",
-      "Vl_Garantia", "Vl_Corrigido", "Cpf_Cnpj"
-    ]
-  },
-  avalista: {
-    label: "Avalista",
-    filename: "avalista.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "avalistaNome", "tipoPessoa", "documentMode"],
-    headers: [
-      "Tipo_Registro", "Nr_Contrato", "Nome", "Cpf_Cnpj", "Dt_Nascimento", "Sexo", "Tipo_Pessoa",
-      "Estado_Civil", "Conjuge", "Pai", "Mae", "Rg", "Rg_Orgao_Emiss", "Rg_Uf_Emiss", "Rg_Dt_Emiss",
-      "Tipo_Telefone_1", "DDD_1", "Fone_1", "Tipo_Endereco", "Logradouro", "Numero", "Bairro", "Cidade", "UF", "CEP"
-    ]
-  },
-  dados_auxiliares: {
-    label: "Dados Auxiliares",
-    filename: "dados_auxiliares.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "dadosAuxDescricao", "dadosAuxValor"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Descricao", "Valor", "Cpf_Cnpj"]
-  },
-  processo: {
-    label: "Processo",
-    filename: "processo.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Nr_Processo", "Tipo_Processo", "Comarca", "Vara", "Uf", "Processo_Digital"]
-  },
-  processo_andamento: {
-    label: "Processo Andamento",
-    filename: "processo_andamento.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso", "andamentoDescricao"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Nr_Processo", "Dt_Andamento", "Complemento", "Observacao"]
-  },
-  processo_data: {
-    label: "Processo Data",
-    filename: "processo_data.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso", "dataPrazo"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Nr_Processo", "Dt_Prazo", "Observacao"]
-  },
-  processo_localizador: {
-    label: "Processo Localizador",
-    filename: "processo_localizador.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso", "localizador"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Nr_Processo", "Dt_Localizacao", "Localizador", "Tipo_Retorno"]
-  },
-  despesa: {
-    label: "Despesa",
-    filename: "despesa.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "despesaCodigo", "despesaValor"],
-    headers: ["Tipo_Registro", "Nr_Contrato", "Cod_Despesa_Sistema", "Tipo_Comprovante", "Dt_Despesa", "Vl_Despesa", "Cpf_Cnpj"]
-  },
-  mensagem_operacao: {
-    label: "Mensagem Operação",
-    filename: "mensagem_operacao.csv",
-    required: ["recordCount", "contratoInicial", "contratoSufixo", "mensagemOperacao"],
-    headers: ["Tipo_Registro", "Cpf_Cnpj", "Nr_Contrato", "Mensagem", "Status_Msg"]
-  }
+// Cabecalhos: fonte unica em layouts-datacob.js, compartilhada com o
+// Validador de CSV (tools/dados/csv-validator/). Aqui fica so o que e do
+// gerador: quais campos do formulario cada layout exige para montar as
+// linhas. Coluna nova do DataCob = mexer em layouts-datacob.js, e as duas
+// telas acompanham.
+const REQUIRED_POR_LAYOUT = {
+  configuracao: ["devolucaoGeral"],
+  loja: ["recordCount", "cliente", "lojaCodLoja", "lojaNome"],
+  financiado: ["recordCount", "cliente", "contratoInicial", "contratoSufixo", "nomeBase", "tipoPessoa", "documentMode"],
+  email: ["recordCount", "contratoInicial", "contratoSufixo", "documentMode", "emailValor"],
+  telefone: ["recordCount", "contratoInicial", "contratoSufixo", "documentMode", "dddTelefone", "telefoneNumero"],
+  endereco: ["recordCount", "contratoInicial", "contratoSufixo", "documentMode", "logradouro", "cidade", "uf"],
+  contrato: ["recordCount", "cliente", "contratoInicial", "contratoSufixo", "fase"],
+  parcela: ["recordCount", "contratoInicial", "contratoSufixo", "dataVencimento", "valorOriginal", "tipoParcela", "numeroParcela"],
+  historico: ["recordCount", "contratoInicial", "contratoSufixo", "historicoTexto"],
+  garantia: ["recordCount", "contratoInicial", "contratoSufixo", "tipoGarantia", "descricaoGarantia"],
+  avalista: ["recordCount", "contratoInicial", "contratoSufixo", "avalistaNome", "tipoPessoa", "documentMode"],
+  dados_auxiliares: ["recordCount", "contratoInicial", "contratoSufixo", "dadosAuxDescricao", "dadosAuxValor"],
+  processo: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso"],
+  processo_andamento: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso", "andamentoDescricao"],
+  processo_data: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso", "dataPrazo"],
+  processo_localizador: ["recordCount", "contratoInicial", "contratoSufixo", "numeroProcesso", "localizador"],
+  despesa: ["recordCount", "contratoInicial", "contratoSufixo", "despesaCodigo", "despesaValor"],
+  mensagem_operacao: ["recordCount", "contratoInicial", "contratoSufixo", "mensagemOperacao"],
 };
+
+const FILES = Object.fromEntries(
+  Object.entries(DATACOB_CSV_LAYOUTS).map(([key, layout]) => [key, {
+    label: layout.label,
+    filename: layout.filename,
+    required: REQUIRED_POR_LAYOUT[key] || [],
+    headers: layout.headers
+  }])
+);
 
 const NAMES = ["Joao", "Maria", "Ana", "Carlos", "Fernanda", "Pedro", "Julia", "Marcos", "Patricia", "Lucas"];
 const SURNAMES = ["Silva", "Santos", "Oliveira", "Souza", "Lima", "Costa", "Pereira", "Almeida", "Ferreira", "Rocha"];

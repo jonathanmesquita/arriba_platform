@@ -3,21 +3,21 @@ const menuData = {
         label: "Plataforma",
         children: {
             overview: {
-                label: "Visao geral",
+                label: "Visão geral",
                 badge: "Produto",
                 title: "Arriba Platform",
-                description: "Portal tecnico com ferramentas, documentacao, cases, labs e assistente inteligente.",
+                description: "Portal técnico com ferramentas, documentação, cases, labs e assistente inteligente.",
                 links: [
-                    ["Visao geral", "index.html"],
-                    ["Arquitetura", "pages/case-study/arriba-platform.html", true],
+                    ["Visão geral", "index.html"],
+                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true],
                     ["Sobre Jonathan", "pages/about/about_jonathan.html", true]
                 ]
             },
             cases: {
                 label: "Case Study",
                 badge: "Portfolio",
-                title: "Cases tecnicos",
-                description: "Documentacao de decisoes tecnicas, arquitetura, deploy e IA.",
+                title: "Cases técnicos",
+                description: "Documentação de decisões técnicas, arquitetura, deploy e IA.",
                 links: [
                     ["Todos os cases", "pages/case-study/index.html", true],
                     ["PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
@@ -33,11 +33,12 @@ const menuData = {
         children: {
             dados: {
                 label: "Dados",
-                badge: "Utilitarios",
+                badge: "Utilitários",
                 title: "Ferramentas de dados",
-                description: "Validadores, conversores e utilitarios para rotina tecnica.",
+                description: "Validadores, conversores e utilitários para a rotina técnica.",
                 links: [
                     ["Validador JSON", "tools/dados/json-validator/json_validator.html"],
+                    ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
                     ["CSV para JSON", "tools/dados/csv-to-json/csv-to-json.html"],
                     ["Calculadora de Hash", "tools/dados/hash-generator/hash-generator.html"],
                     ["Boleto Base64 → PDF", "tools/dados/base64-pdf/base64-pdf.html"],
@@ -48,9 +49,9 @@ const menuData = {
             },
             crms: {
                 label: "CRMs",
-                badge: "Operacao",
+                badge: "Operação",
                 title: "Ferramentas por CRM",
-                description: "Geracao de CSV, massa ficticia, suporte e apoio operacional, organizado por CRM.",
+                description: "Geração de CSV, massa fictícia, suporte e apoio operacional, organizado por CRM.",
                 // Estrutura "por CRM": cada aba e um CRM. DataCob e o primeiro
                 // (unico com ferramentas hoje); "Outros CRM" fica vazia,
                 // pronta para quando surgir a primeira ferramenta de outro
@@ -61,18 +62,19 @@ const menuData = {
                         label: "DataCob",
                         links: [
                             ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
+                            ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
                             ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
                             ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
                             ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
                             ["Validador CNAB 400", "tools/datacob/cnab400/cnab400.html"],
                             ["Negativação Serasa", "tools/datacob/serasa/serasa.html"],
-                            ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
+                            ["PH3A Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
                             ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
                             ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
                             ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
                             ["SQL Query T-SQL - Relatórios", "tools/datacob/query-builder/query-builder.html"],
                             ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
-                            ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true],
+                            ["Documentação de erros DataCob", "pages/docs/datacob/erros-datacob.html", true],
                             ["Como funciona a negativação Serasa", "pages/docs/datacob/negativacao-serasa.html", true]
                         ]
                     },
@@ -87,10 +89,10 @@ const menuData = {
                 label: "Suporte",
                 badge: "IA",
                 title: "Ferramentas de Suporte",
-                description: "Copiloto de IA para triagem de chamados, templates Freshdesk e especificacao para Desenvolvimento.",
+                description: "Copiloto de IA para triagem de chamados, templates Freshdesk e especificação para Desenvolvimento.",
                 links: [
                     ["PH3A Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
-                    ["Case Study Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
+                    ["Case: PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
                     ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"]
                 ]
             },
@@ -98,18 +100,18 @@ const menuData = {
                 label: "Cloud",
                 badge: "Deploy",
                 title: "Ferramentas Cloud",
-                description: "Acesso rapido a API, Render, Vercel, Cloudflare e documentacao tecnica.",
+                description: "Acesso rápido à API, Render, Vercel, Cloudflare e documentação técnica.",
                 links: [
                     ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["Status Freshdesk API", "https://api.arriba.jm.dev.br/freshdesk/status"],
+                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
                     ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["Arquitetura Arriba", "pages/case-study/arriba-platform.html", true]
+                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true]
                 ]
             }
         }
     },
     docs: {
-        label: "Documentacao",
+        label: "Documentação",
         children: {
             aprender: {
                 label: "Aprender",
@@ -127,11 +129,11 @@ const menuData = {
                 label: "Help Center",
                 badge: "Ajuda",
                 title: "Centro de Ajuda",
-                description: "Busca, topicos, tutoriais e documentacao rapida para suporte tecnico.",
+                description: "Busca, tópicos, tutoriais e documentação rápida para o suporte técnico.",
                 links: [
                     ["Help Center", "pages/docs/help-center/index.html", true],
                     ["Base de Conhecimento DataCob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],
-                    ["Documentacao DataCob", "pages/docs/datacob/erros-datacob.html", true],
+                    ["Documentação de erros DataCob", "pages/docs/datacob/erros-datacob.html", true],
                     ["Blog de troubleshooting", "pages/docs/blog/index.html", true],
                     ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"]
                 ]
@@ -140,22 +142,23 @@ const menuData = {
                 label: "Downloads",
                 badge: "Arquivos",
                 title: "Downloads",
-                description: "Modelos, exemplos e arquivos uteis para operacao e testes.",
+                description: "Modelos, exemplos e arquivos úteis para operação e testes.",
                 links: [
                     ["Central de Downloads", "pages/docs/downloads/index.html", true],
-                    ["Gerador CSV", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
+                    ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
+                    ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
                     ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
                     ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"]
                 ]
             },
             errors: {
-                label: "Erros e topicos",
+                label: "Erros e tópicos",
                 badge: "Blog",
-                title: "Erros e documentacao",
-                description: "Pesquise erros e encontre topicos em formato de blog tecnico.",
+                title: "Erros e documentação",
+                description: "Pesquise erros e encontre tópicos em formato de blog técnico.",
                 links: [
-                    ["Erro DX001 - Falha de conexao", "pages/docs/blog/index.html#dx001", true],
-                    ["Erro LV005 - Licenca invalida", "pages/docs/blog/index.html#lv005", true],
+                    ["Erro DX001 - Falha de conexão", "pages/docs/blog/index.html#dx001", true],
+                    ["Erro LV005 - Licença inválida", "pages/docs/blog/index.html#lv005", true],
                     ["Erro PR102 - Processamento interrompido", "pages/docs/blog/index.html#pr102", true]
                 ]
             }
@@ -172,8 +175,8 @@ const menuData = {
                 links: [
                     ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
                     ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
-                    ["Case de arquitetura", "pages/case-study/arriba-platform.html", true]
+                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
+                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true]
                 ]
             },
             api: {
@@ -184,15 +187,15 @@ const menuData = {
                 links: [
                     ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
                     ["PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["API publica", "https://api.arriba.jm.dev.br"],
-                    ["Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
+                    ["API Arriba", "https://api.arriba.jm.dev.br"],
+                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
                     ["Help Center", "pages/docs/help-center/index.html", true]
                 ]
             }
         }
     },
     lab: {
-        label: "Lab / Portfolios",
+        label: "Lab / Portfólios",
         children: {
             personal: {
                 label: "Portfolios",
@@ -200,7 +203,7 @@ const menuData = {
                 title: "Projetos pessoais",
                 description: "GameDev, IA e experimentos.",
                 links: [
-                    ["Todos os labs", "pages/lab/index.html", true],
+                    ["Lab Psicologia", "pages/lab/index.html", true],
                     ["Portfolio GameDev", "pages/lab/gamedev/index.html", true],
                     ["Lab IA", "pages/lab/ai/index.html", true]
                 ]
@@ -239,6 +242,7 @@ export const searchItems = [
     ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema datacob financiado contrato parcela acordo negociacao historico telefone email endereco treinar praticar select join group by csv", "tools/datacob/sql-playground/sql-playground.html"],
     ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself w3schools progresso pontos badges quiz exercicios simulador sql cnab base64 massa de dados datacob", "pages/aprender/index.html"],
     ["SQL Query T-SQL - Relatórios", "sql query builder relatorios datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
+    ["Validador de CSV", "csv validador validar arquivo csv delimitador ponto e virgula cabecalho coluna layout recepcao datacob importacao erro linha duplicada cpf cnpj invalido data valor decimal aspas rfc 4180 schema estrutura planilha", "tools/dados/csv-validator/csv-validator.html"],
     ["Negativação Serasa", "serasa negativacao negativar pefin refin spc bureau credito arquivo 600 posicoes layout posicional inclusao exclusao baixa motivo codigo erro retorno remessa convem04 convem01 divida vencida inadimplente validador gerador leitor", "tools/datacob/serasa/serasa.html"],
     ["Como funciona a negativação Serasa", "negativacao serasa processo status nao negativado solicitado negativado remover confirmar prazo 5 dias uteis 5 anos decurso prazo pefin refin motivo baixa cliente explicacao", "pages/docs/datacob/negativacao-serasa.html", true],
 ];
@@ -357,7 +361,7 @@ function renderDetail(sectionKey, childKey, activeTabKey) {
             </div>
 
             <div class="enterprise-menu-note">
-                Navegacao em camadas, leve e sem travar o usuario. O menu troca de contexto ao passar o mouse ou clicar.
+                Navegação em camadas, leve e sem travar o usuário. O menu troca de contexto ao passar o mouse ou clicar.
             </div>
         </div>
     `;

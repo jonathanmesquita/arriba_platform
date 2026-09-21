@@ -131,6 +131,26 @@ NÃO NEGATIVADO
     ]
   },
   {
+    id: "csv",
+    titulo: "CSV de recepção",
+    tagline: "Ler, conferir e corrigir o arquivo antes de tentar importar no DataCob.",
+    chips: ["Delimitador", "Cabeçalho", "CPF/CNPJ", "Layouts DataCob"],
+    pronto: true,
+    exemploTitulo: "Exemplo: por que a importação recusa o arquivo",
+    exemplo: `Tipo_Registro;Nr_Contrato;Dt_Vencimento;Vl_Original
+7;0030-ARRIBA;09/02/2026;100,00     ← ok
+7;0030-ARRIBA;31/02/2026;150,00     ← dia que não existe
+6;0030-ARRIBA;10/03/2026;200,00     ← tipo de outro layout
+7;0030-ARRIBA;10/04/2026;abc        ← valor não numérico
+
+-- o campo entre aspas pode conter o próprio ";",
+-- por isso não dá para conferir com split(";")`,
+    acoes: [
+      { label: "Validar um CSV", href: "../../tools/dados/csv-validator/csv-validator.html", estilo: "btn-red-arriba", icone: "fa-file-csv" },
+      { label: "Gerar CSV de teste", href: "../../tools/datacob/arriba-csv-generator/csv-template-generator.html", estilo: "btn-outline-arriba", icone: "fa-table" }
+    ]
+  },
+  {
     id: "codificacao",
     titulo: "Codificação de dados",
     tagline: "Base64, URL, hex, JWT e companhia — decodificar o que chega no chamado.",

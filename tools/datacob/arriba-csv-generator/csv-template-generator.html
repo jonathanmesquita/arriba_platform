@@ -1321,7 +1321,9 @@ select.required-missing {
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <!-- modulo: script.js importa os cabecalhos de layouts-datacob.js (fonte
+       unica compartilhada com o Validador de CSV). -->
+  <script type="module" src="script.js"></script>
   <script type="module" src="bmp-layout.js"></script>
   <script>
     (() => {

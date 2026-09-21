@@ -160,6 +160,32 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   NEGATIVAÇÃO` → confirmar → `NEGATIVADO` → remover (exige motivo da baixa) → `NÃO NEGATIVADO`.
   **LGPD:** as amostras das planilhas têm nome/CPF/RG/endereço reais e **não estão no repo** —
   os `exemplo` dos campos e as fixtures de teste são fictícios, e o processamento é 100% local.
+- **Validador de CSV** (`tools/dados/csv-validator/`, set/2026): lê um `.csv` no navegador e
+  separa **dois assuntos que não se misturam** — `parser.js` responde "o arquivo está bem
+  formado?" (RFC 4180 de verdade: aspas, `""` escapado, delimitador e quebra de linha dentro
+  do campo; detecção de delimitador, BOM e EOL; linha com número de colunas diferente do
+  cabeçalho; cabeçalho duplicado/vazio/com espaço) e `rules.js` responde "o conteúdo está
+  certo?" (tipo por coluna, obrigatório, único, tamanho, lista de valores, regex).
+  **Não trocar o parser por `split(";")`:** endereço com ponto e vírgula dentro de aspas é
+  comum em base de devedor, e o `split` transforma arquivo bom em arquivo "corrompido".
+  Campo vazio nunca é testado pelo tipo — quem cobra vazio é a regra `obrigatorio`, senão
+  toda coluna opcional acusaria erro.
+  **Os layouts do DataCob não são redigitados aqui:** `schemas.js` importa
+  `tools/datacob/arriba-csv-generator/layouts-datacob.js`, a **mesma fonte** que o Gerador CSV
+  usa — CSV gerado pelo site passa no validador do site por construção. O que `schemas.js`
+  acrescenta é o **tipo** de cada coluna, inferido da convenção de nome (`Dt_*` = data,
+  `Vl_*`/`Tx_*` = decimal, `Cpf_Cnpj`, `UF`, `Email`, `CEP`, `DDD`/`Fone`) — isso é
+  **inferência, não dicionário de dados oficial**, por isso são conferências de formato e a
+  tela deixa ajustar/desligar cada regra. O layout de um arquivo solto é reconhecido pelo
+  `Tipo_Registro` da primeira linha de dados e, na falta dele, pelo cabeçalho (≥70% das
+  colunas). Validação roda em todas as linhas; a grade desenha 300 (`LIMITE_GRADE`).
+- **Layouts CSV do DataCob** (`tools/datacob/arriba-csv-generator/layouts-datacob.js`): fonte
+  única dos 18 cabeçalhos de recepção (177 colunas), **arquivo gerado** do que já existia no
+  `FILES` do gerador + `layout-registry.js`. O `script.js` do gerador passou a ser
+  **`<script type="module">`** por causa desse import (não tinha `onclick` inline, então a
+  conversão foi segura) e guarda só o que é dele: `REQUIRED_POR_LAYOUT`, os campos do
+  formulário obrigatórios para montar as linhas. Coluna nova do DataCob = mexer em
+  `layouts-datacob.js`, e gerador e validador acompanham juntos.
 - **Base64** (`tools/dados/base64-pdf/` e `decodificador/`): decode 100% no browser.
   `base64-pdf` extrai Base64 embutido em JSON automaticamente (detecta por magic bytes
   `%PDF`). `decodificador/` é o conversor universal (Base64, URL, HTML entities, hex,
@@ -366,6 +392,27 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     Também não há arquivo de **retorno real** da Serasa para conferir a decodificação dos
     códigos de erro contra dado de produção (hoje conferida só com códigos plantados em
     fixture fictícia).
+- [x] **Parte 11 — Validador de CSV + auditoria de menu (set/2026).** Ferramenta
+  `tools/dados/csv-validator/` (ver gotcha acima) com os layouts do DataCob vindos da fonte
+  única nova `layouts-datacob.js`. Auditoria do mega-menu e da busca: os 67 itens de menu e
+  32 de busca apontam para arquivo existente; acentos corrigidos em 25 rótulos/títulos
+  visíveis ("Documentação", "Visão geral", "Utilitários", "Operação", "Erros e tópicos",
+  "Lab / Portfólios"...); nomes unificados quando o mesmo destino aparecia com rótulos
+  diferentes ("Gerador CSV" → "Gerador CSV DataCob", 3 nomes do status do Freshdesk → 1,
+  4 nomes do case de arquitetura → 2); `pages/case-study/index.html` tinha o mesmo `<title>`
+  do case individual.
+  - [ ] **Pendente:** `pages/lab/index.html` **não é um hub de labs** — é a página do Lab
+    Psicologia (é o que o `<title>`, o kicker e o conteúdo dizem), mas o item "Lab" da
+    navegação superior e o menu levavam lá como se fosse índice. O rótulo do menu virou
+    "Lab Psicologia" (verdade), porém a navegação superior continua chamando de "Lab" e não
+    existe índice listando GameDev / IA / Psicologia. Criar o hub resolve — não foi feito
+    porque `pages/lab/psychology/index.html` foi removido de propósito na Parte 1 e recriar
+    a pasta é decisão do dono.
+  - [ ] **Observação:** a busca do topo mostra o "saco de palavras-chave" de cada item
+    (`searchItems[1]`) embaixo do nome, e essas palavras são escritas sem acento de
+    propósito. Não atrapalha a busca (`normalizeSearch` tira acento dos dois lados), mas
+    aparece meio cru para quem lê. Se incomodar, o certo é parar de exibir o campo de
+    palavras-chave, não acentuar as 32 linhas.
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

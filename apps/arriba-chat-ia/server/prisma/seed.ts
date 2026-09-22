@@ -24,8 +24,11 @@
    ===================================================================== */
 
 // Primeiro import, pelo mesmo motivo explicado no src/index.ts: o db.ts
-// lê a DATABASE_URL quando é avaliado.
-import "dotenv/config";
+// lê a DATABASE_URL quando é avaliado. Tem de ser o carregarDotenv (e
+// não `dotenv/config`) porque o .env mora na raiz do app, e o seed roda
+// de dentro de server/ — com o dotenv puro, SEED_ADMIN_* chega vazio e o
+// script termina dizendo que não há nada configurado.
+import "../src/carregarDotenv.js";
 
 import { prisma } from "../src/db.js";
 import { hashSenha, validarForcaSenha } from "../src/auth/password.js";

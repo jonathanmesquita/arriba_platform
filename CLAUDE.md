@@ -286,6 +286,25 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   mostra qual provedor está ativo. Nunca commitar chave nem colocá-la em variável de build:
   tudo que vai para um site estático é público. O histórico da conversa é só em memória —
   conversa de suporte pode ter dado de chamado e não deve persistir.
+- **Base de conhecimento do Arriba Chat IA** (`apps/arriba-chat-ia/server/src/knowledge/`,
+  set/2026): o chat do app consulta a documentação do portal antes de chamar o modelo. É
+  **cópia importada**, não leitura ao vivo (`npm run kb:import` ou o botão na aba
+  "Base de conhecimento" do admin) — ler ~100 arquivos do site a cada pergunta amarraria o
+  app ao repositório para sempre. As quatro fontes são as mesmas que o site já usa
+  (`datacob-knowledge-base.js`, `respostas-predefinidas.js`, `erros-datacob.html` e os
+  manuais em `docs/datacob-manuais/`), **importadas como módulo ESM** no caso das duas
+  primeiras — nada de reparsear JavaScript com regex. Mexer no formato desses arquivos
+  quebra o importador; o teste `knowledge.test.ts` não pega isso (não toca no portal).
+  A busca é a textual do Postgres com dicionário português, sem embeddings nem banco
+  vetorial — decisão medida: com 95 documentos e ~80 mil caracteres, a busca nativa
+  responde e é uma dependência a menos. **Os manuais genéricos são páginas de template**
+  (o mesmo corpo com o nome da rotina trocado) e por isso o importador corta frase que
+  se repete em muitos documentos — 48% do texto lido era template, e sem esse corte
+  "cliente" aparecia em 71 dos 95 documentos, fazendo qualquer pergunta casar com tudo.
+  Esse corte depende de `textoDeHtml()` preservar a quebra de bloco: se ele voltar a
+  colapsar tudo numa linha, o nome do arquivo (único por manual) gruda no parágrafo
+  repetido e o template volta a passar. A resposta cita `[1]`, `[2]` e as fontes ficam
+  gravadas em `Message.knowledgeUsed` — reabrir a conversa mostra a origem.
 - **Sessão do Support Copilot** (`tools/datacob/support-copilot/support-copilot.js`,
   set/2026): a autenticação é cookie `HttpOnly` emitido pelo `arriba-api`
   (`/auth/login` → `/auth/status`), e o front sempre manda `credentials: "include"`.
@@ -420,6 +439,16 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     propósito. Não atrapalha a busca (`normalizeSearch` tira acento dos dois lados), mas
     aparece meio cru para quem lê. Se incomodar, o certo é parar de exibir o campo de
     palavras-chave, não acentuar as 32 linhas.
+- [x] **Parte 12 — Arriba Chat IA (set/2026).** Aplicação nova em `apps/arriba-chat-ia/`
+  (React + Vite no front, Express + Prisma/Postgres no back): chat multi-provedor
+  (Anthropic, OpenAI, Gemini, Ollama, OpenRouter) com streaming SSE, painel de
+  administração (provedores com API key cifrada em AES-256-GCM, usuários, auditoria),
+  sessão por cookie HttpOnly e **base de conhecimento** consultando a documentação do
+  portal (ver gotcha acima). Não faz parte do site estático — `.vercelignore` exclui
+  `apps/` do deploy.
+  - [ ] **Pendente:** deploy (Render/Vercel) ainda não feito; sem limite de taxa no
+    `/auth/login`; sem busca no histórico de conversas; a busca da base é léxica (quem
+    pergunta com sinônimo não acha).
 - [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
 - [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
 

@@ -45,6 +45,9 @@ import { SYSTEM_PROMPT_PADRAO } from "../providers/catalog.js";
 import { comoProviderError, ProviderError } from "../providers/errors.js";
 import type { CompletionUsage, ProviderKind as ProviderKindDoContrato } from "../providers/types.js";
 import { conversaDoUsuario, montarHistorico, obterProvedorAtivo, tituloDaConversa } from "./service.js";
+import { buscarTrechos } from "../knowledge/search.js";
+import { comContexto, montarContexto, type ContextoMontado } from "../knowledge/context.js";
+import { configuracaoDaBase } from "../knowledge/settings.js";
 
 /** Teto do que uma mensagem pode ter. Não é regra de negócio: é para o
  *  servidor não gastar memória e tokens com um colar acidental de
@@ -83,6 +86,21 @@ function idDaRota(valor: string | string[] | undefined): string {
   const id = Array.isArray(valor) ? valor[0] : valor;
   if (!id) throw AppError.naoEncontrado("Conversa não encontrada.");
   return id;
+}
+
+/** As fontes vão para uma coluna Json. O tipo de entrada do Prisma exige
+ *  estrutura com index signature, que uma interface nomeada não tem — e
+ *  `as any` aqui esconderia um erro real no dia em que o formato mudar.
+ *  Converter para objeto simples mantém a checagem de verdade. */
+function fontesParaJson(fontes: ContextoMontado["fontes"]) {
+  if (fontes.length === 0) return undefined;
+  return fontes.map((f) => ({
+    numero: f.numero,
+    id: f.id,
+    title: f.title,
+    url: f.url,
+    source: f.source
+  }));
 }
 
 function enviarEvento(res: Response, evento: string, dados: unknown): void {
@@ -208,6 +226,11 @@ export function criarChatRouter(env: Env, secretBox: SecretBox): Router {
               latencyMs: true,
               errorCode: true,
               errorMessage: true,
+              // As fontes citadas voltam junto: sem isto, reabrir a
+              // conversa mostraria a resposta sem a origem dela, e a
+              // pessoa não teria como conferir de onde saiu o
+              // procedimento.
+              knowledgeUsed: true,
               createdAt: true
             }
           }
@@ -302,6 +325,26 @@ export function criarChatRouter(env: Env, secretBox: SecretBox): Router {
       // atual" separada para o adapter.
       const historico = await montarHistorico(conversationId, env.CHAT_HISTORY_LIMIT);
 
+      /* Base de conhecimento: procura antes de chamar o provedor e junta
+         os trechos ao system prompt.
+
+         Roda ANTES de abrir o stream de propósito — é rápido (busca
+         textual em ~100 documentos) e, se falhar, ainda dá para
+         responder com um erro HTTP decente. Falha aqui NÃO derruba a
+         mensagem: o chat segue sem contexto, porque ficar sem responder
+         é pior do que responder sem a base. */
+      const configBase = await configuracaoDaBase();
+      let contexto: ContextoMontado = { bloco: "", fontes: [], caracteres: 0 };
+
+      if (configBase.ativo) {
+        try {
+          contexto = montarContexto(await buscarTrechos(content, configBase.trechos));
+          runtime.systemPrompt = comContexto(runtime.systemPrompt ?? SYSTEM_PROMPT_PADRAO, contexto);
+        } catch (falha) {
+          console.error("[chat] busca na base de conhecimento falhou; seguindo sem contexto:", falha);
+        }
+      }
+
       // --- a partir daqui é SSE: erro vira evento, não status HTTP ---
 
       abrirStream(res);
@@ -327,7 +370,13 @@ export function criarChatRouter(env: Env, secretBox: SecretBox): Router {
         userMessageId: mensagemUsuario.id,
         provider: config.provider,
         providerLabel: config.label,
-        model: config.model
+        model: config.model,
+        // As fontes vão no meta, e não só no done, para a tela poder
+        // mostrar "consultando: manual X" ANTES da resposta começar a
+        // aparecer — e para o usuário conferir a origem se a resposta
+        // parecer estranha.
+        fontes: contexto.fontes,
+        baseConsultada: configBase.ativo
       });
 
       let texto = "";
@@ -370,7 +419,10 @@ export function criarChatRouter(env: Env, secretBox: SecretBox): Router {
             model: config.model,
             promptTokens: usage?.promptTokens ?? null,
             completionTokens: usage?.completionTokens ?? null,
-            latencyMs
+            latencyMs,
+            // Rastro de qual documento embasou a resposta. Sem isto,
+            // auditar "de onde saiu isso" depois é impossivel.
+            knowledgeUsed: fontesParaJson(contexto.fontes)
           },
           select: { id: true, createdAt: true }
         });
@@ -448,6 +500,7 @@ export function criarChatRouter(env: Env, secretBox: SecretBox): Router {
               promptTokens: usage?.promptTokens ?? null,
               completionTokens: usage?.completionTokens ?? null,
               latencyMs,
+              knowledgeUsed: fontesParaJson(contexto.fontes),
               errorCode: falha.code,
               // A frase do USUÁRIO, não a do admin: esta coluna volta no
               // GET da conversa e aparece na tela de quem conversa. O

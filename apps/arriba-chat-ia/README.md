@@ -26,7 +26,8 @@ apps/arriba-chat-ia/
 │
 ├── server/                     API Express + Prisma
 │   ├── prisma/
-│   │   ├── schema.prisma       Modelos: User, ProviderConfig, Conversation, Message, AuditLog
+│   │   ├── schema.prisma       Modelos: User, ProviderConfig, Conversation, Message, AuditLog,
+│   │   │                       KnowledgeDoc, Setting
 │   │   ├── migrations/         Histórico de migração (gerado pelo Prisma)
 │   │   └── seed.ts             Cria o primeiro administrador
 │   ├── prisma.config.ts        Config do CLI do Prisma 7 (a URL do banco mora aqui)
@@ -38,6 +39,7 @@ apps/arriba-chat-ia/
 │       ├── auth/               Senha (scrypt), JWT em cookie, middleware, rotas de sessão
 │       ├── chat/               Conversas, histórico e envio de mensagem com streaming SSE
 │       ├── admin/              Provedores, teste de conexão, usuários e auditoria
+│       ├── knowledge/          Base de conhecimento: importação do portal, busca e contexto
 │       ├── providers/          Um adapter por provedor + catálogo, registry e erros
 │       ├── audit/              Gravação do AuditLog
 │       └── http/errors.ts      Formato único de erro e middleware final
@@ -136,6 +138,7 @@ Entre em http://localhost:5173 com o e-mail e a senha do seed. **Depois de entra
 ```bash
 npm run typecheck     # TypeScript nos dois pacotes
 npm test              # testes do servidor (node:test)
+npm run kb:import     # (em server/) importa a base de conhecimento do portal
 npm run db:studio     # Prisma Studio, para olhar o banco
 npm run build         # build de produção (server + web)
 ```
@@ -187,6 +190,52 @@ Como ele fala o protocolo da OpenAI, reaproveita aquele mesmo adapter trocando a
 — é a vantagem de o contrato ser uma interface. Serve bem para comparar modelos sem abrir
 conta em cada fornecedor; em troca, você depende de mais um intermediário entre você e o
 modelo.
+
+---
+
+## Base de conhecimento (o chat responde com a documentação da casa)
+
+Antes de chamar o modelo, a API procura na documentação interna e manda os trechos mais
+relevantes junto com a pergunta. É o que separa "assistente genérico" de "assistente que
+conhece o DataCob": a resposta cita `[1]`, `[2]` e a tela mostra de onde cada número saiu,
+para quem atende conferir o manual antes de orientar o cliente.
+
+**De onde vem o conteúdo** (importado do portal, quatro fontes, em ordem de confiança):
+
+| Fonte | Arquivo no portal | O que é |
+| --- | --- | --- |
+| `CURADORIA` | `assets/data/datacob-knowledge-base.js` | Passo a passo escrito pelo suporte — o material mais confiável |
+| `RESPOSTA_PRONTA` | `assets/data/respostas-predefinidas.js` | Texto padrão já usado com o cliente |
+| `ERRO` | `pages/docs/datacob/erros-datacob.html` | Catálogo de erros |
+| `MANUAL` | `tools/datacob/support-copilot/docs/datacob-manuais/` | Manuais indexados |
+
+```bash
+cd server && npm run kb:import      # ou: Administração → Base de conhecimento → Reimportar
+```
+
+**Como a busca funciona.** Busca textual nativa do Postgres com dicionário **português**
+(`negativação`/`negativar`/`negativado` caem no mesmo radical), com título e palavras-chave
+pesando mais que o corpo, `OR` entre os termos da pergunta e um corte relativo ao primeiro
+colocado para a cauda irrelevante não entrar no contexto. Sem embeddings, sem banco
+vetorial, sem serviço externo: com ~95 documentos e ~80 mil caracteres, o índice do próprio
+Postgres resolve, e cada dependência a menos é uma peça a menos para manter.
+
+**Texto de template é descartado na importação.** Os manuais genéricos do portal repetem o
+mesmo corpo com o nome da rotina trocado — medido: 48% do texto lido. Sem essa limpeza,
+"cliente" aparecia em 71 dos 95 documentos e qualquer pergunta com uma palavra do template
+casava com dezenas de manuais sem relação. A detecção é estatística (frase que aparece em
+muitos documentos sai), então o template pode mudar sem quebrar nada.
+
+**O que o admin controla** (aba *Base de conhecimento*): reimportar, ligar/desligar a
+consulta — útil para descobrir se uma resposta ruim veio do contexto ou do modelo — e
+quantos trechos entram por resposta (1 a 8). Mais trechos **não** é melhor: dilui a atenção
+do modelo e encarece cada mensagem, porque o contexto é reenviado a cada turno.
+
+**Quando a base não acha nada**, o chat responde assim mesmo, avisando que a informação não
+veio da documentação interna. A instrução que acompanha os trechos é explícita: manter
+nomes de tela e caminhos de menu como estão, citar a fonte, apontar contradição entre
+trechos e dizer "não sei" em vez de preencher lacuna — procedimento inventado com cara de
+manual é pior, num suporte técnico, do que resposta nenhuma.
 
 ---
 
@@ -258,9 +307,15 @@ solto sobe o valor na tela de administração.
 
 Lista honesta do que **não** existe hoje:
 
-- **Sem RAG / base de conhecimento.** O chat não consulta documento, manual nem banco da
-  empresa: ele conversa com o modelo e mais nada. O que existe de "conhecimento" é o system
-  prompt configurável.
+- **A base de conhecimento é uma cópia, e cópia envelhece.** Manual novo publicado no
+  portal só chega ao chat depois de **Administração → Base de conhecimento → Reimportar**
+  (ou `npm run kb:import`). Não há reimportação automática de propósito: importar é ler
+  ~100 arquivos do disco do portal, e amarrar isso a cada pergunta acoplaria o app ao
+  repositório do site para sempre.
+- **A busca é léxica, não semântica.** Quem pergunta "como bloquear um devedor" não
+  encontra um manual que só fala em "inativar cadastro" — palavra diferente, mesmo
+  assunto. Resolver isso exigiria embeddings + banco vetorial; com ~95 documentos, o
+  ganho não paga a complexidade (ver o comentário em `knowledge/search.ts`).
 - **Sem anexos.** Só texto. Nada de imagem, PDF ou planilha, mesmo quando o modelo
   escolhido é multimodal.
 - **Sem SSO.** A autenticação é e-mail + senha no banco local. Não há integração com

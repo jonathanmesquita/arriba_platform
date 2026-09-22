@@ -7,3 +7,6 @@ dist/
 
 # Client gerado pelo Prisma (sai de `prisma generate`, não vai para o git)
 server/generated/
+
+# Cache incremental do tsc — artefato de build, muda a cada typecheck
+*.tsbuildinfo

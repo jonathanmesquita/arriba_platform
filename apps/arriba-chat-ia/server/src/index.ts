@@ -29,7 +29,9 @@
                        Express reconhece um handler de erro.
    ===================================================================== */
 
-import "dotenv/config";
+// Primeiro import de propósito: o .env precisa estar carregado antes
+// de qualquer módulo ler process.env.
+import "./carregarDotenv.js";
 
 import express from "express";
 import cookieParser from "cookie-parser";

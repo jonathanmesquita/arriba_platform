@@ -22,7 +22,8 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { apiDelete, apiGet, apiPost, abrirStreamDeMensagem } from "../api/client";
 import { formatarHora, formatarLatencia, mensagemDaFalha } from "../components/formato";
-import type { ConversaCompleta, MensagemSalva, ResumoConversa } from "../components/tipos";
+import Fontes from "../components/Fontes";
+import type { ConversaCompleta, FonteCitada, MensagemSalva, ResumoConversa } from "../components/tipos";
 
 interface RespostaLista { conversations: ResumoConversa[] }
 interface RespostaConversa { conversation: ConversaCompleta }
@@ -35,6 +36,10 @@ export default function Chat() {
   const [respondendo, setRespondendo] = useState(false);
   const [parcial, setParcial] = useState("");
   const [origem, setOrigem] = useState<{ provider: string; model: string } | null>(null);
+  // Fontes da resposta que está chegando. Ficam separadas das mensagens
+  // porque aparecem no `meta` (antes do primeiro token) e só viram parte
+  // da mensagem quando o `done` chega.
+  const [fontesEmCurso, setFontesEmCurso] = useState<FonteCitada[]>([]);
   const [erroTela, setErroTela] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [lateralAberta, setLateralAberta] = useState(false);
@@ -43,6 +48,9 @@ export default function Chat() {
   const abortRef = useRef<AbortController | null>(null);
   const textoRef = useRef("");
   const quadroRef = useRef<number | null>(null);
+  // Mesmas fontes do estado acima, em ref: os handlers do stream são
+  // criados uma vez e leriam o estado de quando o envio começou (vazio).
+  const fontesRef = useRef<FonteCitada[]>([]);
 
   /* ------------------------ rolagem ------------------------ */
 
@@ -79,6 +87,7 @@ export default function Chat() {
     setLateralAberta(false);
     setParcial("");
     setOrigem(null);
+    setFontesEmCurso([]);
     try {
       const dados = await apiGet<RespostaConversa>(`/chat/conversations/${encodeURIComponent(id)}`);
       setMensagens(dados.conversation?.messages ?? []);
@@ -116,6 +125,7 @@ export default function Chat() {
       setMensagens([]);
       setParcial("");
       setOrigem(null);
+      setFontesEmCurso([]);
       setLateralAberta(false);
     } catch (falha) {
       setErroTela(mensagemDaFalha(falha));
@@ -166,6 +176,7 @@ export default function Chat() {
     setRespondendo(true);
     setParcial("");
     setOrigem(null);
+    setFontesEmCurso([]);
     textoRef.current = "";
     rolarSeEstavaNoFim(estava);
 
@@ -189,7 +200,12 @@ export default function Chat() {
         alvo,
         texto,
         {
-          meta: (dados) => setOrigem({ provider: dados.providerLabel || dados.provider, model: dados.model }),
+          meta: (dados) => {
+            setOrigem({ provider: dados.providerLabel || dados.provider, model: dados.model });
+            const fontes = dados.fontes ?? [];
+            fontesRef.current = fontes;
+            setFontesEmCurso(fontes);
+          },
           delta: (pedaco) => { textoRef.current += pedaco; agendarPintura(); },
           done: (fim) => {
             const completa: MensagemSalva = {
@@ -201,11 +217,14 @@ export default function Chat() {
               promptTokens: fim.usage?.promptTokens ?? null,
               completionTokens: fim.usage?.completionTokens ?? null,
               latencyMs: fim.latencyMs ?? null,
+              knowledgeUsed: fontesRef.current.length ? fontesRef.current : null,
               createdAt: fim.createdAt ?? new Date().toISOString()
             };
             setMensagens((atual) => [...atual, completa]);
             setParcial("");
             textoRef.current = "";
+            fontesRef.current = [];
+            setFontesEmCurso([]);
           },
           error: (falha) => {
             // O texto que chegou antes do erro não se perde: vira uma
@@ -219,11 +238,16 @@ export default function Chat() {
                 content: parcialTexto,
                 errorCode: falha.code,
                 errorMessage: falha.message,
+                // O trecho que chegou antes da falha saiu das mesmas
+                // fontes: mantê-las ajuda a conferir o que foi dito.
+                knowledgeUsed: fontesRef.current.length ? fontesRef.current : null,
                 createdAt: new Date().toISOString()
               }
             ]);
             setParcial("");
             textoRef.current = "";
+            fontesRef.current = [];
+            setFontesEmCurso([]);
           }
         },
         controlador.signal
@@ -311,6 +335,9 @@ export default function Chat() {
                     <strong>{mensagem.errorMessage}</strong>
                   </>
                 ) : null}
+                {mensagem.role !== "USER" && mensagem.knowledgeUsed?.length ? (
+                  <Fontes fontes={mensagem.knowledgeUsed} />
+                ) : null}
                 <div className="bolha-rodape">
                   <span>{formatarHora(mensagem.createdAt)}</span>
                   {mensagem.model ? <span>{mensagem.model}</span> : null}
@@ -325,6 +352,9 @@ export default function Chat() {
             <div className="bolha bolha-assistente">
               {parcial}
               <span className="cursor-digitando" aria-hidden="true" />
+              {/* As fontes aparecem já no meta, antes do texto: dá para
+                  conferir a origem enquanto a resposta ainda escreve. */}
+              {fontesEmCurso.length ? <Fontes fontes={fontesEmCurso} /> : null}
               {origem ? <div className="bolha-rodape"><span>{origem.provider} · {origem.model}</span></div> : null}
             </div>
           ) : null}

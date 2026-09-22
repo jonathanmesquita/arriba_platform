@@ -167,6 +167,17 @@ textarea.campo { resize: vertical; min-height: 80px; line-height: 1.5; }
 .bolha-rodape { font-size: .7rem; color: var(--musgo); margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; }
 .bolha-usuario .bolha-rodape { color: rgba(255, 255, 255, .78); }
 
+/* Fontes citadas: parte da resposta, mas visualmente secundárias — quem
+   lê a resposta não deve tropeçar nelas, e quem quer conferir acha. */
+.fontes { margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--linha); white-space: normal; }
+.fontes-titulo { font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; color: var(--musgo); }
+.fontes-lista { list-style: none; margin: 5px 0 0; padding: 0; display: grid; gap: 3px; }
+.fontes-lista li { font-size: .78rem; line-height: 1.45; color: var(--musgo); }
+.fontes-numero { font-weight: 900; color: var(--vermelho); }
+.fontes-lista a { color: var(--tinta); text-decoration: none; border-bottom: 1px solid var(--linha); }
+.fontes-lista a:hover { color: var(--vermelho); border-bottom-color: var(--vermelho); }
+.fontes-tipo { font-size: .7rem; color: var(--musgo); opacity: .85; }
+
 .cursor-digitando { display: inline-block; width: 7px; height: 1em; background: var(--musgo); vertical-align: -2px; animation: piscar 1s steps(2) infinite; }
 @keyframes piscar { 50% { opacity: 0; } }
 

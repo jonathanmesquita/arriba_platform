@@ -65,6 +65,15 @@ enum MessageRole {
   SYSTEM
 }
 
+// De onde cada documento da base veio. Serve para reimportar sem
+// duplicar e para a tela do admin dizer o que está indexado.
+enum KnowledgeSource {
+  CURADORIA        // assets/data/datacob-knowledge-base.js — escrito à mão pelo suporte
+  RESPOSTA_PRONTA  // assets/data/respostas-predefinidas.js
+  MANUAL           // docs/datacob-manuais/**/index.html
+  ERRO             // pages/docs/datacob/erros-datacob.html
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -176,10 +185,70 @@ model Message {
   errorCode    String?
   errorMessage String?
 
+  /* Quais documentos da base foram enviados como contexto desta resposta.
+     Guardado como JSON (id, título, url) em vez de relação: o registro
+     precisa sobreviver a uma reimportação da base, que troca os ids das
+     linhas. Sem isso, auditar "de onde saiu essa resposta" seis meses
+     depois seria impossível. */
+  knowledgeUsed Json?
+
   createdAt DateTime @default(now())
 
   @@index([conversationId, createdAt])
   @@map("messages")
+}
+
+/* Base de conhecimento consultada antes de chamar o provedor.
+
+   POR QUE NÃO TEM EMBEDDING NEM BANCO VETORIAL: o corpus inteiro tem
+   ~80 mil caracteres depois de descartar o texto de template (≈20 mil
+   tokens, 95 documentos). Nessa escala, a busca textual nativa do
+   Postgres em português acerta o que
+   precisa, custa zero por consulta, funciona offline (importante para
+   quem roda só Ollama) e não adiciona extensão nem serviço para manter.
+   Embedding começa a compensar quando a pergunta e o documento usam
+   palavras diferentes para a mesma coisa, em corpus grande — se a base
+   crescer para milhares de documentos, o caminho é acrescentar pgvector
+   AQUI, sem mexer no resto.
+
+   Pelo mesmo motivo não há coluna tsvector materializada nem índice GIN:
+   com ~100 linhas, calcular o vetor na hora da consulta leva poucos
+   milissegundos. Passando de alguns milhares, criar a coluna gerada e o
+   índice — aí sim vale. */
+model KnowledgeDoc {
+  id     String          @id @default(cuid())
+  source KnowledgeSource
+
+  /* Id estável dentro da fonte (o `id` da entrada curada, o caminho do
+     manual...). É o que permite reimportar por cima sem duplicar. */
+  externalId String
+
+  title    String
+  category String?
+  /* Link para o documento no portal, para a resposta poder citar. */
+  url      String?
+  /* Termos que ajudam a achar mas não aparecem no texto (palavrasChave
+     da entrada curada, por exemplo). */
+  keywords String?
+  content  String
+
+  charCount Int
+  indexedAt DateTime @default(now())
+
+  @@unique([source, externalId])
+  @@index([source])
+  @@map("knowledge_docs")
+}
+
+/* Configuração operacional que o admin muda sem redeploy (ligar/desligar
+   a consulta à base, quantos trechos enviar). Mora no banco, e não no
+   .env, justamente porque .env exige reiniciar o processo. */
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
 }
 
 model AuditLog {

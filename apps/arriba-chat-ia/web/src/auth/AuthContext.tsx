@@ -103,6 +103,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const controlador = new AbortController();
+    // Requisição ABORTADA não pode encerrar o carregamento — é a
+    // diferença entre "já sei quem é" e "ainda estou perguntando".
+    //
+    // Sem esta marca, recarregar qualquer tela logada caía no login com
+    // a sessão perfeitamente válida: em desenvolvimento o StrictMode
+    // monta o componente duas vezes, a primeira montagem é desfeita (e
+    // aborta este fetch) e o `finally` daquele fetch morto zerava o
+    // `carregando` enquanto a segunda chamada ainda estava no ar. As
+    // rotas protegidas, vendo carregando=false e usuário=null,
+    // redirecionavam para /login uma fração de segundo antes de a
+    // resposta chegar. A mesma coisa aconteceria em produção se algo
+    // abortasse a chamada.
+    let abortado = false;
 
     // `ignorarSessaoExpirada`: aqui o 401 é a resposta normal para
     // "ninguém logado ainda", não uma sessão que caiu.
@@ -111,11 +124,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (montado.current) setUsuario(normalizar(resposta));
       })
       .catch((erro: unknown) => {
-        if (erro instanceof ApiError && erro.cancelado) return;
+        if (erro instanceof ApiError && erro.cancelado) {
+          abortado = true;
+          return;
+        }
         if (montado.current) setUsuario(null);
       })
       .finally(() => {
-        if (montado.current) setCarregando(false);
+        if (!abortado && montado.current) setCarregando(false);
       });
 
     return () => controlador.abort();

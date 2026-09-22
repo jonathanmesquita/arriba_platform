@@ -24,10 +24,10 @@ import { apiDelete, apiGet, apiPatch, apiPost } from "../api/client";
 import { formatarDataHora, formatarLatencia, mensagemDaFalha } from "../components/formato";
 import type {
   Catalogo, ConfigPublica, ItemAuditoria, PaginaAuditoria,
-  ProviderKind, RespostaTeste, UsuarioAdmin
+  ProviderKind, RespostaConhecimento, RespostaTeste, ResultadoReindexacao, UsuarioAdmin
 } from "../components/tipos";
 
-type Aba = "provedores" | "auditoria" | "usuarios";
+type Aba = "provedores" | "conhecimento" | "auditoria" | "usuarios";
 
 const VAZIO = {
   provider: "ANTHROPIC" as ProviderKind,
@@ -182,6 +182,7 @@ export default function Admin() {
 
       <div className="abas">
         <button className={`aba${aba === "provedores" ? " ativa" : ""}`} onClick={() => setAba("provedores")}>Provedores</button>
+        <button className={`aba${aba === "conhecimento" ? " ativa" : ""}`} onClick={() => setAba("conhecimento")}>Base de conhecimento</button>
         <button className={`aba${aba === "auditoria" ? " ativa" : ""}`} onClick={() => setAba("auditoria")}>Auditoria</button>
         <button className={`aba${aba === "usuarios" ? " ativa" : ""}`} onClick={() => setAba("usuarios")}>Usuários</button>
       </div>
@@ -360,9 +361,183 @@ export default function Admin() {
         </>
       ) : null}
 
+      {aba === "conhecimento" ? <Conhecimento /> : null}
       {aba === "auditoria" ? <Auditoria /> : null}
       {aba === "usuarios" ? <Usuarios /> : null}
     </div>
+  );
+}
+
+/* ------------------------------ auditoria ------------------------------ */
+
+/* --------------------------- base de conhecimento ---------------------
+   O que esta aba resolve: a base do chat é uma CÓPIA do que existe no
+   portal (manuais, base curada, respostas prontas, catálogo de erros).
+   Cópia envelhece — manual novo publicado no portal não aparece aqui até
+   alguém reimportar. Por isso a tela mostra quando foi a última
+   importação e tem o botão que refaz.
+
+   Os dois controles ao lado disso existem para o dia ruim: desligar a
+   consulta à base (para saber se uma resposta ruim veio do contexto ou
+   do modelo) e mexer em quantos trechos entram — mais trechos não é
+   melhor, dilui a atenção do modelo e encarece cada mensagem.
+   --------------------------------------------------------------------- */
+
+function Conhecimento() {
+  const [dados, setDados] = useState<RespostaConhecimento | null>(null);
+  const [erro, setErro] = useState("");
+  const [recado, setRecado] = useState("");
+  const [avisos, setAvisos] = useState<string[]>([]);
+  const [reindexando, setReindexando] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+
+  const carregar = useCallback(async () => {
+    try {
+      setDados(await apiGet<RespostaConhecimento>("/admin/knowledge"));
+      setErro("");
+    } catch (falha) {
+      setErro(mensagemDaFalha(falha));
+    }
+  }, []);
+
+  useEffect(() => { carregar(); }, [carregar]);
+
+  async function reindexar() {
+    setReindexando(true);
+    setErro("");
+    setRecado("");
+    setAvisos([]);
+    try {
+      const resultado = await apiPost<ResultadoReindexacao>("/admin/knowledge/reindex");
+      setRecado(
+        `Base reimportada: ${resultado.total} documento(s), ` +
+        `${resultado.caracteres.toLocaleString("pt-BR")} caracteres` +
+        `${resultado.removidos ? `, ${resultado.removidos} removido(s) da origem` : ""}.`
+      );
+      setAvisos(resultado.avisos ?? []);
+      await carregar();
+    } catch (falha) {
+      setErro(mensagemDaFalha(falha));
+    } finally {
+      setReindexando(false);
+    }
+  }
+
+  async function salvarConfig(mudanca: { ativo?: boolean; trechos?: number }) {
+    setSalvando(true);
+    setErro("");
+    try {
+      await apiPatch("/admin/knowledge/config", mudanca);
+      await carregar();
+    } catch (falha) {
+      setErro(mensagemDaFalha(falha));
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  if (erro && !dados) return <div className="aviso aviso-erro">{erro}</div>;
+  if (!dados) return <p className="carregando">Carregando…</p>;
+
+  const { estatisticas, configuracao, documentos } = dados;
+
+  return (
+    <>
+      {erro ? <div className="aviso aviso-erro">{erro}</div> : null}
+      {recado ? <div className="aviso aviso-ok">{recado}</div> : null}
+      {avisos.map((aviso, i) => <div key={i} className="aviso">{aviso}</div>)}
+
+      <div className="painel">
+        <div className="grade-form">
+          <div>
+            <span className="rotulo">Conteúdo indexado</span>
+            <p style={{ margin: 0, fontSize: "1.4rem", fontWeight: 300 }}>
+              {estatisticas.total} documento(s)
+            </p>
+            <p className="dica">
+              {estatisticas.caracteres.toLocaleString("pt-BR")} caracteres ·{" "}
+              {estatisticas.ultimaImportacao
+                ? `última importação em ${formatarDataHora(estatisticas.ultimaImportacao)}`
+                : "nunca importada"}
+            </p>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+              {estatisticas.porFonte.map((fonte) => (
+                <span key={fonte.source} className="pilula">{fonte.source}: {fonte.documentos}</span>
+              ))}
+            </div>
+            <button className="botao botao-primario" onClick={reindexar} disabled={reindexando} style={{ marginTop: 12 }}>
+              {reindexando ? "Reimportando…" : "Reimportar do portal"}
+            </button>
+          </div>
+
+          <div>
+            <span className="rotulo">Como o chat usa a base</span>
+            <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: ".88rem" }}>
+              <input
+                type="checkbox"
+                checked={configuracao.ativo}
+                disabled={salvando}
+                onChange={(e) => salvarConfig({ ativo: e.target.checked })}
+              />
+              Consultar a base antes de responder
+            </label>
+            <p className="dica">
+              Desligado, o chat responde só com o conhecimento do modelo — útil para comparar
+              respostas quando o contexto parece estar atrapalhando.
+            </p>
+
+            <label className="rotulo" htmlFor="trechos" style={{ marginTop: 14 }}>Trechos por resposta</label>
+            <input
+              id="trechos"
+              className="campo"
+              type="number"
+              min={1}
+              max={8}
+              value={configuracao.trechos}
+              disabled={salvando || !configuracao.ativo}
+              onChange={(e) => {
+                const valor = Number(e.target.value);
+                if (Number.isFinite(valor) && valor >= 1 && valor <= 8) salvarConfig({ trechos: valor });
+              }}
+            />
+            <p className="dica">
+              Mais trechos não deixa a resposta melhor: dilui a atenção do modelo e aumenta o custo
+              de cada mensagem, porque o contexto é reenviado a cada turno.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="tabela-envolta">
+        <table className="tabela">
+          <thead>
+            <tr><th>Fonte</th><th>Documento</th><th>Categoria</th><th>Tamanho</th></tr>
+          </thead>
+          <tbody>
+            {documentos.length === 0 ? (
+              <tr><td colSpan={4} className="carregando">Nada indexado ainda. Use "Reimportar do portal".</td></tr>
+            ) : documentos.map((doc) => (
+              <tr key={doc.id}>
+                <td><span className="pilula">{doc.source}</span></td>
+                <td>
+                  {doc.url
+                    ? <a href={doc.url} target="_blank" rel="noopener noreferrer">{doc.title}</a>
+                    : doc.title}
+                </td>
+                <td>{doc.category ?? "—"}</td>
+                <td>{doc.charCount.toLocaleString("pt-BR")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {estatisticas.total > documentos.length ? (
+        <p className="dica">
+          Mostrando {documentos.length} de {estatisticas.total} documentos — a lista completa não é
+          enviada para a tela de propósito.
+        </p>
+      ) : null}
+    </>
   );
 }
 

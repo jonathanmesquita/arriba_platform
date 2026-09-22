@@ -27,10 +27,24 @@ export interface ResumoConversa {
   totalMensagens: number;
 }
 
+/** Documento da base interna que entrou no contexto daquela resposta.
+ *  O `numero` é o mesmo que aparece entre colchetes no texto do modelo
+ *  ("conforme o procedimento [1]") — é o que liga a citação à origem. */
+export interface FonteCitada {
+  numero: number;
+  id: string;
+  title: string;
+  url: string | null;
+  source: string;
+}
+
 export interface MensagemSalva {
   id: string;
   role: PapelMensagem;
   content: string;
+  /** Vem do banco (coluna Json) ao reabrir a conversa. Ausente quando a
+   *  resposta foi gerada sem consulta à base. */
+  knowledgeUsed?: FonteCitada[] | null;
   provider?: ProviderKind | null;
   model?: string | null;
   promptTokens?: number | null;
@@ -66,6 +80,12 @@ export interface MetaDoStream {
   provider?: string | null;
   providerLabel?: string | null;
   model?: string | null;
+  /** Fontes da base interna que foram para o contexto desta resposta. */
+  fontes?: FonteCitada[];
+  /** false quando o admin desligou a consulta à base — a tela usa isso
+   *  para não dizer "nenhuma fonte encontrada" quando, na verdade, nem
+   *  se procurou. */
+  baseConsultada?: boolean;
 }
 
 export interface DeltaDoStream {
@@ -188,6 +208,52 @@ export interface PaginaAuditoria {
   pageSize: number;
   total: number;
   totalPages: number;
+}
+
+/* -------------------------- base de conhecimento ------------------ */
+
+export interface EstatisticasDaBase {
+  total: number;
+  caracteres: number;
+  ultimaImportacao: string | null;
+  porFonte: { source: string; documentos: number; caracteres: number }[];
+}
+
+export interface ConfiguracaoDaBase {
+  /** false = o chat responde sem consultar a base. */
+  ativo: boolean;
+  /** Quantos trechos entram no contexto (1 a 8). */
+  trechos: number;
+}
+
+export interface DocumentoIndexado {
+  id: string;
+  source: string;
+  title: string;
+  category: string | null;
+  url: string | null;
+  charCount: number;
+  indexedAt: string;
+}
+
+export interface RespostaConhecimento {
+  estatisticas: EstatisticasDaBase;
+  configuracao: ConfiguracaoDaBase;
+  /** Amostra: o servidor limita a 200 linhas. */
+  documentos: DocumentoIndexado[];
+}
+
+export interface ResultadoReindexacao {
+  total: number;
+  removidos: number;
+  caracteres: number;
+  duracaoMs: number;
+  porFonte: Record<string, number>;
+  /** O que o importador achou estranho (pasta ausente, página sem texto,
+   *  texto de template removido). Vai para a tela: é o que explica um
+   *  número menor do que o esperado. */
+  avisos: string[];
+  estatisticas: EstatisticasDaBase;
 }
 
 /* ----------------------------- usuários --------------------------- */

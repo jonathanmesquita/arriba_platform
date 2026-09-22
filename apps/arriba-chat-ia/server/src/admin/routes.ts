@@ -65,6 +65,9 @@ import {
 import { comoProviderError } from "../providers/errors.js";
 import { mascararSegredo, resolverProvedor } from "../providers/registry.js";
 import type { TestConnectionResult } from "../providers/types.js";
+import { importarBase } from "../knowledge/ingest.js";
+import { estatisticasDaBase } from "../knowledge/search.js";
+import { configuracaoDaBase, salvarConfiguracaoDaBase } from "../knowledge/settings.js";
 
 /** Teto do teste de conexão. O PROVIDER_TIMEOUT_MS serve para uma
  *  resposta de chat inteira (pode ser minutos); prender a tela do admin
@@ -822,6 +825,87 @@ export function criarAdminRouter(env: Env, secretBox: SecretBox): Router {
       });
 
       res.status(201).json({ user: criado });
+    })
+  );
+
+  /* ---------------------------------------------------------------
+     Base de conhecimento
+
+     A busca na base acontece a cada mensagem do chat, então ligar e
+     desligar precisa ser possível com o sistema no ar — por isso a
+     configuração mora na tabela `settings`, e não no .env.
+     --------------------------------------------------------------- */
+
+  router.get(
+    "/admin/knowledge",
+    asyncHandler(async (_req, res) => {
+      const [estatisticas, configuracao, amostra] = await Promise.all([
+        estatisticasDaBase(),
+        configuracaoDaBase(),
+        // Amostra só para a tela mostrar o que entrou; o conteúdo
+        // inteiro não vai por HTTP — são ~80 mil caracteres.
+        prisma.knowledgeDoc.findMany({
+          orderBy: [{ source: "asc" }, { title: "asc" }],
+          select: { id: true, source: true, title: true, category: true, url: true, charCount: true, indexedAt: true },
+          take: 200
+        })
+      ]);
+
+      res.json({ estatisticas, configuracao, documentos: amostra });
+    })
+  );
+
+  router.patch(
+    "/admin/knowledge/config",
+    asyncHandler(async (req, res) => {
+      const usuario = usuarioDaRequisicao(req);
+      const corpo = z
+        .object({ ativo: z.boolean().optional(), trechos: z.number().int().min(1).max(8).optional() })
+        .parse(req.body ?? {});
+
+      const configuracao = await salvarConfiguracaoDaBase(corpo);
+
+      await registrarAuditoria({
+        userId: usuario.id,
+        action: "knowledge.config",
+        success: true,
+        ip: ipDaRequisicao(req),
+        metadata: { ...corpo }
+      });
+
+      res.json({ configuracao });
+    })
+  );
+
+  router.post(
+    "/admin/knowledge/reindex",
+    asyncHandler(async (req, res) => {
+      const usuario = usuarioDaRequisicao(req);
+      const inicio = Date.now();
+
+      try {
+        const resultado = await importarBase();
+        const duracaoMs = Date.now() - inicio;
+
+        await registrarAuditoria({
+          userId: usuario.id,
+          action: "knowledge.reindex",
+          success: true,
+          ip: ipDaRequisicao(req),
+          metadata: { ...resultado, duracaoMs }
+        });
+
+        res.json({ ...resultado, duracaoMs, estatisticas: await estatisticasDaBase() });
+      } catch (falha) {
+        await registrarAuditoria({
+          userId: usuario.id,
+          action: "knowledge.reindex",
+          success: false,
+          ip: ipDaRequisicao(req),
+          metadata: { erro: falha instanceof Error ? falha.message : String(falha) }
+        });
+        throw falha;
+      }
     })
   );
 

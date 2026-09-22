@@ -216,7 +216,7 @@ export const apiDelete = <T,>(caminho: string, opcoes: Omit<OpcoesRequisicao, "m
    Streaming da resposta do chat (SSE lido por fetch)
    ===================================================================== */
 
-/** Primeiro evento: quem vai responder. */
+/** Primeiro evento: quem vai responder — e com que apoio. */
 export interface MetaDoStream {
   conversationId: string;
   title: string;
@@ -224,6 +224,12 @@ export interface MetaDoStream {
   provider: string;
   providerLabel?: string | null;
   model: string;
+  /** Documentos da base interna que entraram no contexto. Chega no
+   *  `meta` (e não no `done`) para a tela poder mostrar a origem
+   *  enquanto a resposta ainda está sendo escrita. */
+  fontes?: { numero: number; id: string; title: string; url: string | null; source: string }[];
+  /** false = a consulta à base está desligada pelo admin. */
+  baseConsultada?: boolean;
 }
 
 /** Último evento do caminho feliz. */

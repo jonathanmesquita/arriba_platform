@@ -18,7 +18,11 @@
    (ver errors.ts). O chat nunca vê exceção de SDK de terceiro.
    ===================================================================== */
 
-export type ProviderKind = "ANTHROPIC" | "OPENAI" | "GEMINI";
+/** Precisa espelhar exatamente o enum ProviderKind do schema.prisma —
+ *  divergir aqui quebra o Record<ProviderKind, ...> do catálogo e do
+ *  registry, que é como OLLAMA e OPENROUTER entraram depois dos três
+ *  primeiros. */
+export type ProviderKind = "ANTHROPIC" | "OPENAI" | "GEMINI" | "OLLAMA" | "OPENROUTER";
 
 /** Uma mensagem da conversa, no formato neutro. O papel `system` não entra
  *  aqui: cada API trata instrução de sistema de um jeito (campo separado na

@@ -1,0 +1,46 @@
+# =====================================================================
+# Postgres de DESENVOLVIMENTO LOCAL — só isso.
+#
+# Este arquivo existe para quem clonou o projeto ter um banco em um
+# comando, sem instalar Postgres na máquina. Ele NÃO é infraestrutura de
+# produção: a senha está em texto puro aqui dentro, não há backup, não há
+# TLS e não há ajuste nenhum de memória/conexões.
+#
+#     docker compose up -d
+#     docker compose down          # para, mantendo os dados
+#     docker compose down -v       # apaga também o volume (zera o banco)
+#
+# Em produção, use um Postgres gerenciado e ponha a URL na DATABASE_URL.
+# =====================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: arriba-chat-ia-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: arriba
+      POSTGRES_PASSWORD: arriba_dev
+      POSTGRES_DB: arriba_chat_ia
+    ports:
+      # Amarrado a 127.0.0.1 de propósito: publicar "5432:5432" abriria
+      # este banco (com senha de exemplo) para a rede em que a máquina
+      # estiver — café, coworking, wi-fi do cliente.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Volume nomeado, não bind mount: os dados sobrevivem a
+      # `docker compose down` e não sujam a árvore do projeto.
+      - arriba-chat-ia-postgres:/var/lib/postgresql/data
+    healthcheck:
+      # `pg_isready` responde quando o servidor aceita conexão. Sem isso,
+      # o `prisma migrate` rodado logo depois do `up -d` falha: o
+      # contêiner já está "running" alguns segundos antes de o Postgres
+      # terminar de inicializar.
+      test: ["CMD-SHELL", "pg_isready -U arriba -d arriba_chat_ia"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  arriba-chat-ia-postgres:

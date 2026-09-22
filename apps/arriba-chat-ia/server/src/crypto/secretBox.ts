@@ -95,7 +95,13 @@ export class SecretBox {
     if (partes.length !== 4) {
       throw new CryptoIntegrityError("Formato do segredo é inválido (esperado v1.<iv>.<tag>.<ct>).");
     }
-    const [versao, ivB64, tagB64, ctB64] = partes;
+    // Desestruturar com noUncheckedIndexedAccess devolve `string | undefined`
+    // mesmo depois do teste de comprimento acima — o compilador não liga uma
+    // coisa à outra. O ?? "" mantém o tipo honesto sem afrouxar a checagem.
+    const versao = partes[0] ?? "";
+    const ivB64 = partes[1] ?? "";
+    const tagB64 = partes[2] ?? "";
+    const ctB64 = partes[3] ?? "";
     if (versao !== VERSAO) {
       throw new CryptoIntegrityError(`Versão de cifra desconhecida: ${versao}.`);
     }

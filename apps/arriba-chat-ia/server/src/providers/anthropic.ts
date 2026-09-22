@@ -14,7 +14,11 @@
       bloco grande em montarCorpo().
    ===================================================================== */
 
-import Anthropic from "@anthropic-ai/sdk";
+// `APIError` vem por importação nomeada porque dentro do namespace
+// `Anthropic` esse nome é ocupado por um TIPO da API (o corpo JSON do
+// erro), não pela classe. `Anthropic.APIError` funciona em `instanceof`
+// (é propriedade estática do client), mas não serve como anotação de tipo.
+import Anthropic, { APIError } from "@anthropic-ai/sdk";
 
 import type {
   AIProvider,
@@ -120,14 +124,14 @@ function extrairUso(usage: Anthropic.Usage | undefined): CompletionUsage | undef
 /** Texto cru do provedor, para auditoria e tela do admin. Nunca contém a
  *  API key: a Anthropic não ecoa a credencial no corpo do erro, e nós não
  *  acrescentamos nada vindo de config.apiKey. */
-function textoDoErro(erro: Anthropic.APIError): string {
+function textoDoErro(erro: APIError): string {
   const corpo = erro.error as { error?: { message?: string }; message?: string } | undefined;
   return corpo?.error?.message ?? corpo?.message ?? erro.message;
 }
 
 /** `retry-after` vem em segundos no header do 429. Serve para a UI dizer
  *  quanto esperar em vez de mandar "tente de novo" genérico. */
-function retryAfterDoErro(erro: Anthropic.APIError): number | undefined {
+function retryAfterDoErro(erro: APIError): number | undefined {
   const bruto = erro.headers?.get("retry-after");
   if (!bruto) return undefined;
   const segundos = Number(bruto);

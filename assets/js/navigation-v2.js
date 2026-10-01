@@ -20,7 +20,6 @@ const menuData = {
                 description: "Documentação de decisões técnicas, arquitetura, deploy e IA.",
                 links: [
                     ["Todos os cases", "pages/case-study/index.html", true],
-                    ["PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
                     ["Arriba Platform", "pages/case-study/arriba-platform.html", true],
                     ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
                     ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true]
@@ -48,52 +47,20 @@ const menuData = {
                 ]
             },
             crms: {
-                label: "CRMs",
-                badge: "Operação",
-                title: "Ferramentas por CRM",
-                description: "Geração de CSV, massa fictícia, suporte e apoio operacional, organizado por CRM.",
-                // Estrutura "por CRM": cada aba e um CRM. DataCob e o primeiro
-                // (unico com ferramentas hoje); "Outros CRM" fica vazia,
-                // pronta para quando surgir a primeira ferramenta de outro
-                // CRM — nao duplicar dados aqui, so adicionar a aba/links.
-                tabs: [
-                    {
-                        key: "datacob",
-                        label: "DataCob",
-                        links: [
-                            ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
-                            ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
-                            ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
-                            ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
-                            ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
-                            ["Validador CNAB 400", "tools/datacob/cnab400/cnab400.html"],
-                            ["Negativação Serasa", "tools/datacob/serasa/serasa.html"],
-                            ["PH3A Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
-                            ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
-                            ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-                            ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
-                            ["SQL Query T-SQL - Relatórios", "tools/datacob/query-builder/query-builder.html"],
-                            ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
-                            ["Documentação de erros DataCob", "pages/docs/datacob/erros-datacob.html", true],
-                            ["Como funciona a negativação Serasa", "pages/docs/datacob/negativacao-serasa.html", true]
-                        ]
-                    },
-                    {
-                        key: "outros",
-                        label: "Outros CRM",
-                        links: []
-                    }
-                ]
-            },
-            suporte: {
-                label: "Suporte",
-                badge: "IA",
-                title: "Ferramentas de Suporte",
-                description: "Copiloto de IA para triagem de chamados, templates Freshdesk e especificação para Desenvolvimento.",
+                label: "Cobrança",
+                badge: "Domínio",
+                title: "Ferramentas de cobrança",
+                description: "Arquivo bancário, geração de CSV, massa fictícia e SQL — o domínio usado como estudo de caso.",
                 links: [
-                    ["PH3A Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
-                    ["Case: PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"]
+                    ["Validador CNAB 400", "tools/cobranca/cnab400/cnab400.html"],
+                    ["Gerador de CSV", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+                    ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
+                    ["Massa de Dados", "tools/cobranca/massa-dados/massa-dados.html"],
+                    ["Modelo de Carta · decodificador", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"],
+                    ["Modelo de Carta · criador", "tools/cobranca/modelo-carta-decoder/modelo-carta-builder.html"],
+                    ["Treinamento SQL", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
+                    ["SQL Playground", "tools/cobranca/sql-playground/sql-playground.html"],
+                    ["Gerador de consulta T-SQL", "tools/cobranca/query-builder/query-builder.html"]
                 ]
             },
             cloudtools: {
@@ -102,10 +69,9 @@ const menuData = {
                 title: "Ferramentas Cloud",
                 description: "Acesso rápido à API, Render, Vercel, Cloudflare e documentação técnica.",
                 links: [
-                    ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
                     ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true]
+                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true],
+                    ["Chatbot AI", "pages/case-study/chatbot-ai.html", true]
                 ]
             }
         }
@@ -120,22 +86,18 @@ const menuData = {
                 description: "Trilhas com teoria, exemplos e simulador para praticar na hora.",
                 links: [
                     ["Centro de Aprendizado", "pages/aprender/index.html", true],
-                    ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-                    ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
+                    ["Track 7 · Treinamento SQL", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
+                    ["SQL Playground", "tools/cobranca/sql-playground/sql-playground.html"],
                     ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"]
                 ]
             },
             help: {
-                label: "Help Center",
-                badge: "Ajuda",
-                title: "Centro de Ajuda",
-                description: "Busca, tópicos, tutoriais e documentação rápida para o suporte técnico.",
+                label: "Troubleshooting",
+                badge: "Blog",
+                title: "Erros e tópicos",
+                description: "Anotações de diagnóstico em formato de blog técnico.",
                 links: [
-                    ["Help Center", "pages/docs/help-center/index.html", true],
-                    ["Base de Conhecimento DataCob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],
-                    ["Documentação de erros DataCob", "pages/docs/datacob/erros-datacob.html", true],
-                    ["Blog de troubleshooting", "pages/docs/blog/index.html", true],
-                    ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"]
+                    ["Blog de troubleshooting", "pages/docs/blog/index.html", true]
                 ]
             },
             downloads: {
@@ -145,10 +107,9 @@ const menuData = {
                 description: "Modelos, exemplos e arquivos úteis para operação e testes.",
                 links: [
                     ["Central de Downloads", "pages/docs/downloads/index.html", true],
-                    ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
+                    ["Gerador de CSV", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
                     ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
-                    ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
-                    ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"]
+                    ["Massa de Dados", "tools/cobranca/massa-dados/massa-dados.html"]
                 ]
             },
             errors: {
@@ -174,22 +135,17 @@ const menuData = {
                 description: "Vercel, Render, Cloudflare e dominio proprio.",
                 links: [
                     ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
                     ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true]
                 ]
             },
             api: {
-                label: "API e IA",
-                badge: "Backend",
-                title: "Backend e IA",
-                description: "API Node, OpenAI, Freshdesk, fallback local e proximos webhooks.",
+                label: "IA",
+                badge: "Protótipo",
+                title: "Assistentes e IA",
+                description: "Chat multi-provedor com base de conhecimento, histórico e painel de administração.",
                 links: [
                     ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
-                    ["PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
-                    ["Help Center", "pages/docs/help-center/index.html", true]
+                    ["Centro de Aprendizado", "pages/aprender/index.html", true]
                 ]
             }
         }
@@ -213,38 +169,28 @@ const menuData = {
 };
 
 export const searchItems = [
-    ["PH3A Support Copilot", "Freshdesk suporte IA chamados triagem templates anotacao desenvolvimento especificacao", "tools/datacob/support-copilot/support-copilot.html"],
-    ["Case Support Copilot", "case study suporte clientes Freshdesk IA", "pages/case-study/ph3a-support-copilot.html", true],
-    ["API Freshdesk Status", "status api freshdesk render node", "https://api.arriba.jm.dev.br/freshdesk/status"],
-    ["Gerador CSV DataCob", "Carga titular contrato parcela combinada", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
-    ["Massa de Dados", "Dados ficticios CPF CNPJ DataCob CSV", "tools/datacob/massa-dados/massa-dados.html"],
-    ["Gerador de Manual DataCob", "manual pdf documentacao rotina passo a passo freshdesk help center", "tools/datacob/manual-builder/manual-builder.html"],
-    ["Validador CNAB 400", "cnab 400 multi banco bradesco 237 itau 341 bmp money plus 274 santander banco do brasil retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo", "tools/datacob/cnab400/cnab400.html"],
-    ["Help Center", "Ajuda documentacao suporte", "pages/docs/help-center/index.html", true],
-    ["Base de Conhecimento DataCob", "manuais internos categorias api integracoes recepcao distribuicao controles discador suporte datacob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],
-    ["Cadastro Nova Carteira DataCob", "nova carteira grupo cliente fase regua boleto ocorrencia calculo acordo recibo layout padrao", "tools/datacob/support-copilot/docs/datacob-manuais/carteira/cadastro-nova-carteira-datacob/"],
-    ["API DataCob Token Usuarios", "api datacob swagger token usuario api key login ativar desativar 400 403", "tools/datacob/support-copilot/docs/datacob-manuais/api/cadastro-token-usuarios-datacob/"],
-    ["Downloads", "Modelos arquivos exemplos", "pages/docs/downloads/index.html", true],
-    ["Erro DX001", "Falha de conexao DataCob CRM", "pages/docs/blog/index.html#dx001", true],
-    ["Erro LV005", "Licenca invalida DataCob", "pages/docs/blog/index.html#lv005", true],
-    ["Erro PR102", "Processamento interrompido DataCob", "pages/docs/blog/index.html#pr102", true],
-    ["Chatbot AI", "OpenAI fallback local modos", "pages/case-study/chatbot-ai.html", true],
-    ["Deploy Cloud", "Vercel Render Cloudflare DNS", "pages/case-study/deploy-cloud.html", true],
-    ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
-    ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true],
-    ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
+    ["Validador CNAB 400", "cnab 400 multi banco bradesco 237 itau 341 bmp 274 retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo posicional", "tools/cobranca/cnab400/cnab400.html"],
+    ["Validador de CSV", "csv validador validar arquivo delimitador ponto e virgula cabecalho coluna layout importacao erro linha duplicada cpf cnpj invalido data valor decimal aspas rfc 4180 schema estrutura planilha", "tools/dados/csv-validator/csv-validator.html"],
+    ["Gerador de CSV", "gerador csv carga titular contrato parcela layout recepcao modelo cabecalho", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+    ["Massa de Dados", "dados ficticios fake cpf cnpj nome telefone cep endereco email csv teste", "tools/cobranca/massa-dados/massa-dados.html"],
+    ["Modelo de Carta", "modelo carta decodificador criador template variaveis campos impressao", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"],
+    ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json download visualizar", "tools/dados/base64-pdf/base64-pdf.html"],
     ["Validador de JSON", "json validador validar formatar indentar sintaxe erro parse", "tools/dados/json-validator/json_validator.html"],
     ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
-    ["Editor Web (HTML/CSS/JS)", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet w3schools aprender praticar", "tools/dados/editor-web/editor-web.html"],
-    ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
+    ["Editor Web (HTML/CSS/JS)", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet aprender praticar", "tools/dados/editor-web/editor-web.html"],
+    ["CSV para JSON", "csv json converter transformar tabela", "tools/dados/csv-to-json/csv-to-json.html"],
+    ["Calculadora de Hash", "hash md5 sha1 sha256 checksum assinatura", "tools/dados/hash-generator/hash-generator.html"],
+    ["Treinamento SQL", "sql tsql treinamento curso licao select where join group by having quiz gamificacao exercicio sandbox", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
+    ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema select join group by csv", "tools/cobranca/sql-playground/sql-playground.html"],
+    ["Gerador de consulta T-SQL", "sql query builder relatorios diagrama tabelas filtros case when tsql export xlsx csv", "tools/cobranca/query-builder/query-builder.html"],
+    ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself progresso pontos badges quiz exercicios simulador sql cnab base64", "pages/aprender/index.html"],
+    ["Blog de troubleshooting", "erros topicos diagnostico blog tecnico", "pages/docs/blog/index.html", true],
+    ["Downloads", "modelos arquivos exemplos", "pages/docs/downloads/index.html", true],
+    ["Chatbot AI", "chat ia assistente provedores base de conhecimento streaming", "pages/case-study/chatbot-ai.html", true],
+    ["Deploy Cloud", "vercel render cloudflare dns deploy", "pages/case-study/deploy-cloud.html", true],
+    ["Arquitetura da plataforma", "case arquitetura decisoes site estatico tokens fonte unica", "pages/case-study/arriba-platform.html", true],
     ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
-    ["Track 7 · Treinamento SQL", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-    ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema datacob financiado contrato parcela acordo negociacao historico telefone email endereco treinar praticar select join group by csv", "tools/datacob/sql-playground/sql-playground.html"],
-    ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself w3schools progresso pontos badges quiz exercicios simulador sql cnab base64 massa de dados datacob", "pages/aprender/index.html"],
-    ["SQL Query T-SQL - Relatórios", "sql query builder relatorios datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
-    ["Validador de CSV", "csv validador validar arquivo csv delimitador ponto e virgula cabecalho coluna layout recepcao datacob importacao erro linha duplicada cpf cnpj invalido data valor decimal aspas rfc 4180 schema estrutura planilha", "tools/dados/csv-validator/csv-validator.html"],
-    ["Negativação Serasa", "serasa negativacao negativar pefin refin spc bureau credito arquivo 600 posicoes layout posicional inclusao exclusao baixa motivo codigo erro retorno remessa convem04 convem01 divida vencida inadimplente validador gerador leitor", "tools/datacob/serasa/serasa.html"],
-    ["Como funciona a negativação Serasa", "negativacao serasa processo status nao negativado solicitado negativado remover confirmar prazo 5 dias uteis 5 anos decurso prazo pefin refin motivo baixa cliente explicacao", "pages/docs/datacob/negativacao-serasa.html", true],
+    ["Lab GameDev", "pixel art portfolio jogo", "pages/lab/gamedev/index.html", true],
 ];
 
 function normalizeSearch(value = "") {
@@ -447,7 +393,7 @@ function setupSearchPanel() {
 
         results.innerHTML = filtered.length
             ? filtered.map(([title, keywords, href, route]) => `<a href="${href}" ${route ? "data-route" : ""}><strong>${title}</strong><br><small>${keywords}</small></a>`).join("")
-            : `<span>Nenhum resultado encontrado. Tente "DataCob", "Freshdesk", "Cloud", "CSV" ou "IA".</span>`;
+            : `<span>Nenhum resultado encontrado. Tente "CNAB", "CSV", "SQL" ou "editor".</span>`;
     }
 
     // Ancora o painel embaixo do campo da topbar (mesma largura), em vez

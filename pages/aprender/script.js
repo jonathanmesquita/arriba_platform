@@ -31,7 +31,7 @@ const TOPICOS = [
   {
     id: "sql",
     titulo: "SQL / T-SQL",
-    tagline: "A linguagem para consultar os dados do DataCob no SQL Server.",
+    tagline: "A linguagem para consultar os dados do modelo de dados no SQL Server.",
     chips: [`${TRACK_7_LICOES.length} lições`, "Trilha completa", "Simulador"],
     pronto: true,
     exemploTitulo: "Exemplo: contratos por carteira",
@@ -42,8 +42,8 @@ const TOPICOS = [
  GROUP BY g.Descricao
  ORDER BY Contratos DESC;`,
     acoes: [
-      { label: "Aprender SQL", href: "../../tools/datacob/treinamento-sql/treinamento-sql.html", estilo: "btn-red-arriba", icone: "fa-graduation-cap" },
-      { label: "Try it Yourself", href: "../../tools/datacob/sql-playground/sql-playground.html", estilo: "btn-dark-arriba", icone: "fa-play" }
+      { label: "Aprender SQL", href: "../../tools/cobranca/treinamento-sql/treinamento-sql.html", estilo: "btn-red-arriba", icone: "fa-graduation-cap" },
+      { label: "Try it Yourself", href: "../../tools/cobranca/sql-playground/sql-playground.html", estilo: "btn-dark-arriba", icone: "fa-play" }
     ]
   },
   {
@@ -82,8 +82,8 @@ const TOPICOS = [
        END AS Faixa
   FROM Parcela_Acordo pa;`,
     acoes: [
-      { label: "Abrir gerador", href: "../../tools/datacob/query-builder/query-builder.html", estilo: "btn-red-arriba", icone: "fa-table-columns" },
-      { label: "Testar no simulador", href: "../../tools/datacob/sql-playground/sql-playground.html", estilo: "btn-outline-arriba", icone: "fa-play" }
+      { label: "Abrir gerador", href: "../../tools/cobranca/query-builder/query-builder.html", estilo: "btn-red-arriba", icone: "fa-table-columns" },
+      { label: "Testar no simulador", href: "../../tools/cobranca/sql-playground/sql-playground.html", estilo: "btn-outline-arriba", icone: "fa-play" }
     ]
   },
   {
@@ -103,38 +103,14 @@ const TOPICOS = [
 
 -- posições são 1-indexadas e inclusivas`,
     acoes: [
-      { label: "Abrir validador", href: "../../tools/datacob/cnab400/cnab400.html", estilo: "btn-red-arriba", icone: "fa-file-invoice-dollar" }
-    ]
-  },
-  {
-    id: "serasa",
-    titulo: "Negativação Serasa",
-    tagline: "O arquivo de negativação e a sequência de status que o DataCob exige.",
-    chips: ["PEFIN", "REFIN", "600 posições", "Códigos de erro"],
-    pronto: true,
-    exemploTitulo: "Exemplo: a sequência que não pode ser pulada",
-    exemplo: `NÃO NEGATIVADO
-      └─ nova negativação (operação I)
-           ↓
-SOLICITADO NEGATIVAÇÃO
-      └─ confirmar negativação (operação I)
-           ↓
-NEGATIVADO
-      └─ remover negativação (operação E + motivo)
-           ↓
-NÃO NEGATIVADO
-
--- ação fora dessa ordem não produz efeito`,
-    acoes: [
-      { label: "Entender o processo", href: "../docs/datacob/negativacao-serasa.html", estilo: "btn-red-arriba", icone: "fa-diagram-project" },
-      { label: "Abrir a ferramenta", href: "../../tools/datacob/serasa/serasa.html", estilo: "btn-outline-arriba", icone: "fa-file-shield" }
+      { label: "Abrir validador", href: "../../tools/cobranca/cnab400/cnab400.html", estilo: "btn-red-arriba", icone: "fa-file-invoice-dollar" }
     ]
   },
   {
     id: "csv",
     titulo: "CSV de recepção",
-    tagline: "Ler, conferir e corrigir o arquivo antes de tentar importar no DataCob.",
-    chips: ["Delimitador", "Cabeçalho", "CPF/CNPJ", "Layouts DataCob"],
+    tagline: "Ler, conferir e corrigir o arquivo antes de tentar importar no modelo de dados.",
+    chips: ["Delimitador", "Cabeçalho", "CPF/CNPJ", "Layouts cobrança"],
     pronto: true,
     exemploTitulo: "Exemplo: por que a importação recusa o arquivo",
     exemplo: `Tipo_Registro;Nr_Contrato;Dt_Vencimento;Vl_Original
@@ -147,7 +123,7 @@ NÃO NEGATIVADO
 -- por isso não dá para conferir com split(";")`,
     acoes: [
       { label: "Validar um CSV", href: "../../tools/dados/csv-validator/csv-validator.html", estilo: "btn-red-arriba", icone: "fa-file-csv" },
-      { label: "Gerar CSV de teste", href: "../../tools/datacob/arriba-csv-generator/csv-template-generator.html", estilo: "btn-outline-arriba", icone: "fa-table" }
+      { label: "Gerar CSV de teste", href: "../../tools/cobranca/arriba-csv-generator/csv-template-generator.html", estilo: "btn-outline-arriba", icone: "fa-table" }
     ]
   },
   {
@@ -182,27 +158,7 @@ NÃO NEGATIVADO
 11122233396   ← aceito na validação
 11111111111   ← recusado`,
     acoes: [
-      { label: "Gerar massa", href: "../../tools/datacob/massa-dados/massa-dados.html", estilo: "btn-red-arriba", icone: "fa-users" }
-    ]
-  },
-  {
-    id: "datacob-produto",
-    titulo: "DataCob (produto)",
-    tagline: "Como operar o sistema: cadastro de carteira, régua, ocorrências.",
-    chips: ["Passo a passo", "Para o cliente"],
-    pronto: true,
-    exemploTitulo: "Onde isso te ajuda",
-    exemplo: `Cadastro de nova carteira:
-
-  Grupo (carteira)
-    └─ Cliente (credor)
-         └─ Fase (estágio da dívida)
-              └─ Régua (sequência de ações)
-
--- é a configuração que define o que o sistema
--- vai cobrar, de quem e em que ordem`,
-    acoes: [
-      { label: "Base de conhecimento", href: "../../tools/datacob/support-copilot/docs/datacob-manuais/", estilo: "btn-red-arriba", icone: "fa-folder-open" }
+      { label: "Gerar massa", href: "../../tools/cobranca/massa-dados/massa-dados.html", estilo: "btn-red-arriba", icone: "fa-users" }
     ]
   }
 ];

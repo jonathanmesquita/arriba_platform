@@ -21,7 +21,7 @@ body.dark-mode {
     font-weight: bold;
 }
 
-/* Estilos para os itens do menu principal (Ferramentas Produtividade, APIs, Erros DataCob) */
+/* Estilos para os itens do menu principal (Ferramentas Produtividade, APIs, Erros cobrança) */
 .navbar-nav .nav-link,
 .u30navitem { /* Aplica-se aos botões dos mega-menus */
     color: #e0e0e0 !important;

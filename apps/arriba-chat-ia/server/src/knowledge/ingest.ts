@@ -1,33 +1,30 @@
 /* =====================================================================
    Importação da base de conhecimento
 
-   Lê o que já existe no portal e grava no banco deste app. Quatro fontes,
-   por ordem de confiança:
+   Lê o que já existe no repositório e grava no banco deste app. Duas
+   fontes, por ordem de confiança:
 
-     1. CURADORIA      — assets/data/datacob-knowledge-base.js
-                         escrita à mão pelo suporte: passo a passo,
-                         checklist, caminho de tela. É o material mais
-                         confiável que existe aqui.
-     2. RESPOSTA_PRONTA— assets/data/respostas-predefinidas.js
-     3. ERRO           — pages/docs/datacob/erros-datacob.html
-     4. MANUAL         — os index.html sob docs/datacob-manuais (87 páginas)
-                         (escrito assim, sem o curinga de caminho, porque
-                         a sequência dele fecharia este comentário de bloco)
+     1. CURADORIA  — assets/data/base-conhecimento.js
+                     escrita à mão: passo a passo, checklist, caminho de
+                     tela. É o material mais direto que existe aqui.
+     2. MANUAL     — a documentação do próprio repositório (README,
+                     CLAUDE.md, memória técnica, fila de tarefas e as
+                     páginas sob pages/docs).
 
    POR QUE IMPORTAR EM VEZ DE LER O ARQUIVO A CADA PERGUNTA:
-   o app precisa rodar sozinho (outro servidor, talvez outro repositório).
-   Depender do caminho relativo do site em tempo de resposta amarraria um
-   ao outro para sempre. Importar deixa o acoplamento num único momento,
-   explícito, que o admin dispara quando quiser.
+   o app precisa rodar sozinho (outro servidor, talvez outro
+   repositório). Depender do caminho relativo do site em tempo de
+   resposta amarraria um ao outro para sempre. Importar deixa o
+   acoplamento num único momento, explícito, que o admin dispara.
 
-   As duas primeiras fontes são módulos ESM sem dependência de DOM, então
-   são IMPORTADAS de verdade — nada de reparsear JavaScript com regex, que
-   quebraria no primeiro reformatador. As duas últimas são HTML, e aí sim
-   há extração de texto.
+   A primeira fonte é um módulo ESM sem dependência de DOM, então é
+   IMPORTADA de verdade — nada de reparsear JavaScript com regex, que
+   quebraria no primeiro reformatador. A segunda é texto (Markdown e
+   HTML), e aí sim há extração.
    ===================================================================== */
 
 import { readFile, readdir } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, statSync } from "node:fs";
 import { join, resolve, relative, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { prisma } from "../db.js";
@@ -134,20 +131,19 @@ interface EntradaCurada {
   checklist?: string[];
   linkManual?: string;
   quandoEncaminharDev?: string;
-  tipoFreshdeskSugerido?: string;
 }
 
 async function lerCuradoria(raiz: string, avisos: string[]): Promise<DocumentoParaIndexar[]> {
-  const caminho = join(raiz, "assets", "data", "datacob-knowledge-base.js");
+  const caminho = join(raiz, "assets", "data", "base-conhecimento.js");
   if (!existsSync(caminho)) {
     avisos.push(`Base curada não encontrada em ${caminho} — nada importado dessa fonte.`);
     return [];
   }
 
   const modulo = (await import(pathToFileURL(caminho).href)) as {
-    DATACOB_KNOWLEDGE_BASE?: EntradaCurada[];
+    KNOWLEDGE_BASE?: EntradaCurada[];
   };
-  const entradas = modulo.DATACOB_KNOWLEDGE_BASE ?? [];
+  const entradas = modulo.KNOWLEDGE_BASE ?? [];
 
   return entradas.map((entrada, i) => {
     // O texto indexado junta tudo que ajuda a responder: o caminho da
@@ -175,77 +171,7 @@ async function lerCuradoria(raiz: string, avisos: string[]): Promise<DocumentoPa
 }
 
 /* ------------------------------------------------------------------
-   Fonte 2 — respostas prontas
-   ------------------------------------------------------------------ */
-
-interface GrupoDeRespostas {
-  id?: string;
-  nome?: string;
-  respostas?: { id?: string; titulo?: string; mensagem?: string }[];
-}
-
-async function lerRespostasProntas(raiz: string, avisos: string[]): Promise<DocumentoParaIndexar[]> {
-  const caminho = join(raiz, "assets", "data", "respostas-predefinidas.js");
-  if (!existsSync(caminho)) {
-    avisos.push(`Respostas predefinidas não encontradas em ${caminho}.`);
-    return [];
-  }
-
-  const modulo = (await import(pathToFileURL(caminho).href)) as {
-    RESPOSTAS_PREDEFINIDAS?: GrupoDeRespostas[];
-  };
-
-  const docs: DocumentoParaIndexar[] = [];
-  for (const grupo of modulo.RESPOSTAS_PREDEFINIDAS ?? []) {
-    for (const resposta of grupo.respostas ?? []) {
-      if (!resposta.mensagem) continue;
-      docs.push({
-        source: "RESPOSTA_PRONTA",
-        externalId: `${grupo.id ?? "grupo"}/${resposta.id ?? resposta.titulo ?? ""}`,
-        title: resposta.titulo ?? "Resposta pronta",
-        category: grupo.nome ?? null,
-        url: null,
-        keywords: null,
-        // O texto é a própria mensagem: serve para o modelo responder no
-        // mesmo tom que o suporte já usa com o cliente.
-        content: resposta.mensagem
-      });
-    }
-  }
-  return docs;
-}
-
-/* ------------------------------------------------------------------
-   Fonte 3 — catálogo de erros
-   ------------------------------------------------------------------ */
-
-async function lerCatalogoDeErros(raiz: string, avisos: string[]): Promise<DocumentoParaIndexar[]> {
-  const caminho = join(raiz, "pages", "docs", "datacob", "erros-datacob.html");
-  if (!existsSync(caminho)) {
-    avisos.push(`Catálogo de erros não encontrado em ${caminho}.`);
-    return [];
-  }
-
-  const html = await readFile(caminho, "utf8");
-  const texto = textoDeHtml(html);
-  if (texto.length < 80) {
-    avisos.push("Catálogo de erros sem texto aproveitável.");
-    return [];
-  }
-
-  return [{
-    source: "ERRO",
-    externalId: "erros-datacob",
-    title: tituloDeHtml(html, "Erros recorrentes do DataCob"),
-    category: "Erros",
-    url: "/pages/docs/datacob/erros-datacob.html",
-    keywords: "erro codigo falha mensagem de erro",
-    content: texto
-  }];
-}
-
-/* ------------------------------------------------------------------
-   Fonte 4 — manuais
+   Fonte 2 — documentação do repositório
    ------------------------------------------------------------------ */
 
 const MINIMO_DE_TEXTO = 400; // abaixo disso é índice de categoria ou redirect
@@ -259,7 +185,7 @@ const MINIMO_DE_TEXTO = 400; // abaixo disso é índice de categoria ou redirect
    impactada...", "Quando encaminhar para DEV/Sistemas...").
 
    Medido nesta base: "cliente" aparecia em 71 dos 95 documentos,
-   "carteira" em 66, "freshdesk" em 65 — não porque os manuais falem
+   "carteira" em 66 — não porque os documentos falem
    disso, mas porque o template fala. Isso estraga as duas pontas:
 
      - na BUSCA, qualquer pergunta com uma palavra do template casa com
@@ -316,79 +242,99 @@ export function removerRepetido(textos: string[]): string[] {
   );
 }
 
-async function listarHtmls(dir: string): Promise<string[]> {
+
+/** Pastas e arquivos de documentação que entram na base. Caminho que não
+ *  existe é ignorado em silêncio: o app roda fora do repositório também. */
+const FONTES_DE_DOC = [
+  { caminho: "README.md", categoria: "Repositório" },
+  { caminho: "CLAUDE.md", categoria: "Repositório" },
+  { caminho: ".claude/memory", categoria: "Memória técnica" },
+  { caminho: "tasks", categoria: "Fila de trabalho" },
+  { caminho: "pages/docs", categoria: "Documentação" },
+  { caminho: "apps/arriba-chat-ia/README.md", categoria: "App de chat" }
+];
+
+async function listarArquivosDeTexto(dir: string): Promise<string[]> {
   const achados: string[] = [];
-  const entradas = await readdir(dir, { withFileTypes: true });
-  for (const entrada of entradas) {
+  for (const entrada of await readdir(dir, { withFileTypes: true })) {
     const caminho = join(dir, entrada.name);
-    if (entrada.isDirectory()) achados.push(...(await listarHtmls(caminho)));
-    else if (entrada.name.endsWith(".html")) achados.push(caminho);
+    if (entrada.isDirectory()) achados.push(...(await listarArquivosDeTexto(caminho)));
+    else if (/\.(md|html)$/i.test(entrada.name)) achados.push(caminho);
   }
   return achados;
 }
 
-async function lerManuais(raiz: string, avisos: string[]): Promise<DocumentoParaIndexar[]> {
-  const base = join(raiz, "tools", "datacob", "support-copilot", "docs", "datacob-manuais");
-  if (!existsSync(base)) {
-    avisos.push(`Pasta de manuais não encontrada em ${base}.`);
+/** Título de um Markdown: o primeiro `# `. Sem ele, o nome do arquivo. */
+function tituloDeMarkdown(texto: string, alternativo: string): string {
+  const linha = /^#\s+(.+)$/m.exec(texto);
+  return linha?.[1]?.trim() || alternativo;
+}
+
+async function lerDocumentacao(raiz: string, avisos: string[]): Promise<DocumentoParaIndexar[]> {
+  const arquivos: string[] = [];
+  for (const fonte of FONTES_DE_DOC) {
+    const alvo = join(raiz, fonte.caminho);
+    if (!existsSync(alvo)) continue;
+    arquivos.push(...(statSync(alvo).isDirectory() ? await listarArquivosDeTexto(alvo) : [alvo]));
+  }
+
+  if (arquivos.length === 0) {
+    avisos.push(`Nenhum arquivo de documentação encontrado em ${raiz}.`);
     return [];
   }
 
-  const arquivos = await listarHtmls(base);
-  const aproveitados: { arquivo: string; html: string; texto: string }[] = [];
+  const aproveitados: { arquivo: string; titulo: string; texto: string }[] = [];
   let descartados = 0;
 
   for (const arquivo of arquivos) {
-    const html = await readFile(arquivo, "utf8");
-    const texto = textoDeHtml(html);
+    const bruto = await readFile(arquivo, "utf8");
+    const ehHtml = arquivo.toLowerCase().endsWith(".html");
+    const texto = ehHtml ? textoDeHtml(bruto) : bruto;
+    const relativo = relative(raiz, arquivo).split(sep).join("/");
 
-    // Páginas de índice de categoria e redirects não respondem pergunta
-    // nenhuma — indexá-las só faz a busca devolver casca.
+    // Índice, redirect e arquivo quase vazio não respondem pergunta
+    // nenhuma — indexá-los só faz a busca devolver casca.
     if (texto.length < MINIMO_DE_TEXTO || /^Redirecionando/i.test(texto)) {
       descartados += 1;
       continue;
     }
 
-    aproveitados.push({ arquivo, html, texto });
+    aproveitados.push({
+      arquivo,
+      titulo: ehHtml ? tituloDeHtml(bruto, relativo) : tituloDeMarkdown(texto, relativo),
+      texto
+    });
   }
 
-  // O corte de template só faz sentido com o conjunto inteiro na mão — é
-  // por isso que a leitura acima junta tudo antes de montar os documentos.
+  // O corte de texto repetido só faz sentido com o conjunto inteiro na
+  // mão — é por isso que a leitura acima junta tudo antes de montar os
+  // documentos.
   const semTemplate = removerRepetido(aproveitados.map((a) => a.texto));
   const antes = aproveitados.reduce((s, a) => s + a.texto.length, 0);
-  const depois = semTemplate.reduce((s, t) => s + t.length, 0);
-  let quaseVazios = 0;
+  const depois = semTemplate.reduce((s, x) => s + x.length, 0);
 
   const docs: DocumentoParaIndexar[] = aproveitados.map((item, i) => {
-    const relativo = relative(base, item.arquivo).split(sep).join("/");
-    const categoria = relativo.split("/")[0] ?? null;
-    const conteudo = semTemplate[i] ?? item.texto;
-    if (conteudo.length < MINIMO_DE_TEXTO) quaseVazios += 1;
+    const relativo = relative(raiz, item.arquivo).split(sep).join("/");
+    const fonte = FONTES_DE_DOC.find((f) => relativo === f.caminho || relativo.startsWith(`${f.caminho}/`));
 
     return {
       source: "MANUAL" as const,
       externalId: relativo,
-      title: tituloDeHtml(item.html, relativo),
-      category: categoria,
-      url: `/tools/datacob/support-copilot/docs/datacob-manuais/${relativo}`,
-      keywords: categoria,
-      content: conteudo
+      title: item.titulo,
+      category: fonte?.categoria ?? null,
+      url: `/${relativo}`,
+      keywords: fonte?.categoria ?? null,
+      content: semTemplate[i] ?? item.texto
     };
   });
 
   if (descartados) {
-    avisos.push(`${descartados} página(s) de manual ignorada(s) por serem índice de categoria ou redirect.`);
+    avisos.push(`${descartados} arquivo(s) de documentação ignorado(s) por serem índice, redirect ou curtos demais.`);
   }
   if (antes > depois) {
     avisos.push(
-      `Texto repetido de template removido dos manuais: ${(antes - depois).toLocaleString("pt-BR")} caracteres ` +
+      `Texto repetido removido: ${(antes - depois).toLocaleString("pt-BR")} caracteres ` +
       `(${Math.round(((antes - depois) / antes) * 100)}% do total lido).`
-    );
-  }
-  if (quaseVazios) {
-    avisos.push(
-      `${quaseVazios} manual(is) ficaram praticamente sem texto próprio depois disso — são páginas de template ` +
-      `em que só o título diz algo. Continuam indexados pelo título, mas não respondem procedimento.`
     );
   }
   return docs;
@@ -404,9 +350,7 @@ export async function importarBase(): Promise<ResultadoImportacao> {
 
   const docs = [
     ...(await lerCuradoria(raiz, avisos)),
-    ...(await lerRespostasProntas(raiz, avisos)),
-    ...(await lerCatalogoDeErros(raiz, avisos)),
-    ...(await lerManuais(raiz, avisos))
+    ...(await lerDocumentacao(raiz, avisos))
   ];
 
   if (docs.length === 0) {

@@ -12,7 +12,7 @@
 
 import { analisarCsv, montarCsv, DELIMITADORES, nomeDelimitador } from "./parser.js";
 import { validarComSchema, acharLinhasDuplicadas, TIPOS, normalizar } from "./rules.js";
-import { montarSchemaDataCob, listarSchemasDataCob, reconhecerLayout, conferirCabecalhoContraLayout } from "./schemas.js";
+import { montarSchemacobrança, listarSchemascobrança, reconhecerLayout, conferirCabecalhoContraLayout } from "./schemas.js";
 
 const LIMITE_GRADE = 300;   // linhas desenhadas (a validacao roda em todas)
 const LIMITE_LISTA = 200;   // achados listados
@@ -23,15 +23,15 @@ const estado = {
   dados: null,       // saida do analisarCsv
   schema: null,      // schema em uso
   achados: [],
-  modoSchema: "auto", // auto | datacob | personalizado | nenhum
+  modoSchema: "auto", // auto | layout | personalizado | nenhum
   layoutEscolhido: "",
   soErros: false
 };
 
 export function initUI() {
-  // Seletor de layout do DataCob
+  // Seletor de layout do modelo de dados
   const select = el("layoutSelect");
-  listarSchemasDataCob().forEach(({ key, label }) => {
+  listarSchemascobrança().forEach(({ key, label }) => {
     const opt = document.createElement("option");
     opt.value = key;
     opt.textContent = label;
@@ -70,7 +70,7 @@ export function initUI() {
   el("delimitadorSelect").addEventListener("change", processar);
   el("layoutSelect").addEventListener("change", () => {
     estado.layoutEscolhido = el("layoutSelect").value;
-    estado.modoSchema = estado.layoutEscolhido ? "datacob" : "auto";
+    estado.modoSchema = estado.layoutEscolhido ? "layout" : "auto";
     sincronizarModo();
     processar();
   });
@@ -202,13 +202,13 @@ function definirSchema(dados) {
     return null;
   }
 
-  if (estado.modoSchema === "datacob" && estado.layoutEscolhido) {
-    estado.schema = montarSchemaDataCob(estado.layoutEscolhido);
+  if (estado.modoSchema === "layout" && estado.layoutEscolhido) {
+    estado.schema = montarSchemacobrança(estado.layoutEscolhido);
     return { key: estado.layoutEscolhido, confianca: "manual", motivo: "Layout escolhido na barra lateral." };
   }
 
   const reconhecido = reconhecerLayout(dados);
-  estado.schema = reconhecido ? montarSchemaDataCob(reconhecido.key) : null;
+  estado.schema = reconhecido ? montarSchemacobrança(reconhecido.key) : null;
   return reconhecido;
 }
 
@@ -237,7 +237,7 @@ function renderResumo(avisoExtra, reconhecido) {
   if (reconhecido && estado.schema) {
     partes.push(`Layout reconhecido: <strong>${escHtml(estado.schema.nome)}</strong> (confiança ${escHtml(reconhecido.confianca)} — ${escHtml(reconhecido.motivo)}).`);
   } else if (estado.modoSchema === "auto") {
-    partes.push("Não reconheci nenhum layout do DataCob neste arquivo — validando só a estrutura. Escolha um layout ou monte um schema na barra lateral para conferir o conteúdo.");
+    partes.push("Não reconheci nenhum layout do modelo de dados neste arquivo — validando só a estrutura. Escolha um layout ou monte um schema na barra lateral para conferir o conteúdo.");
   }
   partes.push(erros
     ? `<strong>${erros} erro(s)</strong> encontrado(s).`
@@ -262,7 +262,7 @@ function renderProblemasEstrutura() {
 
 function renderCabecalhoLayout(reconhecido) {
   const box = el("cabecalhoLayout");
-  const key = estado.schema?.id?.startsWith("datacob:") ? estado.schema.id.split(":")[1] : null;
+  const key = estado.schema?.id?.startsWith("layout:") ? estado.schema.id.split(":")[1] : null;
   if (!key) { box.classList.add("hidden"); box.innerHTML = ""; return; }
 
   const conf = conferirCabecalhoContraLayout(estado.dados.cabecalho, key);
@@ -277,7 +277,7 @@ function renderCabecalhoLayout(reconhecido) {
       : `<ul>
           ${conf.faltando.length ? `<li class="erro"><span class="pill bad">faltando</span> ${conf.faltando.map(escHtml).join(", ")}</li>` : ""}
           ${conf.sobrando.length ? `<li class="aviso"><span class="pill warn">a mais</span> ${conf.sobrando.map(escHtml).join(", ")}</li>` : ""}
-          ${conf.foraDeOrdem ? '<li class="aviso"><span class="pill warn">ordem</span> As colunas existem, mas em ordem diferente da do layout. O DataCob importa pelo nome, então costuma funcionar — só confira se o destino também usa o nome.</li>' : ""}
+          ${conf.foraDeOrdem ? '<li class="aviso"><span class="pill warn">ordem</span> As colunas existem, mas em ordem diferente da do layout. O cobrança importa pelo nome, então costuma funcionar — só confira se o destino também usa o nome.</li>' : ""}
         </ul>`}`;
 }
 
@@ -347,7 +347,7 @@ function renderGrade() {
 }
 
 /* Editor do schema: aparece no modo personalizado e tambem deixa
-   ajustar um layout do DataCob antes de revalidar. */
+   ajustar um layout do modelo de dados antes de revalidar. */
 function renderEditorSchema() {
   const box = el("editorSchema");
   if (!estado.schema) { box.classList.add("hidden"); box.innerHTML = ""; return; }
@@ -405,8 +405,8 @@ function renderEditorSchema() {
 
 function sincronizarModo() {
   document.querySelectorAll("[name=modoSchema]").forEach((r) => { r.checked = r.value === estado.modoSchema; });
-  el("layoutSelect").disabled = estado.modoSchema !== "datacob";
-  if (estado.modoSchema !== "datacob") el("layoutSelect").value = estado.layoutEscolhido || "";
+  el("layoutSelect").disabled = estado.modoSchema !== "layout";
+  if (estado.modoSchema !== "layout") el("layoutSelect").value = estado.layoutEscolhido || "";
 }
 
 /* ---------------------------------------------------------------------

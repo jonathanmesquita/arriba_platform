@@ -1,7 +1,7 @@
 /* =====================================================================
    Leitor de CSV (RFC 4180) + conferencias de estrutura
 
-   Este modulo NAO sabe nada sobre DataCob nem sobre regras de negocio:
+   Este modulo NAO sabe nada sobre cobrança nem sobre regras de negocio:
    ele le o texto e responde o que o arquivo E, com os problemas de
    ESTRUTURA que encontrar. As regras por coluna ficam em rules.js e os
    layouts prontos em schemas.js - separado de proposito, porque "o

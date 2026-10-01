@@ -2,11 +2,11 @@
 
 # Arriba Platform
 
-**An internal tooling hub, knowledge base, and developer portfolio — in one place.**
+**A study prototype: browser-based technical tooling, in one place.**
 
-A production web platform that gives support teams fast, browser-based utilities
-(CNAB parsers, data generators, converters), a searchable knowledge base, and
-doubles as my personal Full-Stack portfolio.
+Fixed-width file parsers (CNAB 400), CSV validator and generator, data generators,
+a SQL sandbox, a live-preview web editor and a multi-provider AI chat app.
+Everything the site does runs in the browser — no server, no data leaving the machine.
 
 [**🔗 Live demo → arriba.jm.dev.br**](https://arriba.jm.dev.br/)
 
@@ -63,7 +63,7 @@ signal than a to-do app.
 | Layer | Technology | Hosting |
 |---|---|---|
 | **Frontend** | Vanilla HTML/CSS/JavaScript + Bootstrap 5, custom Oracle-inspired design system | Vercel |
-| **Backend** | Node.js + Express — pure JSON API (OpenAI + Freshdesk integrations) | Render |
+| **App backend** | Node.js + Express + Prisma/Postgres (chat app only, in `apps/`) | not deployed yet |
 | **Infra / DNS** | Cloudflare (`jm.dev.br`) | Cloudflare |
 
 > No framework on the frontend by choice: the tools are small, must load instantly, and
@@ -77,12 +77,11 @@ flowchart LR
     CF --> FE[Vercel · Static frontend<br/>HTML · CSS · JS · Bootstrap]
     FE -->|fetch JSON| API[Render · Express API]
     API --> AI[OpenAI API]
-    API --> FD[Freshdesk]
     FE -. 100% client-side .-> TOOLS[File tools<br/>Base64→PDF · CNAB 400]
 ```
 
 Most tools never touch the backend — they process files locally in the browser. The
-API is reserved for what genuinely needs a server (the AI copilot and Freshdesk).
+A server is only used by the chat app, which needs sessions, history and encrypted provider keys.
 
 ## Featured tools
 
@@ -106,7 +105,7 @@ npx serve .          # or: VS Code "Live Server"  →  http://localhost:5500
 ```
 
 ```bash
-# Backend (optional — only for AI/Freshdesk features)
+# Chat app (optional — needs Postgres)
 cd arriba-api
 npm install
 cp .env.example .env # add your OPENAI_API_KEY etc.
@@ -120,7 +119,7 @@ arriba_platform/
 ├─ index.html                 # Home (Oracle-style mega-menu + hero + search)
 ├─ tools/
 │  ├─ dados/                  # Base64→PDF, CSV↔JSON, Hash, JSON Validator
-│  └─ datacob/                # CNAB 400, Massa de Dados, Support Copilot, ...
+│  └─ cobranca/               # CNAB 400, CSV generator, SQL sandbox, ...
 ├─ pages/                     # about, case-studies, docs, lab
 ├─ erros/                     # support error catalog
 ├─ assets/

@@ -68,10 +68,10 @@ enum MessageRole {
 // De onde cada documento da base veio. Serve para reimportar sem
 // duplicar e para a tela do admin dizer o que está indexado.
 enum KnowledgeSource {
-  CURADORIA        // assets/data/datacob-knowledge-base.js — escrito à mão pelo suporte
-  RESPOSTA_PRONTA  // assets/data/respostas-predefinidas.js
-  MANUAL           // docs/datacob-manuais/**/index.html
-  ERRO             // pages/docs/datacob/erros-datacob.html
+  CURADORIA        // assets/data/base-conhecimento.js — escrito à mão
+  MANUAL           // documentação do repositório (README, CLAUDE.md, memória, pages/docs)
+  RESPOSTA_PRONTA  // reservado — sem fonte hoje
+  ERRO             // reservado — sem fonte hoje
 }
 
 model User {

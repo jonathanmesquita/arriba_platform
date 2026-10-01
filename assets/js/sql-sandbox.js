@@ -29,7 +29,7 @@
    ===================================================================== */
 
 // Só letras, números e underscore, começando por letra/underscore. Cobre
-// os nomes reais do DataCob (Negociacao_Parcela, Parcela_Acordo...) e
+// os nomes reais do modelo de dados (Negociacao_Parcela, Parcela_Acordo...) e
 // barra qualquer coisa que pudesse virar injeção no DDL concatenado.
 const NOME_TABELA_VALIDO = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -55,7 +55,7 @@ export function semearTabela(nome, linhas = []) {
 
 // Semeia várias tabelas de uma vez. Aceita:
 //   [{ nome, dados }]            (formato explícito)
-//   [{ tabela, dados }]          (formato do DATACOB_SCHEMA)
+//   [{ tabela, dados }]          (formato do SANDBOX_SCHEMA)
 // Devolve { ok: [...], falhas: [{ tabela, erro }] } — quem chama decide
 // se avisa na tela; nada é silenciado aqui dentro.
 export function semearTabelas(tabelas = []) {

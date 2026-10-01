@@ -8,7 +8,7 @@
 
    Cinco provedores, dois mundos:
 
-   local    - base de conhecimento DataCob no próprio navegador. ZERO
+   local    - base de conhecimento cobrança no próprio navegador. ZERO
               rede, zero configuração, funciona para todo mundo. É o
               padrão e o fallback de todos os outros.
    ollama   - LLM rodando na máquina de quem usa (o modelo do artigo do
@@ -49,7 +49,7 @@ export const PROVEDORES = {
   local: {
     id: "local",
     nome: "Local (base de conhecimento)",
-    resumo: "Responde pela base DataCob embutida na página. Sem rede, sem chave, sem custo.",
+    resumo: "Responde pela base embutida na página. Sem rede, sem chave, sem custo.",
     precisaChave: false,
     precisaUrl: false,
     modelos: [],

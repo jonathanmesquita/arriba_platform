@@ -7,7 +7,7 @@ import { searchItems } from './navigation-v2.js';
 
 function inferCategory(url) {
     if (/^https?:\/\//.test(url)) return 'APIs';
-    if (url.startsWith('tools/datacob/')) return 'DataCob';
+    if (url.startsWith('tools/cobranca/')) return 'cobrança';
     if (url.startsWith('tools/dados/')) return 'Ferramentas';
     if (url.startsWith('pages/case-study/')) return 'Portfólio';
     if (url.startsWith('pages/docs/')) return 'Documentação';
@@ -289,7 +289,7 @@ function setActiveSuggestion(items, index) {
 
 function performSearch(query) {
     if (query.trim() === '') return;
-    window.location.href = 'pages/docs/datacob/erros-datacob.html?q=' + encodeURIComponent(query.trim());
+    window.location.href = 'pages/docs/blog/index.html?q=' + encodeURIComponent(query.trim());
 }
 
 function escapeHtml(str) {

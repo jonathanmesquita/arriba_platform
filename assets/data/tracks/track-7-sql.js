@@ -1,13 +1,13 @@
-// Track 7 - T-SQL SQL Server 2019 com DataCob (conteudo das 15 licoes).
+// Track 7 - T-SQL SQL Server 2019 com cobrança (conteudo das 15 licoes).
 //
-// As licoes praticam contra o SCHEMA REAL do DataCob — as mesmas tabelas e
+// As licoes praticam contra o SCHEMA REAL do modelo de dados — as mesmas tabelas e
 // colunas que o analista encontra no banco de producao (Financiado,
 // Contrato, Parcela, Negociacao, Acordo, Parcela_Acordo, Historico...),
-// definidas em assets/data/datacob-sandbox-schema.js.
+// definidas em assets/data/sandbox-schema.js.
 //
 // Os DADOS desse sandbox sao 100% inventados (LGPD: nenhum nome, CPF/CNPJ,
 // telefone ou e-mail real) e o sandbox roda AlaSQL no navegador — NAO existe
-// nenhuma conexao com o SQL Server real do DataCob. O objetivo e treinar a
+// nenhuma conexao com o SQL Server real do modelo de dados. O objetivo e treinar a
 // sintaxe e o modelo de dados com seguranca.
 //
 // ⚠️ Limites do simulador (AlaSQL) verificados na pratica: TOP, HAVING,
@@ -39,7 +39,7 @@ export const TRACK_7_BADGES = [
   { id: "aggregation-expert", nome: "Aggregation Expert", emoji: "🥈", criterio: { tipo: "licao", licaoId: "7.10" } },
   { id: "dashboard-builder", nome: "SQL Dashboard Builder", emoji: "🥇", criterio: { tipo: "licao", licaoId: "7.15" } },
   {
-    id: "data-analyst", nome: "DataCob Data Analyst", emoji: "👑",
+    id: "data-analyst", nome: "Data Analyst", emoji: "👑",
     criterio: {
       tipo: "todasLicoes",
       licoes: ["7.1", "7.2", "7.3", "7.4", "7.5", "7.6", "7.7", "7.8", "7.9", "7.10", "7.11", "7.12", "7.13", "7.14", "7.15"]
@@ -61,11 +61,11 @@ export const TRACK_7_LICOES = [
   {
     id: "7.1",
     secaoId: "fundamentos",
-    titulo: "O modelo de dados do DataCob",
+    titulo: "O modelo de dados de exemplo",
     tempoMin: 20,
     pontosLicao: 10,
     pontosQuizBonus: 5,
-    introducao: "O SQL Server 2019 guarda toda a operação de cobrança do DataCob. Antes de escrever qualquer consulta, vale entender o desenho: quem é o credor, quem é o devedor, o que é contrato, parcela, negociação e acordo. Neste sandbox você consulta as MESMAS tabelas e colunas do banco real — com dados inventados.",
+    introducao: "O SQL Server 2019 guarda toda a operação de cobrança do modelo de dados. Antes de escrever qualquer consulta, vale entender o desenho: quem é o credor, quem é o devedor, o que é contrato, parcela, negociação e acordo. Neste sandbox você consulta as MESMAS tabelas e colunas do banco real — com dados inventados.",
     conceitos: [
       {
         titulo: "Os dois grupos de tabelas",
@@ -84,8 +84,8 @@ export const TRACK_7_LICOES = [
       notaSimulador: "SELECT @@VERSION não existe neste simulador (não é um SQL Server de verdade) — no seu SQL Server real, ele mostra a versão instalada."
     },
     quiz: [
-      { pergunta: "No DataCob, quem é o devedor?", opcoes: ["Cliente", "Financiado", "Grupo", "Contrato"], respostaIndex: 1, explicacao: "Financiado é o devedor. Cliente é o credor — quem contratou a cobrança." },
-      { pergunta: "E a tabela Cliente representa...", opcoes: ["O devedor", "O credor/contratante da cobrança", "O operador do sistema"], respostaIndex: 1, explicacao: "Cliente é o credor. Confundir isso é o erro mais comum de quem começa no modelo do DataCob." },
+      { pergunta: "No modelo de dados, quem é o devedor?", opcoes: ["Cliente", "Financiado", "Grupo", "Contrato"], respostaIndex: 1, explicacao: "Financiado é o devedor. Cliente é o credor — quem contratou a cobrança." },
+      { pergunta: "E a tabela Cliente representa...", opcoes: ["O devedor", "O credor/contratante da cobrança", "O operador do sistema"], respostaIndex: 1, explicacao: "Cliente é o credor. Confundir isso é o erro mais comum de quem começa no modelo do modelo de dados." },
       { pergunta: "O que é o Grupo?", opcoes: ["A carteira de cobrança (estágio da dívida)", "Um grupo de usuários", "Um lote de boletos"], respostaIndex: 0, explicacao: "Grupo é a carteira: define o estágio da dívida (amigável, pré-jurídico, jurídico) e como os itens são agrupados." },
       { pergunta: "Qual a diferença entre Negociacao e Acordo?", opcoes: ["São a mesma coisa", "Negociacao é a proposta; Acordo é a proposta fechada", "Acordo vem antes da Negociacao"], respostaIndex: 1, explicacao: "Pode existir Negociacao sem Acordo (proposta em aberto). O Acordo é o fechamento." },
       { pergunta: "Seguindo o padrão de nomes, qual é a chave primária de Contrato?", opcoes: ["Contrato_Id", "Id_Contrato", "PK_Contrato"], respostaIndex: 1, explicacao: "O padrão é Id_<Tabela> — e quem referencia usa o mesmo nome de coluna." }
@@ -108,7 +108,7 @@ export const TRACK_7_LICOES = [
     conceitos: [
       { titulo: "Estrutura do SELECT", codigo: "SELECT coluna1, coluna2\nFROM tabela\nWHERE condicao;", explicacao: "SELECT define o que trazer, FROM de onde, WHERE filtra quais linhas (opcional)." },
       {
-        titulo: "Exemplos com as tabelas do DataCob",
+        titulo: "Exemplos com as tabelas de exemplo",
         codigo: "-- Todos os devedores, todas as colunas\nSELECT * FROM Financiado;\n\n-- Só nome e documento\nSELECT Nome, Cpfcnpj FROM Financiado;\n\n-- Devedores de um credor específico\nSELECT Nome FROM Financiado WHERE Id_Cliente = 101;\n\n-- Parcelas de acordo acima de R$ 1.000\nSELECT Nr_Parcela, Vl_Parcela\nFROM Parcela_Acordo\nWHERE Vl_Parcela > 1000;",
         explicacao: "O asterisco (*) traz todas as colunas; listar colunas específicas é mais eficiente e mais legível — e em tabela grande de produção isso faz diferença real."
       }
@@ -182,7 +182,7 @@ export const TRACK_7_LICOES = [
     tempoMin: 25,
     pontosLicao: 10,
     pontosQuizBonus: 5,
-    introducao: "Até agora consultamos uma tabela por vez — mas no DataCob a informação está espalhada de propósito. O nome do devedor está em Financiado, o contrato em Contrato. INNER JOIN combina linhas de duas tabelas que têm uma relação.",
+    introducao: "Até agora consultamos uma tabela por vez — mas no modelo de dados a informação está espalhada de propósito. O nome do devedor está em Financiado, o contrato em Contrato. INNER JOIN combina linhas de duas tabelas que têm uma relação.",
     conceitos: [
       { titulo: "Estrutura do INNER JOIN", codigo: "SELECT coluna1, coluna2\nFROM tabela1 t1\nINNER JOIN tabela2 t2 ON t1.Id_Tabela1 = t2.Id_Tabela1;", explicacao: "ON define a coluna que liga as duas tabelas (a \"chave\"). INNER JOIN só traz linhas que existem nas DUAS tabelas." },
       { titulo: "Devedor + contrato", codigo: "SELECT f.Nome AS Devedor,\n       c.Numero_Contrato\nFROM Financiado f\nINNER JOIN Contrato c ON c.Id_Financiado = f.Id_Financiado;", explicacao: "Devedores cadastrados que ainda não têm contrato NÃO aparecem aqui (veja a próxima lição: LEFT JOIN)." },
@@ -202,7 +202,7 @@ export const TRACK_7_LICOES = [
       { enunciado: "Traga o número do contrato, o credor (Nome_Res) e a carteira (Grupo.Descricao) de cada contrato.", solucao: "SELECT c.Numero_Contrato, cl.Nome_Res AS Credor, g.Descricao AS Carteira\nFROM Contrato c\nINNER JOIN Cliente cl ON cl.Id_Cliente = c.Id_Cliente\nINNER JOIN Grupo g ON g.Id_Grupo = c.Id_Grupo;" },
       { enunciado: "Traga o nome do devedor e o telefone (Ddd + Fone) de quem tem telefone cadastrado.", solucao: "SELECT f.Nome AS Devedor, t.Ddd, t.Fone\nFROM Financiado f\nINNER JOIN Telefone t ON t.Id_Financiado = f.Id_Financiado;" }
     ],
-    rafael: "JOIN é onde o SQL realmente brilha! 🎲 No DataCob quase nada útil sai de uma tabela só — o nome está num lugar, o contrato em outro, o valor em outro. Próxima: LEFT JOIN, pra não perder ninguém."
+    rafael: "JOIN é onde o SQL realmente brilha! 🎲 No cobrança quase nada útil sai de uma tabela só — o nome está num lugar, o contrato em outro, o valor em outro. Próxima: LEFT JOIN, pra não perder ninguém."
   },
 
   {
@@ -303,7 +303,7 @@ export const TRACK_7_LICOES = [
     introducao: "Funções de agregação calculam um resultado a partir de várias linhas: quantidade, soma, média, máximo, mínimo. É como você sai de \"lista de parcelas\" para \"quanto essa carteira vale\".",
     conceitos: [
       { titulo: "As 5 funções básicas", codigo: "-- Quantas parcelas de acordo existem\nSELECT COUNT(*) AS Qtd_Parcelas FROM Parcela_Acordo;\n\n-- Valor total acordado\nSELECT SUM(Vl_Parcela) AS Valor_Acordado FROM Parcela_Acordo;\n\n-- Ticket médio da parcela\nSELECT AVG(Vl_Parcela) AS Valor_Medio FROM Parcela_Acordo;\n\n-- Maior e menor parcela\nSELECT MAX(Vl_Parcela) AS Maior, MIN(Vl_Parcela) AS Menor\nFROM Parcela_Acordo;", explicacao: "COUNT conta linhas, SUM soma, AVG tira a média, MAX/MIN pegam o maior/menor valor de uma coluna." },
-      { titulo: "Onde ficam os valores no DataCob", codigo: "-- Parcela (original do contrato) NÃO guarda valor:\nSELECT * FROM Parcela;   -- Tipo_Parcela, Dt_Vencimento...\n\n-- O valor negociado fica aqui:\nSELECT Vl_Total, Vl_Principal FROM Negociacao_Parcela;\n\n-- E o valor do plano de pagamento aqui:\nSELECT Vl_Parcela FROM Parcela_Acordo;", explicacao: "Detalhe do modelo que economiza tempo: se você precisa somar dinheiro, o valor está em Negociacao_Parcela (Vl_Total/Vl_Principal) ou em Parcela_Acordo (Vl_Parcela) — não na Parcela." }
+      { titulo: "Onde ficam os valores no modelo de dados", codigo: "-- Parcela (original do contrato) NÃO guarda valor:\nSELECT * FROM Parcela;   -- Tipo_Parcela, Dt_Vencimento...\n\n-- O valor negociado fica aqui:\nSELECT Vl_Total, Vl_Principal FROM Negociacao_Parcela;\n\n-- E o valor do plano de pagamento aqui:\nSELECT Vl_Parcela FROM Parcela_Acordo;", explicacao: "Detalhe do modelo que economiza tempo: se você precisa somar dinheiro, o valor está em Negociacao_Parcela (Vl_Total/Vl_Principal) ou em Parcela_Acordo (Vl_Parcela) — não na Parcela." }
     ],
     tryIt: {
       descricao: "Calcule quantas parcelas de acordo existem e o valor total acordado.",
@@ -313,7 +313,7 @@ export const TRACK_7_LICOES = [
       { pergunta: "Qual função soma os valores de uma coluna?", opcoes: ["COUNT", "SUM", "TOTAL"], respostaIndex: 1, explicacao: "SUM(coluna) soma todos os valores." },
       { pergunta: "COUNT(*) conta o quê?", opcoes: ["Só colunas não-nulas", "Todas as linhas", "Só valores distintos"], respostaIndex: 1, explicacao: "COUNT(*) conta todas as linhas do resultado." },
       { pergunta: "Qual função calcula a média?", opcoes: ["AVG", "MED", "MEAN"], respostaIndex: 0, explicacao: "AVG(coluna) é a média aritmética." },
-      { pergunta: "Para somar dinheiro no DataCob, qual coluna você usa?", opcoes: ["Parcela.Vl_Parcela", "Parcela_Acordo.Vl_Parcela ou Negociacao_Parcela.Vl_Total", "Contrato.Valor"], respostaIndex: 1, explicacao: "A tabela Parcela não guarda valor — ele está em Negociacao_Parcela e Parcela_Acordo." }
+      { pergunta: "Para somar dinheiro no modelo de dados, qual coluna você usa?", opcoes: ["Parcela.Vl_Parcela", "Parcela_Acordo.Vl_Parcela ou Negociacao_Parcela.Vl_Total", "Contrato.Valor"], respostaIndex: 1, explicacao: "A tabela Parcela não guarda valor — ele está em Negociacao_Parcela e Parcela_Acordo." }
     ],
     exercicios: [
       { enunciado: "Some o valor total negociado (Vl_Total) em Negociacao_Parcela.", solucao: "SELECT SUM(Vl_Total) AS Valor_Negociado FROM Negociacao_Parcela;" },
@@ -450,7 +450,7 @@ export const TRACK_7_LICOES = [
     tempoMin: 20,
     pontosLicao: 10,
     pontosQuizBonus: 5,
-    introducao: "CASE WHEN cria uma coluna condicional — como um \"se/senão\" dentro do SELECT. No DataCob ele é essencial para traduzir código em texto legível.",
+    introducao: "CASE WHEN cria uma coluna condicional — como um \"se/senão\" dentro do SELECT. No cobrança ele é essencial para traduzir código em texto legível.",
     conceitos: [
       { titulo: "Traduzindo código para texto", codigo: "SELECT p.Id_Parcela,\n       p.Tipo_Parcela,\n       CASE p.Tipo_Parcela\n         WHEN 'P' THEN 'Principal'\n         WHEN 'J' THEN 'Juros'\n         WHEN 'M' THEN 'Multa/Encargo'\n         ELSE 'Outro'\n       END AS Tipo\nFROM Parcela p;", explicacao: "Ninguém fora da TI sabe o que é Tipo_Parcela = 'M'. O CASE resolve isso no próprio SELECT, sem precisar de tabela de domínio." },
       { titulo: "Categorizando faixas de valor", codigo: "SELECT Id_Acordo, Vl_Parcela,\n  CASE\n    WHEN Vl_Parcela < 500 THEN 'Baixo'\n    WHEN Vl_Parcela BETWEEN 500 AND 1500 THEN 'Medio'\n    ELSE 'Alto'\n  END AS Faixa\nFROM Parcela_Acordo;", explicacao: "As condições são avaliadas em ordem; a primeira que for verdadeira \"ganha\". Sem ELSE, o resultado é NULL quando nenhuma bate." },
@@ -550,7 +550,7 @@ export const TRACK_7_LICOES = [
     quiz: [
       { pergunta: "Uma subquery escalar no SELECT devolve...", opcoes: ["Uma tabela inteira", "Um único valor por linha", "Sempre NULL"], respostaIndex: 1, explicacao: "Por isso serve pra montar KPI: cada subquery vira uma coluna com um número." },
       { pergunta: "Que combinação de cláusulas o \"Top 5 devedores\" usa?", opcoes: ["Só WHERE", "JOIN + GROUP BY + ORDER BY + TOP", "Só DISTINCT"], respostaIndex: 1, explicacao: "Junta as tabelas, agrupa por devedor, ordena pelo total e limita a 5." },
-      { pergunta: "No dashboard, por que o valor acordado vem de Parcela_Acordo e não de Parcela?", opcoes: ["Porque Parcela não guarda valor", "Porque Parcela está vazia", "É indiferente"], respostaIndex: 0, explicacao: "No modelo do DataCob o valor mora em Parcela_Acordo (plano fechado) e Negociacao_Parcela (proposta)." }
+      { pergunta: "No dashboard, por que o valor acordado vem de Parcela_Acordo e não de Parcela?", opcoes: ["Porque Parcela não guarda valor", "Porque Parcela está vazia", "É indiferente"], respostaIndex: 0, explicacao: "No modelo do modelo de dados o valor mora em Parcela_Acordo (plano fechado) e Negociacao_Parcela (proposta)." }
     ],
     exercicios: [
       { enunciado: "Rode o bloco 2 (contratos por carteira) e veja qual estágio da dívida concentra mais contratos.", solucao: "SELECT g.Descricao AS Carteira, COUNT(c.Id_Contrato) AS Contratos\nFROM Contrato c\nJOIN Grupo g ON g.Id_Grupo = c.Id_Grupo\nGROUP BY g.Descricao\nORDER BY Contratos DESC;" },
@@ -558,7 +558,7 @@ export const TRACK_7_LICOES = [
       { enunciado: "Rode o bloco 4 (Top 5 devedores por valor acordado).", solucao: "SELECT TOP 5 f.Nome AS Devedor, COUNT(pa.Id_Parcela_Acordo) AS Parcelas, SUM(pa.Vl_Parcela) AS Valor_Acordo\nFROM Acordo a\nJOIN Negociacao n ON n.Id_Negociacao = a.Id_Negociacao\nJOIN Financiado f ON f.Id_Financiado = n.Id_Financiado\nJOIN Parcela_Acordo pa ON pa.Id_Acordo = a.Id_Acordo\nGROUP BY f.Nome\nORDER BY Valor_Acordo DESC;" },
       { enunciado: "Desafio: monte a taxa de conversão de negociação em acordo (quantas negociações existem e quantas viraram acordo).", solucao: "SELECT COUNT(*) AS Negociacoes,\n       SUM(CASE WHEN a.Id_Acordo IS NULL THEN 0 ELSE 1 END) AS Fechadas\nFROM Negociacao n\nLEFT JOIN Acordo a ON a.Id_Negociacao = n.Id_Negociacao;" }
     ],
-    rafael: "Query otimizada! 🚀 Você chegou ao fim do Track 7 tendo escrito, do começo ao fim, consultas nas tabelas REAIS do DataCob — é o mesmo SQL que você vai rodar em produção. Badges SQL Dashboard Builder e DataCob Data Analyst desbloqueados! 👑"
+    rafael: "Query otimizada! 🚀 Você chegou ao fim do Track 7 tendo escrito, do começo ao fim, consultas nas tabelas REAIS do modelo de dados — é o mesmo SQL que você vai rodar em produção. Badges SQL Dashboard Builder e Data Analyst desbloqueados! 👑"
   }
 ];
 

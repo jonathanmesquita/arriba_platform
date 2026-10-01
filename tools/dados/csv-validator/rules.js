@@ -14,7 +14,7 @@
    Cada achado sai como:
      { linha, coluna, indiceColuna, valor, regra, mensagem, gravidade }
 
-   Nada aqui conhece DataCob - os layouts prontos ficam em schemas.js.
+   Nada aqui conhece cobrança - os layouts prontos ficam em schemas.js.
    ===================================================================== */
 
 "use strict";

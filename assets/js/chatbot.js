@@ -1,6 +1,6 @@
 // js/chatbot.js
 
-import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from '../data/datacob-knowledge-base.js';
+import { KNOWLEDGE_BASE as BASE_CONHECIMENTO, QUICK_TOPICS as TOPICOS_RAPIDOS } from '../data/base-conhecimento.js';
 
 import {
     PROVEDORES, getConfig, salvarConfig, limparConfig,
@@ -49,14 +49,14 @@ export function initChatbot() {
     const chatWindow = document.getElementById('chatWindow');
     const modeButtons = document.querySelectorAll('.chat-mode-btn');
 
-    let currentMode = 'datacob';
+    let currentMode = 'ferramentas';
     let currentMood = 'idle';
     let isWaitingResponse = false;
     let rotationIndex = 0;
     // Historico da conversa, so em memoria: fecha a aba, some. Conversa de
     // suporte pode ter dado de chamado, entao nao persiste.
     const historico = [];
-    const knowledgeById = new Map(DATACOB_KNOWLEDGE_BASE.map((item) => [item.id, item]));
+    const knowledgeById = new Map(BASE_CONHECIMENTO.map((item) => [item.id, item]));
 
     if (!chatbotBtn || !chatbotPopup || !closeChatBtn || !chatInput || !sendChatBtn || !chatWindow) {
         return;
@@ -85,7 +85,7 @@ export function initChatbot() {
             modeButtons.forEach(btn => btn.classList.remove('active'));
 
             this.classList.add('active');
-            currentMode = this.dataset.mode || 'datacob';
+            currentMode = this.dataset.mode || 'ferramentas';
             setMascotMood(getMoodByMode(currentMode));
 
             appendMessage(
@@ -127,7 +127,7 @@ export function initChatbot() {
             true
         );
 
-        const localResult = searchDatacobKnowledge(message);
+        const localResult = buscarNaBase(message);
         if (shouldUseLocalKnowledge(localResult)) {
             botTypingMsg.remove();
             renderLocalKnowledgeResponse(message, localResult);
@@ -175,7 +175,7 @@ export function initChatbot() {
 
     /* Contexto do sistema: quem o modelo e, e o que a base local sabe
        sobre a pergunta. Mandar so os trechos relevantes (e nao a base
-       inteira) mantem o custo baixo e a resposta ancorada no DataCob. */
+       inteira) mantem o custo baixo e a resposta ancorada na base. */
     function montarSistema(localResult) {
         const trechos = (localResult?.matches || []).slice(0, 3).map(m => {
             const item = m.item || m;
@@ -183,11 +183,11 @@ export function initChatbot() {
         }).join('\n');
 
         return [
-            'Voce e o assistente da Arriba Platform, da PH3A, e atende o time de suporte do CRM DataCob.',
+            'Voce e o assistente da Arriba Platform, um prototipo de estudos com ferramentas tecnicas.',
             'Responda em portugues do Brasil, de forma direta e objetiva.',
-            'Se nao souber, diga que nao sabe e sugira abrir chamado — nao invente passo de tela nem codigo de erro.',
-            'Nunca peca nem repita dado pessoal de devedor (CPF, nome completo, telefone, endereco).',
-            trechos ? `\nTrechos da base de conhecimento do DataCob que podem ajudar:\n${trechos}` : ''
+            'Se nao souber, diga que nao sabe — nao invente passo de tela nem codigo de erro.',
+            'Nunca peca nem repita dado pessoal (CPF, nome completo, telefone, endereco).',
+            trechos ? `\nTrechos da base de conhecimento que podem ajudar:\n${trechos}` : ''
         ].filter(Boolean).join('\n');
     }
 
@@ -362,7 +362,7 @@ export function initChatbot() {
     }
 
     function shouldUseLocalKnowledge(result) {
-        return currentMode === 'datacob' || Number(result.best?.score || 0) >= 14;
+        return currentMode === 'ferramentas' || Number(result.best?.score || 0) >= 14;
     }
 
     function renderLocalKnowledgeResponse(query, result) {
@@ -376,13 +376,13 @@ export function initChatbot() {
         appendRichBotMessage(renderKnowledgeSuggestions(query, result.matches));
     }
 
-    function searchDatacobKnowledge(query = '') {
+    function buscarNaBase(query = '') {
         const normalizedQuery = normalizeText(query);
         const tokens = normalizedQuery
             .split(/\s+/)
             .filter((token) => token.length > 2 && !['quero', 'como', 'sobre', 'para', 'com', 'uma', 'uns', 'das', 'dos', 'que'].includes(token));
 
-        const matches = DATACOB_KNOWLEDGE_BASE
+        const matches = BASE_CONHECIMENTO
             .map((item) => {
                 const haystack = normalizeText([
                     item.titulo,
@@ -391,7 +391,7 @@ export function initChatbot() {
                     item.perguntaExemplo,
                     item.caminhoTela,
                     item.resumo,
-                    item.tipoFreshdeskSugerido,
+                    item.tipoSugerido,
                     item.quandoEncaminharDev,
                     ...(item.palavrasChave || []),
                     ...(item.passos || []),
@@ -438,7 +438,7 @@ export function initChatbot() {
                 <div class="chat-knowledge-meta">
                     <span>${escapeHtml(item.produto)}</span>
                     <span>${escapeHtml(item.categoria)}</span>
-                    <span>${escapeHtml(item.tipoFreshdeskSugerido || 'Duvida')}</span>
+                    <span>${escapeHtml(item.tipoSugerido || 'Duvida')}</span>
                 </div>
                 <h4>${escapeHtml(item.titulo)}</h4>
                 <p>${escapeHtml(item.resumo)}</p>
@@ -462,7 +462,7 @@ export function initChatbot() {
                 </div>
                 <div class="chat-knowledge-actions">
                     <button type="button" data-chat-toggle="${escapeHtml(detailsId)}">Ver passo a passo</button>
-                    <a href="${escapeAttr(item.linkManual || '/pages/docs/help-center/index.html')}" target="_blank" rel="noopener">Abrir manual</a>
+                    <a href="${escapeAttr(item.linkManual || '/index.html')}" target="_blank" rel="noopener">Abrir manual</a>
                     <button type="button" data-chat-copy="${escapeHtml(item.id)}">Copiar resposta</button>
                     <button type="button" data-chat-client="${escapeHtml(item.id)}">Gerar resposta para cliente</button>
                 </div>
@@ -472,7 +472,7 @@ export function initChatbot() {
     }
 
     function renderKnowledgeSuggestions(query, matches = []) {
-        const suggestions = matches.length ? matches : DATACOB_KNOWLEDGE_BASE.slice(0, 4).map((item) => ({ item, score: 0 }));
+        const suggestions = matches.length ? matches : BASE_CONHECIMENTO.slice(0, 4).map((item) => ({ item, score: 0 }));
         return `
             <article class="chat-knowledge-card">
                 <div class="chat-knowledge-meta">
@@ -562,7 +562,7 @@ export function initChatbot() {
             <article class="chat-knowledge-card">
                 <div class="chat-knowledge-meta">
                     <span>Resposta para cliente</span>
-                    <span>${escapeHtml(item.tipoFreshdeskSugerido || 'Duvida')}</span>
+                    <span>${escapeHtml(item.tipoSugerido || 'Duvida')}</span>
                 </div>
                 <h4>${escapeHtml(item.titulo)}</h4>
                 <p>${formatBotText(clientReply)}</p>
@@ -576,13 +576,13 @@ export function initChatbot() {
     function buildClientReply(item) {
         const firstSteps = (item.passos || []).slice(0, 4).map((step, index) => `${index + 1}. ${step}`).join('\n');
         return `
-Ola! Para essa rotina no DataCob, siga este caminho:
+Ola! Para essa rotina, siga este caminho:
 ${item.caminhoTela || 'Caminho a confirmar'}
 
 Orientacao inicial:
 ${firstSteps}
 
-Antes de encaminhar para analise tecnica, valide os parametros e teste em um contrato de exemplo. Se o comportamento persistir mesmo com a parametrizacao correta, envie prints, log e exemplo para investigarmos.
+Se o comportamento persistir, confira os parametros e repita com um arquivo de exemplo pequeno — e guarde print e log do que aconteceu.
         `.trim();
     }
 
@@ -627,17 +627,12 @@ Antes de encaminhar para analise tecnica, valide os parametros e teste em um con
 A API nao respondeu agora.
 
 Posso ajudar com:
-- DataCob / Suporte
-- SQL
-- DevOps
+- Ferramentas do site (CNAB, CSV, Base64, editor web)
+- SQL (trilha e playground)
+- DevOps (deploy, DNS)
 - API REST
-- Render
-- Vercel
-- Cloudflare
 
-Portais uteis:
-- https://ph3a.freshdesk.com/
-- https://suporte.ph3a.com.br/pt-BR/support/solutions
+Tudo que respondo aqui sai da base local do proprio repositorio.
         `.trim();
     }
 
@@ -681,15 +676,15 @@ Portais uteis:
         stage.innerHTML = `
             <img class="chatbot-mascot-stage-img" alt="" aria-hidden="true">
             <div>
-                <strong>PH3A Bot</strong>
-                <span>Manual interativo DataCob pronto para orientar o suporte.</span>
+                <strong>Arriba Bot</strong>
+                <span>Assistente do prototipo: explica as ferramentas do site.</span>
             </div>
         `;
         chatWindow.appendChild(stage);
 
         const quickTopics = document.createElement('div');
         quickTopics.className = 'chat-quick-topics';
-        quickTopics.innerHTML = DATACOB_QUICK_TOPICS
+        quickTopics.innerHTML = TOPICOS_RAPIDOS
             .map((topic) => `<button type="button" data-chat-topic="${escapeAttr(topic)}">${escapeHtml(topic)}</button>`)
             .join('');
         chatWindow.appendChild(quickTopics);
@@ -726,7 +721,7 @@ Portais uteis:
 
     function getMoodByMode(mode) {
         const moods = {
-            datacob: 'think',
+            ferramentas: 'think',
             sql: 'think',
             devops: 'jump',
             produtividade: 'hack',

@@ -18,7 +18,7 @@
   /* ---- Tokens canônicos (Redwood) ---- */
   /* Valores alinhados à paleta já predominante nas ferramentas (base64-pdf,
      cnab400-bradesco, massa-dados, csv-template-generator, modelo-carta,
-     freshdesk-paste, manual-builder) — a UI do site (oracle-inspired.css)
+     ferramentas antigas) — a UI do site (oracle-inspired.css)
      usava tons quase idênticos e convergiu para estes. */
   --rw-bg:        #f7f5f2;   /* off-white / areia */
   --rw-bg-soft:   #fbfaf8;

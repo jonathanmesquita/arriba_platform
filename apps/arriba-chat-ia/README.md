@@ -197,17 +197,15 @@ modelo.
 
 Antes de chamar o modelo, a API procura na documentação interna e manda os trechos mais
 relevantes junto com a pergunta. É o que separa "assistente genérico" de "assistente que
-conhece o DataCob": a resposta cita `[1]`, `[2]` e a tela mostra de onde cada número saiu,
+conhece este projeto": a resposta cita `[1]`, `[2]` e a tela mostra de onde cada número saiu,
 para quem atende conferir o manual antes de orientar o cliente.
 
 **De onde vem o conteúdo** (importado do portal, quatro fontes, em ordem de confiança):
 
 | Fonte | Arquivo no portal | O que é |
 | --- | --- | --- |
-| `CURADORIA` | `assets/data/datacob-knowledge-base.js` | Passo a passo escrito pelo suporte — o material mais confiável |
-| `RESPOSTA_PRONTA` | `assets/data/respostas-predefinidas.js` | Texto padrão já usado com o cliente |
-| `ERRO` | `pages/docs/datacob/erros-datacob.html` | Catálogo de erros |
-| `MANUAL` | `tools/datacob/support-copilot/docs/datacob-manuais/` | Manuais indexados |
+| `CURADORIA` | `assets/data/base-conhecimento.js` | Passo a passo escrito à mão sobre as ferramentas |
+| `MANUAL` | `README.md`, `CLAUDE.md`, `.claude/memory/`, `tasks/`, `pages/docs/` | Documentação do próprio repositório |
 
 ```bash
 cd server && npm run kb:import      # ou: Administração → Base de conhecimento → Reimportar

@@ -1,0 +1,16 @@
+{
+  "name": "comunicados",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Portal para escrever cartas modelo e disparar comunicados por e-mail, com configuração de servidor SMTP e controle de descadastro.",
+  "workspaces": ["server", "web"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "npm run dev --workspace=server & npm run dev --workspace=web",
+    "build": "npm run build --workspace=server && npm run build --workspace=web",
+    "typecheck": "npm run typecheck --workspace=server && npm run typecheck --workspace=web",
+    "test": "npm run test --workspace=server",
+    "db:migrate": "npm run db:migrate --workspace=server",
+    "db:seed": "npm run db:seed --workspace=server"
+  }
+}

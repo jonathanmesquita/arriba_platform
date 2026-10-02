@@ -24,7 +24,8 @@ bureau**; dado de exemplo é fictício, sempre.
   estático). Não introduza React/Vue/Tailwind/bundler no site sem pedido explícito.
 - **`apps/` é exceção à regra acima, e só ela.** A pasta guarda aplicações que **não fazem
   parte do site**: têm build próprio, backend e banco. Hoje há `apps/arriba-chat-ia/`
-  (React + Vite + Express + Prisma/Postgres). `.vercelignore` exclui `apps/` do deploy,
+  (React + Vite + Express + Prisma/Postgres) e `apps/comunicados/` (React + Vite + Express +
+  Prisma/**SQLite**). `.vercelignore` exclui `apps/` do deploy,
   senão o código-fonte iria para o ar como arquivo estático. Cada app tem o próprio README
   e `package.json` — **não** misture dependência de app com o site, e não importe nada de
   `apps/` a partir de `assets/` ou `tools/`.
@@ -166,6 +167,22 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   em muitos documentos (era 48% do texto quando a base eram páginas de template), e isso
   depende de `textoDeHtml()` **preservar a quebra de bloco**. A resposta cita `[1]`, `[2]` e
   as fontes ficam gravadas em `Message.knowledgeUsed`.
+- **Comunicados** (`apps/comunicados/`, out/2026): portal de cartas modelo e disparo de
+  e-mail. **SQLite**, e não Postgres: roda na máquina de quem opera, e um arquivo em
+  `dados/` elimina servidor de banco, porta e usuário para administrar. Quatro regras
+  moram no código e não podem ser afrouxadas sem pensar: a senha do SMTP é cifrada
+  (AES-256-GCM) e **nunca volta por HTTP** — campo vazio na tela significa "mantém",
+  não "apaga"; todo erro de envio passa por `envios/mascarar.ts` antes de ser guardado,
+  porque o diálogo SMTP traz o `AUTH LOGIN` com a credencial; os destinatários vão em
+  **CCO** com o remetente no "Para", senão um cliente vê a lista dos outros; e o
+  descadastro é consultado em **todo** disparo, inclusive em lista colada à mão. As
+  variáveis da carta (`{{nome}}`, `{{cliente}}`…) são declaradas em
+  `cartas/variaveis.ts` — fonte única da tela, do preenchimento e da conferência — e o
+  valor é **escapado** no corpo HTML (nome com `<` quebraria o layout; com `<script>`,
+  executaria no cliente de e-mail de quem recebe). **Personalização só funciona com lote
+  de 1**: o lote vira uma mensagem só, então `{{nome}}` fica vazio quando há mais de um
+  destinatário. `SMTP_MODO_TESTE=1` grava `.eml` em `dados/saida/` em vez de mandar pela
+  rede — é como o fluxo é testado sem servidor.
 - **Integridade de CDN (SRI)**: toda tag de `cdn.jsdelivr`/`cdnjs` tem `integrity` +
   `crossorigin`. Ao adicionar biblioteca de CDN, **gerar o hash junto** — sem ele,
   comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do pacote npm
@@ -187,6 +204,8 @@ Entregue e funcionando:
 - Editor Web com preview ao vivo e sandbox endurecido.
 - Chat do site (base local + provedores BYOK) e `apps/arriba-chat-ia` (multi-provedor,
   streaming SSE, administração, auditoria e base de conhecimento).
+- `apps/comunicados`: portal de cartas modelo e disparo de e-mail em lotes, com
+  descadastro, histórico por destinatário e configuração de servidor SMTP.
 
 O que falta está em `tasks/` — e as decisões que dependem do dono, em
 `tasks/decisoes-pendentes.md`.

@@ -2,13 +2,24 @@
 
 Trabalho futuro já entendido. Formato em [README.md](README.md).
 
-## Protótipo / descaracterização
+## Qualidade do site
 
-- [ ] Remover do repositório o que amarra o projeto a uma empresa específica 📅 2026-10-01 🔺 alta #area/site #esforco/g
-  - Contexto: o projeto é de **estudos** — vitrine de engenharia, não sistema de cliente.
-    Hoje há nome de empresa, de produto e de bureau espalhados por ~200 arquivos.
-  - Local: inventário em `tasks/decisoes-pendentes.md`
-  - Ação: definir renomear × remover por categoria e executar numa passada só.
+- [ ] Testes para a lógica pura do site 📅 2026-10-02 🔼 média #area/ferramentas #esforco/m 🤖
+  - Contexto: os dois apps têm 77 testes; o **site não tem nenhum**. E é no site que mora a
+    lógica onde errar é caro: `parser.js` (RFC 4180 — aspas, `""` escapado, delimitador e
+    quebra de linha dentro do campo), `engine.js` do CNAB (fatias 1-indexadas do manual),
+    `rules.js` (CPF/CNPJ, data) e `fake-data-br.js`. São ~1.070 linhas, **todas sem DOM**:
+    `node --test` roda os módulos como estão, verificado.
+  - Local: `tools/dados/csv-validator/`, `tools/cobranca/cnab400/engine.js`, `assets/js/`
+  - Ação: `scripts/package.json` já existe para ferramenta de manutenção; acrescentar
+    `npm test` ali, começando pelo parser de CSV, que é o de regra mais sutil.
+- [ ] Apagar a cópia morta do patch de Tipo_Registro 📅 2026-10-02 🔽 baixa #area/ferramentas #esforco/p 🤖
+  - Contexto: `patch-tipo-registro-layout.js` (251 linhas) não é carregado por página nenhuma
+    — o HTML só carrega `script.js` e `bmp-layout.js`. A sequência que ele define já está
+    dentro de `script.js:7`. São duas cópias da mesma tabela, e só uma é usada: quem editar
+    a errada não vê efeito. `LAYOUT_FIX.md` documenta correção de layout já aplicada.
+  - Local: `tools/cobranca/arriba-csv-generator/`
+  - Ação: conferir com `grep` que nada referencia (feito) e remover os dois.
 
 ## Ferramentas
 

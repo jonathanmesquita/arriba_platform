@@ -1,6 +1,6 @@
 # Sistema de Tarefas — Arriba Platform
 
-Contrato de formato, herdado do modelo a empresa (BoilerplateIA). Aqui ele é **só arquivo**: os
+Contrato de formato, herdado de um boilerplate corporativo (ver ADR-014). Aqui ele é **só arquivo**: os
 programas do modelo que leem esta pasta (`scripts/prioridade.py`, os painéis do Obsidian,
 `scripts/registrar-concluidas.py`) **não estão instalados neste repositório**. O formato é
 mantido assim mesmo para que passem a funcionar no dia em que forem instalados, sem
@@ -14,10 +14,9 @@ gerados), e ninguém escreve `[prio: N]` à mão.
 ```
 tasks/
 ├── README.md       Este contrato
-├── human.md        🙋 Decisões que dependem do dono — a única fila que ele acompanha
+├── decisoes-pendentes.md  🙋 Decisões que dependem do dono — a única fila que ele acompanha
 ├── backlog.md      Trabalho futuro, já entendido
 ├── bugs.md         Defeitos abertos
-├── features.md     Frentes em desenvolvimento
 ├── ideas.md        Ideias sem compromisso, formato livre
 └── concluidas.md   Histórico append-only
 ```
@@ -44,7 +43,7 @@ tasks/
 
 1. **Trabalho identificado e não executado agora é registrado** — nunca em comentário no
    código, nunca só na conversa.
-2. **Pedido a humano vai para `human.md` e só para lá.**
+2. **Pedido a humano vai para `decisoes-pendentes.md` e só para lá.**
 3. **Nunca bloquear em cima de um pedido:** registre, siga com o que não depende dele e diga
    o que ficou parado.
 4. **Concluída sai do arquivo de trabalho** — o item inteiro move para `concluidas.md` com

@@ -235,7 +235,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do pacote npm
   (`npm pack <pkg>@<versão>` → `openssl dgst -sha384 -binary <arquivo> | openssl base64 -A`).
   **Sempre pinar versão exata**: tag flutuante muda sozinha e impede fixar hash.
-- **Biblioteca de logos de bancos** (`assets/img/bancos/`): 87 SVGs guardados como fonte
+- **Biblioteca de logos de bancos** (`assets/img/bancos/`): 205 SVGs de 87 bancos, guardados como fonte
   para quando novos bancos entrarem no CNAB. Copiar o SVG desejado para a pasta
   `assets/icons/` da ferramenta em vez de referenciar essa pasta diretamente.
 

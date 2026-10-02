@@ -142,7 +142,7 @@ sinônimo que não está no texto não encontra.
 
 ## ADR-013: Conventional Commits validados por hook
 
-**Decisão:** formato `tipo(escopo)?: descrição`, validado por `commit-msg` do modelo a empresa.
+**Decisão:** formato `tipo(escopo)?: descrição`, validado por um hook `commit-msg` no próprio repositório.
 **Motivo:** histórico legível, `CHANGELOG.md` gerado do `git log`, rastreabilidade por escopo.
 **Consequências:** após clonar, rodar `bash scripts/hooks/install-hooks.sh`. Commits anteriores
 a set/2026 não seguem o formato e ficam fora do CHANGELOG gerado.
@@ -165,3 +165,43 @@ entre prosa e conversa).
 **Consequências:** quem clona roda `bash scripts/hooks/install-hooks.sh`; pendência nova
 tem lugar certo; e `.claude/memory/` precisa ser mantida junto com o código que descreve —
 documento que mente é pior que documento que falta.
+
+
+---
+
+## ADR-015: Cada acento da paleta tem duas entradas — a cheia e a tinta
+
+**Decisão:** toda cor de acento existe em par: a **cheia** (`--rw-red`, `--rw-olive`,
+`--rw-ok`, `--rw-warn`, `--rw-danger`) é preenchimento e borda; a **tinta** (`--rw-red-ink`,
+`--rw-olive-ink`, `--rw-ok-ink`, `--rw-warn-ink`, `--rw-danger-ink`) é a cor de **texto** e é
+a única das duas que vira com o tema. Some-se a isso `--rw-on-primary` (o que fica legível
+*sobre* a terracota) e `--rw-on-dark` (o que fica legível sobre as superfícies escuras fixas).
+**Motivo:** medição, não gosto. A terracota pura dá 4,27 como texto sobre a areia e a oliva
+pura 4,05 — as duas reprovam. No tema escuro a terracota **clareia** para #E08A55, e aí o
+branco em cima dela dá 2,65: o `#fff` fixo que funcionava no tema claro passa a reprovar em
+23 botões. Uma cor só não consegue ser preenchimento e texto ao mesmo tempo nos dois temas.
+**Alternativas:** escurecer a paleta inteira até a cor cheia servir de texto (rejeitada:
+mataria o laranja que dá identidade ao projeto) e aceitar a reprovação (rejeitada: é a
+diferença entre ler e não ler o rótulo do botão).
+**Consequências:** `color:` nunca recebe a cor cheia — nem `--ok`, nem `--warn`, nem
+`--danger`. Acento novo entra em par, com o contraste do par medido antes de adotar.
+
+---
+
+## ADR-016: Superfície e texto são vocabulários separados — e isso se verifica medindo
+
+**Decisão:** `--ink` e as tintas são **cor de texto** e nunca entram em `background`;
+`--rw-dark`, `--rw-dark-2`, `--rw-deep` e `--rw-deep-2` são **superfície escura fixa** e
+nunca entram em `color`. A conferência é feita por `scripts/conferir-contraste.mjs`, que
+abre cada página nos dois temas e mede o que está pintado.
+**Motivo:** os dois sentidos da troca já tinham acontecido no repositório sem ninguém notar.
+`--dark` como `color:` sumia no tema escuro (23 ocorrências) e `--ink` como `background:`
+virava creme no tema escuro — no mega-menu, no corpo do chat, nas modais e na navbar, cada um
+com uma sobrescrita `body.dark-mode` por cima escondendo o problema. Nenhum dos dois aparece
+numa revisão de paleta no papel; os dois aparecem na primeira medição.
+**Alternativas:** conferir por captura de tela (rejeitada: foi o que deixou passar — o olho
+não vê 4,27 contra 4,5) e confiar nos valores da paleta (rejeitada: o fundo real é composto,
+e um chip de mostarda a 14% sobre o creme não é o creme).
+**Consequências:** o repositório ganhou `scripts/package.json` só para essa conferência — o
+site continua sem build. E a conferência mede o que está visível **no carregamento**: estado
+aberto (chat, menu, modal) continua sendo verificação manual, registrada em `tasks/`.

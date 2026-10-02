@@ -61,13 +61,13 @@
       border: 1px dashed #a99d94; border-radius: 10px; padding: 20px; margin-top: 14px;
       background: var(--surface); color: var(--muted); text-align: center; transition: .18s ease; cursor: pointer;
     }
-    .drop-zone.drag { border-color: var(--red); background: #fff6f4; color: var(--ink); }
+    .drop-zone.drag { border-color: var(--red); background: rgb(from var(--red) r g b / .08); color: var(--ink); }
     .drop-zone i { font-size: 1.4rem; color: var(--red); }
 
     .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
-    .btn-red-arriba { background: var(--red); color: #fff; }
-    .btn-red-arriba:hover { background: var(--rw-red-ink); color: #fff; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
+    .btn-red-arriba:hover { background: var(--rw-red-ink); color: var(--rw-on-primary); }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-dark-arriba:hover { background: #000; color: #fff; }
     .btn-outline-arriba { background: transparent; border-color: var(--ink); color: var(--ink); }

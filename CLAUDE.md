@@ -39,7 +39,7 @@ bureau**; dado de exemplo é fictício, sempre.
 | `.claude/memory/` | [arquitetura](.claude/memory/architecture.md) (mapa), [decisões](.claude/memory/decisions.md) (ADRs) e [padrões](.claude/memory/patterns.md) (snippets) |
 | `.claude/rules/` | regras de comportamento por caminho (idioma, fila de trabalho) |
 | `tasks/` | a fila: `backlog`, `bugs`, `ideas`, `decisoes-pendentes`, `concluidas` |
-| `scripts/` | `changelog.sh` e o hook de commit |
+| `scripts/` | `changelog.sh`, o hook de commit e `conferir-contraste.mjs` |
 
 **Pendência identificada e não executada agora vira item em `tasks/`** — não comentário
 `// TODO`, não só na conversa. O que depende de decisão do dono vai para
@@ -50,7 +50,14 @@ Commits em **Conventional Commits** (`tipo(escopo): descrição`), validados pel
 ```bash
 bash scripts/hooks/install-hooks.sh   # depois de clonar
 bash scripts/changelog.sh             # regenera o CHANGELOG a partir do git log
+
+# Conferência de contraste de todo o site, nos dois temas (sai 1 se reprovar).
+python3 -m http.server 8899 &         # na raiz
+cd scripts && npm install && npm run contraste
 ```
+
+O `scripts/package.json` existe **só** para essa conferência — o site continua sem build e
+sem dependência. Não mova nada dele para a raiz.
 
 ## Regra de ouro: fonte única
 
@@ -73,14 +80,37 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     com texto escuro, nunca texto (2,33); `--rw-accent` (mostarda) só sobre faixa escura.
     `--rw-line` é divisória decorativa e `--rw-line-strong` é borda de **controle** (campo,
     select), que precisa de 3:1 para a pessoa achar o campo.
+  - **Todo acento tem um par: a cor cheia e a tinta (`-ink`).** A cheia é preenchimento e
+    borda; a `-ink` é a de **texto** e **vira com o tema**. Vale para terracota
+    (`--rw-red` / `--rw-red-ink`), oliva, sucesso, aviso e erro — `--rw-ok`, `--rw-warn` e
+    `--rw-danger` nunca entram como `color:`, só `--rw-ok-ink`, `--rw-warn-ink`,
+    `--rw-danger-ink`. O motivo é medido: no tema escuro `--rw-red` clareia para #E08A55 e
+    **branco em cima dá 2,65** — por isso o que vai sobre a terracota é `--rw-on-primary`,
+    nunca `#fff` fixo (eram 23 botões assim).
   - **`--dark` é cor de superfície, não de texto.** Usada como `color:`, ela some no tema
     escuro — eram 23 ocorrências. Para texto, `--ink`.
+  - **E o inverso também:** `--ink` é cor de **texto**, não de superfície. Como `background`,
+    ela vira creme no tema escuro e o que estiver escrito em cima some — foi assim com o
+    mega-menu, o corpo do chat, as modais e a navbar, cada um com uma sobrescrita de tema
+    escuro por cima escondendo o problema. Superfície escura fixa é `--rw-dark` /
+    `--rw-dark-2` / `--rw-deep` / `--rw-deep-2`, e o texto em cima delas é **`--rw-on-dark`**
+    (também fixo: essas faixas são escuras nos dois temas, logo o texto não pode virar).
+  - **Sobrescrita `body.dark-mode` é sinal de cheiro.** Se a regra clara usa token, a
+    sobrescrita é desnecessária — e na prática era o lugar onde o cinza-azulado da paleta
+    antiga sobrevivia. Antes de escrever uma, verificar se o token já não resolve.
   - **ARMADILHA DO ALIAS:** `--bg: var(--rw-bg)` é substituído **no elemento onde a
     declaração está**. Declarado só em `:root`, o alias congela o valor claro, e o
     `body.dark-mode` troca o canônico sem trocar o alias — foi assim que o tema escuro
     nunca funcionou para quase todo o site, sem ninguém notar. Por isso o bloco de aliases
     é declarado **nos três escopos** (`:root`, `body.dark-mode`, `[data-theme="dark"]`).
     Alias novo entra nesse bloco, não no `:root`.
+  - **A conferência de contraste é por medição, não por leitura da paleta.** O que vale é o
+    que está pintado na tela: o fundo precisa ser **composto** camada a camada (um chip de
+    mostarda a 14% sobre o creme não é o creme), texto com alfa também, e `rgb(from …)` sai
+    do navegador como `color(srgb 0.95 0.9 0.86 / .72)` — componentes de 0 a 1, não de 0 a
+    255. Duas armadilhas de quem escreve o conferidor: ler esses componentes como 0–255
+    inventa reprovação, e pular elemento com filho **descarta todo botão com ícone** (medir
+    o texto próprio do nó).
 - **Dark mode:** ativado por `body.dark-mode` (ver `assets/js/theme.js`), salvo em
   localStorage.
 - **Busca do topo (home):** o campo é o `<input id="topbarSearchInput">` da topbar em
@@ -237,7 +267,9 @@ O que falta está em `tasks/` — e as decisões que dependem do dono, em
 - Preservar o visual/tom retro-criativo e a paleta boho tech (terracota, oliva, mostarda,
   areia). **Cor nova entra em `tokens.css`, nunca escrita à mão no HTML da ferramenta** — e
   antes de adotar, medir o contraste do par (texto × fundo) em que ela vai ser usada.
-- Depois de mexer em cor, rodar a conferência de contraste real no navegador, nos **dois**
-  temas: ela pega cor fixa esquecida que a paleta no papel não mostra.
+- Depois de mexer em cor, rodar `scripts/conferir-contraste.mjs` nos **dois** temas: ela
+  pega cor fixa esquecida que a paleta no papel não mostra. Ela mede só o que está **visível
+  no carregamento** — painel aberto, menu aberto e resultado preenchido continuam sendo
+  conferência manual.
 - Dado de exemplo é sempre fictício: nome, CPF/CNPJ, telefone, e-mail, endereço e número de
   contrato em fixture, exemplo de campo ou schema de sandbox são inventados.

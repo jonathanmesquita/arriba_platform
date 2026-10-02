@@ -1,0 +1,12 @@
+{
+  "name": "arriba-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Ferramentas de manutenção do repositório. Fica separado da raiz de propósito: o site não tem build nem dependência, e isto é só para quem mantém.",
+  "scripts": {
+    "contraste": "node conferir-contraste.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.48.2"
+  }
+}

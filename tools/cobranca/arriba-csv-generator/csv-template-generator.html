@@ -124,8 +124,8 @@
       transition: background-color .18s ease, transform .18s ease;
     }
 
-    .step:hover { background: #f3f1ee; transform: translateX(2px); }
-    .step.active { background: #dcebea; color: var(--ink); }
+    .step:hover { background: var(--surface-soft); transform: translateX(2px); }
+    .step.active { background: var(--blue-soft); color: var(--ink); }
 
     .step-number {
       width: 27px;
@@ -138,7 +138,7 @@
       flex: 0 0 auto;
     }
 
-    .step.active .step-number { background: var(--red); color: #fff; }
+    .step.active .step-number { background: var(--red); color: var(--rw-on-primary); }
 
     .main-stack { display: grid; gap: 20px; }
     .card-section { padding: 24px; }
@@ -305,6 +305,9 @@
     .preview-tab {
       border: 1px solid var(--line);
       background: var(--surface);
+      /* `button` não herda cor: sem esta linha o rótulo fica no preto do
+         agente de usuário e some no tema escuro. */
+      color: var(--ink);
       border-radius: 999px;
       padding: 8px 12px;
       font-weight: 900;
@@ -560,28 +563,28 @@ details > div {
 
 
 /* ===== UX Help + validação suave ===== */
-.required-error,.form-control.required-error,.form-select.required-error,input.required-error,select.required-error{border-color:var(--red)!important;background:#fff6f4!important;box-shadow:0 0 0 3px rgba(199,70,52,.10)!important}
+.required-error,.form-control.required-error,.form-select.required-error,input.required-error,select.required-error{border-color:var(--red)!important;background:rgb(from var(--red) r g b / .08)!important;box-shadow:0 0 0 3px rgba(199,70,52,.10)!important}
 .required-error-message{display:block;color:#9f2d20;font-size:.78rem;font-weight:800;margin-top:5px}
 .field-ok,.form-control.field-ok,.form-select.field-ok,input.field-ok,select.field-ok{border-color:#74a77b!important}
 .help-action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
-.help-button{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:8px 13px;border-radius:999px;border:1px solid #d8d2cc;background:var(--surface);color:#161513;font-weight:900;text-decoration:none;cursor:help}
+.help-button{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:8px 13px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font-weight:900;text-decoration:none;cursor:help}
 .help-button:hover,.help-button:focus{border-color:var(--red);color:var(--red)}
 .help-button .help-tooltip{position:absolute;left:0;top:calc(100% + 10px);width:min(360px,86vw);background:#1f1b19;color:#fff;padding:14px 16px;border-radius:8px;box-shadow:0 18px 48px rgba(0,0,0,.22);opacity:0;visibility:hidden;transform:translateY(-4px);transition:.18s ease;z-index:50;font-weight:500;line-height:1.45}
 .help-button:hover .help-tooltip,.help-button:focus .help-tooltip{opacity:1;visibility:visible;transform:translateY(0)}
 .help-button .help-tooltip strong{display:block;margin-bottom:6px}
 .doc-link-button{display:inline-flex;align-items:center;min-height:38px;padding:8px 13px;border-radius:999px;background:#1f1b19;color:#fff!important;font-weight:900;text-decoration:none}
 .doc-link-button:hover{background:#000}
-.future-import-note{border-left:4px solid #f0cc71;background:#fff8df;padding:14px 16px;border-radius:8px;margin-top:16px;color:#3a332b}.download-all-label{white-space:nowrap}
+.future-import-note{border-left:4px solid #f0cc71;background:rgb(from var(--gold) r g b / .14);padding:14px 16px;border-radius:8px;margin-top:16px;color:var(--ink)}.download-all-label{white-space:nowrap}
 @media(max-width:640px){.help-action-row{align-items:stretch}.help-button,.doc-link-button{justify-content:center;width:100%}}
 
 
 /* ===== Patch UX: Tipo_Registro, Step 2/3 por layout e preview selecionável ===== */
 .record-help {
   border-left: 4px solid var(--gold);
-  background: #fff8df;
+  background: rgb(from var(--gold) r g b / .14);
   border-radius: 9px;
   padding: 14px 16px;
-  color: #3a332b;
+  color: var(--ink);
   margin: 18px 0;
 }
 
@@ -638,12 +641,12 @@ details > div {
 .tipo-registro-card:hover,
 .tipo-registro-card.selected {
   border-color: var(--red);
-  box-shadow: 0 8px 22px rgba(199,70,52,.12);
+  box-shadow: 0 8px 22px rgb(from var(--red) r g b / .12);
   transform: translateY(-1px);
 }
 
 .tipo-registro-card.primary {
-  background: #fffaf0;
+  background: var(--rw-tint);
 }
 
 .tipo-registro-card input {
@@ -664,7 +667,7 @@ details > div {
 
 .tipo-registro-card.selected .tipo-registro-number {
   background: var(--red);
-  color: #fff;
+  color: var(--rw-on-primary);
 }
 
 .tipo-registro-card strong,
@@ -702,7 +705,7 @@ details > div {
 }
 
 .record-context {
-  background: #f5f1ec;
+  background: var(--surface-soft);
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 14px 16px;
@@ -720,7 +723,7 @@ details > div {
 input.required-missing,
 select.required-missing {
   border-color: var(--red) !important;
-  background: #fff6f4 !important;
+  background: rgb(from var(--red) r g b / .08) !important;
   box-shadow: 0 0 0 3px rgba(199,70,52,.10) !important;
 }
 

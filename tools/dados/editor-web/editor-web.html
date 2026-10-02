@@ -23,7 +23,7 @@
     }
 
     .topbar {
-      min-height: 64px; background: #fff; border-bottom: 1px solid var(--line);
+      min-height: 64px; background: var(--surface); border-bottom: 1px solid var(--line);
       display: flex; align-items: center; gap: 22px; padding: 0 28px;
       position: sticky; top: 0; z-index: 30;
     }
@@ -48,11 +48,11 @@
     .exemplos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
     .exemplos-label { font-size: .76rem; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-right: 4px; }
     .exemplo-btn {
-      border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px;
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px;
       padding: 6px 14px; font-size: .82rem; font-weight: 800; cursor: pointer;
     }
     .exemplo-btn:hover { border-color: var(--red); color: var(--red); }
-    .exemplo-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .exemplo-btn.active { background: var(--red); border-color: var(--red); color: var(--rw-on-primary); }
 
     /* Layout editor | preview */
     .editor-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
@@ -85,7 +85,7 @@
     /* Preview */
     .preview-frame {
       flex: 1; width: 100%; min-height: 460px; border: 0; border-radius: 0 0 8px 8px;
-      background: #fff; display: block;
+      background: var(--surface); display: block;
     }
     .preview-wrap { display: flex; flex-direction: column; flex: 1; padding: 0 14px 14px; }
     .preview-box { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; flex: 1; }
@@ -102,7 +102,7 @@
     }
     .console-linha { padding: 4px 10px; border-bottom: 1px dashed var(--line); white-space: pre-wrap; word-break: break-word; }
     .console-linha:last-child { border-bottom: 0; }
-    .console-linha.erro { color: var(--danger); font-weight: 700; }
+    .console-linha.erro { color: var(--danger-ink); font-weight: 700; }
     .console-vazio { padding: 8px 10px; color: var(--muted); font-family: system-ui, sans-serif; }
 
     .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; align-items: center; }
@@ -110,7 +110,7 @@
       min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px;
       font-weight: 900; cursor: pointer; font-size: .9rem; display: inline-flex; align-items: center;
     }
-    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
     .btn-red-arriba:hover { background: var(--rw-red-ink); }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line); }
@@ -119,8 +119,8 @@
     .switch { display: inline-flex; align-items: center; gap: 7px; font-size: .86rem; font-weight: 800; color: var(--muted); cursor: pointer; }
 
     .nota {
-      border-left: 4px solid var(--gold); background: #fff8df; padding: 12px 14px;
-      border-radius: 7px; font-size: .85rem; color: #5b4d20; line-height: 1.55; margin-top: 18px;
+      border-left: 4px solid var(--gold); background: rgb(from var(--gold) r g b / .14); padding: 12px 14px;
+      border-radius: 7px; font-size: .85rem; color: var(--rw-olive-ink); line-height: 1.55; margin-top: 18px;
     }
 
     @media (max-width: 980px) {

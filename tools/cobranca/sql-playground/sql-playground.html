@@ -65,15 +65,15 @@
     .schema-desc { color: var(--muted); margin: 0 0 8px; line-height: 1.45; }
     .schema-col { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-family: Consolas, Monaco, monospace; font-size: .76rem; }
     .schema-col .tag { font-family: system-ui, sans-serif; font-size: .62rem; font-weight: 900; padding: 1px 5px; border-radius: 4px; letter-spacing: .04em; }
-    .tag-pk { background: #fff8df; color: #7a6210; border: 1px solid var(--gold); }
-    .tag-fk { background: #e8f0fb; color: #2b5f9e; border: 1px solid #b8d0ee; }
+    .tag-pk { background: rgb(from var(--gold) r g b / .14); color: var(--rw-olive-ink); border: 1px solid var(--gold); }
+    .tag-fk { background: var(--blue-soft); color: var(--rw-red-ink); border: 1px solid rgb(from var(--red) r g b / .35); }
     .schema-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
     .mini-btn {
       border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px;
       padding: 4px 8px; font-size: .74rem; font-weight: 800; cursor: pointer;
     }
     .mini-btn:hover { background: var(--surface-soft); }
-    .mini-btn.danger { color: var(--danger); border-color: rgba(220,53,69,.35); }
+    .mini-btn.danger { color: var(--danger-ink); border-color: rgba(220,53,69,.35); }
 
     /* Área principal */
     .main-stack { display: grid; gap: 18px; min-width: 0; }
@@ -93,17 +93,17 @@
       background: var(--surface-soft); padding: 12px 14px; font-size: .86rem; color: var(--muted);
     }
     .sql-result-meta { font-size: .8rem; color: var(--muted); margin-bottom: 8px; }
-    .sql-error { color: var(--danger); font-weight: 700; margin: 0; }
+    .sql-error { color: var(--danger-ink); font-weight: 700; margin: 0; }
     .sql-empty { margin: 0; color: var(--muted); }
     .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
-    table.preview-table { width: 100%; border-collapse: collapse; font-size: .82rem; background: #fff; }
+    table.preview-table { width: 100%; border-collapse: collapse; font-size: .82rem; background: var(--surface); }
     table.preview-table th { background: var(--surface-soft); padding: 8px 10px; text-align: left; font-weight: 850; border-bottom: 2px solid var(--line); white-space: nowrap; }
     table.preview-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); }
     table.preview-table tr:last-child td { border-bottom: 0; }
 
     .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
     .btn-arriba { min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
-    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
     .btn-red-arriba:hover { background: var(--rw-red-ink); }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
@@ -114,12 +114,15 @@
     .validation-msg.ok { border-left-color: var(--ok); background: rgba(25,135,84,.08); }
     .validation-msg.error { border-left-color: var(--danger); background: rgba(220,53,69,.08); }
 
-    .sim-nota { border-left: 4px solid var(--gold); background: #fff8df; padding: 10px 12px; border-radius: 7px; font-size: .84rem; color: #5b4d20; }
+    .sim-nota { border-left: 4px solid var(--gold); background: rgb(from var(--gold) r g b / .14); padding: 10px 12px; border-radius: 7px; font-size: .84rem; color: var(--rw-olive-ink); }
 
     /* Exemplos */
     .exemplo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
     .exemplo-card {
       border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--surface-soft);
+      /* `button` não herda cor do pai — sem isto o título fica preto do
+         agente de usuário e desaparece no tema escuro. */
+      color: var(--ink);
       text-align: left; cursor: pointer; display: grid; gap: 4px;
     }
     .exemplo-card:hover { border-color: var(--red); }
@@ -154,8 +157,8 @@
     }
     .lista-item .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
     .pill { padding: 2px 8px; border-radius: 999px; font-size: .7rem; font-weight: 900; }
-    .pill.ok { background: rgba(25,135,84,.12); color: #14683f; }
-    .pill.bad { background: rgba(220,53,69,.12); color: #a52834; }
+    .pill.ok { background: rgba(25,135,84,.12); color: var(--ok-ink); }
+    .pill.bad { background: rgba(220,53,69,.12); color: var(--danger-ink); }
     .lista-vazia { color: var(--muted); font-size: .86rem; margin: 0; }
 
     .save-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }

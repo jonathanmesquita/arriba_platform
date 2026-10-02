@@ -53,7 +53,7 @@
       min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px;
       font-weight: 900; cursor: pointer; font-size: .9rem; display: inline-flex; align-items: center; gap: 8px;
     }
-    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
     .btn-red-arriba:hover { background: var(--rw-red-ink); }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line); }
     .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
@@ -62,7 +62,7 @@
     .estado { border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; font-size: .92rem; line-height: 1.55; }
     .estado.ok { border-left: 4px solid var(--ok); background: #eef8f2; color: #2c5545; }
     .estado.erro { border-left: 4px solid var(--danger); background: #fdeeec; color: #7a2b20; }
-    .estado.aviso { border-left: 4px solid var(--gold); background: #fff8df; color: #5b4d20; }
+    .estado.aviso { border-left: 4px solid var(--gold); background: rgb(from var(--gold) r g b / .14); color: var(--rw-olive-ink); }
     .estado strong { display: block; margin-bottom: 4px; }
 
     pre.bloco {
@@ -78,8 +78,8 @@
     td.valor { font-family: Consolas, Monaco, monospace; word-break: break-all; }
 
     .nota {
-      border-left: 4px solid var(--gold); background: #fff8df; padding: 12px 14px;
-      border-radius: 7px; font-size: .85rem; color: #5b4d20; line-height: 1.55; margin-top: 18px;
+      border-left: 4px solid var(--gold); background: rgb(from var(--gold) r g b / .14); padding: 12px 14px;
+      border-radius: 7px; font-size: .85rem; color: var(--rw-olive-ink); line-height: 1.55; margin-top: 18px;
     }
     .vazio { color: var(--muted); font-size: .88rem; margin: 0; }
   </style>

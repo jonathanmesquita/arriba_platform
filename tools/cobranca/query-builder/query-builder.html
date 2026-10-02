@@ -72,11 +72,11 @@
       background: var(--surface); cursor: pointer; font-size: .84rem; font-weight: 700;
     }
     .regra-item:hover { border-color: var(--red); }
-    .regra-item.active { border-color: var(--red); background: rgb(from var(--red) r g b / .06); color: var(--red); }
+    .regra-item.active { border-color: var(--red); background: rgb(from var(--red) r g b / .06); color: var(--rw-red-ink); }
     .regra-nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .rule-editor label { display: block; font-weight: 800; font-size: .84rem; margin: 0 0 5px; }
-    .rule-editor select, .rule-editor input[type="text"] { width: 100%; min-height: 38px; border-radius: 6px; border-color: #cfc8c1; margin-bottom: 14px; }
+    .rule-editor select, .rule-editor input[type="text"] { width: 100%; min-height: 38px; border-radius: 6px; border-color: var(--line-strong); margin-bottom: 14px; }
     .rule-editor .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .rule-editor .check-line { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: .88rem; margin-bottom: 14px; }
     .rule-editor .check-line input { accent-color: var(--red); width: 16px; height: 16px; }
@@ -92,11 +92,11 @@
 
     .diagram-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
     .diagram-card { border: 2px solid var(--red); border-radius: 10px; padding: 14px; background: var(--surface-soft); }
-    .diagram-card h3 { font-size: 1.02rem; font-weight: 800; margin: 0 0 6px; color: var(--red); }
+    .diagram-card h3 { font-size: 1.02rem; font-weight: 800; margin: 0 0 6px; color: var(--rw-red-ink); }
     .diagram-card .schema-tag { color: var(--muted); font-size: .78rem; margin-bottom: 8px; display: block; }
     .diagram-card .field-line { color: var(--muted); font-size: .8rem; margin: 1px 0; }
     .diagram-card .rel-title { font-weight: 800; font-size: .8rem; margin-top: 8px; }
-    .diagram-card .rel-line { color: #b5810b; font-size: .8rem; margin: 1px 0; }
+    .diagram-card .rel-line { color: var(--rw-olive-ink); font-size: .8rem; margin: 1px 0; }
 
     pre.code-block {
       font-family: Consolas, Monaco, monospace; font-size: .82rem; background: #101010; color: #e8e8e8;
@@ -116,7 +116,7 @@
 
     .actions { display: flex; flex-wrap: wrap; gap: 10px; }
     .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
-    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
     .btn-red-arriba:hover { background: var(--rw-red-ink); }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }

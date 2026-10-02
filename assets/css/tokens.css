@@ -56,21 +56,41 @@
   --rw-red-soft:  #D9783F;   /* realce e fundo suave — NÃO é cor de botão */
   --rw-on-primary: #FFFAF4;  /* o que fica LEGÍVEL sobre --rw-red */
   --rw-gold:      #C9A227;   /* mostarda — FUNDO de selo, com texto escuro */
-  --rw-olive:     #6B7A3A;   /* verde-oliva */
+  --rw-olive:     #6B7A3A;   /* verde-oliva — preenchimento e borda */
+  /* A oliva pura como TEXTO dá 4,05 sobre a areia e 3,75 sobre a
+     superfície suave: não passa. Como a terracota, ela precisa de uma
+     variante de texto que vira com o tema. O tom foi fechado mais uma
+     vez depois da medição no site: o primeiro candidato (#5A6730) passava
+     sobre a areia e reprovava com 3,86 dentro do chip de mostarda a 14%,
+     que é justamente onde essa cor mais aparece. */
+  --rw-olive-ink: #4D5828;   /* texto oliva no claro (6,60 areia / 4,81 no chip) */
   --rw-tint:      #EDE6D3;   /* tinta suave — estado selecionado (texto café: 12,49) */
   --rw-deep:      #45351F;   /* marrom profundo — faixas e documentação (branco: 11,78) */
   --rw-deep-2:    #241C17;   /* charcoal terroso — faixa do hero */
 
   --rw-dark:      #1E1713;   /* charcoal terroso */
   --rw-dark-2:    #2A201B;
+  /* O que fica LEGÍVEL sobre as superfícies escuras fixas (--rw-dark,
+     --rw-dark-2, --rw-deep, --rw-deep-2). Estas superfícies NÃO viram com
+     o tema — são cromo escuro nos dois —, então o texto delas também não
+     pode virar: `--ink` ali clareia no escuro e some. */
+  --rw-on-dark:   #F3E8DC;   /* 14,36 sobre --rw-dark */
 
   --rw-accent:    #D9A93C;   /* mostarda clara — acento sobre fundo escuro (7,73) */
 
   /* ---- Semânticos ---- */
-  --rw-ok:        #198754;
-  --rw-warn:      #b58100;
-  --rw-warn-soft: #fff3cd;  /* fundo suave de aviso (manual-builder) */
-  --rw-danger:    #dc3545;
+  /* Cada semântico tem DUAS entradas pelo mesmo motivo da terracota: a cor
+     cheia é preenchimento e borda; o `-ink` é a de TEXTO e vira com o tema.
+     Verde #198754, amarelo #b58100 e vermelho #dc3545 como texto reprovam
+     no claro ou somem no escuro — por isso nenhum deles aparece como
+     `color:` nas ferramentas. */
+  --rw-ok:        #198754;   /* preenchimento/borda de sucesso */
+  --rw-ok-ink:    #14683F;   /* texto de sucesso no claro (5,88 na areia) */
+  --rw-warn:      #b58100;   /* preenchimento/borda de aviso */
+  --rw-warn-ink:  #7E5B00;   /* texto de aviso no claro (5,35 / 4,96) */
+  --rw-warn-soft: #fff3cd;   /* fundo suave de aviso */
+  --rw-danger:    #dc3545;   /* preenchimento/borda de erro */
+  --rw-danger-ink: #A32330;  /* texto de erro no claro (6,37 / 5,91) */
 
   /* ---- Elevação / raio / tipografia ---- */
   --rw-shadow:  0 18px 46px rgba(0, 0, 0, .08);
@@ -104,6 +124,10 @@ body.dark-mode,
   --rw-red:       #E08A55;
   --rw-red-ink:   #EFA474;
   --rw-red-soft:  #8A4524;   /* no escuro o "suave" é mais FECHADO que o fundo */
+  --rw-olive-ink: #9DB05F;   /* texto oliva no escuro (7,42 / 6,67 / 5,99) */
+  --rw-ok-ink:    #4FBF8B;    /* texto de sucesso no escuro (7,71 / 6,23) */
+  --rw-warn-ink:  #D9A93C;    /* texto de aviso no escuro (8,16 / 6,59) */
+  --rw-danger-ink: #F08A92;   /* texto de erro no escuro (7,38 / 5,95) */
   --rw-on-primary: #1E1713;
 
   --rw-tint:      #3A3022;   /* no escuro o realce é mais quente que a superfície */
@@ -140,12 +164,18 @@ body.dark-mode,
   --muted:       var(--rw-muted);
   --line:        var(--rw-line);
   --line-strong: var(--rw-line-strong);
+  --olive:       var(--rw-olive);
+  --olive-ink:   var(--rw-olive-ink);
   --red:         var(--rw-red);
   --gold:        var(--rw-gold);
   --dark:        var(--rw-dark);
   --ok:          var(--rw-ok);
+  --ok-ink:      var(--rw-ok-ink);
+  --on-dark:     var(--rw-on-dark);
   --warn:        var(--rw-warn);
+  --warn-ink:    var(--rw-warn-ink);
   --danger:      var(--rw-danger);
+  --danger-ink:  var(--rw-danger-ink);
   --blue:        var(--rw-deep);
   --blue-soft:   var(--rw-tint);
   --green-soft:  var(--rw-tint);

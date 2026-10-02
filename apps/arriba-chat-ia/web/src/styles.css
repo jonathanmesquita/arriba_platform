@@ -1,9 +1,9 @@
 /* =====================================================================
    Arriba Chat IA — estilo base
 
-   Paleta Deep Autumn / Redwood, a mesma do portal da empresa, para o
-   chat não parecer um sistema de outra casa. CSS puro: o projeto todo
-   evita dependência de UI que envelhece e engorda o bundle.
+   Paleta boho tech / Deep Autumn, a mesma do site, para o chat não
+   parecer coisa de outra casa. CSS puro: o projeto todo evita
+   dependência de UI que envelhece e engorda o bundle.
    ===================================================================== */
 
 :root {
@@ -17,6 +17,7 @@
   --suave: #F0E4D6;
   --superficie: #FFFAF4;
   --linha: #E2D3C1;
+  --linha-forte: #A88B6B;   /* borda de controle — 3:1 sobre o cartão */
   --musgo: #726254;
   --ok: #198754;
   --alerta: #C9A227;
@@ -84,7 +85,7 @@ body {
   display: inline-flex; align-items: center; gap: 7px;
   transition: background .15s ease, border-color .15s ease;
 }
-.botao:hover:not(:disabled) { border-color: #cfc8c1; background: var(--suave); }
+.botao:hover:not(:disabled) { border-color: var(--linha-forte); background: var(--suave); }
 .botao:disabled { opacity: .5; cursor: not-allowed; }
 
 .botao-primario { background: var(--vermelho); border-color: var(--vermelho); color: #fff; }

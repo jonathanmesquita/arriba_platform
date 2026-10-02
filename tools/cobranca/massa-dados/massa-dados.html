@@ -157,13 +157,13 @@
     }
 
     .generator-btn:hover {
-      background: #f3f1ee;
+      background: var(--surface-soft);
       color: var(--ink);
       transform: translateX(2px);
     }
 
     .generator-btn.active {
-      background: #dcebea;
+      background: var(--blue-soft);
       color: var(--ink);
     }
 
@@ -180,7 +180,7 @@
 
     .generator-btn.active .generator-icon {
       background: var(--red);
-      color: #fff;
+      color: var(--rw-on-primary);
     }
 
     .generator-btn .chevron {
@@ -189,10 +189,10 @@
 
     .sidebar-note {
       border-left: 4px solid var(--gold);
-      background: #fff8df;
+      background: rgb(from var(--gold) r g b / .14);
       border-radius: 9px;
       padding: 12px 14px;
-      color: #3a332b;
+      color: var(--ink);
       margin-top: 18px;
       font-size: .9rem;
       line-height: 1.45;
@@ -371,12 +371,12 @@
 
     .btn-red-arriba {
       background: var(--red);
-      color: #fff;
+      color: var(--rw-on-primary);
     }
 
     .btn-red-arriba:hover {
       background: var(--rw-red-ink);
-      color: #fff;
+      color: var(--rw-on-primary);
     }
 
     .preview-tabs {
@@ -425,7 +425,7 @@
 
     .validation-msg.warn {
       border-left-color: var(--gold);
-      background: #fff8df;
+      background: rgb(from var(--gold) r g b / .14);
     }
 
     .validation-msg.error {

@@ -77,3 +77,15 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
     três cópias para manter em sincronia.
   - Ação: gerar o `:root` dos apps a partir do `tokens.css` no build, ou publicar os tokens
     como um arquivo compartilhado.
+- [ ] Conferir contraste também nos estados abertos 📅 2026-10-02 🔼 média #area/site #esforco/m 🤖
+  - Contexto: `scripts/conferir-contraste.mjs` mede o que está pintado **no carregamento**.
+    Os piores defeitos de tema não estavam ali — estavam no chat aberto, no mega-menu e na
+    modal, que a conferência de página nunca vê. Foram achados com um segundo roteiro, que
+    abria cada estado antes de medir, e esse roteiro não ficou no repositório.
+  - Ação: acrescentar ao script um modo que abre os estados (chat, mega-menu, busca, painel
+    de resultado, `<details>`) antes de medir, com a lista declarada por página.
+- [ ] Tema escuro nos dois apps 📅 2026-10-02 🔽 baixa #area/site #esforco/m 🤖
+  - Contexto: `apps/arriba-chat-ia` e `apps/comunicados` não têm tema escuro — por isso as
+    cores semânticas fixas deles (`#8c2430`, `#14603c`, `#7a5a00`) ainda passam. No dia em
+    que o tema entrar, elas precisam virar o par cheia/`-ink` como no site.
+  - Local: `apps/*/web/src/styles.css`

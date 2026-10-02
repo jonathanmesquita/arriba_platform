@@ -65,7 +65,7 @@
       font-weight: 800; font-size: .86rem; cursor: pointer;
     }
     .licao-item:hover { background: var(--surface-soft); }
-    .licao-item.active { background: #e8f0fb; color: var(--ink); }
+    .licao-item.active { background: var(--blue-soft); color: var(--ink); }
     .licao-item .num { font-size: .72rem; color: var(--muted); }
     .licao-item.concluida .check { color: var(--ok); }
 
@@ -74,7 +74,7 @@
       display: grid; place-items: center; aspect-ratio: 1; border-radius: 10px;
       background: var(--surface-soft); font-size: 1.3rem; opacity: .3; border: 1px solid var(--line);
     }
-    .badge-icon.unlocked { opacity: 1; background: #fff8df; border-color: var(--gold); }
+    .badge-icon.unlocked { opacity: 1; background: rgb(from var(--gold) r g b / .14); border-color: var(--gold); }
 
     .main-stack { display: grid; gap: 18px; min-width: 0; }
     .card-section { padding: 26px; }
@@ -91,7 +91,7 @@
       border-radius: 8px; padding: 14px; overflow-x: auto; white-space: pre; margin: 0;
     }
     textarea.sql-editor { width: 100%; min-height: 110px; resize: vertical; border: 1px solid var(--line); }
-    .sim-nota { border-left: 4px solid var(--gold); background: #fff8df; padding: 10px 12px; border-radius: 7px; font-size: .84rem; color: #5b4d20; margin-top: 10px; }
+    .sim-nota { border-left: 4px solid var(--gold); background: rgb(from var(--gold) r g b / .14); padding: 10px 12px; border-radius: 7px; font-size: .84rem; color: var(--rw-olive-ink); margin-top: 10px; }
 
     .tryit-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 16px; align-items: start; }
     .tryit-main { min-width: 0; }
@@ -101,10 +101,10 @@
       background: var(--surface-soft); padding: 12px 14px; font-size: .86rem; color: var(--muted);
     }
     .sql-result-meta { font-size: .8rem; color: var(--muted); margin-bottom: 8px; }
-    .sql-error { color: var(--danger); font-weight: 700; margin: 0; }
+    .sql-error { color: var(--danger-ink); font-weight: 700; margin: 0; }
     .sql-empty { margin: 0; color: var(--muted); }
     .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
-    table.preview-table { width: 100%; border-collapse: collapse; font-size: .82rem; background: #fff; }
+    table.preview-table { width: 100%; border-collapse: collapse; font-size: .82rem; background: var(--surface); }
     table.preview-table th { background: var(--surface-soft); padding: 8px 10px; text-align: left; font-weight: 850; border-bottom: 2px solid var(--line); }
     table.preview-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); }
     table.preview-table tr:last-child td { border-bottom: 0; }
@@ -113,7 +113,8 @@
     .tryit-db-title { font-size: .76rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 8px; }
     .tryit-db-row { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; font-size: .84rem; border-bottom: 1px dashed var(--line); }
     .tryit-db-row:last-child { border-bottom: 0; }
-    .tryit-db-row a { color: var(--red); font-weight: 800; text-decoration: none; }
+    /* `--red` cheio dá 3,96 sobre a superfície suave: link é `--red-ink`. */
+    .tryit-db-row a { color: var(--rw-red-ink); font-weight: 800; text-decoration: none; }
     .tryit-db-row a:hover { text-decoration: underline; }
     .tryit-db-row span:last-child { color: var(--muted); }
 
@@ -123,7 +124,7 @@
 
     .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
     .btn-arriba { min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
-    .btn-red-arriba { background: var(--red); color: #fff; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
     .btn-red-arriba:hover { background: var(--rw-red-ink); }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
@@ -154,11 +155,11 @@
       display: grid; place-items: center; font-weight: 900; font-size: 1.3rem; flex: 0 0 auto;
     }
     .rafael-bubble { background: var(--surface-soft); border-radius: 12px; padding: 14px 16px; font-size: .92rem; line-height: 1.55; }
-    .rafael-bubble strong { color: #4A90E2; }
+    .rafael-bubble strong { color: var(--rw-red-ink); }
 
     .lesson-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
 
-    .celebracao { border: 1px solid var(--gold); background: #fff8df; border-radius: 10px; padding: 14px 16px; margin-top: 14px; font-weight: 800; }
+    .celebracao { border: 1px solid var(--gold); background: rgb(from var(--gold) r g b / .14); border-radius: 10px; padding: 14px 16px; margin-top: 14px; font-weight: 800; }
 
     .hidden { display: none !important; }
 

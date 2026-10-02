@@ -61,9 +61,26 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   adicionar em `searchItems` (exportado). `assets/js/search.js` (busca da home) **importa**
   esse mesmo `searchItems` — não duplicar dados de ferramentas lá. Rode `node --check`
   após editar: não há build para acusar erro de sintaxe.
-- **Cores / design tokens:** `assets/css/tokens.css`. Define os tokens canônicos `--rw-*` e
-  aliases curtos (`--bg`, `--red`, ...). Ferramentas devem **linkar tokens.css e remover o
-  `:root{}` inline**.
+- **Cores / design tokens:** `assets/css/tokens.css`. Paleta **boho tech / Deep Autumn**
+  (out/2026): terracota, oliva, mostarda e areia. Define os tokens canônicos `--rw-*`, os
+  aliases curtos (`--bg`, `--red`, ...) e os nomes `--cor-*`. Ferramentas devem **linkar
+  tokens.css e remover o `:root{}` inline** — trocar a paleta inteira é trocar valor nesse
+  arquivo, e foi o que permitiu a mudança sem tocar nas ferramentas.
+  - **Cada cor tem um uso, medido em contraste** (os números estão no cabeçalho do
+    arquivo): `--rw-red` é preenchimento de botão e texto sobre cartão; **texto sobre a
+    areia é `--rw-red-ink`** (a terracota pura dá 4,27 ali, abaixo de 4,5); `--rw-red-soft`
+    é realce, nunca fundo de botão com texto branco (3,13); `--rw-gold` é **fundo** de selo
+    com texto escuro, nunca texto (2,33); `--rw-accent` (mostarda) só sobre faixa escura.
+    `--rw-line` é divisória decorativa e `--rw-line-strong` é borda de **controle** (campo,
+    select), que precisa de 3:1 para a pessoa achar o campo.
+  - **`--dark` é cor de superfície, não de texto.** Usada como `color:`, ela some no tema
+    escuro — eram 23 ocorrências. Para texto, `--ink`.
+  - **ARMADILHA DO ALIAS:** `--bg: var(--rw-bg)` é substituído **no elemento onde a
+    declaração está**. Declarado só em `:root`, o alias congela o valor claro, e o
+    `body.dark-mode` troca o canônico sem trocar o alias — foi assim que o tema escuro
+    nunca funcionou para quase todo o site, sem ninguém notar. Por isso o bloco de aliases
+    é declarado **nos três escopos** (`:root`, `body.dark-mode`, `[data-theme="dark"]`).
+    Alias novo entra nesse bloco, não no `:root`.
 - **Dark mode:** ativado por `body.dark-mode` (ver `assets/js/theme.js`), salvo em
   localStorage.
 - **Busca do topo (home):** o campo é o `<input id="topbarSearchInput">` da topbar em
@@ -217,6 +234,10 @@ O que falta está em `tasks/` — e as decisões que dependem do dono, em
   aparece numa busca pelo caminho a partir da raiz.
 - Commits pequenos e por parte, em `tipo(escopo): descrição`.
 - Respostas e comentários em **português (Brasil)**.
-- Preservar o visual/tom retro-criativo e a paleta Deep Autumn/Redwood.
+- Preservar o visual/tom retro-criativo e a paleta boho tech (terracota, oliva, mostarda,
+  areia). **Cor nova entra em `tokens.css`, nunca escrita à mão no HTML da ferramenta** — e
+  antes de adotar, medir o contraste do par (texto × fundo) em que ela vai ser usada.
+- Depois de mexer em cor, rodar a conferência de contraste real no navegador, nos **dois**
+  temas: ela pega cor fixa esquecida que a paleta no papel não mostra.
 - Dado de exemplo é sempre fictício: nome, CPF/CNPJ, telefone, e-mail, endereço e número de
   contrato em fixture, exemplo de campo ou schema de sandbox são inventados.

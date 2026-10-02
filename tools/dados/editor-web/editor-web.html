@@ -33,11 +33,11 @@
     .hero {
       background:
         radial-gradient(circle at 90% 10%, rgba(74,144,226,.10), transparent 28%),
-        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+        linear-gradient(90deg, var(--bg) 0%, #fff 100%);
       border-bottom: 1px solid var(--line); padding: 40px 0 28px;
     }
     .container-page { width: min(1400px, calc(100% - 44px)); margin-inline: auto; }
-    .kicker { color: var(--red); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    .kicker { color: var(--rw-red-ink); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
     h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: .98; letter-spacing: -.06em; font-weight: 300; margin: 0 0 14px; }
     .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 820px; margin: 0; }
 
@@ -111,10 +111,10 @@
       font-weight: 900; cursor: pointer; font-size: .9rem; display: inline-flex; align-items: center;
     }
     .btn-red-arriba { background: var(--red); color: #fff; }
-    .btn-red-arriba:hover { background: #a93225; }
+    .btn-red-arriba:hover { background: var(--rw-red-ink); }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line); }
-    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
 
     .switch { display: inline-flex; align-items: center; gap: 7px; font-size: .86rem; font-weight: 800; color: var(--muted); cursor: pointer; }
 

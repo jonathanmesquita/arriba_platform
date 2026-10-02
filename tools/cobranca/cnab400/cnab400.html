@@ -25,7 +25,7 @@
 
     .topbar {
       min-height: 64px;
-      background: #fff;
+      background: var(--surface);
       border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
@@ -41,8 +41,8 @@
 
     .hero {
       background:
-        radial-gradient(circle at 90% 10%, rgba(199, 70, 52, .08), transparent 28%),
-        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+        radial-gradient(circle at 90% 10%, rgb(from var(--red) r g b / .08), transparent 28%),
+        linear-gradient(90deg, var(--bg) 0%, var(--surface) 100%);
       border-bottom: 1px solid var(--line);
       padding: 48px 0 34px;
     }
@@ -50,7 +50,7 @@
     .container-page { width: min(1180px, calc(100% - 44px)); margin-inline: auto; }
 
     .kicker {
-      color: var(--red);
+      color: var(--rw-red-ink);
       text-transform: uppercase;
       letter-spacing: .18em;
       font-weight: 900;
@@ -137,7 +137,7 @@
       width: 100%; max-width: 100%; min-width: 0;
     }
     .form-control:focus, .form-select:focus {
-      border-color: var(--red); box-shadow: 0 0 0 .22rem rgba(199, 70, 52, .14);
+      border-color: var(--red); box-shadow: 0 0 0 .22rem rgb(from var(--red) r g b / .14);
     }
 
     .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
@@ -146,13 +146,13 @@
 
     .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
     .btn-red-arriba { background: var(--red); color: #fff; }
-    .btn-red-arriba:hover { background: var(--red-ink, #a93225); color: #fff; }
+    .btn-red-arriba:hover { background: var(--red-ink, var(--rw-red-ink)); color: #fff; }
     .btn-red-arriba:disabled { background: var(--muted); cursor: not-allowed; }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-dark-arriba:hover { background: #000; color: #fff; }
     .btn-dark-arriba:disabled { background: var(--muted); cursor: not-allowed; }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
-    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
 
     .validation-msg {
       border-left: 4px solid var(--warn);
@@ -166,7 +166,7 @@
 
     .drop-zone {
       border: 1px dashed #a99d94; border-radius: 10px; padding: 26px 18px;
-      background: #fff; color: var(--muted); text-align: center; transition: .18s ease;
+      background: var(--surface); color: var(--muted); text-align: center; transition: .18s ease;
       cursor: pointer; margin-bottom: 14px;
     }
     .drop-zone.drag { border-color: var(--red); background: #fff6f4; color: var(--ink); }
@@ -208,7 +208,7 @@
     }
     .det-row label { font-size: .76rem; margin-bottom: 3px; }
     .det-row .form-control, .det-row .form-select { min-height: 38px; font-size: .82rem; }
-    .det-remove { background: #fff; border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger); }
+    .det-remove { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger); }
 
     .gen-preview {
       background: #101010; color: #f3f3f3; border-radius: 8px; padding: 16px; margin-top: 16px;

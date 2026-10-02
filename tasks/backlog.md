@@ -64,3 +64,16 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 - [ ] Tratamento de retorno (bounce) 📅 2026-10-02 🔽 baixa #area/comunicados #esforco/g
   - Contexto: hoje "ENVIADO" significa que o servidor aceitou, não que chegou.
 - [ ] Limite de taxa no login do portal 📅 2026-10-02 🔼 média #area/comunicados #esforco/p 🤖
+
+## Identidade visual
+
+- [ ] Esfriar menos a arte do hero 📅 2026-10-02 🔽 baixa #area/site #esforco/p 🤖
+  - Contexto: a ilustração do hero (selo "AI" e o gráfico) tem turquesa e rosa pastel, que
+    sobraram da paleta antiga. O véu já é terroso, mas a arte em si continua fria.
+  - Ação: regerar ou recolorir `assets/img/capas-wallpaper-menus/` na paleta nova.
+- [ ] Paleta dos apps em fonte única 📅 2026-10-02 🔽 baixa #area/site #esforco/m 🤖
+  - Contexto: `apps/arriba-chat-ia` e `apps/comunicados` repetem os valores da paleta no
+    próprio `styles.css` porque rodam fora do site e não carregam `tokens.css`. Hoje são
+    três cópias para manter em sincronia.
+  - Ação: gerar o `:root` dos apps a partir do `tokens.css` no build, ou publicar os tokens
+    como um arquivo compartilhado.

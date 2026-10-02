@@ -22,7 +22,7 @@
 
     .topbar {
       min-height: 64px;
-      background: #fff;
+      background: var(--surface);
       border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
@@ -51,7 +51,7 @@
     .hero {
       background:
         radial-gradient(circle at 90% 10%, rgba(199,70,52,.08), transparent 28%),
-        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+        linear-gradient(90deg, var(--bg) 0%, var(--surface) 100%);
       border-bottom: 1px solid var(--line);
       padding: 48px 0 34px;
     }
@@ -62,7 +62,7 @@
     }
 
     .kicker {
-      color: var(--red);
+      color: var(--rw-red-ink);
       text-transform: uppercase;
       letter-spacing: .18em;
       font-weight: 900;
@@ -176,7 +176,7 @@
 
     .choice-btn {
       border: 1px solid var(--line);
-      background: #fff;
+      background: var(--surface);
       border-radius: 10px;
       padding: 18px;
       text-align: left;
@@ -253,7 +253,7 @@
     details.advanced {
       border: 1px solid var(--line);
       border-radius: 10px;
-      background: #fff;
+      background: var(--surface);
       padding: 16px;
     }
 
@@ -285,7 +285,7 @@
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-dark-arriba:hover { background: #000; color: #fff; }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
-    .btn-outline-arriba { background: transparent; border-color: var(--dark); color: var(--dark); }
+    .btn-outline-arriba { background: transparent; border-color: var(--ink); color: var(--ink); }
 
     .validation-list { display: grid; gap: 10px; }
 
@@ -304,14 +304,14 @@
 
     .preview-tab {
       border: 1px solid var(--line);
-      background: #fff;
+      background: var(--surface);
       border-radius: 999px;
       padding: 8px 12px;
       font-weight: 900;
       cursor: pointer;
     }
 
-    .preview-tab.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .preview-tab.active { background: var(--dark); color: #fff; border-color: var(--ink); }
 
     .preview-box {
       background: #101010;
@@ -560,12 +560,12 @@ details > div {
 
 
 /* ===== UX Help + validação suave ===== */
-.required-error,.form-control.required-error,.form-select.required-error,input.required-error,select.required-error{border-color:#c74634!important;background:#fff6f4!important;box-shadow:0 0 0 3px rgba(199,70,52,.10)!important}
+.required-error,.form-control.required-error,.form-select.required-error,input.required-error,select.required-error{border-color:var(--red)!important;background:#fff6f4!important;box-shadow:0 0 0 3px rgba(199,70,52,.10)!important}
 .required-error-message{display:block;color:#9f2d20;font-size:.78rem;font-weight:800;margin-top:5px}
 .field-ok,.form-control.field-ok,.form-select.field-ok,input.field-ok,select.field-ok{border-color:#74a77b!important}
 .help-action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
-.help-button{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:8px 13px;border-radius:999px;border:1px solid #d8d2cc;background:#fff;color:#161513;font-weight:900;text-decoration:none;cursor:help}
-.help-button:hover,.help-button:focus{border-color:#c74634;color:#c74634}
+.help-button{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:8px 13px;border-radius:999px;border:1px solid #d8d2cc;background:var(--surface);color:#161513;font-weight:900;text-decoration:none;cursor:help}
+.help-button:hover,.help-button:focus{border-color:var(--red);color:var(--red)}
 .help-button .help-tooltip{position:absolute;left:0;top:calc(100% + 10px);width:min(360px,86vw);background:#1f1b19;color:#fff;padding:14px 16px;border-radius:8px;box-shadow:0 18px 48px rgba(0,0,0,.22);opacity:0;visibility:hidden;transform:translateY(-4px);transition:.18s ease;z-index:50;font-weight:500;line-height:1.45}
 .help-button:hover .help-tooltip,.help-button:focus .help-tooltip{opacity:1;visibility:visible;transform:translateY(0)}
 .help-button .help-tooltip strong{display:block;margin-bottom:6px}
@@ -630,7 +630,7 @@ details > div {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 13px;
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
   transition: .18s ease;
 }
@@ -658,7 +658,7 @@ details > div {
   border-radius: 50%;
   background: var(--surface-soft);
   font-weight: 900;
-  color: var(--dark);
+  color: var(--ink);
   font-size: .84rem;
 }
 
@@ -688,7 +688,7 @@ details > div {
 .record-edit-tab {
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: #fff;
+  background: var(--surface);
   color: var(--ink);
   padding: 8px 13px;
   font-weight: 900;
@@ -698,7 +698,7 @@ details > div {
 .record-edit-tab.active {
   background: var(--dark);
   color: #fff;
-  border-color: var(--dark);
+  border-color: var(--ink);
 }
 
 .record-context {
@@ -758,7 +758,7 @@ select.required-missing {
 
 .preview-selected-list span {
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--surface);
   border-radius: 999px;
   padding: 6px 10px;
   font-weight: 800;

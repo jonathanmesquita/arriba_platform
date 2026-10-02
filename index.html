@@ -36,7 +36,7 @@
             position: sticky;
             top: 0;
             z-index: 1060;
-            background: #fff;
+            background: var(--surface);
             border-bottom: 1px solid var(--line);
         }
 
@@ -50,7 +50,7 @@
         }
 
         .enterprise-brand {
-            color: var(--red);
+            color: var(--rw-red-ink);
             font-size: 1.55rem;
             font-weight: 900;
             letter-spacing: -0.06em;
@@ -74,7 +74,7 @@
             height: 48px;
             border: 1px solid #cfc8c1;
             border-radius: 6px;
-            background: #fff;
+            background: var(--surface);
             color: var(--muted);
             display: flex;
             align-items: center;
@@ -86,7 +86,7 @@
         .enterprise-search:hover,
         .enterprise-search:focus-within {
             border-color: var(--red);
-            box-shadow: 0 0 0 3px rgba(199, 70, 52, .12);
+            box-shadow: 0 0 0 3px rgb(from var(--red) r g b / .12);
         }
 
         .enterprise-search input {
@@ -166,7 +166,7 @@
         }
 
         .category-band {
-            background: #fff;
+            background: var(--surface);
             border-bottom: 1px solid var(--line);
             padding: 26px 0 24px;
         }
@@ -206,7 +206,7 @@
             min-height: 118px;
             border: 1px solid var(--line);
             border-radius: 8px;
-            background: #fff;
+            background: var(--surface);
             color: var(--ink);
             display: grid;
             place-items: center;
@@ -226,10 +226,10 @@
 
         .portfolio-hero {
             --hero-accent: var(--rw-accent-teal);
-            --hero-deep: #102b38;
+            --hero-deep: var(--rw-deep-2);
             --hero-bg-image: url("assets/img/capas-wallpaper-menus/arriba-hero-bg.webp");
             position: relative;
-            background: #102b38;
+            background: var(--rw-deep-2);
             color: #fff;
             overflow: hidden;
             padding: clamp(58px, 7vw, 92px) 0 clamp(118px, 8vw, 136px);
@@ -244,9 +244,13 @@
             z-index: -2;
             background:
                 /* Quase opaco a esquerda (onde fica o texto do hero) e leve a
-                   direita, para a arte de fundo aparecer sem afogar. */
-                linear-gradient(90deg, rgba(10, 24, 31, .96) 0%, rgba(16, 43, 56, .82) 42%, rgba(16, 43, 56, .32) 100%),
+                   direita, para a arte de fundo aparecer sem afogar. O veu e
+                   terroso, nao azul: a arte de fundo e fria e, sem isso, a
+                   faixa do hero briga com a areia do resto da pagina. */
+                linear-gradient(90deg, rgba(30, 23, 19, .96) 0%, rgba(36, 28, 23, .86) 42%, rgba(36, 28, 23, .42) 100%),
                 var(--hero-bg-image) center/cover no-repeat;
+            /* Puxa a arte para o lado quente sem trocar o arquivo. */
+            background-blend-mode: normal, luminosity;
             transform: scale(1.02);
             transition: opacity .45s ease, transform 8s ease;
         }
@@ -271,6 +275,11 @@
             z-index: 1;
         }
 
+        /* Sobre faixa escura o acento é a mostarda; sobre o creme, o tom
+           de texto (declarado acima). */
+        .portfolio-hero .hero-eyebrow,
+        .architecture-board .hero-eyebrow { color: var(--hero-accent, var(--rw-accent)); }
+
         .portfolio-hero-grid {
             display: grid;
             grid-template-columns: minmax(0, .9fr) minmax(430px, 1.1fr);
@@ -279,7 +288,9 @@
         }
 
         .hero-eyebrow {
-            color: var(--rw-accent-teal);
+            /* Mostarda só sobre a faixa escura (7,73); sobre o creme ela dá
+               2,09 e reprova — por isso o padrão aqui é o tom de texto. */
+            color: var(--rw-red-ink);
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -320,6 +331,12 @@
         }
 
         .enterprise-btn {
+            /* <button> tem fundo e borda próprios do navegador; sem zerar
+               aqui, a mesma classe fica cinza em botão e transparente em
+               link. */
+            background: transparent;
+            border: 0;
+            cursor: pointer;
             min-height: 46px;
             border-radius: 5px;
             display: inline-flex;
@@ -332,7 +349,7 @@
         }
 
         .enterprise-btn-primary {
-            background: #fff;
+            background: var(--surface);
             color: #111;
         }
 
@@ -394,7 +411,7 @@
             border-bottom: 1px solid #d8d0ca;
             background:
                 linear-gradient(180deg, transparent 24%, rgba(0, 0, 0, .05) 24% 25%, transparent 25% 49%, rgba(0, 0, 0, .05) 49% 50%, transparent 50% 74%, rgba(0, 0, 0, .05) 74% 75%, transparent 75%),
-                linear-gradient(90deg, rgba(115, 201, 199, .4) 0 8%, rgba(115, 201, 199, .52) 8% 22%, rgba(199, 70, 52, .14) 22% 44%, rgba(115, 201, 199, .3) 44% 63%, rgba(199, 70, 52, .16) 63% 82%, rgba(115, 201, 199, .5) 82% 100%);
+                linear-gradient(90deg, rgba(115, 201, 199, .4) 0 8%, rgba(115, 201, 199, .52) 8% 22%, rgb(from var(--red) r g b / .14) 22% 44%, rgba(115, 201, 199, .3) 44% 63%, rgb(from var(--red) r g b / .16) 63% 82%, rgba(115, 201, 199, .5) 82% 100%);
             clip-path: polygon(0 70%, 8% 24%, 18% 16%, 27% 28%, 36% 74%, 48% 78%, 62% 65%, 73% 72%, 84% 55%, 94% 32%, 100% 28%, 100% 100%, 0 100%);
         }
 
@@ -407,7 +424,7 @@
             border-radius: 16px;
             display: grid;
             place-items: center;
-            background: linear-gradient(135deg, #73c9c7, #c74634);
+            background: linear-gradient(135deg, #73c9c7, var(--red));
             box-shadow: 0 24px 54px rgba(0, 0, 0, .32);
             color: #fff;
             font-size: 2.4rem;
@@ -442,7 +459,7 @@
             height: 58px;
             border-radius: 50%;
             object-fit: cover;
-            background: #fff;
+            background: var(--surface);
             border: 3px solid #fff;
         }
 
@@ -457,7 +474,7 @@
         .assistant-search button {
             border: 0;
             border-right: 1px solid rgba(0, 0, 0, .08);
-            background: #fff;
+            background: var(--surface);
             color: var(--muted);
             display: flex;
             align-items: center;
@@ -602,7 +619,7 @@
             width: 0%;
             height: 100%;
             border-radius: inherit;
-            background: #fff;
+            background: var(--surface);
             transition: width .25s ease;
         }
 
@@ -625,7 +642,7 @@
         }
 
         .section-heading span {
-            color: var(--red);
+            color: var(--rw-red-ink);
             display: inline-block;
             font-size: .76rem;
             font-weight: 900;
@@ -659,7 +676,7 @@
             min-height: 250px;
             border: 1px solid var(--line);
             border-radius: 8px;
-            background: #fff;
+            background: var(--surface);
             color: var(--ink);
             padding: 24px;
             text-decoration: none;
@@ -678,14 +695,14 @@
             height: 44px;
             border-radius: 4px;
             background: #f0ebe5;
-            color: var(--red);
+            color: var(--rw-red-ink);
             display: grid;
             place-items: center;
             margin-bottom: 20px;
         }
 
         .portfolio-card span {
-            color: var(--red);
+            color: var(--rw-red-ink);
             font-size: .72rem;
             font-weight: 900;
             letter-spacing: .12em;
@@ -707,7 +724,7 @@
         }
 
         .case-band {
-            background: #e9e4de;
+            background: var(--rw-surface-2);
         }
 
         .case-grid {
@@ -718,7 +735,7 @@
         }
 
         .case-copy {
-            background: #fff;
+            background: var(--surface);
             border-radius: 8px;
             padding: 34px;
             border: 1px solid var(--line);
@@ -807,10 +824,14 @@
         }
 
         .enterprise-footer {
-            background: #fff;
+            background: var(--surface);
             border-top: 1px solid var(--line);
             padding: 24px 0;
         }
+
+        /* Link do rodapé sem cor declarada caía no azul padrão do
+           navegador — some no tema escuro e destoa no claro. */
+        .enterprise-footer a { color: var(--ink); }
 
         .enterprise-footer-inner {
             display: flex;
@@ -1299,8 +1320,8 @@
                     coverLabel: "Portal de ferramentas",
                     dashboard: "Ferramentas recorrentes centralizadas em um portal unico",
                     question: "Qual arquivo precisa ser validado agora?",
-                    accent: "#c74634",
-                    deep: "#16191d",
+                    accent: "#D9A93C",   // mostarda: 7,73 de contraste sobre a faixa escura
+                    deep: "#241C17",     // charcoal terroso, no lugar do cinza frio
                     summary: "Portal de ferramentas para suporte, dados e documentacao."
                 }
             ];

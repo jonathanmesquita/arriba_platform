@@ -27,7 +27,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1050;
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--rw-line);
     transition: background-color .22s ease, border-color .22s ease;
 }
@@ -87,7 +87,7 @@ body.dark-mode .rw-flag-btn:hover {
     height: 42px;
     border: 1px solid #cfc8c1;
     border-radius: 5px;
-    background: #fff;
+    background: var(--surface);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -173,7 +173,7 @@ body.dark-mode .rw-search-trigger {
 .rw-page-hero {
     background:
         radial-gradient(circle at 90% 0, rgba(255,255,255,.82), transparent 26%),
-        linear-gradient(90deg, #f7f5f2 0%, #fdfcfb 100%);
+        linear-gradient(90deg, var(--bg) 0%, #fdfcfb 100%);
     padding: clamp(72px, 9vw, 118px) 0;
 }
 
@@ -271,7 +271,7 @@ body.dark-mode .rw-btn-secondary {
 }
 
 .rw-flow-card {
-    background: #fff;
+    background: var(--surface);
     border-radius: 8px;
     padding: 28px;
     box-shadow: var(--rw-shadow);
@@ -322,7 +322,7 @@ body.dark-mode .rw-diagram-node {
 /* Sections and cards */
 .rw-section {
     padding: 82px 0;
-    background: #fff;
+    background: var(--surface);
 }
 
 .rw-section-light {
@@ -433,7 +433,7 @@ body.dark-mode .rw-doc-card {
     left: 0;
     width: min(980px, 94vw);
     height: 100vh;
-    background: #f7f5f2;
+    background: var(--bg);
     color: var(--rw-ink);
     z-index: 3010;
     display: grid;
@@ -454,7 +454,7 @@ body.dark-mode .rw-doc-card {
     align-items: center;
     justify-content: space-between;
     padding: 0 28px;
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--rw-line);
 }
 
@@ -473,7 +473,7 @@ body.dark-mode .rw-doc-card {
 }
 
 .enterprise-menu-column {
-    background: #fff;
+    background: var(--surface);
     border-right: 1px solid var(--rw-line);
 }
 
@@ -483,7 +483,14 @@ body.dark-mode .rw-doc-card {
 }
 
 .enterprise-menu-detail {
-    background: #fff;
+    background: var(--surface);
+}
+
+/* Qualquer link dentro do mega-menu: sem isto, <a> sem regra cai no azul
+   padrão do navegador — invisível sobre a superfície escura. */
+.enterprise-menu a,
+.enterprise-menu-detail a {
+    color: var(--rw-ink);
 }
 
 .enterprise-menu-item,
@@ -491,6 +498,10 @@ body.dark-mode .rw-doc-card {
     width: 100%;
     border: 0;
     background: transparent;
+    /* Sem isto o <button> herda o preto padrão do navegador (buttontext) e
+       some no tema escuro — foi assim que "Plataforma" e "Ferramentas"
+       ficaram pretos sobre marrom. */
+    color: var(--rw-ink);
     padding: 15px 14px;
     text-align: left;
     font-weight: 900;
@@ -547,8 +558,8 @@ body.dark-mode .rw-doc-card {
 
 .enterprise-menu-badge {
     display: inline-block;
-    background: rgba(199,70,52,.1);
-    color: var(--rw-red);
+    background: rgb(from var(--rw-red) r g b / .08);
+    color: var(--rw-red-ink);
     border-radius: 999px;
     padding: 4px 9px;
     font-size: .75rem;
@@ -638,7 +649,7 @@ body.dark-mode .enterprise-submenu-item:hover {
     left: 50%;
     transform: translateX(-50%);
     width: min(980px, 92vw);
-    background: #fff;
+    background: var(--surface);
     color: var(--rw-ink);
     border: 1px solid var(--rw-line);
     border-radius: 8px;
@@ -722,7 +733,7 @@ body.dark-mode .quick-links a:hover {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #fff;
+    background: var(--surface);
     color: #111;
     border-radius: 6px;
     padding: 14px 16px;
@@ -765,7 +776,7 @@ body.dark-mode .quick-links a:hover {
 }
 
 .rw-doc-card {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--rw-line);
     border-radius: 8px;
     padding: 26px;
@@ -792,7 +803,7 @@ body.dark-mode .quick-links a:hover {
 
 .rw-doc-link-card {
     border-top: 5px solid #8fae8f;
-    background: #fff;
+    background: var(--surface);
     border-radius: 8px;
     padding: 22px;
     box-shadow: 0 8px 22px rgba(0,0,0,.08);
@@ -827,7 +838,7 @@ body.dark-mode .quick-links a:hover {
     display: grid;
     grid-template-columns: 160px minmax(0,1fr);
     gap: 18px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--rw-line);
     border-radius: 8px;
     padding: 18px;
@@ -928,7 +939,7 @@ body.dark-mode .rw-blog-card:hover {
 
 /* Footer */
 .rw-footer {
-    background: #fff;
+    background: var(--surface);
     border-top: 1px solid var(--rw-line);
     color: var(--rw-muted);
     padding: 22px 0;

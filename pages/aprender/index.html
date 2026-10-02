@@ -23,7 +23,7 @@
     }
 
     .topbar {
-      min-height: 64px; background: #fff; border-bottom: 1px solid var(--line);
+      min-height: 64px; background: var(--surface); border-bottom: 1px solid var(--line);
       display: flex; align-items: center; gap: 22px; padding: 0 28px;
       position: sticky; top: 0; z-index: 30;
     }
@@ -33,11 +33,11 @@
     .hero {
       background:
         radial-gradient(circle at 88% 12%, rgba(74,144,226,.10), transparent 30%),
-        linear-gradient(90deg, #f7f5f2 0%, #fff 100%);
+        linear-gradient(90deg, var(--bg) 0%, var(--surface) 100%);
       border-bottom: 1px solid var(--line); padding: 48px 0 34px;
     }
     .container-page { width: min(1220px, calc(100% - 44px)); margin-inline: auto; }
-    .kicker { color: var(--red); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    .kicker { color: var(--rw-red-ink); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
     h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); line-height: .98; letter-spacing: -.06em; font-weight: 300; margin: 0 0 16px; }
     .hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.6; max-width: 780px; margin: 0 0 22px; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -109,10 +109,10 @@
       align-items: center; justify-content: center; font-size: .9rem;
     }
     .btn-red-arriba { background: var(--red); color: #fff; }
-    .btn-red-arriba:hover { background: #a93225; color: #fff; }
+    .btn-red-arriba:hover { background: var(--rw-red-ink); color: #fff; }
     .btn-dark-arriba { background: var(--dark); color: #fff; }
     .btn-dark-arriba:hover { color: #fff; opacity: .9; }
-    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--dark); }
+    .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
     .btn-outline-arriba:hover { background: var(--dark); color: #fff; }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line); }
 

@@ -1,45 +1,70 @@
 /* =====================================================================
  * tokens.css — FONTE ÚNICA de design tokens da Arriba Platform
- * Paleta Oracle Redwood / Deep Autumn (terrosa, minimalista).
+ * Paleta "boho tech" / Deep Autumn: terracota, oliva, mostarda e areia.
  *
  * COMO USAR
  * ---------
  * 1) Linke este arquivo ANTES de qualquer outro CSS, em toda página:
  *      <link rel="stylesheet" href="/assets/css/tokens.css">
  * 2) Nas ferramentas, APAGUE o bloco :root{...} inline e use as vars.
- *    Os aliases curtos (--bg, --red, ...) existem justamente para que as
- *    ferramentas atuais (base64-pdf, cnab400, etc.) continuem funcionando
- *    sem reescrever nada — só remover o :root duplicado.
- * 3) Dark mode: o toggle (theme.js) adiciona `dark-mode` no <body>.
- *    Os valores abaixo já respondem a isso automaticamente.
+ *    Os aliases curtos (--bg, --red, ...) e os nomes --cor-* existem para
+ *    que nada precise ser reescrito: trocar a paleta é trocar valor aqui.
+ * 3) Dark mode: o toggle (theme.js) adiciona `dark-mode` no <body>; o
+ *    seletor [data-theme="dark"] também funciona.
+ *
+ * REGRAS DE USO QUE SAÍRAM DA MEDIÇÃO DE CONTRASTE (WCAG 2.1)
+ * -----------------------------------------------------------
+ * As cores da paleta foram medidas par a par, e três delas NÃO servem
+ * para qualquer coisa — usar fora disso reprova em contraste:
+ *
+ *   --rw-red (#B5532A)  preenchimento de botão (branco em cima: 4,96) e
+ *                       texto sobre CARTÃO (4,78). Sobre o fundo areia
+ *                       como texto dá 4,27 — abaixo de 4,5.
+ *   --rw-red-ink        é o tom de TEXTO/LINK e o hover do botão: 4,98
+ *                       sobre a areia e 5,56 sobre o cartão.
+ *   --rw-red-soft       (#D9783F, a "primária-2") é realce e fundo suave.
+ *                       Com texto branco em cima dá 3,13: NÃO é cor de
+ *                       botão. Hover de botão ESCURECE (red-ink), não
+ *                       clareia.
+ *   --rw-gold (#C9A227) é FUNDO de selo, com texto escuro (6,43). Como
+ *                       texto sobre cartão dá 2,33 — reprova.
+ *
+ * E duas bordas, em vez de uma: `--rw-line` é a divisória decorativa
+ * (fina, discreta) e `--rw-line-strong` é a borda de CONTROLE — campo,
+ * select, botão de contorno —, que precisa de 3:1 para a pessoa achar o
+ * campo. A divisória da paleta (#E2D3C1) tem 1,41 sobre o cartão: boa
+ * para separar seção, insuficiente para delimitar um campo.
  * ===================================================================== */
 
 :root {
   /* ---- Tokens canônicos (Redwood) ---- */
-  /* Valores alinhados à paleta já predominante nas ferramentas (base64-pdf,
-     cnab400-bradesco, massa-dados, csv-template-generator, modelo-carta,
-     ferramentas antigas) — a UI do site (oracle-inspired.css)
-     usava tons quase idênticos e convergiu para estes. */
-  --rw-bg:        #f7f5f2;   /* off-white / areia */
-  --rw-bg-soft:   #fbfaf8;
-  --rw-surface:   #ffffff;   /* cartões */
-  --rw-surface-2: #efede9;   /* superfícies suaves */
-  --rw-ink:       #171412;   /* texto principal (quase preto quente) */
-  --rw-muted:     #625c56;   /* texto secundário */
-  --rw-line:      #d9d2cc;   /* bordas / divisórias */
+  /* Paleta boho tech (out/2026). Substituiu os tons quase-neutros
+     anteriores: a areia e o creme esquentaram, o texto virou marrom café
+     e a terracota ficou mais alaranjada. As ferramentas não precisaram
+     de uma linha de mudança — todas leem daqui. */
+  --rw-bg:        #F5EDE3;   /* areia clara */
+  --rw-bg-soft:   #FBF4EC;
+  --rw-surface:   #FFFAF4;   /* cartões (creme, não branco puro) */
+  --rw-surface-2: #F0E4D6;   /* superfícies suaves */
+  --rw-ink:       #2E211B;   /* marrom café */
+  --rw-muted:     #726254;   /* texto secundário (5,04 sobre a areia) */
+  --rw-line:      #E2D3C1;   /* divisória decorativa */
+  --rw-line-strong: #A88B6B; /* borda de controle — 3,08 sobre o cartão */
 
-  --rw-red:       #c74634;   /* terracotta — acento primário Oracle */
-  --rw-red-ink:   #a93225;   /* hover do vermelho */
-  --rw-gold:      #f0c75e;   /* dourado — destaque/dividers */
-  --rw-olive:     #6b6a3a;   /* verde-oliva (Deep Autumn) */
-  --rw-teal:      #dcebea;   /* teal claro — estados selecionados */
-  --rw-doc-teal:  #1f555e;   /* teal escuro — documentação */
-  --rw-blue-dark: #18213d;
+  --rw-red:       #B5532A;   /* terracota — preenchimento e acento */
+  --rw-red-ink:   #A8491F;   /* texto/link e hover do botão */
+  --rw-red-soft:  #D9783F;   /* realce e fundo suave — NÃO é cor de botão */
+  --rw-on-primary: #FFFAF4;  /* o que fica LEGÍVEL sobre --rw-red */
+  --rw-gold:      #C9A227;   /* mostarda — FUNDO de selo, com texto escuro */
+  --rw-olive:     #6B7A3A;   /* verde-oliva */
+  --rw-tint:      #EDE6D3;   /* tinta suave — estado selecionado (texto café: 12,49) */
+  --rw-deep:      #45351F;   /* marrom profundo — faixas e documentação (branco: 11,78) */
+  --rw-deep-2:    #241C17;   /* charcoal terroso — faixa do hero */
 
-  --rw-dark:      #1f1b19;   /* charcoal — botões escuros/rodapé */
-  --rw-dark-2:    #312d2a;
+  --rw-dark:      #1E1713;   /* charcoal terroso */
+  --rw-dark-2:    #2A201B;
 
-  --rw-accent-teal: #73c9c7; /* acento secundário — hero da home */
+  --rw-accent:    #D9A93C;   /* mostarda clara — acento sobre fundo escuro (7,73) */
 
   /* ---- Semânticos ---- */
   --rw-ok:        #198754;
@@ -54,8 +79,58 @@
   --rw-radius-lg: 16px;
   --rw-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --rw-mono: "Consolas", "Monaco", "SFMono-Regular", monospace;
+}
 
-  /* ---- ALIASES curtos (compatibilidade com as ferramentas atuais) ---- */
+/* =====================================================================
+ * DARK MODE — `body.dark-mode` (theme.js) e [data-theme="dark"].
+ * Os dois seletores existem porque o toggle do site usa a classe e a
+ * proposta de paleta veio escrita com o atributo: aceitar os dois evita
+ * que o tema escuro simplesmente não aconteça dependendo de quem marca.
+ * ===================================================================== */
+body.dark-mode,
+:root[data-theme="dark"] {
+  --rw-bg:        #1E1713;
+  --rw-bg-soft:   #241C17;
+  --rw-surface:   #2A201B;
+  --rw-surface-2: #342820;
+  --rw-ink:       #F3E8DC;
+  --rw-muted:     #AD9C8A;   /* 6,65 sobre o fundo */
+  --rw-line:      #3D2F27;
+  --rw-line-strong: #87705F; /* 3,42 sobre a superfície */
+
+  /* A terracota clareia no escuro para o texto continuar legível (6,68
+     sobre o fundo). Em compensação, o que vai EM CIMA dela deixa de ser
+     branco — branco sobre #E08A55 dá 2,65, reprova. */
+  --rw-red:       #E08A55;
+  --rw-red-ink:   #EFA474;
+  --rw-red-soft:  #8A4524;   /* no escuro o "suave" é mais FECHADO que o fundo */
+  --rw-on-primary: #1E1713;
+
+  --rw-tint:      #3A3022;   /* no escuro o realce é mais quente que a superfície */
+
+  --rw-shadow:    0 18px 48px rgba(0, 0, 0, .45);
+  --rw-shadow-sm: 0 6px 18px rgba(0, 0, 0, .35);
+}
+
+/* =====================================================================
+ * ALIASES — precisam ser declarados DE NOVO em cada escopo de tema.
+ *
+ * A armadilha que isto resolve: `--bg: var(--rw-bg)` é substituído no
+ * elemento onde a DECLARAÇÃO está. Declarado só em `:root`, o alias
+ * congela o valor claro e é esse valor congelado que o `body` herda —
+ * mesmo com `--rw-bg` já escuro no `body.dark-mode`. Resultado: o tema
+ * escuro trocava os tokens canônicos e NÃO trocava nada que usasse os
+ * aliases, que é quase todo o site (medido: com `--rw-bg` em #1E1713, o
+ * `--bg` continuava #F5EDE3).
+ *
+ * Por isso o seletor abaixo repete os três escopos: o alias é declarado
+ * dentro de cada um e resolve contra o canônico daquele escopo. O VALOR
+ * continua num lugar só — aqui só há `var()`.
+ * ===================================================================== */
+:root,
+body.dark-mode,
+:root[data-theme="dark"] {
+  /* ---- Aliases curtos (compatibilidade com as ferramentas atuais) ---- */
   --bg:          var(--rw-bg);
   --surface:     var(--rw-surface);
   --surface-soft:var(--rw-surface-2);
@@ -64,44 +139,44 @@
   --ink:         var(--rw-ink);
   --muted:       var(--rw-muted);
   --line:        var(--rw-line);
+  --line-strong: var(--rw-line-strong);
   --red:         var(--rw-red);
   --gold:        var(--rw-gold);
   --dark:        var(--rw-dark);
   --ok:          var(--rw-ok);
   --warn:        var(--rw-warn);
   --danger:      var(--rw-danger);
-  --blue:        var(--rw-doc-teal);
-  --blue-soft:   var(--rw-teal);
-  --green-soft:  var(--rw-teal);
+  --blue:        var(--rw-deep);
+  --blue-soft:   var(--rw-tint);
+  --green-soft:  var(--rw-tint);
   --shadow:      var(--rw-shadow);
   --radius:      var(--rw-radius);
+
+  /* ---- Nomes da proposta de paleta (--cor-*), para quem preferir ----
+     Mesmos valores, outro nome: há dois vocabulários no repositório e
+     duplicar o VALOR seria criar duas fontes da verdade. */
+  --cor-primaria:   var(--rw-red);
+  --cor-primaria-2: var(--rw-red-soft);
+  --cor-acento:     var(--rw-olive);
+  --cor-dourado:    var(--rw-gold);
+  --cor-fundo:      var(--rw-bg);
+  --cor-superficie: var(--rw-surface);
+  --cor-texto:      var(--rw-ink);
+  --cor-borda:      var(--rw-line);
 
   /* ---- Aliases --rw-* (compatibilidade com manual-builder.html e oracle-inspired.css) ---- */
   --rw-soft:     var(--rw-surface-2);
   --rw-card:     var(--rw-surface);
   --rw-green:    var(--rw-ok);
   --rw-warning:  var(--rw-warn-soft);
-}
 
-/* =====================================================================
- * DARK MODE — ativado por `body.dark-mode` (compatível com theme.js).
- * Só sobrescrevemos as cores; acentos (vermelho/dourado) se mantêm.
- * ===================================================================== */
-body.dark-mode {
-  --rw-bg:        #17150f;   /* charcoal terroso */
-  --rw-bg-soft:   #1d1a14;
-  --rw-surface:   #221e18;
-  --rw-surface-2: #2a251e;
-  --rw-ink:       #f3efe8;   /* off-white como texto */
-  --rw-muted:     #a89f94;
-  --rw-line:      #3a342b;
-
-  --rw-red:       #e06a58;   /* terracotta um pouco mais claro p/ contraste */
-  --rw-red-ink:   #c74634;
-  --rw-teal:      #24484a;
-
-  --rw-shadow:    0 18px 48px rgba(0, 0, 0, .45);
-  --rw-shadow-sm: 0 6px 18px rgba(0, 0, 0, .35);
+  /* Nomes antigos dos tons frios (teal/azul), mantidos porque algumas
+     ferramentas ainda os citam. Apontam para os tons quentes novos — a
+     paleta boho tech não tem azul. */
+  --rw-teal:        var(--rw-tint);
+  --rw-doc-teal:    var(--rw-deep);
+  --rw-blue-dark:   var(--rw-deep-2);
+  --rw-accent-teal: var(--rw-accent);
 }
 
 /* Suavização opcional na troca de tema */

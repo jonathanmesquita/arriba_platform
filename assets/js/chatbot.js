@@ -684,8 +684,16 @@ Tudo que respondo aqui sai da base local do proprio repositorio.
 
         const quickTopics = document.createElement('div');
         quickTopics.className = 'chat-quick-topics';
+        // Cada atalho e um objeto { id, rotulo, resumo } — o rotulo vai no
+        // botao e tambem e o texto enviado como pergunta; o resumo fica no
+        // title. Mandar o objeto inteiro para o template imprimia
+        // "[object Object]" na tela.
         quickTopics.innerHTML = TOPICOS_RAPIDOS
-            .map((topic) => `<button type="button" data-chat-topic="${escapeAttr(topic)}">${escapeHtml(topic)}</button>`)
+            .map((topico) => {
+                const rotulo = typeof topico === 'string' ? topico : topico.rotulo;
+                const resumo = typeof topico === 'string' ? '' : (topico.resumo || '');
+                return `<button type="button" data-chat-topic="${escapeAttr(rotulo)}" title="${escapeAttr(resumo)}">${escapeHtml(rotulo)}</button>`;
+            })
             .join('');
         chatWindow.appendChild(quickTopics);
 

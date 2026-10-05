@@ -4,6 +4,59 @@ Só o que depende de decisão de quem é dono do projeto. Cada item diz o que tr
 
 ---
 
+## ⏳ Marcas de TERCEIROS no repositório (direito autoral / marca registrada)
+
+**Pedido:** "não quero usar nenhuma empresa por enquanto, para evitar direitos autorais."
+
+A descaracterização de out/2026 mirou **uma** empresa e tirou o conteúdo operacional dela.
+Esta verificação (2026-10-05) é outra: procura marca de **qualquer** terceiro. Sobrou coisa,
+e em duas categorias bem diferentes.
+
+### O que foi medido
+
+| O que | Quanto | Usado hoje? | Observação |
+|---|---|---|---|
+| **Logos de bancos** `assets/img/bancos/` | **205 SVG, 87 instituições, 9,0 MB** | **não** — nenhuma página referencia a pasta | são marcas registradas de 87 instituições financeiras, copiadas inteiras |
+| **Ícones de banco na UI** `cnab400/assets/icons/` | 3 SVG | **sim** — aparecem na tela do validador | Bradesco, Itaú e BMP |
+| **Logo da empresa e do produto** `assets/img/logos-assets/` | 2 arquivos | **não** — órfãos | `logo-ph3.webp` e `logo-datacob.png` sobreviveram à descaracterização |
+| **Capturas do produto real** `capas-wallpaper-menus/` | 2 JPG | **não** — órfãos | tela de login (com logo, nome da empresa, "© 2026" e versão interna `v.3.0.289.7`) e **peça de marketing** com os selos ISO 27001 e LGPD |
+| **Capas com o produto no nome** `capas-wallpaper-menus/` | 3 PNG | **não** — órfãos | `capa-01-*-datacob.png` |
+| **Imagem servida pelo site da Oracle** `index.html` | 3 `<img>` | **sim** | `https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg` — o navegador de quem visita busca o arquivo **no servidor da Oracle** |
+| **Nome "Oracle" no design** | `oracle-inspired.css`, README, comentários | sim | "Oracle-inspired", "Oracle style" |
+| **Nomes de banco no CNAB** `banks/*.js` | 3 módulos | sim | `bradesco.js`, `itau.js`, `bmp.js` |
+| **Arquivo de licença / créditos** | **nenhum** | — | o repositório não declara licença própria nem origem de asset de terceiro |
+
+### O que é decisão sua, e por quê
+
+**1. Os 7 órfãos (logo da empresa, logo do produto, as 2 capturas, as 3 capas).**
+Não são usados por nada — removê-los não quebra tela nenhuma. São o resíduo mais direto:
+a captura de marketing traz inclusive selo de certificação de terceiro. *Recomendação:
+remover; é custo zero.*
+
+**2. Os 205 logos de bancos (9,0 MB).** É o item grande, e o `CLAUDE.md` hoje manda o
+contrário — diz para guardá-los "como fonte para quando novos bancos entrarem no CNAB".
+Nenhuma página os usa; só 3 foram copiados para a ferramenta. Travado porque remover
+contraria uma instrução escrita do projeto.
+
+**3. O hotlink da Oracle.** Independente de marca, é frágil: a imagem some se a Oracle
+mudar o caminho, e cada visita do site informa à Oracle quem acessou. Trocar por um ícone
+próprio resolve as duas coisas de uma vez. *Recomendação: trocar.*
+
+**4. Nome de banco no código e na tela.** Diferente dos logos: o CNAB 400 é **especificação
+pública**, e dizer "esta ferramenta lê o CNAB do Bradesco" é uso descritivo — é o que
+torna a ferramenta verificável. O **logo** é que é o ativo de marca. Decisão de apetite,
+não de necessidade.
+
+**5. "Oracle-inspired".** Descreve a inspiração do layout, não se passa pela Oracle. Se a
+régua for "nenhuma empresa", vira "mega-menu corporativo" e o arquivo muda de nome.
+
+**6. Licença.** O repositório é público e não diz sob que termos. Vale decidir a licença
+do que é seu e creditar o que não é (as bandeiras de idioma, as fontes).
+
+> Nota: isto é inventário do que está no repositório, não parecer jurídico.
+
+---
+
 ## ⏳ Até onde vai a descaracterização do projeto
 
 **Pedido:** "projeto de estudos — tirar tudo que relaciona a uma empresa específica, quero

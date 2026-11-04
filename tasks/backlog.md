@@ -109,7 +109,7 @@ tomadas estão em `decisoes-pendentes.md`, não aqui.
     e **`ARRIBA_JWT_SECRET`** no Render; (4) abrir o PR do branch.
   - Nota: nenhuma rota confere papel (`role`) — quem entra pelo Microsoft acessa o mesmo que o
     admin. Se for para ter diferença, é a próxima peça.
-- [ ] Teste de carga dos 3 endpoints Escobs 📅 2026-11-04 🔼 média #area/qa #esforco/m
+- [ ] Teste de carga dos 3 endpoints Escobs — ⏸️ em espera (decisão do dono, 05/11) 📅 2026-11-04 🔽 baixa #area/qa #esforco/m
   - Contexto: collection e environments do Postman foram entregues e validados (freio
     automático 10/10, login 6/6), mas só existem como download: o ambiente foi reciclado e o
     repositório privado não chegou a ser criado. Decidido: k6 contra o mock para volume,

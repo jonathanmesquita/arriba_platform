@@ -31,18 +31,15 @@ Medido em 04/11/2026, ao anexar o repositório para o login com Microsoft:
 
 Em outubro, no site, esse mesmo material foi classificado como risco **alto** e removido.
 
+Conferido em 05/11: **0 forks e 0 estrelas** (tornar privado esconde tudo, sem cópia pública
+sobrando) e **nenhum segredo real no histórico** — os valores de `ARRIBA_JWT_SECRET` e
+`FRESHDESK_WEBHOOK_SECRET` que aparecem nos commits são placeholders ("troque-…").
+
 **O que trava:** apagar os arquivos hoje não tira do histórico do git — num repositório
 público, qualquer um ainda lê as versões antigas. As saídas reais são: (a) tornar o
 repositório **privado** (configuração do GitHub, só o dono faz; resolve inclusive o histórico);
 (b) descaracterizar como foi feito no site e aceitar que o histórico continua exposto; ou
 (c) as duas. O login com Microsoft já entregue não depende dessa escolha.
-
----
-
-## ⏳ Contato na página "Sobre o autor"
-
-A página foi refeita com a apresentação do README. Faltam LinkedIn e e-mail — o README tinha
-`<your-linkedin>` e `<your-email>`, que foram retirados em vez de publicados como estão.
 
 ---
 

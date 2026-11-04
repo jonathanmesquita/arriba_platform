@@ -3,6 +3,9 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Chat do site redesenhado: conversa honesta, acessível e com estilo em fonte única ✅ 2026-11-05 #area/site
+- [x] Decidido: contato da página "Sobre o autor" fica em branco — o repositório oficial está sendo criado ✅ 2026-11-05 #area/site
+- [x] Login com Microsoft validado no servidor (`arriba-api`, branch da sessão) ✅ 2026-11-04 #area/infra
 - [x] Nomes que dizem o que cada ferramenta faz, menu agrupado por ação ✅ 2026-11-04 #area/site
 - [x] Página "Sobre o autor" refeita (era lorem ipsum, com CSS e imagens em 404) ✅ 2026-11-04 #area/site
 - [x] README atualizado e `docs/preview.png` real ✅ 2026-11-04 #area/docs

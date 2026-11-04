@@ -558,7 +558,7 @@ export const TRACK_7_LICOES = [
       { enunciado: "Rode o bloco 4 (Top 5 devedores por valor acordado).", solucao: "SELECT TOP 5 f.Nome AS Devedor, COUNT(pa.Id_Parcela_Acordo) AS Parcelas, SUM(pa.Vl_Parcela) AS Valor_Acordo\nFROM Acordo a\nJOIN Negociacao n ON n.Id_Negociacao = a.Id_Negociacao\nJOIN Financiado f ON f.Id_Financiado = n.Id_Financiado\nJOIN Parcela_Acordo pa ON pa.Id_Acordo = a.Id_Acordo\nGROUP BY f.Nome\nORDER BY Valor_Acordo DESC;" },
       { enunciado: "Desafio: monte a taxa de conversão de negociação em acordo (quantas negociações existem e quantas viraram acordo).", solucao: "SELECT COUNT(*) AS Negociacoes,\n       SUM(CASE WHEN a.Id_Acordo IS NULL THEN 0 ELSE 1 END) AS Fechadas\nFROM Negociacao n\nLEFT JOIN Acordo a ON a.Id_Negociacao = n.Id_Negociacao;" }
     ],
-    rafael: "Query otimizada! 🚀 Você chegou ao fim do Track 7 tendo escrito, do começo ao fim, consultas nas tabelas REAIS do modelo de dados — é o mesmo SQL que você vai rodar em produção. Badges SQL Dashboard Builder e Data Analyst desbloqueados! 👑"
+    rafael: "Query otimizada! 🚀 Você chegou ao fim do curso tendo escrito, do começo ao fim, consultas nas tabelas REAIS do modelo de dados — é o mesmo SQL que você vai rodar em produção. Badges SQL Dashboard Builder e Data Analyst desbloqueados! 👑"
   }
 ];
 

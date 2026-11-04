@@ -1006,15 +1006,15 @@
             </div>
         </header>
 
-        <nav class="enterprise-nav" aria-label="Navegacao principal">
+        <nav class="enterprise-nav" aria-label="Navegação principal">
             <div class="enterprise-nav-inner">
-                <button type="button" id="enterpriseMenuOpenProducts">Produtos</button>
+                <button type="button" id="enterpriseMenuOpenProducts">Menu</button>
                 <a href="#tools-section">Ferramentas</a>
                 <a href="#ia-section">IA</a>
                 <a href="#architecture-section">Arquitetura</a>
                 <a href="pages/aprender/index.html" data-route>Aprender</a>
-                <a href="pages/case-study/index.html" data-route>Case Studies</a>
-                <a href="pages/lab/index.html" data-route>Lab</a>
+                <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
+                <a href="pages/lab/index.html" data-route>Laboratório</a>
             </div>
         </nav>
 
@@ -1024,18 +1024,18 @@
         <section class="category-band" aria-label="Categorias principais">
             <div class="rw-container">
                 <div class="category-grid">
-                    <h2 class="category-group-title category-group-title--infra">Infraestrutura</h2>
-                    <h2 class="category-group-title category-group-title--apps">Aplicações</h2>
+                    <h2 class="category-group-title category-group-title--infra">Arquivos e dados</h2>
+                    <h2 class="category-group-title category-group-title--apps">Código e aprendizado</h2>
 
-                    <a class="category-tile" href="tools/cobranca/cnab400/cnab400.html">Validador CNAB 400</a>
-                    <a class="category-tile" href="tools/cobranca/arriba-csv-generator/csv-template-generator.html">Gerador de CSV</a>
-                    <a class="category-tile" href="tools/cobranca/massa-dados/massa-dados.html">Massa de dados</a>
-                    <a class="category-tile" href="pages/case-study/deploy-cloud.html" data-route>Cloud</a>
-
+                    <a class="category-tile" href="tools/cobranca/cnab400/cnab400.html">Arquivo bancário (CNAB 400)</a>
                     <a class="category-tile" href="tools/dados/csv-validator/csv-validator.html">Validador de CSV</a>
-                    <a class="category-tile" href="tools/dados/editor-web/editor-web.html">Editor Web</a>
+                    <a class="category-tile" href="tools/cobranca/arriba-csv-generator/csv-template-generator.html">Gerador de CSV</a>
+                    <a class="category-tile" href="tools/cobranca/massa-dados/massa-dados.html">Dados fictícios</a>
+
+                    <a class="category-tile" href="tools/dados/editor-web/editor-web.html">Editor HTML, CSS e JS</a>
                     <a class="category-tile" href="tools/cobranca/sql-playground/sql-playground.html">SQL Playground</a>
-                    <a class="category-tile" href="pages/aprender/index.html">Centro de Aprendizado</a>
+                    <a class="category-tile" href="tools/cobranca/treinamento-sql/treinamento-sql.html">Curso de SQL</a>
+                    <a class="category-tile" href="pages/aprender/index.html" data-route>Centro de Aprendizado</a>
                 </div>
             </div>
         </section>
@@ -1055,7 +1055,7 @@
                         <div class="hero-actions">
                             <a class="enterprise-btn enterprise-btn-primary" href="tools/cobranca/cnab400/cnab400.html">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                                Abrir o validador CNAB
+                                Validar um arquivo bancário
                             </a>
                             <a class="enterprise-btn enterprise-btn-secondary" href="pages/case-study/arriba-platform.html" data-route>
                                 Ver a arquitetura
@@ -1066,7 +1066,7 @@
                         </div>
                     </div>
 
-                    <div class="ai-showcase" aria-label="Demonstração visual do copiloto de IA">
+                    <div class="ai-showcase" aria-label="Demonstração visual do assistente">
                         <div class="dashboard-panel">
                             <div class="dashboard-header">
                                 <strong>Arquivo lido e conferido campo a campo, no navegador</strong>
@@ -1080,7 +1080,7 @@
                         <div class="assistant-card">
                             <div class="assistant-question">
                                 <img src="assets/img/frames-arriba-sapo-laranja/sapo-pixelado-laranja-programando.png" alt="Mascote da Arriba programando no notebook">
-                                <span>Quais tickets precisam de acao tecnica hoje?</span>
+                                <span>Qual arquivo precisa ser validado agora?</span>
                             </div>
                             <div class="assistant-search">
                                 <span>Buscar ou perguntar a Arriba</span>
@@ -1095,11 +1095,11 @@
             <section class="section-wrap" id="tools-section">
                 <div class="rw-container">
                     <div class="section-heading">
-                        <span>Infraestrutura de operacao</span>
-                        <h2>Ferramentas que parecem portfolio, mas nasceram de rotina real.</h2>
+                        <span>Ferramentas</span>
+                        <h2>Ferramentas que resolvem trabalho de verdade.</h2>
                         <p>
-                            A ideia e mostrar dominio tecnico com algo que resolve trabalho de verdade:
-                            arquivos, validacoes, documentacao, atendimento e integracoes.
+                            Cada uma nasceu de uma rotina real — validar arquivo, gerar dado de teste,
+                            consultar banco — e roda inteira no navegador: o arquivo não sai da sua máquina.
                         </p>
                     </div>
 
@@ -1108,42 +1108,42 @@
                             <i class="fa-solid fa-file-invoice-dollar"></i>
                             <span>Arquivo bancário</span>
                             <h3>Validador CNAB 400</h3>
-                            <p>Le e gera arquivos de 400 posicoes de varios bancos, campo a campo, com conferencia de trailer.</p>
+                            <p>Lê e gera o arquivo de cobrança que os bancos trocam com as empresas (padrão CNAB de 400 posições), campo a campo.</p>
                         </a>
 
                         <a class="portfolio-card" href="tools/dados/csv-validator/csv-validator.html">
                             <i class="fa-solid fa-table-list"></i>
                             <span>Dados</span>
                             <h3>Validador de CSV</h3>
-                            <p>Separa "o arquivo esta bem formado?" (RFC 4180) de "o conteudo esta certo?" (regras por coluna).</p>
+                            <p>Separa "o arquivo está bem formado?" (RFC 4180) de "o conteúdo está certo?" (regras por coluna).</p>
                         </a>
 
                         <a class="portfolio-card" href="tools/dados/editor-web/editor-web.html">
                             <i class="fa-solid fa-code"></i>
                             <span>Front-end</span>
-                            <h3>Editor Web</h3>
-                            <p>HTML, CSS e JS com preview ao vivo — o codigo roda isolado, sem alcancar a pagina do site.</p>
+                            <h3>Editor HTML, CSS e JS</h3>
+                            <p>Preview ao vivo — o código roda isolado, sem alcançar a página do site.</p>
                         </a>
 
                         <a class="portfolio-card" href="tools/cobranca/sql-playground/sql-playground.html">
                             <i class="fa-solid fa-database"></i>
                             <span>SQL</span>
                             <h3>SQL Playground</h3>
-                            <p>Simulador que roda no navegador, com navegador de schema, historico e consultas salvas.</p>
+                            <p>Banco de dados de treino no navegador, com explorador de tabelas, histórico e consultas salvas.</p>
                         </a>
 
                         <a class="portfolio-card" href="tools/cobranca/massa-dados/massa-dados.html">
                             <i class="fa-solid fa-users"></i>
                             <span>Testes</span>
-                            <h3>Massa de dados</h3>
-                            <p>Nome, CPF/CNPJ valido, telefone e endereco inventados, para testar sem dado de pessoa real.</p>
+                            <h3>Gerador de dados fictícios</h3>
+                            <p>Nome, CPF/CNPJ válido, telefone e endereço inventados, para testar sem dado de pessoa real.</p>
                         </a>
 
                         <a class="portfolio-card" href="tools/dados/decodificador/decodificador.html">
                             <i class="fa-solid fa-right-left"></i>
-                            <span>Utilitarios</span>
-                            <h3>Decodificador universal</h3>
-                            <p>Base64, URL, hex, binario, JWT e entidades HTML, com deteccao automatica de formato.</p>
+                            <span>Utilitários</span>
+                            <h3>Decodificador</h3>
+                            <p>Base64, URL, hex, binário, JWT e entidades HTML, com detecção automática do formato.</p>
                         </a>
 
                     </div>
@@ -1156,30 +1156,30 @@
                         <span class="hero-eyebrow">IA no protótipo</span>
                         <h2>Chat com base de conhecimento e provedor configurável.</h2>
                         <p>
-                            O chat responde primeiro pela base local do proprio repositorio — sem rede,
-                            sem chave, instantaneo. IA de verdade e opt-in: quem quiser liga um provedor
-                            (local ou de nuvem) com a propria chave, que fica no navegador de quem digitou.
+                            O chat responde primeiro pela base local do próprio repositório — sem rede,
+                            sem chave, instantâneo. IA de verdade é opcional: quem quiser liga um provedor
+                            (local ou de nuvem) com a própria chave, que fica no navegador de quem digitou.
                         </p>
 
                         <div class="metric-list">
-                            <div><strong>Base local primeiro</strong><span>Resposta curada e instantanea, sem custo por pergunta.</span></div>
+                            <div><strong>Base local primeiro</strong><span>Resposta curada e instantânea, sem custo por pergunta.</span></div>
                             <div><strong>Falha nunca deixa sem resposta</strong><span>Erro do provedor volta para a base local.</span></div>
-                            <div><strong>A chave e de quem usa</strong><span>Site estatico nao guarda segredo — e o painel avisa disso.</span></div>
+                            <div><strong>A chave é de quem usa</strong><span>Site estático não guarda segredo — e o painel avisa disso.</span></div>
                         </div>
                     </div>
 
                     <div class="architecture-board" id="architecture-section">
-                        <span class="hero-eyebrow">Arquitetura demonstravel</span>
-                        <h2 class="h3">Da pergunta a resposta com fonte.</h2>
+                        <span class="hero-eyebrow">Como funciona</span>
+                        <h2 class="h3">Da pergunta à resposta com fonte.</h2>
                         <div class="architecture-row">
                             <div class="architecture-node"><strong>Pergunta</strong><small>No navegador</small></div>
                             <span><i class="fa-solid fa-arrow-right"></i></span>
-                            <div class="architecture-node"><strong>Base local</strong><small>Busca por relevancia</small></div>
+                            <div class="architecture-node"><strong>Base local</strong><small>Busca por relevância</small></div>
                             <span><i class="fa-solid fa-arrow-right"></i></span>
-                            <div class="architecture-node"><strong>Provedor (opcional)</strong><small>So quando a base nao cobre</small></div>
+                            <div class="architecture-node"><strong>Provedor (opcional)</strong><small>Só quando a base não cobre</small></div>
                         </div>
                         <p class="mb-0 text-white-50">
-                            O que ha para explicar aqui e a decisao: onde o segredo mora, o que acontece
+                            O que há para explicar aqui é a decisão: onde o segredo mora, o que acontece
                             quando o provedor falha e por que a base vem antes do modelo.
                         </p>
                     </div>
@@ -1189,34 +1189,34 @@
             <section class="section-wrap">
                 <div class="rw-container">
                     <div class="section-heading">
-                        <span>O que destacar</span>
-                        <h2>As decisões por tras do prototipo.</h2>
+                        <span>Estudos de caso</span>
+                        <h2>As decisões por trás do protótipo.</h2>
                     </div>
 
                     <div class="portfolio-card-grid">
                         <a class="portfolio-card" href="pages/case-study/arriba-platform.html" data-route>
                             <i class="fa-solid fa-diagram-project"></i>
-                            <span>Case</span>
-                            <h3>Arriba Platform</h3>
-                            <p>Arquitetura, decisoes tecnicas, evolucao e proposta de valor.</p>
+                            <span>Arquitetura</span>
+                            <h3>Como o site foi construído</h3>
+                            <p>Arquitetura, decisões técnicas e evolução do projeto.</p>
                         </a>
                         <a class="portfolio-card" href="pages/case-study/chatbot-ai.html" data-route>
                             <i class="fa-solid fa-robot"></i>
                             <span>IA</span>
-                            <h3>Chatbot AI</h3>
-                            <p>Modos de resposta, fallback local e integracao com API.</p>
+                            <h3>Chatbot com IA</h3>
+                            <p>Base local primeiro, provedor opcional e o que acontece quando ele falha.</p>
                         </a>
                         <a class="portfolio-card" href="pages/case-study/deploy-cloud.html" data-route>
                             <i class="fa-solid fa-cloud"></i>
                             <span>Cloud</span>
-                            <h3>Deploy</h3>
-                            <p>Vercel, Render, Cloudflare, dominios e ambiente produtivo.</p>
+                            <h3>Deploy e DNS</h3>
+                            <p>Vercel, Render, Cloudflare, domínio próprio e ambiente de produção.</p>
                         </a>
                         <a class="portfolio-card" href="pages/aprender/index.html" data-route>
                             <i class="fa-solid fa-graduation-cap"></i>
                             <span>Aprender</span>
                             <h3>Centro de Aprendizado</h3>
-                            <p>Trilhas com exemplo real, simulador e exercicio corrigido na hora.</p>
+                            <p>Trilhas com exemplo real, simulador e exercício corrigido na hora.</p>
                         </a>
                     </div>
                 </div>
@@ -1226,9 +1226,9 @@
         <footer class="enterprise-footer">
             <div class="rw-container enterprise-footer-inner">
                 <span>Arriba Platform · protótipo de estudos</span>
-                <span>Front-end estatico, sem build · app de chat com Node e Postgres</span>
+                <span>Front-end estático, sem build · app de chat com Node e Postgres</span>
                 <a href="pages/aprender/index.html" data-route>Aprender</a>
-                <a href="pages/case-study/index.html" data-route>Case Studies</a>
+                <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
             </div>
         </footer>
     </div>
@@ -1310,19 +1310,19 @@
 
             const slides = [
                 {
-                    eyebrow: "Ferramentas de operacao",
-                    title: "Ferramentas de operacao",
-                    copy: "Gerador de CSV, massa de dados ficticios, validadores e utilitarios organizados numa experiencia consistente.",
-                    primary: { label: "Ver ferramentas", href: "#tools-section", icon: "fa-table-list" },
-                    secondary: { label: "Gerador CSV", href: "tools/cobranca/arriba-csv-generator/csv-template-generator.html" },
+                    eyebrow: "Protótipo de estudos",
+                    title: "Ferramentas técnicas que rodam inteiras no navegador.",
+                    copy: "Validadores de arquivo bancário e CSV, simulador SQL, editor com preview ao vivo e um chat com IA — sem servidor no meio, sem dado de ninguém saindo da máquina.",
+                    primary: { label: "Ver as ferramentas", href: "#tools-section", icon: "fa-table-list" },
+                    secondary: { label: "Ver a arquitetura", href: "pages/case-study/arriba-platform.html" },
                     cover: "assets/img/capas-wallpaper-menus/arriba-hero-card.webp",
                     bg: "assets/img/capas-wallpaper-menus/arriba-hero-bg.webp",
                     coverLabel: "Portal de ferramentas",
-                    dashboard: "Ferramentas recorrentes centralizadas em um portal unico",
+                    dashboard: "Arquivo lido e conferido campo a campo, no navegador",
                     question: "Qual arquivo precisa ser validado agora?",
                     accent: "#D9A93C",   // mostarda: 7,73 de contraste sobre a faixa escura
                     deep: "#241C17",     // charcoal terroso, no lugar do cinza frio
-                    summary: "Portal de ferramentas para suporte, dados e documentacao."
+                    summary: "Ferramentas de dados, SQL e front-end que rodam no navegador."
                 }
             ];
 
@@ -1346,13 +1346,13 @@
                 hero.setAttribute("aria-live", "polite");
                 showcase?.setAttribute("role", "button");
                 showcase?.setAttribute("tabindex", "0");
-                showcase?.setAttribute("aria-label", "Avancar slide do portal");
+                showcase?.setAttribute("aria-label", "Avançar slide do portal");
             }
 
             const cover = document.createElement("button");
             cover.type = "button";
             cover.className = "hero-cover-card";
-            cover.setAttribute("aria-label", "Avancar para o proximo destaque");
+            cover.setAttribute("aria-label", "Avançar para o próximo destaque");
             cover.innerHTML = '<img alt=""><span></span>';
             showcase?.appendChild(cover);
 

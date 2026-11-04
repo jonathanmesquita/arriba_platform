@@ -68,6 +68,14 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   adicionar em `searchItems` (exportado). `assets/js/search.js` (busca da home) **importa**
   esse mesmo `searchItems` — não duplicar dados de ferramentas lá. Rode `node --check`
   após editar: não há build para acusar erro de sintaxe.
+  - **Regra de nome (nov/2026): o rótulo diz o que a ferramenta FAZ**, em português, para
+    quem não conhece o domínio — o teste é um recrutador entender sem perguntar. Sigla de
+    nicho vai com explicação ("Arquivo bancário (CNAB 400)"); código interno nunca aparece
+    na tela ("Track 7" virou "Curso de SQL"; "Erro DX001" virou "Falha de conexão com uma
+    API"). O menu agrupa por **ação** (validar, gerar, converter, código e SQL), não pelo
+    domínio. Nome novo muda em quatro lugares: menu/busca aqui, `<title>`/kicker/`<h1>` da
+    página, `caminhoTela` em `assets/data/base-conhecimento.js` e o README. **O caminho do
+    arquivo não muda** — renomear pasta quebra link e import relativo.
 - **Cores / design tokens:** `assets/css/tokens.css`. Paleta **boho tech / Deep Autumn**
   (out/2026): terracota, oliva, mostarda e areia. Define os tokens canônicos `--rw-*`, os
   aliases curtos (`--bg`, `--red`, ...) e os nomes `--cor-*`. Ferramentas devem **linkar

@@ -307,7 +307,7 @@ function concluirLicao(licao) {
   celebracao.classList.remove("hidden");
   celebracao.textContent = badgesNovos.length
     ? `🎉 Lição concluída! Badge${badgesNovos.length > 1 ? "s" : ""} desbloqueado${badgesNovos.length > 1 ? "s" : ""}: ${badgesNovos.map((b) => `${b.emoji} ${b.nome}`).join(", ")}`
-    : "🎉 Lição concluída! Pontos somados ao seu progresso no Track 7.";
+    : "🎉 Lição concluída! Pontos somados ao seu progresso no curso.";
 }
 
 /* ---------------------------------------------------------------------

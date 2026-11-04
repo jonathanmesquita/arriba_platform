@@ -2,11 +2,11 @@
 
 # Arriba Platform
 
-**A study prototype: browser-based technical tooling, in one place.**
+**A study prototype: browser-based technical tools, in one place.**
 
-Fixed-width file parsers (CNAB 400), CSV validator and generator, data generators,
-a SQL sandbox, a live-preview web editor and a multi-provider AI chat app.
-Everything the site does runs in the browser — no server, no data leaving the machine.
+Validators for bank files (CNAB 400) and CSV, test-data generators, a SQL sandbox with
+a course, a live-preview web editor and a multi-provider AI chat app.
+Every tool on the site runs in the browser — no server in the middle, no data leaving the machine.
 
 [**🔗 Live demo → arriba.jm.dev.br**](https://arriba.jm.dev.br/)
 
@@ -17,8 +17,8 @@ Everything the site does runs in the browser — no server, no data leaving the 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=flat-square&logo=bootstrap&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI_API-412991?style=flat-square&logo=openai&logoColor=white)
 
 ![Vercel](https://img.shields.io/badge/Frontend-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 ![Render](https://img.shields.io/badge/Backend-Render-46E3B7?style=flat-square&logo=render&logoColor=white)
@@ -26,45 +26,46 @@ Everything the site does runs in the browser — no server, no data leaving the 
 
 </div>
 
-<!-- Add a real screenshot at docs/preview.png (1280×720 recommended). It is the single
-     biggest factor for a recruiter's first impression — do not ship the README without it. -->
 <div align="center">
-  <img src="docs/preview.png" alt="Arriba Platform — home with Oracle-inspired mega-menu" width="820">
+  <img src="docs/preview.png" alt="Arriba Platform home: search, tool shortcuts and the hero section" width="820">
 </div>
 
 ---
 
 ## Why this exists
 
-Support teams waste time on repetitive, error-prone manual work: decoding Base64
-boletos, reading fixed-width CNAB 400 return files, generating test data, and
-hunting for internal procedures. **Arriba Platform** turns each of those into a
-fast, self-service tool — and keeps the team's manuals and error catalog one search away.
+I work in IT support, and a lot of that job is repetitive, error-prone manual work:
+reading fixed-width bank files, checking CSV imports line by line, generating test data,
+writing the same SQL again. **Arriba Platform** turns each of those into a small,
+self-service tool that runs in the browser.
 
-It also serves a second purpose: it's my portfolio. Instead of a static "about me"
-page, it's a **real product with real users and real content** — which is a stronger
-signal than a to-do app.
+It is also my portfolio, and it is a **study prototype**: the domain (debt-collection
+files and data) is real, but every sample record is invented and no tool talks to a real
+customer system.
 
 ## Highlights
 
-- ⚡ **Client-side by design** — file tools (Base64→PDF, CNAB 400) run entirely in the
-  browser. Zero server cost, zero cold-start latency, and sensitive customer data
-  **never leaves the machine**.
-- 🧭 **Oracle Redwood UI** — a warm, minimal, earthy design system with a mega-menu,
-  global search, and native dark mode.
-- 🗂️ **Single source of truth** — navigation, search index, and design tokens are each
-  defined in exactly one place, so adding a tool or changing a color touches one file.
-- 🏦 **Domain-accurate parsers** — the CNAB 400 (Bradesco) parser/generator was validated
-  byte-by-byte against the official bank layout and real return files.
-- 🤖 **AI assistant** — an OpenAI-backed support copilot integrated into the platform.
+- ⚡ **Client-side by design** — the file tools run entirely in the browser: no server cost,
+  no cold start, and the file never leaves the machine.
+- 🎨 **Own design system** — a warm, earthy palette defined as tokens in a single file, with a
+  dark mode checked by an automated contrast audit (WCAG 2.1) on every page, in both themes.
+- 🗂️ **Single source of truth** — navigation, search index and design tokens each live in
+  exactly one file, so adding a tool or changing a color touches one place.
+- 🏦 **Real file formats** — the CNAB 400 tool reads and generates bank files for three banks,
+  field by field; the CSV validator follows RFC 4180 (quotes, escaped quotes, line breaks
+  inside fields).
+- 🤖 **AI chat app** — Node, Express and Postgres, multiple AI providers, a knowledge base with
+  cited sources, and an audit trail.
+- 🔒 **Security from the start** — user code runs in a sandboxed iframe, every CDN library is
+  pinned with an SRI hash, and provider keys are encrypted at rest (AES-256-GCM).
 
 ## Tech stack
 
 | Layer | Technology | Hosting |
 |---|---|---|
-| **Frontend** | Vanilla HTML/CSS/JavaScript + Bootstrap 5, custom Oracle-inspired design system | Vercel |
-| **App backend** | Node.js + Express + Prisma/Postgres (chat app only, in `apps/`) | not deployed yet |
-| **Infra / DNS** | Cloudflare (`jm.dev.br`) | Cloudflare |
+| **Frontend** | Vanilla HTML/CSS/JavaScript + Bootstrap 5, own token-based design system | Vercel |
+| **Apps backend** | Node.js + Express + Prisma (Postgres for the chat app, SQLite for the mail app), in `apps/` | not deployed yet |
+| **DNS** | Cloudflare (`jm.dev.br`) | Cloudflare |
 
 > No framework on the frontend by choice: the tools are small, must load instantly, and
 > ship as static files. Complexity is added only where it earns its place.
@@ -73,69 +74,69 @@ signal than a to-do app.
 
 ```mermaid
 flowchart LR
-    U[User / Support agent] -->|HTTPS| CF[Cloudflare DNS]
-    CF --> FE[Vercel · Static frontend<br/>HTML · CSS · JS · Bootstrap]
-    FE -->|fetch JSON| API[Render · Express API]
-    API --> AI[OpenAI API]
-    FE -. 100% client-side .-> TOOLS[File tools<br/>Base64→PDF · CNAB 400]
+    U[Visitor] -->|HTTPS| CF[Cloudflare DNS]
+    CF --> FE[Vercel · static site<br/>HTML · CSS · JS]
+    FE -. runs in the browser .-> TOOLS[File and SQL tools<br/>CNAB 400 · CSV · Base64 · SQL sandbox]
+    FE -. optional, visitor's own key .-> LLM[AI provider<br/>Ollama · OpenAI · Anthropic · Gemini]
+    APP[apps/arriba-chat-ia<br/>Express · Postgres] --> LLM
 ```
 
-Most tools never touch the backend — they process files locally in the browser. The
-A server is only used by the chat app, which needs sessions, history and encrypted provider keys.
+The site's tools never touch a backend — they process files locally. A server only exists for
+the apps in `apps/`, which need sessions, history and encrypted keys.
 
 ## Featured tools
 
 | Tool | What it does |
 |---|---|
-| **CNAB 400 Bradesco** | Generates test return files and parses/validates real ones into a readable table |
-| **Base64 → PDF (Boleto)** | Decodes Base64 (raw, Data URI, or embedded in JSON) into a viewable/downloadable PDF |
-| **Massa de Dados** | Generates fictitious test data (valid CPF/CNPJ, names, addresses, emails) |
-| **CSV / JSON utilities** | CSV↔JSON conversion, JSON validation, hashing |
-| **Support Copilot** | AI assistant over the internal knowledge base |
+| **Bank file validator (CNAB 400)** | Reads and generates the fixed-width file banks exchange with companies (three banks), field by field, and checks the trailer totals |
+| **CSV validator** | Separates "is the file well-formed?" (RFC 4180) from "is the content right?" (per-column rules) |
+| **CSV generator by layout** | Builds sample CSV files from a layout — the same source the validator uses |
+| **Test-data generator** | Fictitious names, valid CPF/CNPJ, phones and addresses |
+| **SQL Playground + SQL course** | An in-browser database with schema explorer, history and saved queries, plus lessons with exercises graded on the spot |
+| **Visual SQL query builder** | Builds T-SQL reports by picking tables and filters |
+| **Live web editor** | HTML, CSS and JS with live preview in a sandboxed iframe |
+| **Converters** | CSV→JSON, Base64→PDF, decoder (Base64, URL, JWT, hex), hash calculator |
+| **AI chat app** (`apps/arriba-chat-ia`) | Multi-provider chat with streaming, admin panel, audit log and a knowledge base built from this repo's docs |
+| **Mail templates app** (`apps/comunicados`) | Letter templates with variables and batched e-mail sending, with unsubscribe handling |
 
 ## Run locally
 
-No build step is required for the frontend.
+No build step is required for the site.
 
 ```bash
-# Frontend — clone and serve statically
-git clone https://github.com/<your-username>/arriba_platform.git
+git clone https://github.com/jonathanmesquita/arriba_platform.git
 cd arriba_platform
-npx serve .          # or: VS Code "Live Server"  →  http://localhost:5500
+npx serve .          # or VS Code "Live Server"
 ```
 
-```bash
-# Chat app (optional — needs Postgres)
-cd arriba-api
-npm install
-cp .env.example .env # add your OPENAI_API_KEY etc.
-npm start
-```
+Each app in `apps/` has its own README with setup steps (database, environment variables,
+first admin user).
 
 ## Project structure
 
 ```
 arriba_platform/
-├─ index.html                 # Home (Oracle-style mega-menu + hero + search)
+├─ index.html                 # Home: menu, search and tool shortcuts
 ├─ tools/
-│  ├─ dados/                  # Base64→PDF, CSV↔JSON, Hash, JSON Validator
-│  └─ cobranca/               # CNAB 400, CSV generator, SQL sandbox, ...
-├─ pages/                     # about, case-studies, docs, lab
-├─ erros/                     # support error catalog
+│  ├─ dados/                  # CSV validator, converters, decoder, web editor
+│  └─ cobranca/               # CNAB 400, CSV generator, test data, SQL tools
+├─ pages/                     # about, case studies, guides, lab
+├─ apps/                      # standalone apps with their own backend (not deployed with the site)
 ├─ assets/
-│  ├─ css/tokens.css          # single source of truth for the design system
-│  ├─ js/navigation-v2.js     # menu + search index (data-driven, one place)
-│  └─ data/                   # knowledge-base content
-└─ README.md
+│  ├─ css/tokens.css          # design tokens — the single source of colors
+│  ├─ js/navigation-v2.js     # menu + search index, in one place
+│  └─ data/                   # chat knowledge base, SQL sandbox schema
+├─ scripts/                   # changelog, commit hook, contrast audit
+└─ tasks/                     # the work queue: backlog, bugs, pending decisions
 ```
 
 ## Roadmap
 
-- [ ] Consolidate the 66 internal manuals into a first-class Knowledge Base section
-- [ ] Unify the error catalog into a single searchable page
-- [ ] Bilingual content (PT/EN)
-- [ ] `Ctrl/Cmd + K` global command palette
-- [ ] v2 exploration: Astro + MDX + React islands for SEO-friendly tutorials
+- [ ] Automated tests for the site's pure logic (CSV parser, CNAB engine, validation rules)
+- [ ] Contrast audit for opened states (chat, menu, modals), not only the page on load
+- [ ] Deploy the chat app (managed Postgres, secrets outside the repo)
+- [ ] Sign-in with Microsoft (Azure AD) on the backend
+- [ ] Bilingual content (PT/EN) and a `Ctrl/Cmd + K` command palette
 
 ## About the author
 
@@ -146,8 +147,7 @@ background (technical support + hospitality tech) as an edge, not a gap.
 > *"Aprender é hackear a si mesmo."*
 
 - 🌐 Portfolio: [arriba.jm.dev.br](https://arriba.jm.dev.br/)
-- 💼 LinkedIn: `<your-linkedin>`
-- 📧 Email: `<your-email>`
+- 💻 GitHub: [github.com/jonathanmesquita](https://github.com/jonathanmesquita)
 
 ## License
 

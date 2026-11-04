@@ -22,7 +22,7 @@ export const KNOWLEDGE_BASE = [
     categoria: "Arquivo bancário",
     palavrasChave: ["cnab", "400", "remessa", "retorno", "banco", "boleto", "validar", "rem", "ret"],
     perguntaExemplo: "Como eu confiro se o arquivo de retorno do banco está correto?",
-    caminhoTela: "Ferramentas › Cobrança › Validador CNAB 400",
+    caminhoTela: "Ferramentas › Validar arquivos › Arquivo bancário (CNAB 400)",
     resumo:
       "Lê arquivos de 400 posições (remessa e retorno) de vários bancos, campo a campo, " +
       "e aponta posição inválida, ocorrência desconhecida e trailer que não fecha. " +
@@ -48,7 +48,7 @@ export const KNOWLEDGE_BASE = [
     categoria: "Dados",
     palavrasChave: ["csv", "validar", "delimitador", "cabecalho", "coluna", "importacao", "planilha"],
     perguntaExemplo: "Por que a importação do meu CSV falha?",
-    caminhoTela: "Ferramentas › Dados › Validador de CSV",
+    caminhoTela: "Ferramentas › Validar arquivos › Validador de CSV",
     resumo:
       "Separa dois assuntos que costumam ser confundidos: se o arquivo está bem formado " +
       "(RFC 4180 — aspas, delimitador e quebra de linha dentro do campo) e se o conteúdo " +
@@ -72,7 +72,7 @@ export const KNOWLEDGE_BASE = [
     categoria: "Dados",
     palavrasChave: ["base64", "pdf", "boleto", "decodificar", "json", "data uri"],
     perguntaExemplo: "Recebi um Base64 na resposta da API; como vejo o PDF?",
-    caminhoTela: "Ferramentas › Dados › Boleto Base64 → PDF",
+    caminhoTela: "Ferramentas › Converter e decodificar › Base64 para PDF",
     resumo:
       "Cola-se o Base64 (puro ou dentro de um JSON) e o PDF é montado e aberto no navegador. " +
       "O conteúdo é reconhecido pelos bytes mágicos %PDF, então não importa onde ele esteja no JSON.",
@@ -91,7 +91,7 @@ export const KNOWLEDGE_BASE = [
     categoria: "Front-end",
     palavrasChave: ["editor", "html", "css", "javascript", "preview", "sandbox", "try it yourself"],
     perguntaExemplo: "Tem onde eu testar um trecho de HTML rapidinho?",
-    caminhoTela: "Ferramentas › Dados › Editor Web",
+    caminhoTela: "Ferramentas › Código e SQL › Editor HTML, CSS e JS",
     resumo:
       "Três abas (HTML, CSS, JS) viram um documento só, renderizado ao vivo. O código roda " +
       "isolado em origem opaca: executa de verdade, mas não alcança o armazenamento nem a página do site.",
@@ -111,7 +111,7 @@ export const KNOWLEDGE_BASE = [
     categoria: "SQL",
     palavrasChave: ["sql", "treinamento", "playground", "select", "join", "simulador", "consulta"],
     perguntaExemplo: "Onde eu treino consulta SQL?",
-    caminhoTela: "Documentação › Aprender › Treinamento SQL / SQL Playground",
+    caminhoTela: "Aprender › Trilhas › Curso de SQL / SQL Playground",
     resumo:
       "A trilha traz lições com teoria, exemplo e exercício corrigido na hora; o playground é " +
       "livre, com navegador de schema, histórico e consultas salvas. Tudo roda no navegador, " +
@@ -132,7 +132,7 @@ export const KNOWLEDGE_BASE = [
     categoria: "Dados",
     palavrasChave: ["massa", "dados", "ficticio", "cpf", "cnpj", "teste", "gerador", "fake"],
     perguntaExemplo: "Preciso de CPFs válidos para testar uma importação.",
-    caminhoTela: "Ferramentas › Cobrança › Massa de Dados",
+    caminhoTela: "Ferramentas › Gerar dados de teste › Gerador de dados fictícios",
     resumo:
       "Gera nome, CPF/CNPJ com dígito válido, telefone, CEP, endereço e e-mail brasileiros " +
       "inventados, prontos para exportar em CSV — para testar sem usar dado de pessoa real.",

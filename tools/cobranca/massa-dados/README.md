@@ -1,4 +1,4 @@
-# Massa de Dados cobrança
+# Gerador de dados fictícios
 
 Ferramenta beta para gerar massa fictícia compatível com o Gerador CSV cobrança.
 

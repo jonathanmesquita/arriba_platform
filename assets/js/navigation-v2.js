@@ -1,28 +1,39 @@
+/* =====================================================================
+   Menu e busca — FONTE ÚNICA dos nomes que aparecem no site.
+
+   Regra de nome (nov/2026): cada rótulo diz O QUE A FERRAMENTA FAZ, em
+   português, para quem não conhece o domínio — um recrutador tem de
+   entender sem perguntar. Sigla de nicho (CNAB, JWT) vai junto de uma
+   explicação; código interno ("Track 7", "DX001") não aparece.
+
+   Os CAMINHOS dos arquivos não mudaram: só o texto. Renomear pasta
+   quebraria link e import relativo (ver CLAUDE.md).
+   ===================================================================== */
 const menuData = {
     plataforma: {
-        label: "Plataforma",
+        label: "Sobre o projeto",
         children: {
             overview: {
                 label: "Visão geral",
-                badge: "Produto",
+                badge: "Comece aqui",
                 title: "Arriba Platform",
-                description: "Portal técnico com ferramentas, documentação, cases, labs e assistente inteligente.",
+                description: "Protótipo de estudos com ferramentas que rodam inteiras no navegador: validação de arquivos, SQL, editor web e um chat com IA.",
                 links: [
-                    ["Visão geral", "index.html"],
-                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true],
-                    ["Sobre Jonathan", "pages/about/about_jonathan.html", true]
+                    ["Página inicial", "index.html"],
+                    ["Sobre o autor", "pages/about/about_jonathan.html", true],
+                    ["Como o site foi construído", "pages/case-study/arriba-platform.html", true],
+                    ["Todos os estudos de caso", "pages/case-study/index.html", true]
                 ]
             },
             cases: {
-                label: "Case Study",
-                badge: "Portfolio",
-                title: "Cases técnicos",
-                description: "Documentação de decisões técnicas, arquitetura, deploy e IA.",
+                label: "Estudos de caso",
+                badge: "Decisões técnicas",
+                title: "Estudos de caso",
+                description: "O problema, a decisão tomada e o porquê de cada parte do projeto.",
                 links: [
-                    ["Todos os cases", "pages/case-study/index.html", true],
-                    ["Arriba Platform", "pages/case-study/arriba-platform.html", true],
-                    ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
-                    ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true]
+                    ["Arquitetura do site", "pages/case-study/arriba-platform.html", true],
+                    ["Chatbot com IA", "pages/case-study/chatbot-ai.html", true],
+                    ["Deploy e DNS (Vercel, Render, Cloudflare)", "pages/case-study/deploy-cloud.html", true]
                 ]
             }
         }
@@ -30,167 +41,139 @@ const menuData = {
     ferramentas: {
         label: "Ferramentas",
         children: {
-            dados: {
-                label: "Dados",
-                badge: "Utilitários",
-                title: "Ferramentas de dados",
-                description: "Validadores, conversores e utilitários para a rotina técnica.",
+            validar: {
+                label: "Validar arquivos",
+                badge: "Validação",
+                title: "Validar arquivos",
+                description: "Confere o arquivo campo a campo e aponta a linha e a coluna do erro — sem enviar nada para servidor.",
                 links: [
-                    ["Validador JSON", "tools/dados/json-validator/json_validator.html"],
+                    ["Arquivo bancário (CNAB 400)", "tools/cobranca/cnab400/cnab400.html"],
                     ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
+                    ["Validador de JSON", "tools/dados/json-validator/json_validator.html"]
+                ]
+            },
+            gerar: {
+                label: "Gerar dados de teste",
+                badge: "Massa de teste",
+                title: "Gerar dados de teste",
+                description: "Cria arquivos e documentos de exemplo com dados inventados, para testar sem usar dado de pessoa real.",
+                links: [
+                    ["Gerador de dados fictícios (CPF, nome, endereço)", "tools/cobranca/massa-dados/massa-dados.html"],
+                    ["Gerador de CSV por layout", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+                    ["Editor de cartas com variáveis", "tools/cobranca/modelo-carta-decoder/modelo-carta-builder.html"],
+                    ["Leitor de cartas modelo", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"]
+                ]
+            },
+            converter: {
+                label: "Converter e decodificar",
+                badge: "Conversão",
+                title: "Converter e decodificar",
+                description: "Transforma um formato em outro e revela o que está codificado.",
+                links: [
                     ["CSV para JSON", "tools/dados/csv-to-json/csv-to-json.html"],
-                    ["Calculadora de Hash", "tools/dados/hash-generator/hash-generator.html"],
-                    ["Boleto Base64 → PDF", "tools/dados/base64-pdf/base64-pdf.html"],
-                    ["Decodificador Universal", "tools/dados/decodificador/decodificador.html"],
-                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"],
-                    ["Descriptografador (MD5 + 3DES)", "https://decrypt.jm.dev.br/"],
+                    ["Base64 para PDF", "tools/dados/base64-pdf/base64-pdf.html"],
+                    ["Decodificador (Base64, URL, JWT, hex)", "tools/dados/decodificador/decodificador.html"],
+                    ["Calculadora de hash (MD5, SHA)", "tools/dados/hash-generator/hash-generator.html"]
                 ]
             },
-            crms: {
-                label: "Cobrança",
-                badge: "Domínio",
-                title: "Ferramentas de cobrança",
-                description: "Arquivo bancário, geração de CSV, massa fictícia e SQL — o domínio usado como estudo de caso.",
+            codigo: {
+                label: "Código e SQL",
+                badge: "Desenvolvimento",
+                title: "Código e SQL",
+                description: "Escreva e execute HTML, CSS, JavaScript e SQL direto no navegador.",
                 links: [
-                    ["Validador CNAB 400", "tools/cobranca/cnab400/cnab400.html"],
-                    ["Gerador de CSV", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
-                    ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
-                    ["Massa de Dados", "tools/cobranca/massa-dados/massa-dados.html"],
-                    ["Modelo de Carta · decodificador", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"],
-                    ["Modelo de Carta · criador", "tools/cobranca/modelo-carta-decoder/modelo-carta-builder.html"],
-                    ["Treinamento SQL", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
-                    ["SQL Playground", "tools/cobranca/sql-playground/sql-playground.html"],
-                    ["Gerador de consulta T-SQL", "tools/cobranca/query-builder/query-builder.html"]
-                ]
-            },
-            cloudtools: {
-                label: "Cloud",
-                badge: "Deploy",
-                title: "Ferramentas Cloud",
-                description: "Acesso rápido à API, Render, Vercel, Cloudflare e documentação técnica.",
-                links: [
-                    ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true],
-                    ["Chatbot AI", "pages/case-study/chatbot-ai.html", true]
+                    ["Editor HTML, CSS e JS (preview ao vivo)", "tools/dados/editor-web/editor-web.html"],
+                    ["SQL Playground (simulador no navegador)", "tools/cobranca/sql-playground/sql-playground.html"],
+                    ["Construtor visual de consultas SQL", "tools/cobranca/query-builder/query-builder.html"]
                 ]
             }
         }
     },
-    docs: {
-        label: "Documentação",
+    aprender: {
+        label: "Aprender",
         children: {
-            aprender: {
-                label: "Aprender",
-                badge: "Trilhas",
+            trilhas: {
+                label: "Trilhas",
+                badge: "Prática",
                 title: "Centro de Aprendizado",
-                description: "Trilhas com teoria, exemplos e simulador para praticar na hora.",
+                description: "Teoria curta, exemplo real e exercício corrigido na hora, com pontos e progresso.",
                 links: [
                     ["Centro de Aprendizado", "pages/aprender/index.html", true],
-                    ["Track 7 · Treinamento SQL", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
+                    ["Curso de SQL com exercícios", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
                     ["SQL Playground", "tools/cobranca/sql-playground/sql-playground.html"],
-                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"]
+                    ["Editor HTML, CSS e JS", "tools/dados/editor-web/editor-web.html"]
                 ]
             },
-            help: {
-                label: "Troubleshooting",
-                badge: "Blog",
-                title: "Erros e tópicos",
-                description: "Anotações de diagnóstico em formato de blog técnico.",
+            diagnostico: {
+                label: "Guias de diagnóstico",
+                badge: "Checklists",
+                title: "Guias de diagnóstico",
+                description: "Roteiros curtos para investigar um problema antes de escalar.",
                 links: [
-                    ["Blog de troubleshooting", "pages/docs/blog/index.html", true]
+                    ["Todos os guias", "pages/docs/blog/index.html", true],
+                    ["Falha de conexão com uma API", "pages/docs/blog/index.html#dx001", true],
+                    ["Acesso ou credencial recusada", "pages/docs/blog/index.html#lv005", true],
+                    ["Processamento interrompido", "pages/docs/blog/index.html#pr102", true]
                 ]
             },
             downloads: {
                 label: "Downloads",
                 badge: "Arquivos",
                 title: "Downloads",
-                description: "Modelos, exemplos e arquivos úteis para operação e testes.",
+                description: "Modelos e exemplos para baixar e usar nos testes.",
                 links: [
-                    ["Central de Downloads", "pages/docs/downloads/index.html", true],
-                    ["Gerador de CSV", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
-                    ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
-                    ["Massa de Dados", "tools/cobranca/massa-dados/massa-dados.html"]
-                ]
-            },
-            errors: {
-                label: "Erros e tópicos",
-                badge: "Blog",
-                title: "Erros e documentação",
-                description: "Pesquise erros e encontre tópicos em formato de blog técnico.",
-                links: [
-                    ["Erro DX001 - Falha de conexão", "pages/docs/blog/index.html#dx001", true],
-                    ["Erro LV005 - Licença inválida", "pages/docs/blog/index.html#lv005", true],
-                    ["Erro PR102 - Processamento interrompido", "pages/docs/blog/index.html#pr102", true]
-                ]
-            }
-        }
-    },
-    cloud: {
-        label: "DevOps e Cloud",
-        children: {
-            deploy: {
-                label: "Deploy",
-                badge: "Cloud",
-                title: "Deploy e DNS",
-                description: "Vercel, Render, Cloudflare e dominio proprio.",
-                links: [
-                    ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["Arquitetura da plataforma", "pages/case-study/arriba-platform.html", true]
-                ]
-            },
-            api: {
-                label: "IA",
-                badge: "Protótipo",
-                title: "Assistentes e IA",
-                description: "Chat multi-provedor com base de conhecimento, histórico e painel de administração.",
-                links: [
-                    ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
-                    ["Centro de Aprendizado", "pages/aprender/index.html", true]
+                    ["Central de downloads", "pages/docs/downloads/index.html", true],
+                    ["Gerador de CSV por layout", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+                    ["Gerador de dados fictícios", "tools/cobranca/massa-dados/massa-dados.html"]
                 ]
             }
         }
     },
     lab: {
-        label: "Lab / Portfólios",
+        label: "Laboratório",
         children: {
-            personal: {
-                label: "Portfolios",
-                badge: "Lab",
-                title: "Projetos pessoais",
-                description: "GameDev, IA e experimentos.",
+            experimentos: {
+                label: "Experimentos",
+                badge: "Em andamento",
+                title: "Laboratório",
+                description: "Ideias em estágio inicial — protótipos que ainda não viraram ferramenta.",
                 links: [
-                    ["Lab Psicologia", "pages/lab/index.html", true],
-                    ["Portfolio GameDev", "pages/lab/gamedev/index.html", true],
-                    ["Lab IA", "pages/lab/ai/index.html", true]
+                    ["IA aplicada", "pages/lab/ai/index.html", true],
+                    ["Portfólio em pixel art", "pages/lab/gamedev/index.html", true],
+                    ["Interface e performance", "pages/lab/experiments/index.html", true],
+                    ["Comportamento e UX", "pages/lab/index.html", true]
                 ]
             }
         }
     }
 };
 
+/* [título, palavras-chave, caminho, rota?]
+   As palavras-chave são escritas SEM acento de propósito: normalizeSearch
+   tira o acento dos dois lados (ver .claude/rules/idioma-ptbr.md). */
 export const searchItems = [
-    ["Validador CNAB 400", "cnab 400 multi banco bradesco 237 itau 341 bmp 274 retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo posicional", "tools/cobranca/cnab400/cnab400.html"],
+    ["Arquivo bancário (CNAB 400)", "cnab 400 arquivo bancario banco multi banco bradesco 237 itau 341 bmp 274 retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo posicional", "tools/cobranca/cnab400/cnab400.html"],
     ["Validador de CSV", "csv validador validar arquivo delimitador ponto e virgula cabecalho coluna layout importacao erro linha duplicada cpf cnpj invalido data valor decimal aspas rfc 4180 schema estrutura planilha", "tools/dados/csv-validator/csv-validator.html"],
-    ["Gerador de CSV", "gerador csv carga titular contrato parcela layout recepcao modelo cabecalho", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
-    ["Massa de Dados", "dados ficticios fake cpf cnpj nome telefone cep endereco email csv teste", "tools/cobranca/massa-dados/massa-dados.html"],
-    ["Modelo de Carta", "modelo carta decodificador criador template variaveis campos impressao", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"],
-    ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json download visualizar", "tools/dados/base64-pdf/base64-pdf.html"],
+    ["Gerador de CSV por layout", "gerador csv carga titular contrato parcela layout recepcao modelo cabecalho exemplo arquivo", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+    ["Gerador de dados fictícios", "massa de dados massa de teste dados ficticios fake cpf cnpj nome telefone cep endereco email csv teste", "tools/cobranca/massa-dados/massa-dados.html"],
+    ["Editor de cartas com variáveis", "carta modelo template variaveis campos editor criador documento mala direta", "tools/cobranca/modelo-carta-decoder/modelo-carta-builder.html"],
+    ["Leitor de cartas modelo", "carta modelo template decodificador leitor html gzip variaveis campos impressao", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"],
+    ["Base64 para PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json download visualizar", "tools/dados/base64-pdf/base64-pdf.html"],
     ["Validador de JSON", "json validador validar formatar indentar sintaxe erro parse", "tools/dados/json-validator/json_validator.html"],
-    ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
-    ["Editor Web (HTML/CSS/JS)", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet aprender praticar", "tools/dados/editor-web/editor-web.html"],
+    ["Decodificador (Base64, URL, JWT, hex)", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
+    ["Editor HTML, CSS e JS", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet aprender praticar", "tools/dados/editor-web/editor-web.html"],
     ["CSV para JSON", "csv json converter transformar tabela", "tools/dados/csv-to-json/csv-to-json.html"],
-    ["Calculadora de Hash", "hash md5 sha1 sha256 checksum assinatura", "tools/dados/hash-generator/hash-generator.html"],
-    ["Treinamento SQL", "sql tsql treinamento curso licao select where join group by having quiz gamificacao exercicio sandbox", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
+    ["Calculadora de hash", "hash md5 sha1 sha256 checksum assinatura integridade", "tools/dados/hash-generator/hash-generator.html"],
+    ["Curso de SQL com exercícios", "sql tsql curso treinamento trilha licao select where join group by having quiz gamificacao exercicio sandbox", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
     ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema select join group by csv", "tools/cobranca/sql-playground/sql-playground.html"],
-    ["Gerador de consulta T-SQL", "sql query builder relatorios diagrama tabelas filtros case when tsql export xlsx csv", "tools/cobranca/query-builder/query-builder.html"],
-    ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself progresso pontos badges quiz exercicios simulador sql cnab base64", "pages/aprender/index.html"],
-    ["Blog de troubleshooting", "erros topicos diagnostico blog tecnico", "pages/docs/blog/index.html", true],
-    ["Downloads", "modelos arquivos exemplos", "pages/docs/downloads/index.html", true],
-    ["Chatbot AI", "chat ia assistente provedores base de conhecimento streaming", "pages/case-study/chatbot-ai.html", true],
-    ["Deploy Cloud", "vercel render cloudflare dns deploy", "pages/case-study/deploy-cloud.html", true],
-    ["Arquitetura da plataforma", "case arquitetura decisoes site estatico tokens fonte unica", "pages/case-study/arriba-platform.html", true],
-    ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
-    ["Lab GameDev", "pixel art portfolio jogo", "pages/lab/gamedev/index.html", true],
+    ["Construtor visual de consultas SQL", "sql query builder construtor consulta relatorios diagrama tabelas filtros case when tsql export xlsx csv", "tools/cobranca/query-builder/query-builder.html"],
+    ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself progresso pontos badges quiz exercicios simulador sql cnab base64", "pages/aprender/index.html", true],
+    ["Guias de diagnóstico", "erros topicos diagnostico checklist troubleshooting conexao api credencial processamento blog tecnico", "pages/docs/blog/index.html", true],
+    ["Downloads", "modelos arquivos exemplos baixar", "pages/docs/downloads/index.html", true],
+    ["Chatbot com IA (estudo de caso)", "chat chatbot ia assistente provedores base de conhecimento streaming", "pages/case-study/chatbot-ai.html", true],
+    ["Deploy e DNS (estudo de caso)", "vercel render cloudflare dns deploy hospedagem dominio", "pages/case-study/deploy-cloud.html", true],
+    ["Arquitetura do site (estudo de caso)", "case arquitetura decisoes site estatico tokens fonte unica", "pages/case-study/arriba-platform.html", true],
+    ["Portfólio em pixel art", "pixel art portfolio jogo gamedev", "pages/lab/gamedev/index.html", true],
 ];
 
 function normalizeSearch(value = "") {
@@ -303,12 +286,9 @@ function renderDetail(sectionKey, childKey, activeTabKey) {
             <div class="enterprise-menu-detail-list">
                 ${links.length ? links.map(([label, href, route]) => `
                     <a href="${href}" ${route ? "data-route" : ""}>${label}</a>
-                `).join("") : `<span class="enterprise-menu-empty">Em breve: ferramentas para outros CRMs.</span>`}
+                `).join("") : `<span class="enterprise-menu-empty">Nada aqui ainda.</span>`}
             </div>
 
-            <div class="enterprise-menu-note">
-                Navegação em camadas, leve e sem travar o usuário. O menu troca de contexto ao passar o mouse ou clicar.
-            </div>
         </div>
     `;
 

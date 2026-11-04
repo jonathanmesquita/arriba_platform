@@ -212,6 +212,17 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   backend aqui para guardar segredo. Nunca commitar chave nem colocá-la em variável de
   build — tudo que vai para um site estático é público. O histórico da conversa é só em
   memória.
+  - **Escrita do chat (nov/2026):** o primeiro balão diz que é um **assistente automático**
+    e o que ele faz; quando não sabe, diz "não sei" e oferece caminho — "achei algo
+    parecido" e "não tenho nada" são respostas **diferentes** (misturar as duas era o que
+    fazia "qual a capital da França" virar uma lista de ferramentas). O subtítulo mostra
+    **de onde vem a resposta** (base do site ou provedor), não um humor do mascote. Fala com
+    quem visita o site: nada de "encaminhar para DEV" ou "resposta para cliente".
+  - **Estilo em `assets/css/chatbot.css`, fonte única** — antes eram ~550 linhas em
+    `style.css` que se sobrescreviam. O widget **não usa as classes `.card` do Bootstrap**:
+    as regras globais de `.card-header` (com `!important` no tema escuro) brigavam com o
+    cabeçalho. O lançador **não anima sozinho** (movimento automático sem pausa fere a WCAG
+    2.2.2); movimento só no hover, e some com `prefers-reduced-motion`.
 - **Base de conhecimento do app de chat** (`apps/arriba-chat-ia/server/src/knowledge/`): o
   chat do app consulta a **documentação do próprio repositório** antes de chamar o modelo.
   É cópia importada, não leitura ao vivo (`npm run kb:import` ou o botão na aba "Base de

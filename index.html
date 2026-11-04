@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="assets/css/tokens.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/oracle-inspired.css" />
+    <link rel="stylesheet" href="assets/css/chatbot.css" />
     <style>
         body.rw-body {
             background: var(--bg);
@@ -1233,30 +1234,33 @@
         </footer>
     </div>
 
-    <button id="chatbotBtn" class="btn btn-primary shadow-lg" aria-label="Abrir chatbot">
-        <i class="fas fa-comments"></i>
+    <!-- Chat do site. Estilo em assets/css/chatbot.css, comportamento em
+         assets/js/chatbot.js. Não usa as classes .card do Bootstrap de
+         propósito: as regras globais de .card-header (com !important no
+         tema escuro) brigavam com o cabeçalho do chat. -->
+    <button id="chatbotBtn" type="button" aria-label="Abrir o chat do Arriba Bot" aria-controls="chatbot" aria-expanded="false">
+        <i class="fas fa-comments" aria-hidden="true"></i>
     </button>
 
-    <div id="chatbot" class="chatbot-popup card d-none">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Arriba Bot</span>
-            <button id="closeChat" class="btn-close btn-close-white" aria-label="Fechar chatbot"></button>
-        </div>
+    <section id="chatbot" class="chatbot-popup d-none" aria-labelledby="chatTitle">
+        <header class="chat-header">
+            <div class="chat-header-text">
+                <h2 class="chat-title" id="chatTitle">Arriba Bot</h2>
+                <span class="chat-subtitle" id="chatSubtitle">Assistente automático · responde pela base do site</span>
+            </div>
+            <button type="button" id="closeChat" class="chat-header-btn" aria-label="Fechar o chat">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </header>
 
-        <div class="chat-mode-bar" aria-label="Selecionar modo do chatbot">
-            <button type="button" class="chat-mode-btn active" data-mode="ferramentas">Ferramentas</button>
-            <button type="button" class="chat-mode-btn" data-mode="sql">SQL</button>
-            <button type="button" class="chat-mode-btn" data-mode="devops">DevOps</button>
-            <button type="button" class="chat-mode-btn" data-mode="geral">Geral</button>
-        </div>
+        <div class="chat-window" id="chatWindow" role="log" aria-live="polite" aria-label="Conversa com o Arriba Bot"></div>
 
-        <div class="card-body chat-window" id="chatWindow"></div>
-
-        <div class="card-footer d-flex">
-            <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem...">
-            <button id="sendChat" class="btn btn-primary ms-2">Enviar</button>
-        </div>
-    </div>
+        <form class="chat-form" id="chatForm" autocomplete="off">
+            <label for="chatInput" class="chat-sr-only">Sua pergunta</label>
+            <input type="text" id="chatInput" class="chat-input" placeholder="Pergunte sobre uma ferramenta" maxlength="300">
+            <button type="submit" id="sendChat" class="chat-send">Enviar</button>
+        </form>
+    </section>
 
     <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">

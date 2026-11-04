@@ -1,0 +1,487 @@
+/* =====================================================================
+   Chat do site (Arriba Bot) — FONTE ÚNICA do estilo do widget.
+
+   Antes, o estilo do chat ocupava ~550 linhas de style.css em camadas
+   que se sobrescreviam (duas regras .chatbot-popup, duas .chat-window,
+   três .chat-message strong) e mais um pedaço em oracle-inspired.css.
+   Mudar uma cor num lugar não mudava nada na tela. Agora é este arquivo,
+   e só com tokens de tokens.css — os dois temas viram sozinhos.
+
+   Decisões de design (nov/2026):
+   - O lançador NÃO anima sozinho. O mascote balançava em loop e trocava
+     de imagem a cada 6,5 s: movimento automático sem pausa (WCAG 2.2.2)
+     e o tipo de enfeite que deixa a ferramenta com cara de brinquedo. O
+     movimento ficou só no hover, e some com prefers-reduced-motion.
+   - Alvos de toque de 40 px ou mais em todo botão.
+   - O cabeçalho é cromo escuro fixo (--rw-dark), com texto --rw-on-dark,
+     nos dois temas.
+   ===================================================================== */
+
+/* ---------------- Lançador ---------------- */
+#chatbotBtn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1040;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+#chatbotBtn:hover { border-color: var(--red); }
+#chatbotBtn:focus-visible { outline: 3px solid var(--rw-red-ink); outline-offset: 3px; }
+
+/* O ícone só aparece se a imagem do mascote não carregar. */
+#chatbotBtn.chatbot-mascot-button .fa-comments { display: none; }
+
+.chatbot-mascot-button-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  transition: transform .2s ease;
+}
+
+#chatbotBtn:hover .chatbot-mascot-button-img { transform: translateY(-3px); }
+
+/* ---------------- Janela ---------------- */
+.chatbot-popup {
+  position: fixed;
+  right: 20px;
+  bottom: 92px;
+  z-index: 1050;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: min(600px, calc(100vh - 120px));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Não depender do Bootstrap para esconder: se o CDN falhar, o chat não
+   pode abrir sozinho por cima da página. */
+.chatbot-popup.d-none { display: none; }
+
+/* ---------------- Cabeçalho ---------------- */
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 10px 14px;
+  background: var(--rw-dark);
+  color: var(--rw-on-dark);
+}
+
+.chatbot-mascot-header-img {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.chat-header-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.chat-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--rw-on-dark);
+}
+
+/* Quebra em duas linhas em vez de cortar com reticências: a parte que
+   some primeiro é a que diz de onde vem a resposta — a mais importante. */
+.chat-subtitle {
+  font-size: .75rem;
+  line-height: 1.3;
+  color: rgb(from var(--rw-on-dark) r g b / .8);
+}
+
+.chat-header-btn {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--rw-on-dark);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.chat-header-btn:hover {
+  background: var(--rw-dark-2);
+  border-color: rgb(from var(--rw-on-dark) r g b / .25);
+}
+
+.chat-header-btn:focus-visible { outline: 2px solid var(--rw-accent); outline-offset: 2px; }
+
+/* Engrenagem acesa = há provedor de IA externo ativo: o que for digitado
+   pode sair do navegador. Mostarda sobre a faixa escura, texto escuro. */
+#btnConfigIA.active {
+  background: var(--rw-accent);
+  border-color: var(--rw-accent);
+  color: var(--rw-dark);
+}
+
+/* ---------------- Conversa ---------------- */
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg);
+}
+
+.chat-message {
+  max-width: 90%;
+  font-size: .9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.chat-message p { margin: 0 0 6px; }
+.chat-message p:last-child { margin-bottom: 0; }
+
+/* Quem falou é anunciado ao leitor de tela, mas não ocupa a tela: o lado
+   do balão já diz isso a quem enxerga. */
+.chat-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.user-message {
+  align-self: flex-end;
+  padding: 9px 13px;
+  border-radius: 14px 14px 4px 14px;
+  background: var(--rw-red-ink);
+  color: var(--rw-on-primary);
+}
+
+.user-message a { color: inherit; }
+
+.bot-message {
+  align-self: flex-start;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.chat-message-avatar {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.chat-message-content {
+  min-width: 0;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px 14px 14px 4px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+/* :not(.chat-btn): sem isso, este seletor (mais específico) pintava o
+   texto do botão "Abrir a ferramenta" de terracota sobre terracota. */
+.chat-message-content a:not(.chat-btn) { color: var(--rw-red-ink); text-decoration: underline; }
+
+.typing-indicator { color: var(--muted); font-style: italic; }
+
+/* ---------------- Respostas rápidas ---------------- */
+.chat-quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 36px; /* alinha com o balão, depois do avatar */
+}
+
+.chat-quick-replies button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--rw-red-ink);
+  font-size: .84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chat-quick-replies button:hover { background: var(--surface-soft); border-color: var(--red); }
+
+.chat-quick-replies button:focus-visible,
+.chat-card summary:focus-visible,
+.chat-btn:focus-visible {
+  outline: 2px solid var(--rw-red-ink);
+  outline-offset: 2px;
+}
+
+/* ---------------- Cartão de resposta ---------------- */
+.chat-card h3 {
+  margin: 0 0 4px;
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.chat-card-where {
+  margin: 8px 0 0;
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+.chat-card-where strong { color: var(--ink); font-weight: 700; }
+
+.chat-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chat-btn {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: .82rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.chat-btn-primary {
+  border: 1px solid var(--red);
+  background: var(--red);
+  color: var(--rw-on-primary);
+}
+
+.chat-btn-primary:hover { background: var(--rw-red-ink); border-color: var(--rw-red-ink); color: var(--rw-on-primary); }
+
+.chat-btn-secondary {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--rw-red-ink);
+}
+
+.chat-btn-secondary:hover { background: var(--surface-soft); }
+
+.chat-btn-link {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  text-decoration: underline;
+}
+
+/* Passo a passo em <details> nativo: abre e fecha pelo teclado e o leitor
+   de tela anuncia "expandido/recolhido" sem uma linha de JS. */
+.chat-card details { width: 100%; }
+
+.chat-card summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--rw-red-ink);
+  font-size: .82rem;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.chat-card summary::-webkit-details-marker { display: none; }
+.chat-card summary::after { content: "▾"; margin-left: 6px; }
+.chat-card details[open] summary::after { content: "▴"; }
+
+.chat-card ol,
+.chat-card ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+.chat-card li { margin-bottom: 4px; }
+
+.chat-good-to-know {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  background: rgb(from var(--gold) r g b / .14);
+  color: var(--rw-olive-ink);
+  font-size: .8rem;
+}
+
+.chat-good-to-know ul { margin-top: 4px; }
+
+/* ---------------- Campo de pergunta ---------------- */
+.chat-form {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: .9rem;
+}
+
+.chat-input::placeholder { color: var(--muted); }
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgb(from var(--red) r g b / .22);
+}
+
+.chat-send {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--red);
+  border-radius: 10px;
+  background: var(--red);
+  color: var(--rw-on-primary);
+  font-size: .88rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.chat-send:hover { background: var(--rw-red-ink); border-color: var(--rw-red-ink); }
+.chat-send:focus-visible { outline: 3px solid var(--rw-red-ink); outline-offset: 2px; }
+
+/* ---------------- Painel de configuração do provedor de IA ----------------
+   Injetado por chatbot.js (montarPainelConfig). */
+.chat-config {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-soft);
+  font-size: .86rem;
+}
+
+.chat-config.d-none { display: none; }
+
+.chat-config-label {
+  display: block;
+  margin: 8px 0 3px;
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chat-config-input {
+  width: 100%;
+  min-height: 36px;
+  padding: 5px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: .86rem;
+}
+
+.chat-config-hint {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+.chat-config-hint code { font-size: .72rem; word-break: break-all; }
+.chat-config-hint a { color: var(--rw-red-ink); }
+
+.chat-config-aviso {
+  margin-top: 10px;
+  padding: 9px 11px;
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  background: rgb(from var(--gold) r g b / .14);
+  color: var(--rw-olive-ink);
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+.chat-config-aviso strong { display: block; margin-bottom: 4px; }
+.chat-config-aviso p { margin: 0 0 4px; }
+
+.chat-config-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.chat-config-status {
+  margin: 8px 0 0;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ---------------- Celular ---------------- */
+@media (max-width: 576px) {
+  .chatbot-popup {
+    right: 8px;
+    left: 8px;
+    bottom: 84px;
+    width: auto;
+    max-width: none;
+    height: calc(100vh - 100px);
+  }
+
+  #chatbotBtn { right: 15px; bottom: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chatbot-mascot-button-img { transition: none; }
+  #chatbotBtn:hover .chatbot-mascot-button-img { transform: none; }
+}

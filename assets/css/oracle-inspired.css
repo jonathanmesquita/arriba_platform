@@ -911,32 +911,6 @@ body.dark-mode .rw-blog-card:hover {
 }
 
 /* Chat harmonization */
-.chat-mode-bar {
-    display: flex;
-    gap: 6px;
-    padding: 8px;
-    background-color: var(--rw-dark);
-    border-bottom: 1px solid rgb(from var(--rw-on-dark) r g b / .08);
-    overflow-x: auto;
-}
-
-.chat-mode-btn {
-    border: 1px solid rgb(from var(--rw-on-dark) r g b / .25);
-    background-color: var(--rw-dark-2);
-    color: var(--rw-on-dark);
-    border-radius: 999px;
-    padding: 5px 10px;
-    font-size: .78rem;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.chat-mode-btn.active {
-    background-color: var(--rw-red-ink);
-    border-color: var(--rw-red-ink);
-    color: var(--rw-on-primary);
-}
-
 /* Footer */
 .rw-footer {
     background: var(--surface);

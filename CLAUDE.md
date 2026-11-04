@@ -223,6 +223,11 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     as regras globais de `.card-header` (com `!important` no tema escuro) brigavam com o
     cabeçalho. O lançador **não anima sozinho** (movimento automático sem pausa fere a WCAG
     2.2.2); movimento só no hover, e some com `prefers-reduced-motion`.
+  - **Camada 1070, acima do topo fixo (1060).** Em 1050 o cabeçalho do chat — com o botão de
+    fechar — ficava atrás do topo em qualquer tela abaixo de ~800 px de altura, inclusive
+    no celular, e isso foi para o ar porque o teste rodava só numa janela de 900 px. Mudou
+    tamanho ou posição do chat, confira em várias telas (baixa, notebook, celular, celular
+    deitado) se o fechar e o campo continuam visíveis **e por cima** (`elementFromPoint`).
 - **Base de conhecimento do app de chat** (`apps/arriba-chat-ia/server/src/knowledge/`): o
   chat do app consulta a **documentação do próprio repositório** antes de chamar o modelo.
   É cópia importada, não leitura ao vivo (`npm run kb:import` ou o botão na aba "Base de

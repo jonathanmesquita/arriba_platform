@@ -824,25 +824,74 @@
             text-decoration: none;
         }
 
+        /* Rodapé (nov/2026). Sem "versão" e sem "Atualizado em": o site não tem
+           build, então esses textos teriam de ser trocados à mão e um dia
+           mentiriam. O link do GitHub mostra a data do último commit, sempre
+           certa. Sem links de cookie ou de anúncio: o site não usa nenhum dos
+           dois — conferido no código. */
         .enterprise-footer {
             background: var(--surface);
             border-top: 1px solid var(--line);
-            padding: 24px 0;
+            padding: 28px 0 22px;
         }
-
-        /* Link do rodapé sem cor declarada caía no azul padrão do
-           navegador — some no tema escuro e destoa no claro. */
-        .enterprise-footer a { color: var(--ink); }
 
         .enterprise-footer-inner {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px 26px;
-            align-items: center;
+            gap: 18px 40px;
+            align-items: flex-start;
             justify-content: space-between;
+        }
+
+        .enterprise-footer-about { max-width: 560px; }
+
+        .enterprise-footer-about strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--ink);
+            font-size: .95rem;
+            font-weight: 800;
+        }
+
+        .enterprise-footer-about p {
+            margin: 0;
             color: var(--muted);
+            font-size: .88rem;
+            line-height: 1.5;
+        }
+
+        .enterprise-footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 22px;
+        }
+
+        /* Link sem cor declarada caía no azul padrão do navegador. */
+        .enterprise-footer-links a {
+            color: var(--rw-red-ink);
             font-size: .92rem;
             font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .enterprise-footer-links a:hover { color: var(--ink); }
+
+        .enterprise-footer-copy {
+            margin: 18px 0 0;
+            padding-top: 14px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: .82rem;
+        }
+
+        .enterprise-footer-sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
         }
 
         @media (max-width: 1100px) {
@@ -1225,11 +1274,19 @@
         </main>
 
         <footer class="enterprise-footer">
-            <div class="rw-container enterprise-footer-inner">
-                <span>Arriba Platform · protótipo de estudos</span>
-                <span>Front-end estático, sem build · app de chat com Node e Postgres</span>
-                <a href="pages/aprender/index.html" data-route>Aprender</a>
-                <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
+            <div class="rw-container">
+                <div class="enterprise-footer-inner">
+                    <div class="enterprise-footer-about">
+                        <strong>Arriba Platform · protótipo de estudos de Jonathan Mesquita</strong>
+                        <p>Sem cookies e sem rastreamento: o que o site guarda (tema, progresso, rascunhos) fica só no seu navegador.</p>
+                    </div>
+                    <nav class="enterprise-footer-links" aria-label="Links do rodapé">
+                        <a href="pages/about/about_jonathan.html" data-route>Sobre o autor</a>
+                        <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
+                        <a href="https://github.com/jonathanmesquita/arriba_platform" target="_blank" rel="noopener">Código no GitHub<span class="enterprise-footer-sr"> (abre em nova aba)</span></a>
+                    </nav>
+                </div>
+                <p class="enterprise-footer-copy">© 2026 Jonathan Mesquita</p>
             </div>
         </footer>
     </div>

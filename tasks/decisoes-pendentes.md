@@ -4,6 +4,27 @@ Só o que depende de decisão de quem é dono do projeto. Cada item diz o que tr
 
 ---
 
+## ⏳ Itens do status de nov/2026 que contradizem decisões já tomadas
+
+O documento de status usa informações até o início de outubro, antes da descaracterização.
+Três itens dele voltam atrás em decisões registradas — por isso estão aqui, e não no backlog.
+
+| Item do status | Decisão que ele contradiz |
+|---|---|
+| "Módulo de respostas predefinidas estilo Freshdesk" | Removido de propósito em `b1ba159`: era conteúdo operacional de empresa |
+| "Dashboard de chamados conectado a API/BD real" + "registro do app no tenant da empresa (produção)" | O repositório é **público** e é protótipo. Chamado real tem dado de cliente (LGPD) — mesma lógica que levou o teste do Escobs para repositório privado |
+| "Visual: Oracle Redwood" | O pedido foi "nenhuma empresa, por direitos autorais"; ver o inventário de marcas abaixo |
+
+**O que trava:** decidir se o dashboard e as respostas predefinidas vivem num repositório
+privado (e o site público só mostra uma versão com dado inventado) ou se ficam de fora.
+
+## ⏳ Contato na página "Sobre o autor"
+
+A página foi refeita com a apresentação do README. Faltam LinkedIn e e-mail — o README tinha
+`<your-linkedin>` e `<your-email>`, que foram retirados em vez de publicados como estão.
+
+---
+
 ## ⏳ Marcas de TERCEIROS no repositório (direito autoral / marca registrada)
 
 **Pedido:** "não quero usar nenhuma empresa por enquanto, para evitar direitos autorais."
@@ -21,7 +42,7 @@ e em duas categorias bem diferentes.
 | **Logo da empresa e do produto** `assets/img/logos-assets/` | 2 arquivos | **não** — órfãos | `logo-ph3.webp` e `logo-datacob.png` sobreviveram à descaracterização |
 | **Capturas do produto real** `capas-wallpaper-menus/` | 2 JPG | **não** — órfãos | tela de login (com logo, nome da empresa, "© 2026" e versão interna `v.3.0.289.7`) e **peça de marketing** com os selos ISO 27001 e LGPD |
 | **Capas com o produto no nome** `capas-wallpaper-menus/` | 3 PNG | **não** — órfãos | `capa-01-*-datacob.png` |
-| **Imagem servida pelo site da Oracle** `index.html` | 3 `<img>` | **sim** | `https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg` — o navegador de quem visita busca o arquivo **no servidor da Oracle** |
+| ~~**Imagem servida pelo site da Oracle**~~ — **resolvido em 04/11**: estava só na página Sobre antiga, que foi refeita | 3 `<img>` | não | `https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg` — o navegador de quem visita busca o arquivo **no servidor da Oracle** |
 | **Nome "Oracle" no design** | `oracle-inspired.css`, README, comentários | sim | "Oracle-inspired", "Oracle style" |
 | **Nomes de banco no CNAB** `banks/*.js` | 3 módulos | sim | `bradesco.js`, `itau.js`, `bmp.js` |
 | **Arquivo de licença / créditos** | **nenhum** | — | o repositório não declara licença própria nem origem de asset de terceiro |
@@ -50,7 +71,7 @@ não de necessidade.
 **5. "Oracle-inspired".** Descreve a inspiração do layout, não se passa pela Oracle. Se a
 régua for "nenhuma empresa", vira "mega-menu corporativo" e o arquivo muda de nome.
 
-**6. Licença.** O repositório é público e não diz sob que termos. Vale decidir a licença
+**6. Licença.** O repositório é público e não diz sob que termos — e o README afirma "MIT" com link para um `LICENSE` que **não existe**. Vale decidir a licença
 do que é seu e creditar o que não é (as bandeiras de idioma, as fontes).
 
 > Nota: isto é inventário do que está no repositório, não parecer jurídico.

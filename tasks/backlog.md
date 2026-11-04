@@ -27,21 +27,14 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
   - Contexto: a arquitetura já suporta (criar `banks/<banco>.js` e registrar no registry).
   - Local: `tools/cobranca/cnab400/banks/`
   - Ação: só com manual **e** amostra real — não estimar posição "provável" (ADR-006).
-- [ ] Primeira ferramenta da aba "Outros CRM" 📅 2026-10-01 🔽 baixa #area/ferramentas #esforco/m
-  - Local: `assets/js/navigation-v2.js` (`crms.tabs`)
-  - Ação: a aba existe vazia, com mensagem "Em breve".
 
 ## Site
 
 - [ ] Hub de laboratórios 📅 2026-10-01 🔼 média #area/site #esforco/m 🤖
-  - Contexto: `pages/lab/index.html` não é índice — é a página de um lab só, mas a navegação
-    superior leva lá como se fosse hub.
+  - Contexto: `pages/lab/index.html` não é índice — é a página "Comportamento e UX", mas o
+    item "Laboratório" do topo leva lá como se fosse hub. O mega-menu já lista os quatro labs.
   - Ação: criar o índice listando os labs, ou renomear o item do menu.
-- [ ] Padronizar visualmente os 61 manuais genéricos 📅 2026-10-01 🔽 baixa #area/docs #esforco/g
-  - Contexto: template sem imagem nem breadcrumb; 5 páginas "premium" mostram o alvo.
-  - Nota: depende da decisão de descaracterização — pode virar remoção em vez de padronização.
 - [ ] i18n PT/EN e paleta de comandos `Ctrl/Cmd+K` 📅 2026-10-01 🔽 baixa #area/site #esforco/g
-- [ ] Screenshot real em `docs/preview.png` para o README 📅 2026-10-01 🔽 baixa #area/docs #esforco/p
 
 ## App de chat
 
@@ -100,3 +93,32 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
     cores semânticas fixas deles (`#8c2430`, `#14603c`, `#7a5a00`) ainda passam. No dia em
     que o tema entrar, elas precisam virar o par cheia/`-ink` como no site.
   - Local: `apps/*/web/src/styles.css`
+
+## Do status de nov/2026
+
+Itens do documento de status do dono que viram trabalho. Os que contradizem decisões já
+tomadas estão em `decisoes-pendentes.md`, não aqui.
+
+- [ ] Backend do login com Microsoft (Azure AD) 📅 2026-11-04 🔺 alta #area/infra #esforco/m
+  - Contexto: a metade do navegador já existe — `auth/callback/` faz Authorization Code com
+    PKCE, sem `client_secret`, que é o fluxo certo para site estático. Falta o servidor
+    validar o token antes de liberar rota protegida.
+  - Local: repositório `arriba-api` (não está neste)
+  - Ação: middleware Express que confere assinatura (JWKS do tenant), `aud`, `iss` e `exp`.
+    App registrado hoje no tenant pessoal; o de produção depende de outro dono.
+- [ ] Teste de carga dos 3 endpoints Escobs 📅 2026-11-04 🔼 média #area/qa #esforco/m
+  - Contexto: collection e environments do Postman foram entregues e validados (freio
+    automático 10/10, login 6/6), mas só existem como download: o ambiente foi reciclado e o
+    repositório privado não chegou a ser criado. Decidido: k6 contra o mock para volume,
+    Newman para o cenário de registros, `dados-cadastrais` fora do escopo.
+  - Ação: criar o repositório PRIVADO primeiro; depois mock, k6 e `COMO_RODAR.md`.
+- [ ] Ranking e personagens na gamificação 📅 2026-11-04 🔽 baixa #area/site #esforco/m
+  - Contexto: o status lista "plataforma gamificada estilo W3Schools" como ideia, mas o
+    Centro de Aprendizado e o `gamification.js` (pontos, badges, progresso) já existem.
+    Falta só o que é novo: ranking e personagens.
+  - Local: `assets/js/gamification.js`
+- [ ] Publicar os prompts de code review e auditoria de segurança como páginas 📅 2026-11-04 🔽 baixa #area/site #esforco/p
+  - Contexto: estão prontos como texto, fora do site.
+- [ ] Tirar o descriptografador do ar (Vercel e GitHub) 📅 2026-11-04 🔼 média #area/infra #esforco/p
+  - Contexto: o link já saiu do menu e da busca. Falta a parte que só o dono faz: remover o
+    projeto da Vercel e arquivar ou apagar o repositório — apagar não tem volta.

@@ -3,6 +3,12 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Nomes que dizem o que cada ferramenta faz, menu agrupado por ação ✅ 2026-11-04 #area/site
+- [x] Página "Sobre o autor" refeita (era lorem ipsum, com CSS e imagens em 404) ✅ 2026-11-04 #area/site
+- [x] README atualizado e `docs/preview.png` real ✅ 2026-11-04 #area/docs
+- [x] Texto da home acentuado ✅ 2026-11-04 #area/site
+- [x] ~~Primeira ferramenta da aba "Outros CRM"~~ — obsoleto: a aba não existe mais ✅ 2026-11-04 #area/ferramentas
+- [x] ~~Padronizar os 61 manuais genéricos~~ — obsoleto: os manuais saíram na descaracterização ✅ 2026-11-04 #area/docs
 - [x] Correção de contraste da paleta em todo o site, nos dois temas ✅ 2026-10-02 #area/site
 - [x] Adoção da paleta boho tech / Deep Autumn (terracota, oliva, mostarda, areia) ✅ 2026-10-02 #area/site
 - [x] `apps/comunicados`: portal de cartas modelo e disparo de e-mail ✅ 2026-10-02 #area/comunicados

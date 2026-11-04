@@ -1,7 +1,7 @@
 // Geradores de dados ficticios brasileiros (nome, CPF valido, telefone, CEP,
 // endereco, e-mail) - modulo compartilhado, sem dependencia de DOM.
 // Mesma logica/algoritmos (digito verificador de CPF etc.) já usados em
-// tools/datacob/massa-dados/script.js, extraidos aqui para reuso por outras
+// tools/cobranca/massa-dados/script.js, extraidos aqui para reuso por outras
 // ferramentas (ex.: geradores de layout CSV com massa ficticia).
 
 const NOMES_MASCULINOS = ["Joao", "Carlos", "Pedro", "Lucas", "Marcos", "Rafael", "Andre", "Bruno", "Felipe", "Gustavo", "Caio", "Eduardo", "Anderson", "Ricardo", "Marcelo"];

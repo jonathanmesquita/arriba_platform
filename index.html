@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Arriba Platform: portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
-    <title>Arriba Platform | PH3A AI Portfolio</title>
+    <meta name="description" content="Arriba Platform: prototipo de estudos em fullstack — validadores de arquivo, simulador SQL, editor web e um chat com IA, tudo rodando no navegador." />
+    <title>Arriba Platform | Protótipo de estudos</title>
     <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Arriba Platform" />
-    <meta property="og:title" content="Arriba Platform | PH3A AI Portfolio" />
-    <meta property="og:description" content="Portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
+    <meta property="og:title" content="Arriba Platform | Protótipo de estudos" />
+    <meta property="og:description" content="Prototipo de estudos em fullstack: validadores de arquivo, simulador SQL, editor web e chat com IA." />
     <meta property="og:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/arriba-hero-bg.webp" />
     <meta property="og:url" content="https://arriba.jm.dev.br/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Arriba Platform | PH3A AI Portfolio" />
-    <meta name="twitter:description" content="Portfolio fullstack inspirado em produto enterprise, com IA para suporte PH3A, ferramentas DataCob, Help Center e automacao de dados." />
+    <meta name="twitter:title" content="Arriba Platform | Protótipo de estudos" />
+    <meta name="twitter:description" content="Prototipo de estudos em fullstack: validadores de arquivo, simulador SQL, editor web e chat com IA." />
     <meta name="twitter:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/arriba-hero-bg.webp" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous" />
     <link rel="stylesheet" href="assets/css/tokens.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/oracle-inspired.css" />
+    <link rel="stylesheet" href="assets/css/chatbot.css" />
     <style>
         body.rw-body {
             background: var(--bg);
@@ -36,7 +37,7 @@
             position: sticky;
             top: 0;
             z-index: 1060;
-            background: #fff;
+            background: var(--surface);
             border-bottom: 1px solid var(--line);
         }
 
@@ -50,7 +51,7 @@
         }
 
         .enterprise-brand {
-            color: var(--red);
+            color: var(--rw-red-ink);
             font-size: 1.55rem;
             font-weight: 900;
             letter-spacing: -0.06em;
@@ -74,7 +75,7 @@
             height: 48px;
             border: 1px solid #cfc8c1;
             border-radius: 6px;
-            background: #fff;
+            background: var(--surface);
             color: var(--muted);
             display: flex;
             align-items: center;
@@ -84,9 +85,28 @@
         }
 
         .enterprise-search:hover,
-        .enterprise-search:focus {
+        .enterprise-search:focus-within {
             border-color: var(--red);
-            box-shadow: 0 0 0 3px rgba(199, 70, 52, .12);
+            box-shadow: 0 0 0 3px rgb(from var(--red) r g b / .12);
+        }
+
+        .enterprise-search input {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            border: 0;
+            outline: none;
+            background: transparent;
+            /* A topbar e a caixa de busca sao brancas nos dois temas (regra
+               acima), entao a cor do texto aqui e fixa - usar var(--ink)
+               deixaria o texto claro sobre branco no modo escuro. */
+            color: #2b2724;
+            font-size: .95rem;
+            font-family: inherit;
+        }
+
+        .enterprise-search input::placeholder {
+            color: #6d6863;
         }
 
         .enterprise-actions {
@@ -147,7 +167,7 @@
         }
 
         .category-band {
-            background: #fff;
+            background: var(--surface);
             border-bottom: 1px solid var(--line);
             padding: 26px 0 24px;
         }
@@ -187,7 +207,7 @@
             min-height: 118px;
             border: 1px solid var(--line);
             border-radius: 8px;
-            background: #fff;
+            background: var(--surface);
             color: var(--ink);
             display: grid;
             place-items: center;
@@ -207,10 +227,10 @@
 
         .portfolio-hero {
             --hero-accent: var(--rw-accent-teal);
-            --hero-deep: #102b38;
+            --hero-deep: var(--rw-deep-2);
             --hero-bg-image: url("assets/img/capas-wallpaper-menus/arriba-hero-bg.webp");
             position: relative;
-            background: #102b38;
+            background: var(--rw-deep-2);
             color: #fff;
             overflow: hidden;
             padding: clamp(58px, 7vw, 92px) 0 clamp(118px, 8vw, 136px);
@@ -225,9 +245,13 @@
             z-index: -2;
             background:
                 /* Quase opaco a esquerda (onde fica o texto do hero) e leve a
-                   direita, para a arte de fundo aparecer sem afogar. */
-                linear-gradient(90deg, rgba(10, 24, 31, .96) 0%, rgba(16, 43, 56, .82) 42%, rgba(16, 43, 56, .32) 100%),
+                   direita, para a arte de fundo aparecer sem afogar. O veu e
+                   terroso, nao azul: a arte de fundo e fria e, sem isso, a
+                   faixa do hero briga com a areia do resto da pagina. */
+                linear-gradient(90deg, rgba(30, 23, 19, .96) 0%, rgba(36, 28, 23, .86) 42%, rgba(36, 28, 23, .42) 100%),
                 var(--hero-bg-image) center/cover no-repeat;
+            /* Puxa a arte para o lado quente sem trocar o arquivo. */
+            background-blend-mode: normal, luminosity;
             transform: scale(1.02);
             transition: opacity .45s ease, transform 8s ease;
         }
@@ -252,6 +276,11 @@
             z-index: 1;
         }
 
+        /* Sobre faixa escura o acento é a mostarda; sobre o creme, o tom
+           de texto (declarado acima). */
+        .portfolio-hero .hero-eyebrow,
+        .architecture-board .hero-eyebrow { color: var(--hero-accent, var(--rw-accent)); }
+
         .portfolio-hero-grid {
             display: grid;
             grid-template-columns: minmax(0, .9fr) minmax(430px, 1.1fr);
@@ -260,7 +289,9 @@
         }
 
         .hero-eyebrow {
-            color: var(--rw-accent-teal);
+            /* Mostarda só sobre a faixa escura (7,73); sobre o creme ela dá
+               2,09 e reprova — por isso o padrão aqui é o tom de texto. */
+            color: var(--rw-red-ink);
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -301,6 +332,12 @@
         }
 
         .enterprise-btn {
+            /* <button> tem fundo e borda próprios do navegador; sem zerar
+               aqui, a mesma classe fica cinza em botão e transparente em
+               link. */
+            background: transparent;
+            border: 0;
+            cursor: pointer;
             min-height: 46px;
             border-radius: 5px;
             display: inline-flex;
@@ -313,13 +350,13 @@
         }
 
         .enterprise-btn-primary {
-            background: #fff;
-            color: #111;
+            background: var(--surface);
+            color: var(--ink);
         }
 
         .enterprise-btn-primary:hover {
-            color: #111;
-            background: #f0e9e2;
+            color: var(--ink);
+            background: var(--rw-tint);
         }
 
         .enterprise-btn-secondary {
@@ -375,7 +412,7 @@
             border-bottom: 1px solid #d8d0ca;
             background:
                 linear-gradient(180deg, transparent 24%, rgba(0, 0, 0, .05) 24% 25%, transparent 25% 49%, rgba(0, 0, 0, .05) 49% 50%, transparent 50% 74%, rgba(0, 0, 0, .05) 74% 75%, transparent 75%),
-                linear-gradient(90deg, rgba(115, 201, 199, .4) 0 8%, rgba(115, 201, 199, .52) 8% 22%, rgba(199, 70, 52, .14) 22% 44%, rgba(115, 201, 199, .3) 44% 63%, rgba(199, 70, 52, .16) 63% 82%, rgba(115, 201, 199, .5) 82% 100%);
+                linear-gradient(90deg, rgba(115, 201, 199, .4) 0 8%, rgba(115, 201, 199, .52) 8% 22%, rgb(from var(--red) r g b / .14) 22% 44%, rgba(115, 201, 199, .3) 44% 63%, rgb(from var(--red) r g b / .16) 63% 82%, rgba(115, 201, 199, .5) 82% 100%);
             clip-path: polygon(0 70%, 8% 24%, 18% 16%, 27% 28%, 36% 74%, 48% 78%, 62% 65%, 73% 72%, 84% 55%, 94% 32%, 100% 28%, 100% 100%, 0 100%);
         }
 
@@ -388,7 +425,7 @@
             border-radius: 16px;
             display: grid;
             place-items: center;
-            background: linear-gradient(135deg, #73c9c7, #c74634);
+            background: linear-gradient(135deg, #73c9c7, var(--red));
             box-shadow: 0 24px 54px rgba(0, 0, 0, .32);
             color: #fff;
             font-size: 2.4rem;
@@ -423,7 +460,7 @@
             height: 58px;
             border-radius: 50%;
             object-fit: cover;
-            background: #fff;
+            background: var(--surface);
             border: 3px solid #fff;
         }
 
@@ -438,7 +475,7 @@
         .assistant-search button {
             border: 0;
             border-right: 1px solid rgba(0, 0, 0, .08);
-            background: #fff;
+            background: var(--surface);
             color: var(--muted);
             display: flex;
             align-items: center;
@@ -448,7 +485,7 @@
         .assistant-search button:last-child {
             justify-content: center;
             background: var(--red);
-            color: #fff;
+            color: var(--rw-on-primary);
             font-size: 1.5rem;
         }
 
@@ -583,7 +620,7 @@
             width: 0%;
             height: 100%;
             border-radius: inherit;
-            background: #fff;
+            background: var(--surface);
             transition: width .25s ease;
         }
 
@@ -606,7 +643,7 @@
         }
 
         .section-heading span {
-            color: var(--red);
+            color: var(--rw-red-ink);
             display: inline-block;
             font-size: .76rem;
             font-weight: 900;
@@ -640,7 +677,7 @@
             min-height: 250px;
             border: 1px solid var(--line);
             border-radius: 8px;
-            background: #fff;
+            background: var(--surface);
             color: var(--ink);
             padding: 24px;
             text-decoration: none;
@@ -659,14 +696,14 @@
             height: 44px;
             border-radius: 4px;
             background: #f0ebe5;
-            color: var(--red);
+            color: var(--rw-red-ink);
             display: grid;
             place-items: center;
             margin-bottom: 20px;
         }
 
         .portfolio-card span {
-            color: var(--red);
+            color: var(--rw-red-ink);
             font-size: .72rem;
             font-weight: 900;
             letter-spacing: .12em;
@@ -688,7 +725,7 @@
         }
 
         .case-band {
-            background: #e9e4de;
+            background: var(--rw-surface-2);
         }
 
         .case-grid {
@@ -699,7 +736,7 @@
         }
 
         .case-copy {
-            background: #fff;
+            background: var(--surface);
             border-radius: 8px;
             padding: 34px;
             border: 1px solid var(--line);
@@ -780,7 +817,7 @@
         }
 
         .region-grid a {
-            color: #05739b;
+            color: var(--rw-red-ink);
             display: block;
             font-weight: 700;
             margin-bottom: 8px;
@@ -788,10 +825,14 @@
         }
 
         .enterprise-footer {
-            background: #fff;
+            background: var(--surface);
             border-top: 1px solid var(--line);
             padding: 24px 0;
         }
+
+        /* Link do rodapé sem cor declarada caía no azul padrão do
+           navegador — some no tema escuro e destoa no claro. */
+        .enterprise-footer a { color: var(--ink); }
 
         .enterprise-footer-inner {
             display: flex;
@@ -938,13 +979,19 @@
 
                 <a class="enterprise-brand" href="index.html" aria-label="Arriba Platform Home">
                     ARRIBA
-                    <small>PH3A AI</small>
+                    <small>Protótipo</small>
                 </a>
 
-                <button class="enterprise-search" type="button" id="searchToggleBtn" aria-label="Pesquisar na Arriba Platform">
-                    <i class="fas fa-search"></i>
-                    <span>Pesquisar ferramentas, erros, tickets, DataCob ou IA</span>
-                </button>
+                <!-- Campo de busca real: quem digita aqui ja filtra. O painel de
+                     resultados (gerado por navigation-v2.js) abre logo abaixo e NAO
+                     tem campo proprio - antes tinha, e apareciam dois campos. -->
+                <div class="enterprise-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="topbarSearchInput" autocomplete="off" role="combobox"
+                        aria-label="Pesquisar na Arriba Platform"
+                        aria-expanded="false" aria-controls="oracleSearchResults"
+                        placeholder="Pesquisar ferramentas, trilhas ou documentação" />
+                </div>
 
                 <div class="enterprise-actions">
                     <button type="button" class="enterprise-flag-btn" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar pais ou regiao">
@@ -960,15 +1007,15 @@
             </div>
         </header>
 
-        <nav class="enterprise-nav" aria-label="Navegacao principal">
+        <nav class="enterprise-nav" aria-label="Navegação principal">
             <div class="enterprise-nav-inner">
-                <button type="button" id="enterpriseMenuOpenProducts">Produtos</button>
+                <button type="button" id="enterpriseMenuOpenProducts">Menu</button>
                 <a href="#tools-section">Ferramentas</a>
-                <a href="#ph3a-ai">PH3A com IA</a>
+                <a href="#ia-section">IA</a>
                 <a href="#architecture-section">Arquitetura</a>
-                <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
-                <a href="pages/case-study/index.html" data-route>Case Studies</a>
-                <a href="pages/lab/index.html" data-route>Lab</a>
+                <a href="pages/aprender/index.html" data-route>Aprender</a>
+                <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
+                <a href="pages/lab/index.html" data-route>Laboratório</a>
             </div>
         </nav>
 
@@ -978,18 +1025,18 @@
         <section class="category-band" aria-label="Categorias principais">
             <div class="rw-container">
                 <div class="category-grid">
-                    <h2 class="category-group-title category-group-title--infra">Infraestrutura</h2>
-                    <h2 class="category-group-title category-group-title--apps">Aplicações</h2>
+                    <h2 class="category-group-title category-group-title--infra">Arquivos e dados</h2>
+                    <h2 class="category-group-title category-group-title--apps">Código e aprendizado</h2>
 
-                    <a class="category-tile" href="tools/datacob/cnab400/cnab400.html">Validador CNAB 400</a>
-                    <a class="category-tile" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">DataCob CSV</a>
-                    <a class="category-tile" href="tools/datacob/massa-dados/massa-dados.html">Massa de dados</a>
-                    <a class="category-tile" href="pages/case-study/deploy-cloud.html" data-route>Cloud</a>
+                    <a class="category-tile" href="tools/cobranca/cnab400/cnab400.html">Arquivo bancário (CNAB 400)</a>
+                    <a class="category-tile" href="tools/dados/csv-validator/csv-validator.html">Validador de CSV</a>
+                    <a class="category-tile" href="tools/cobranca/arriba-csv-generator/csv-template-generator.html">Gerador de CSV</a>
+                    <a class="category-tile" href="tools/cobranca/massa-dados/massa-dados.html">Dados fictícios</a>
 
-                    <a class="category-tile" href="pages/docs/help-center/index.html" data-route>Help Center</a>
-                    <a class="category-tile" href="tools/datacob/support-copilot/docs/datacob-manuais/">Base de Conhecimento</a>
-                    <a class="category-tile" href="tools/datacob/support-copilot/support-copilot.html">AI Support Copilot</a>
-                    <a class="category-tile" href="pages/aprender/index.html">Centro de Aprendizado</a>
+                    <a class="category-tile" href="tools/dados/editor-web/editor-web.html">Editor HTML, CSS e JS</a>
+                    <a class="category-tile" href="tools/cobranca/sql-playground/sql-playground.html">SQL Playground</a>
+                    <a class="category-tile" href="tools/cobranca/treinamento-sql/treinamento-sql.html">Curso de SQL</a>
+                    <a class="category-tile" href="pages/aprender/index.html" data-route>Centro de Aprendizado</a>
                 </div>
             </div>
         </section>
@@ -998,21 +1045,21 @@
             <section class="portfolio-hero">
                 <div class="rw-container portfolio-hero-grid">
                     <div>
-                        <span class="hero-eyebrow">Portfolio enterprise para PH3A</span>
-                        <h1>A proxima geracao da Arriba Platform com IA.</h1>
+                        <span class="hero-eyebrow">Protótipo de estudos</span>
+                        <h1>Ferramentas técnicas que rodam inteiras no navegador.</h1>
                         <p>
-                            Uma vitrine fullstack inspirada em produtos corporativos: suporte com IA,
-                            automacao DataCob, base de conhecimento, dashboards de atendimento e
-                            storytelling tecnico para entrevista.
+                            Um protótipo de estudos em fullstack: validadores de arquivo posicional e CSV,
+                            simulador SQL, editor com preview ao vivo e um chat com IA — sem servidor
+                            no meio, sem dado de ninguém saindo da máquina.
                         </p>
 
                         <div class="hero-actions">
-                            <a class="enterprise-btn enterprise-btn-primary" href="tools/datacob/support-copilot/support-copilot.html">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                Explorar Copilot
+                            <a class="enterprise-btn enterprise-btn-primary" href="tools/cobranca/cnab400/cnab400.html">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                Validar um arquivo bancário
                             </a>
-                            <a class="enterprise-btn enterprise-btn-secondary" href="pages/case-study/ph3a-support-copilot.html" data-route>
-                                Ver case PH3A
+                            <a class="enterprise-btn enterprise-btn-secondary" href="pages/case-study/arriba-platform.html" data-route>
+                                Ver a arquitetura
                             </a>
                             <button type="button" class="enterprise-btn enterprise-btn-secondary" id="openChatFromHero">
                                 Perguntar ao bot
@@ -1020,11 +1067,11 @@
                         </div>
                     </div>
 
-                    <div class="ai-showcase" aria-label="Demonstração visual do copiloto de IA">
+                    <div class="ai-showcase" aria-label="Demonstração visual do assistente">
                         <div class="dashboard-panel">
                             <div class="dashboard-header">
-                                <strong>Chamados críticos caíram 18% no cenário simulado</strong>
-                                <span>PH3A Support</span>
+                                <strong>Arquivo lido e conferido campo a campo, no navegador</strong>
+                                <span>Demonstração</span>
                             </div>
                             <div class="dashboard-chart" aria-hidden="true"></div>
                         </div>
@@ -1034,7 +1081,7 @@
                         <div class="assistant-card">
                             <div class="assistant-question">
                                 <img src="assets/img/frames-arriba-sapo-laranja/sapo-pixelado-laranja-programando.png" alt="Mascote da Arriba programando no notebook">
-                                <span>Quais tickets precisam de acao tecnica hoje?</span>
+                                <span>Qual arquivo precisa ser validado agora?</span>
                             </div>
                             <div class="assistant-search">
                                 <span>Buscar ou perguntar a Arriba</span>
@@ -1049,91 +1096,92 @@
             <section class="section-wrap" id="tools-section">
                 <div class="rw-container">
                     <div class="section-heading">
-                        <span>Infraestrutura de operacao</span>
-                        <h2>Ferramentas que parecem portfolio, mas nasceram de rotina real.</h2>
+                        <span>Ferramentas</span>
+                        <h2>Ferramentas que resolvem trabalho de verdade.</h2>
                         <p>
-                            A ideia e mostrar dominio tecnico com algo que resolve trabalho de verdade:
-                            arquivos, validacoes, documentacao, atendimento e integracoes.
+                            Cada uma nasceu de uma rotina real — validar arquivo, gerar dado de teste,
+                            consultar banco — e roda inteira no navegador: o arquivo não sai da sua máquina.
                         </p>
                     </div>
 
                     <div class="portfolio-card-grid">
-                        <a class="portfolio-card" href="tools/datacob/arriba-csv-generator/csv-template-generator.html">
+                        <a class="portfolio-card" href="tools/cobranca/cnab400/cnab400.html">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <span>Arquivo bancário</span>
+                            <h3>Validador CNAB 400</h3>
+                            <p>Lê e gera o arquivo de cobrança que os bancos trocam com as empresas (padrão CNAB de 400 posições), campo a campo.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/dados/csv-validator/csv-validator.html">
                             <i class="fa-solid fa-table-list"></i>
-                            <span>DataCob</span>
-                            <h3>Gerador CSV</h3>
-                            <p>Cria arquivos de carga com layout, preview, tipos de registro e exportacao.</p>
+                            <span>Dados</span>
+                            <h3>Validador de CSV</h3>
+                            <p>Separa "o arquivo está bem formado?" (RFC 4180) de "o conteúdo está certo?" (regras por coluna).</p>
                         </a>
 
-                        <a class="portfolio-card" href="tools/datacob/support-copilot/support-copilot.html">
-                            <i class="fa-solid fa-headset"></i>
-                            <span>Suporte com IA</span>
-                            <h3>Support Copilot</h3>
-                            <p>Resume tickets, sugere checklist, classifica prioridade e apoia respostas.</p>
+                        <a class="portfolio-card" href="tools/dados/editor-web/editor-web.html">
+                            <i class="fa-solid fa-code"></i>
+                            <span>Front-end</span>
+                            <h3>Editor HTML, CSS e JS</h3>
+                            <p>Preview ao vivo — o código roda isolado, sem alcançar a página do site.</p>
                         </a>
 
-                        <a class="portfolio-card" href="pages/docs/help-center/index.html" data-route>
-                            <i class="fa-solid fa-book-open"></i>
-                            <span>Conhecimento</span>
-                            <h3>Help Center</h3>
-                            <p>Busca em manuais, pacotes, artigos e materiais tecnicos para suporte.</p>
+                        <a class="portfolio-card" href="tools/cobranca/sql-playground/sql-playground.html">
+                            <i class="fa-solid fa-database"></i>
+                            <span>SQL</span>
+                            <h3>SQL Playground</h3>
+                            <p>Banco de dados de treino no navegador, com explorador de tabelas, histórico e consultas salvas.</p>
                         </a>
 
-                        <a class="portfolio-card" href="tools/datacob/support-copilot/docs/datacob-manuais/">
-                            <i class="fa-solid fa-folder-tree"></i>
-                            <span>Base de Conhecimento</span>
-                            <h3>Manuais DataCob por categoria</h3>
-                            <p>65 manuais internos organizados em 20 categorias, navegaveis sem depender so de busca.</p>
+                        <a class="portfolio-card" href="tools/cobranca/massa-dados/massa-dados.html">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Testes</span>
+                            <h3>Gerador de dados fictícios</h3>
+                            <p>Nome, CPF/CNPJ válido, telefone e endereço inventados, para testar sem dado de pessoa real.</p>
                         </a>
 
-                        <a class="portfolio-card" href="tools/datacob/manual-builder/freshdesk-paste.html">
-                            <i class="fa-solid fa-file-lines"></i>
-                            <span>Freshdesk</span>
-                            <h3>Gerador de artigo</h3>
-                            <p>Transforma conhecimento operacional em conteudo limpo para publicacao.</p>
+                        <a class="portfolio-card" href="tools/dados/decodificador/decodificador.html">
+                            <i class="fa-solid fa-right-left"></i>
+                            <span>Utilitários</span>
+                            <h3>Decodificador</h3>
+                            <p>Base64, URL, hex, binário, JWT e entidades HTML, com detecção automática do formato.</p>
                         </a>
 
-                        <a class="portfolio-card" href="pages/docs/datacob/erros-datacob.html">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                            <span>Triagem</span>
-                            <h3>Erros recorrentes</h3>
-                            <p>Busca por boleto, contrato, API, token, versao e outros temas repetitivos.</p>
-                        </a>
                     </div>
                 </div>
             </section>
 
-            <section class="section-wrap case-band" id="ph3a-ai">
+            <section class="section-wrap case-band" id="ia-section">
                 <div class="rw-container case-grid">
                     <div class="case-copy">
-                        <span class="hero-eyebrow">Projeto para empresa</span>
-                        <h2>PH3A com IA: suporte mais rapido, contexto melhor.</h2>
+                        <span class="hero-eyebrow">IA no protótipo</span>
+                        <h2>Chat com base de conhecimento e provedor configurável.</h2>
                         <p>
-                            O case mostra como uma plataforma interna pode reduzir leitura manual,
-                            padronizar respostas, encontrar manuais e transformar chamados em insumos
-                            claros para suporte e desenvolvimento.
+                            O chat responde primeiro pela base local do próprio repositório — sem rede,
+                            sem chave, instantâneo. IA de verdade é opcional: quem quiser liga um provedor
+                            (local ou de nuvem) com a própria chave, que fica no navegador de quem digitou.
                         </p>
 
                         <div class="metric-list">
-                            <div><strong>Read-only primeiro</strong><span>Integracao segura antes de qualquer escrita no Freshdesk.</span></div>
-                            <div><strong>Fallback local</strong><span>O fluxo continua util mesmo sem IA ou API externa.</span></div>
-                            <div><strong>Base pesquisavel</strong><span>Manuais, pacotes, erros e artigos em uma busca unica.</span></div>
+                            <div><strong>Base local primeiro</strong><span>Resposta curada e instantânea, sem custo por pergunta.</span></div>
+                            <div><strong>Falha nunca deixa sem resposta</strong><span>Erro do provedor volta para a base local.</span></div>
+                            <div><strong>A chave é de quem usa</strong><span>Site estático não guarda segredo — e o painel avisa disso.</span></div>
                         </div>
                     </div>
 
                     <div class="architecture-board" id="architecture-section">
-                        <span class="hero-eyebrow">Arquitetura demonstravel</span>
-                        <h2 class="h3">Do ticket ao insight.</h2>
+                        <span class="hero-eyebrow">Como funciona</span>
+                        <h2 class="h3">Da pergunta à resposta com fonte.</h2>
                         <div class="architecture-row">
-                            <div class="architecture-node"><strong>Freshdesk</strong><small>Tickets e conversas</small></div>
+                            <div class="architecture-node"><strong>Pergunta</strong><small>No navegador</small></div>
                             <span><i class="fa-solid fa-arrow-right"></i></span>
-                            <div class="architecture-node"><strong>Arriba API</strong><small>Node, regras e contexto</small></div>
+                            <div class="architecture-node"><strong>Base local</strong><small>Busca por relevância</small></div>
                             <span><i class="fa-solid fa-arrow-right"></i></span>
-                            <div class="architecture-node"><strong>OpenAI</strong><small>Resumo, triagem e checklist</small></div>
+                            <div class="architecture-node"><strong>Provedor (opcional)</strong><small>Só quando a base não cobre</small></div>
                         </div>
                         <p class="mb-0 text-white-50">
-                            O diferencial para entrevista e explicar decisoes: seguranca por flags,
-                            separacao de modulos, fallback e evolucao incremental.
+                            O que há para explicar aqui é a decisão: onde o segredo mora, o que acontece
+                            quando o provedor falha e por que a base vem antes do modelo.
                         </p>
                     </div>
                 </div>
@@ -1142,34 +1190,34 @@
             <section class="section-wrap">
                 <div class="rw-container">
                     <div class="section-heading">
-                        <span>O que destacar</span>
-                        <h2>Um portfolio com linguagem de produto enterprise.</h2>
+                        <span>Estudos de caso</span>
+                        <h2>As decisões por trás do protótipo.</h2>
                     </div>
 
                     <div class="portfolio-card-grid">
                         <a class="portfolio-card" href="pages/case-study/arriba-platform.html" data-route>
                             <i class="fa-solid fa-diagram-project"></i>
-                            <span>Case</span>
-                            <h3>Arriba Platform</h3>
-                            <p>Arquitetura, decisoes tecnicas, evolucao e proposta de valor.</p>
+                            <span>Arquitetura</span>
+                            <h3>Como o site foi construído</h3>
+                            <p>Arquitetura, decisões técnicas e evolução do projeto.</p>
                         </a>
                         <a class="portfolio-card" href="pages/case-study/chatbot-ai.html" data-route>
                             <i class="fa-solid fa-robot"></i>
                             <span>IA</span>
-                            <h3>Chatbot AI</h3>
-                            <p>Modos de resposta, fallback local e integracao com API.</p>
+                            <h3>Chatbot com IA</h3>
+                            <p>Base local primeiro, provedor opcional e o que acontece quando ele falha.</p>
                         </a>
                         <a class="portfolio-card" href="pages/case-study/deploy-cloud.html" data-route>
                             <i class="fa-solid fa-cloud"></i>
                             <span>Cloud</span>
-                            <h3>Deploy</h3>
-                            <p>Vercel, Render, Cloudflare, dominios e ambiente produtivo.</p>
+                            <h3>Deploy e DNS</h3>
+                            <p>Vercel, Render, Cloudflare, domínio próprio e ambiente de produção.</p>
                         </a>
-                        <a class="portfolio-card" href="pages/docs/datacob/erros-datacob.html">
-                            <i class="fa-solid fa-magnifying-glass-chart"></i>
-                            <span>Documentacao</span>
-                            <h3>Erros e topicos</h3>
-                            <p>Base operacional que transforma suporte repetitivo em conhecimento.</p>
+                        <a class="portfolio-card" href="pages/aprender/index.html" data-route>
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Aprender</span>
+                            <h3>Centro de Aprendizado</h3>
+                            <p>Trilhas com exemplo real, simulador e exercício corrigido na hora.</p>
                         </a>
                     </div>
                 </div>
@@ -1178,38 +1226,41 @@
 
         <footer class="enterprise-footer">
             <div class="rw-container enterprise-footer-inner">
-                <span>Arriba Platform | PH3A AI Portfolio</span>
-                <span>Frontend estatico + Node API + Freshdesk + OpenAI</span>
-                <a href="pages/docs/help-center/index.html" data-route>Help Center</a>
-                <a href="pages/case-study/index.html" data-route>Case Studies</a>
+                <span>Arriba Platform · protótipo de estudos</span>
+                <span>Front-end estático, sem build · app de chat com Node e Postgres</span>
+                <a href="pages/aprender/index.html" data-route>Aprender</a>
+                <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
             </div>
         </footer>
     </div>
 
-    <button id="chatbotBtn" class="btn btn-primary shadow-lg" aria-label="Abrir chatbot">
-        <i class="fas fa-comments"></i>
+    <!-- Chat do site. Estilo em assets/css/chatbot.css, comportamento em
+         assets/js/chatbot.js. Não usa as classes .card do Bootstrap de
+         propósito: as regras globais de .card-header (com !important no
+         tema escuro) brigavam com o cabeçalho do chat. -->
+    <button id="chatbotBtn" type="button" aria-label="Abrir o chat do Arriba Bot" aria-controls="chatbot" aria-expanded="false">
+        <i class="fas fa-comments" aria-hidden="true"></i>
     </button>
 
-    <div id="chatbot" class="chatbot-popup card d-none">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Arriba Bot</span>
-            <button id="closeChat" class="btn-close btn-close-white" aria-label="Fechar chatbot"></button>
-        </div>
+    <section id="chatbot" class="chatbot-popup d-none" aria-labelledby="chatTitle">
+        <header class="chat-header">
+            <div class="chat-header-text">
+                <h2 class="chat-title" id="chatTitle">Arriba Bot</h2>
+                <span class="chat-subtitle" id="chatSubtitle">Assistente automático · responde pela base do site</span>
+            </div>
+            <button type="button" id="closeChat" class="chat-header-btn" aria-label="Fechar o chat">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </header>
 
-        <div class="chat-mode-bar" aria-label="Selecionar modo do chatbot">
-            <button type="button" class="chat-mode-btn active" data-mode="datacob">DataCob</button>
-            <button type="button" class="chat-mode-btn" data-mode="sql">SQL</button>
-            <button type="button" class="chat-mode-btn" data-mode="devops">DevOps</button>
-            <button type="button" class="chat-mode-btn" data-mode="geral">Geral</button>
-        </div>
+        <div class="chat-window" id="chatWindow" role="log" aria-live="polite" aria-label="Conversa com o Arriba Bot"></div>
 
-        <div class="card-body chat-window" id="chatWindow"></div>
-
-        <div class="card-footer d-flex">
-            <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem...">
-            <button id="sendChat" class="btn btn-primary ms-2">Enviar</button>
-        </div>
-    </div>
+        <form class="chat-form" id="chatForm" autocomplete="off">
+            <label for="chatInput" class="chat-sr-only">Sua pergunta</label>
+            <input type="text" id="chatInput" class="chat-input" placeholder="Pergunte sobre uma ferramenta" maxlength="300">
+            <button type="submit" id="sendChat" class="chat-send">Enviar</button>
+        </form>
+    </section>
 
     <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -1263,19 +1314,19 @@
 
             const slides = [
                 {
-                    eyebrow: "Ferramentas de operacao",
-                    title: "Ferramentas de operacao",
-                    copy: "Gerador CSV, massa de dados, JSON, artigos Freshdesk e materiais tecnicos organizados em uma experiencia consistente para portfolio e uso real.",
-                    primary: { label: "Ver ferramentas", href: "#tools-section", icon: "fa-table-list" },
-                    secondary: { label: "Gerador CSV", href: "tools/datacob/arriba-csv-generator/csv-template-generator.html" },
+                    eyebrow: "Protótipo de estudos",
+                    title: "Ferramentas técnicas que rodam inteiras no navegador.",
+                    copy: "Validadores de arquivo bancário e CSV, simulador SQL, editor com preview ao vivo e um chat com IA — sem servidor no meio, sem dado de ninguém saindo da máquina.",
+                    primary: { label: "Ver as ferramentas", href: "#tools-section", icon: "fa-table-list" },
+                    secondary: { label: "Ver a arquitetura", href: "pages/case-study/arriba-platform.html" },
                     cover: "assets/img/capas-wallpaper-menus/arriba-hero-card.webp",
                     bg: "assets/img/capas-wallpaper-menus/arriba-hero-bg.webp",
                     coverLabel: "Portal de ferramentas",
-                    dashboard: "Ferramentas recorrentes centralizadas em um portal unico",
+                    dashboard: "Arquivo lido e conferido campo a campo, no navegador",
                     question: "Qual arquivo precisa ser validado agora?",
-                    accent: "#c74634",
-                    deep: "#16191d",
-                    summary: "Portal de ferramentas para suporte, dados e documentacao."
+                    accent: "#D9A93C",   // mostarda: 7,73 de contraste sobre a faixa escura
+                    deep: "#241C17",     // charcoal terroso, no lugar do cinza frio
+                    summary: "Ferramentas de dados, SQL e front-end que rodam no navegador."
                 }
             ];
 
@@ -1299,13 +1350,13 @@
                 hero.setAttribute("aria-live", "polite");
                 showcase?.setAttribute("role", "button");
                 showcase?.setAttribute("tabindex", "0");
-                showcase?.setAttribute("aria-label", "Avancar slide do portal");
+                showcase?.setAttribute("aria-label", "Avançar slide do portal");
             }
 
             const cover = document.createElement("button");
             cover.type = "button";
             cover.className = "hero-cover-card";
-            cover.setAttribute("aria-label", "Avancar para o proximo destaque");
+            cover.setAttribute("aria-label", "Avançar para o próximo destaque");
             cover.innerHTML = '<img alt=""><span></span>';
             showcase?.appendChild(cover);
 

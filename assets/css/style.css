@@ -7,21 +7,21 @@ body {
 }
 
 body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
+    background-color: var(--rw-dark);
+    color: var(--rw-on-dark);
 }
 
 /* Navbar personalizada */
 .navbar.bg-dark {
-    background-color: #2b2b2b !important; /* Cor de fundo da navbar (Oracle style) */
+    background-color: var(--rw-dark) !important; /* Cor de fundo da navbar */
 }
 
 .navbar-brand {
-    color: #e0e0e0 !important; /* Cor do texto do ARRIBA */
+    color: var(--rw-on-dark) !important; /* Cor do texto do ARRIBA */
     font-weight: bold;
 }
 
-/* Estilos para os itens do menu principal (Ferramentas Produtividade, APIs, Erros DataCob) */
+/* Estilos para os itens do menu principal (Ferramentas Produtividade, APIs, Erros cobrança) */
 .navbar-nav .nav-link,
 .u30navitem { /* Aplica-se aos botões dos mega-menus */
     color: #e0e0e0 !important;
@@ -35,8 +35,8 @@ body.dark-mode {
 
 .navbar-nav .nav-link:hover,
 .u30navitem:hover {
-    background-color: #333; /* Cor de fundo ao passar o mouse */
-    color: #fff !important;
+    background-color: var(--rw-dark-2); /* Cor de fundo ao passar o mouse */
+    color: var(--rw-on-dark) !important;
 }
 
 .u30navitem.active {
@@ -77,8 +77,8 @@ body.dark-mode {
     left: 0;
     width: 100%;
     height: 100vh; /* Ocupa a altura total da tela */
-    background-color: #2b2b2b; /* Fundo escuro similar à navbar */
-    color: #e0e0e0;
+    background-color: var(--rw-dark); /* Fundo escuro similar à navbar */
+    color: var(--rw-on-dark);
     z-index: 1040; /* Acima de outros elementos, mas abaixo do chatbot */
     display: flex;
     flex-direction: column;
@@ -189,8 +189,8 @@ body.dark-mode {
     left: 0;
     width: 100%;
     padding: 20px 0;
-    background-color: #333; /* Fundo do mega menu */
-    color: #fff;
+    background-color: var(--rw-dark); /* Fundo do mega menu */
+    color: var(--on-dark);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1020; /* Abaixo da navbar mas acima do conteúdo */
@@ -218,7 +218,7 @@ body.dark-mode {
 .u30t1 h3 {
     font-size: 1.1rem;
     margin-bottom: 15px;
-    color: #e0e0e0;
+    color: var(--on-dark);
 }
 
 .u30t1 ul {
@@ -227,7 +227,7 @@ body.dark-mode {
 }
 
 .u30t1 ul li a {
-    color: #ccc;
+    color: rgb(from var(--on-dark) r g b / .78);
     text-decoration: none;
     display: block;
     padding: 5px 0;
@@ -323,620 +323,17 @@ body.dark-mode {
 }
 
 /* Estilos para o Dark Mode dos mega-menus */
-body.dark-mode .u30navw2 {
-    background-color: #1a1a1a; /* Fundo mais escuro no dark mode */
-    border-top: 1px solid rgba(255,255,255,0.05);
-}
-
 body.dark-mode .u30navitem:hover,
 body.dark-mode .u30navitem.active {
-    background-color: #333; /* Hover/active mais escuro */
-}
-
-body.dark-mode .u30navw2 .u30t1 h3 {
-    color: #f0f0f0;
-}
-
-body.dark-mode .u30navw2 .u30t1 ul li a {
-    color: #b0b0b0;
+    background-color: var(--rw-dark-2);
 }
 
 body.dark-mode .u30navw2 .u30t1 ul li a:hover {
     color: #fff;
 }
 
-/* Estilos para o Botão do Chatbot */
-#chatbotBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1040; /* Acima de outros elementos, como o mega-menu (z-index 1020) e a navbar (z-index 1030) */
-    width: 60px; /* Tamanho do botão */
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.8rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Cores ajustadas para dark/light mode se necessário */
-}
-
-#chatbotBtn.chatbot-mascot-button {
-    padding: 0;
-    overflow: visible;
-    background: #fff;
-    border: 1px solid rgba(255, 145, 32, 0.35);
-}
-
-#chatbotBtn.chatbot-mascot-button .fa-comments {
-    display: none;
-}
-
-.chatbot-mascot-button-img {
-    width: 72px;
-    height: 72px;
-    object-fit: contain;
-    transform: translateY(-5px);
-    filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.28));
-    animation: mascot-bob 3.6s ease-in-out infinite;
-}
-
-#chatbotBtn[data-mascot-mood="think"] .chatbot-mascot-button-img,
-#chatbotBtn[data-mascot-mood="music"] .chatbot-mascot-button-img {
-    animation-duration: 2.2s;
-}
-
-#chatbotBtn[data-mascot-mood="angry"] .chatbot-mascot-button-img,
-#chatbotBtn[data-mascot-mood="crybaby"] .chatbot-mascot-button-img {
-    animation-name: mascot-shake;
-    animation-duration: 0.55s;
-}
-
-@keyframes mascot-bob {
-    0%, 100% { transform: translateY(-5px); }
-    50% { transform: translateY(-10px); }
-}
-
-@keyframes mascot-shake {
-    0%, 100% { transform: translate(-1px, -5px); }
-    25% { transform: translate(2px, -6px); }
-    50% { transform: translate(-2px, -4px); }
-    75% { transform: translate(2px, -5px); }
-}
-
-/* Estilos para o Popup do Chatbot */
-.chatbot-popup {
-    position: fixed;
-    bottom: 90px; /* Acima do botão */
-    right: 20px;
-    width: 350px; /* Largura padrão */
-    max-width: 90%; /* Responsividade */
-    z-index: 1050; /* Acima do botão do chatbot */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    overflow: hidden; /* Para garantir que o card-body não vaze */
-}
-
-/* Dark Mode para Chatbot */
-body.dark-mode #chatbotBtn {
-    background-color: #007bff; /* Ou uma cor escura */
-    color: #fff;
-}
-
-body.dark-mode #chatbotBtn.chatbot-mascot-button {
-    background-color: #1f232b;
-    border-color: rgba(255, 145, 32, 0.42);
-}
-
-body.dark-mode .chatbot-popup .card-header {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-}
-body.dark-mode .chatbot-popup .card-body {
-    background-color: #2b2b2b;
-    color: #e0e0e0;
-}
-body.dark-mode .chatbot-popup .card-footer {
-    background-color: #1a1a1a;
-}
-body.dark-mode .chatbot-popup .form-control {
-    background-color: #3d3d3d;
-    color: #e0e0e0;
-    border-color: #555;
-}
-body.dark-mode .chatbot-popup .form-control::placeholder {
-    color: #aaa;
-}
-
-/* Mensagens do chat */
-.chat-window {
-    height: 300px;
-    overflow-y: auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-}
-
-.chat-message {
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    border-radius: 15px;
-    max-width: 80%;
-    word-wrap: break-word;
-}
-
-.user-message {
-    align-self: flex-end;
-    background-color: #007bff;
-    color: white;
-    border-bottom-right-radius: 2px;
-}
-
-.bot-message {
-    align-self: flex-start;
-    background-color: #e2e6ea;
-    color: #333;
-    border-bottom-left-radius: 2px;
-}
-body.dark-mode .bot-message {
-    background-color: #444;
-    color: #e0e0e0;
-}
-
-.chat-message strong {
-    display: block;
-    font-size: 0.8em;
-    margin-bottom: 3px;
-    color: rgba(255, 255, 255, 0.7); /* Para mensagens do usuário */
-}
-
-.bot-message strong {
-    color: #000; /* Para mensagens do bot em light mode */
-}
-body.dark-mode .bot-message strong {
-    color: #ccc; /* Para mensagens do bot em dark mode */
-}
-
-/* Melhorias do Arriba Bot */
-.chatbot-popup {
-    width: 380px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.chat-window {
-    gap: 10px;
-}
-
-.chatbot-header-left {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    gap: 8px;
-}
-
-.chatbot-mascot-header-img {
-    width: 42px;
-    height: 42px;
-    object-fit: contain;
-    flex: 0 0 auto;
-    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.22));
-}
-
-.chatbot-title-wrap {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    line-height: 1.15;
-}
-
-.chatbot-title {
-    font-weight: 800;
-}
-
-.chatbot-mascot-status {
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 0.72rem;
-    font-weight: 600;
-    margin-top: 2px;
-    white-space: nowrap;
-}
-
-.chatbot-mascot-stage {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border: 1px solid rgba(255, 145, 32, 0.22);
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(255, 145, 32, 0.12), rgba(13, 110, 253, 0.08));
-    color: #212529;
-}
-
-.chatbot-mascot-stage-img {
-    width: 58px;
-    height: 58px;
-    object-fit: contain;
-    flex: 0 0 auto;
-}
-
-.chatbot-mascot-stage strong,
-.chatbot-mascot-stage span {
-    display: block;
-}
-
-.chatbot-mascot-stage span {
-    color: #5f6670;
-    font-size: 0.82rem;
-    margin-top: 2px;
-}
-
-.chat-quick-topics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.chat-quick-topics button {
-    border: 1px solid rgba(13, 110, 253, 0.18);
-    background: #fff;
-    color: #1f2937;
-    border-radius: 999px;
-    padding: 6px 10px;
-    font-size: 0.76rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
-}
-
-.chat-quick-topics button:hover {
-    background: #eef4ff;
-    border-color: rgba(13, 110, 253, 0.38);
-    transform: translateY(-1px);
-}
-
-.chat-message {
-    max-width: 78%;
-    padding: 10px 12px;
-    margin-bottom: 4px;
-    border-radius: 14px;
-    line-height: 1.4;
-    overflow-wrap: anywhere;
-    white-space: normal;
-}
-
-.user-message {
-    align-self: flex-end;
-    background-color: #0d6efd;
-    color: #fff;
-    border-bottom-right-radius: 4px;
-    text-align: left;
-}
-
-.bot-message {
-    align-self: flex-start;
-    background-color: #e9ecef;
-    color: #212529;
-    border-bottom-left-radius: 4px;
-}
-
-.chat-message-with-avatar {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    max-width: 92%;
-    padding: 0;
-    background: transparent !important;
-    color: inherit;
-}
-
-.chat-message-avatar {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-    flex: 0 0 auto;
-    margin-top: 3px;
-}
-
-.chat-message-content {
-    padding: 10px 12px;
-    border-radius: 14px;
-    border-bottom-left-radius: 4px;
-    background-color: #e9ecef;
-    color: #212529;
-    min-width: 0;
-}
-
-.chat-knowledge-card {
-    display: grid;
-    gap: 10px;
-    min-width: 0;
-}
-
-.chat-knowledge-card h4 {
-    margin: 0;
-    font-size: 0.98rem;
-    font-weight: 800;
-    color: inherit;
-}
-
-.chat-knowledge-card p {
-    margin: 0;
-}
-
-.chat-knowledge-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.chat-knowledge-meta span,
-.chat-query-note {
-    border: 1px solid rgba(17, 24, 39, 0.08);
-    background: rgba(17, 24, 39, 0.04);
-    color: #4b5563;
-    border-radius: 999px;
-    padding: 4px 8px;
-    font-size: 0.68rem;
-    font-weight: 800;
-}
-
-.chat-screen-path {
-    border-left: 3px solid #d45f3a;
-    background: rgba(212, 95, 58, 0.08);
-    border-radius: 8px;
-    padding: 9px 10px;
-}
-
-.chat-screen-path span {
-    display: block;
-    color: #6b7280;
-    font-size: 0.68rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-}
-
-.chat-screen-path strong {
-    display: block;
-    color: #1f2937;
-    font-size: 0.84rem;
-    line-height: 1.35;
-}
-
-.chat-knowledge-details {
-    display: none;
-    gap: 10px;
-}
-
-.chat-knowledge-details.open {
-    display: grid;
-}
-
-.chat-knowledge-details strong,
-.chat-dev-note strong {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 0.78rem;
-}
-
-.chat-knowledge-details ol,
-.chat-knowledge-details ul {
-    margin: 0;
-    padding-left: 1.05rem;
-}
-
-.chat-knowledge-details li {
-    margin-bottom: 4px;
-}
-
-.chat-dev-note {
-    border-top: 1px solid rgba(17, 24, 39, 0.08);
-    padding-top: 8px;
-}
-
-.chat-knowledge-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.chat-knowledge-actions button,
-.chat-knowledge-actions a {
-    border: 1px solid rgba(13, 110, 253, 0.22);
-    background: #fff;
-    color: #0d47a1;
-    border-radius: 8px;
-    padding: 6px 8px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.chat-knowledge-actions button:hover,
-.chat-knowledge-actions a:hover {
-    background: #eef4ff;
-    border-color: rgba(13, 110, 253, 0.42);
-}
-
-.chat-suggestion-list {
-    display: grid;
-    gap: 7px;
-}
-
-.chat-suggestion-list button {
-    width: 100%;
-    text-align: left;
-    border: 1px solid rgba(17, 24, 39, 0.1);
-    background: #fff;
-    border-radius: 10px;
-    padding: 9px 10px;
-    cursor: pointer;
-}
-
-.chat-suggestion-list button strong,
-.chat-suggestion-list button span {
-    display: block;
-}
-
-.chat-suggestion-list button strong {
-    color: #1f2937;
-    font-size: 0.84rem;
-}
-
-.chat-suggestion-list button span {
-    color: #6b7280;
-    font-size: 0.72rem;
-    margin-top: 2px;
-}
-
-.chat-message strong {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 0.78rem;
-    font-weight: 700;
-}
-
-.user-message strong {
-    color: rgba(255, 255, 255, 0.85);
-}
-
-.bot-message strong {
-    color: #212529;
-}
-
-body.dark-mode .bot-message {
-    background-color: #444;
-    color: #f1f1f1;
-}
-
-body.dark-mode .chatbot-mascot-stage {
-    background: linear-gradient(135deg, rgba(255, 145, 32, 0.13), rgba(13, 110, 253, 0.12));
-    border-color: rgba(255, 145, 32, 0.18);
-    color: #f1f1f1;
-}
-
-body.dark-mode .chatbot-mascot-stage span {
-    color: #b9c0cc;
-}
-
-body.dark-mode .chat-quick-topics button,
-body.dark-mode .chat-knowledge-actions button,
-body.dark-mode .chat-knowledge-actions a,
-body.dark-mode .chat-suggestion-list button {
-    background: #2f343d;
-    border-color: rgba(255, 255, 255, 0.12);
-    color: #f3f6fb;
-}
-
-body.dark-mode .chat-quick-topics button:hover,
-body.dark-mode .chat-knowledge-actions button:hover,
-body.dark-mode .chat-knowledge-actions a:hover,
-body.dark-mode .chat-suggestion-list button:hover {
-    background: #39414d;
-    border-color: rgba(255, 145, 32, 0.34);
-}
-
-body.dark-mode .chat-knowledge-meta span,
-body.dark-mode .chat-query-note {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #cdd5df;
-}
-
-body.dark-mode .chat-screen-path {
-    background: rgba(255, 145, 32, 0.12);
-}
-
-body.dark-mode .chat-screen-path span,
-body.dark-mode .chat-suggestion-list button span {
-    color: #b9c0cc;
-}
-
-body.dark-mode .chat-screen-path strong,
-body.dark-mode .chat-suggestion-list button strong {
-    color: #f3f6fb;
-}
-
-body.dark-mode .chat-dev-note {
-    border-top-color: rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .chat-message-content {
-    background-color: #444;
-    color: #f1f1f1;
-}
-
-body.dark-mode .bot-message strong {
-    color: #f1f1f1;
-}
-
-.typing-indicator {
-    opacity: 0.75;
-    font-style: italic;
-}
-
-@media (max-width: 576px) {
-    .chatbot-popup {
-        right: 10px;
-        bottom: 85px;
-        width: calc(100% - 20px);
-    }
-
-    #chatbotBtn {
-        right: 15px;
-        bottom: 15px;
-    }
-}
-
-/* Arriba Bot - barra de modos */
-.chat-mode-bar {
-    display: flex;
-    gap: 6px;
-    padding: 8px;
-    background-color: #202020;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    overflow-x: auto;
-}
-
-.chat-mode-btn {
-    border: 1px solid #444;
-    background-color: #2b2b2b;
-    color: #ddd;
-    border-radius: 999px;
-    padding: 5px 10px;
-    font-size: 0.78rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-}
-
-.chat-mode-btn:hover {
-    background-color: #3a3a3a;
-    color: #fff;
-}
-
-.chat-mode-btn.active {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-    color: #fff;
-}
-
-/* Melhor leitura das mensagens */
-.chat-message a {
-    color: inherit;
-    text-decoration: underline;
-}
-
-.bot-message a {
-    color: #0d6efd;
-}
-
-body.dark-mode .bot-message a {
-    color: #8ab4ff;
-}
-
+/* O estilo do chat (lançador, janela, mensagens e painel de IA) mora em
+   assets/css/chatbot.css — fonte única desde nov/2026. */
 
 /* --- INÍCIO: NOVOS ESTILOS PARA A LUPA DE BUSCA E CAIXA DE PESQUISA (TRANSFORMAÇÃO) --- */
 .search-container {
@@ -1028,13 +425,13 @@ body.dark-mode .bot-message a {
 }
 
 .search-input::placeholder {
-    color: #aaa;
+    color: var(--muted);
 }
 
 .search-close-btn {
     background: none;
     border: none;
-    color: #aaa;
+    color: var(--muted);
     font-size: 1rem;
     cursor: pointer;
     margin-left: 10px;
@@ -1138,7 +535,7 @@ body.dark-mode .search-input::placeholder {
     display: flex;
     align-items: center;
     padding: 8px 0;
-    color: #333;
+    color: var(--ink);
     text-decoration: none;
     transition: background-color 0.2s;
 }
@@ -1147,30 +544,28 @@ body.dark-mode .search-input::placeholder {
     background-color: #f0f0f0;
 }
 
-body.dark-mode .language-list li a {
-    color: #e0e0e0;
-}
-
 body.dark-mode .language-list li a:hover {
-    background-color: #333;
+    background-color: var(--surface-soft);
 }
 
 .language-list img {
     margin-right: 10px;
 }
 
-/* Dark Mode para Modals */
-body.dark-mode .modal-content {
-    background-color: #2b2b2b;
-    color: #e0e0e0;
+/* Cromo das modais, para os dois temas. A versão antiga era só uma
+   sobrescrita de tema escuro com `--ink` de FUNDO — e no escuro `--ink` é
+   creme, então a modal ficava clara com texto claro dentro. */
+.modal-content {
+    background-color: var(--surface);
+    color: var(--ink);
 }
 
-body.dark-mode .modal-header {
-    border-bottom-color: #444;
+.modal-header {
+    border-bottom-color: var(--line);
 }
 
-body.dark-mode .modal-footer {
-    border-top-color: #444;
+.modal-footer {
+    border-top-color: var(--line);
 }
 
 body.dark-mode .btn-close {
@@ -1193,113 +588,29 @@ body.dark-mode .btn-close {
   gap:6px;
   padding:10px 12px;
   border-radius:10px;
-  background:#eef2f7;
+  background:var(--surface-soft);
   border:1px solid rgba(0,0,0,.06);
   font-size:14px;
 }
-.req .form-label{ color:#d93025; font-weight:700; }
-.req .form-control, .req .form-select{ border-color:#d93025; }
+.req .form-label{ color:var(--danger-ink); font-weight:700; }
+.req .form-control, .req .form-select{ border-color:var(--danger); }
 .req-badge{
   display:inline-block;
   padding:2px 8px;
   border-radius:999px;
-  background:#ffe8e6;
-  color:#d93025;
+  background:rgb(from var(--danger) r g b / .12);
+  color:var(--danger-ink);
   font-weight:700;
   font-size:12px;
 }
 
-body.dark-mode .summary-bar{ background: rgba(20,22,28,.65); border-color:#2a2f3a; }
-body.dark-mode .chip{ background:#222836; border-color:#2a2f3a; color:#e6e6e6; }
-body.dark-mode .table-light{ --bs-table-bg: #222836; --bs-table-color: #e6e6e6; }
-body.dark-mode .card{ background:#171a21; border-color:#2a2f3a; }
-body.dark-mode .card-header, body.dark-mode .card-footer{ background:#171a21 !important; border-color:#2a2f3a; }
-body.dark-mode .req-badge{ background:#3a1f1f; color:#ff6b6b; }
-body.dark-mode .req .form-label{ color:#ff6b6b; }
-body.dark-mode .req .form-control, body.dark-mode .req .form-select{ border-color:#ff6b6b; }
+/* Antes havia aqui um bloco inteiro de sobrescrita de tema escuro em
+   cinza-azulado (#222836, #171a21, #ff6b6b). Com as regras claras lendo os
+   tokens, a sobrescrita virou só uma forma de reintroduzir o frio da
+   paleta antiga — o que vira com o tema vem do token. */
+body.dark-mode .summary-bar{ background: var(--surface-soft); border-color: var(--line); }
+body.dark-mode .chip{ background: var(--surface-soft); border-color: var(--line); color: var(--ink); }
+body.dark-mode .table-light{ --bs-table-bg: var(--surface-soft); --bs-table-color: var(--ink); }
+body.dark-mode .card{ background: var(--surface); border-color: var(--line); }
+body.dark-mode .card-header, body.dark-mode .card-footer{ background: var(--surface-soft) !important; border-color: var(--line); }
 
-/* =====================================================================
-   Painel de configuração do provedor de IA do chat
-   (injetado por assets/js/chatbot.js — ver montarPainelConfig)
-   ===================================================================== */
-.chat-config {
-  max-height: 320px;
-  overflow-y: auto;
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface-soft, #f7f5f2);
-  font-size: .86rem;
-}
-
-.chat-config-label {
-  display: block;
-  margin: 8px 0 3px;
-  font-size: .7rem;
-  font-weight: 900;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.chat-config-input {
-  width: 100%;
-  min-height: 34px;
-  padding: 5px 9px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #fff;
-  color: var(--ink);
-  font-size: .86rem;
-}
-
-.chat-config-hint {
-  margin: 5px 0 0;
-  color: var(--muted);
-  font-size: .76rem;
-  line-height: 1.45;
-}
-
-.chat-config-hint code {
-  font-size: .72rem;
-  word-break: break-all;
-}
-
-.chat-config-aviso {
-  margin-top: 10px;
-  padding: 9px 11px;
-  border-left: 3px solid var(--gold, #c9a227);
-  border-radius: 6px;
-  background: #fff8df;
-  color: #5b4d20;
-  font-size: .76rem;
-  line-height: 1.45;
-}
-
-.chat-config-aviso strong { display: block; margin-bottom: 4px; }
-.chat-config-aviso p { margin: 0 0 4px; }
-
-.chat-config-acoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.chat-config-status {
-  margin: 8px 0 0;
-  font-size: .78rem;
-  font-weight: 700;
-  color: var(--muted);
-  line-height: 1.4;
-}
-
-/* Engrenagem acesa quando há provedor externo ativo: sinaliza que o que
-   for digitado sai do navegador. */
-#btnConfigIA.active {
-  background: var(--red, #c74634);
-  border-color: var(--red, #c74634);
-  color: #fff;
-}
-
-body.dark-mode .chat-config { background: #1f1f1f; border-color: #333; }
-body.dark-mode .chat-config-input { background: #2a2a2a; color: #eee; border-color: #444; }

@@ -31,7 +31,7 @@ const TOPICOS = [
   {
     id: "sql",
     titulo: "SQL / T-SQL",
-    tagline: "A linguagem para consultar os dados do DataCob no SQL Server.",
+    tagline: "A linguagem para consultar os dados do modelo de dados no SQL Server.",
     chips: [`${TRACK_7_LICOES.length} lições`, "Trilha completa", "Simulador"],
     pronto: true,
     exemploTitulo: "Exemplo: contratos por carteira",
@@ -42,8 +42,8 @@ const TOPICOS = [
  GROUP BY g.Descricao
  ORDER BY Contratos DESC;`,
     acoes: [
-      { label: "Aprender SQL", href: "../../tools/datacob/treinamento-sql/treinamento-sql.html", estilo: "btn-red-arriba", icone: "fa-graduation-cap" },
-      { label: "Try it Yourself", href: "../../tools/datacob/sql-playground/sql-playground.html", estilo: "btn-dark-arriba", icone: "fa-play" }
+      { label: "Aprender SQL", href: "../../tools/cobranca/treinamento-sql/treinamento-sql.html", estilo: "btn-red-arriba", icone: "fa-graduation-cap" },
+      { label: "Try it Yourself", href: "../../tools/cobranca/sql-playground/sql-playground.html", estilo: "btn-dark-arriba", icone: "fa-play" }
     ]
   },
   {
@@ -82,8 +82,8 @@ const TOPICOS = [
        END AS Faixa
   FROM Parcela_Acordo pa;`,
     acoes: [
-      { label: "Abrir gerador", href: "../../tools/datacob/query-builder/query-builder.html", estilo: "btn-red-arriba", icone: "fa-table-columns" },
-      { label: "Testar no simulador", href: "../../tools/datacob/sql-playground/sql-playground.html", estilo: "btn-outline-arriba", icone: "fa-play" }
+      { label: "Abrir gerador", href: "../../tools/cobranca/query-builder/query-builder.html", estilo: "btn-red-arriba", icone: "fa-table-columns" },
+      { label: "Testar no simulador", href: "../../tools/cobranca/sql-playground/sql-playground.html", estilo: "btn-outline-arriba", icone: "fa-play" }
     ]
   },
   {
@@ -103,7 +103,27 @@ const TOPICOS = [
 
 -- posições são 1-indexadas e inclusivas`,
     acoes: [
-      { label: "Abrir validador", href: "../../tools/datacob/cnab400/cnab400.html", estilo: "btn-red-arriba", icone: "fa-file-invoice-dollar" }
+      { label: "Abrir validador", href: "../../tools/cobranca/cnab400/cnab400.html", estilo: "btn-red-arriba", icone: "fa-file-invoice-dollar" }
+    ]
+  },
+  {
+    id: "csv",
+    titulo: "CSV de recepção",
+    tagline: "Ler, conferir e corrigir o arquivo antes de tentar importar no modelo de dados.",
+    chips: ["Delimitador", "Cabeçalho", "CPF/CNPJ", "Layouts cobrança"],
+    pronto: true,
+    exemploTitulo: "Exemplo: por que a importação recusa o arquivo",
+    exemplo: `Tipo_Registro;Nr_Contrato;Dt_Vencimento;Vl_Original
+7;0030-ARRIBA;09/02/2026;100,00     ← ok
+7;0030-ARRIBA;31/02/2026;150,00     ← dia que não existe
+6;0030-ARRIBA;10/03/2026;200,00     ← tipo de outro layout
+7;0030-ARRIBA;10/04/2026;abc        ← valor não numérico
+
+-- o campo entre aspas pode conter o próprio ";",
+-- por isso não dá para conferir com split(";")`,
+    acoes: [
+      { label: "Validar um CSV", href: "../../tools/dados/csv-validator/csv-validator.html", estilo: "btn-red-arriba", icone: "fa-file-csv" },
+      { label: "Gerar CSV de teste", href: "../../tools/cobranca/arriba-csv-generator/csv-template-generator.html", estilo: "btn-outline-arriba", icone: "fa-table" }
     ]
   },
   {
@@ -138,27 +158,7 @@ const TOPICOS = [
 11122233396   ← aceito na validação
 11111111111   ← recusado`,
     acoes: [
-      { label: "Gerar massa", href: "../../tools/datacob/massa-dados/massa-dados.html", estilo: "btn-red-arriba", icone: "fa-users" }
-    ]
-  },
-  {
-    id: "datacob-produto",
-    titulo: "DataCob (produto)",
-    tagline: "Como operar o sistema: cadastro de carteira, régua, ocorrências.",
-    chips: ["Passo a passo", "Para o cliente"],
-    pronto: true,
-    exemploTitulo: "Onde isso te ajuda",
-    exemplo: `Cadastro de nova carteira:
-
-  Grupo (carteira)
-    └─ Cliente (credor)
-         └─ Fase (estágio da dívida)
-              └─ Régua (sequência de ações)
-
--- é a configuração que define o que o sistema
--- vai cobrar, de quem e em que ordem`,
-    acoes: [
-      { label: "Base de conhecimento", href: "../../tools/datacob/support-copilot/docs/datacob-manuais/", estilo: "btn-red-arriba", icone: "fa-folder-open" }
+      { label: "Gerar massa", href: "../../tools/cobranca/massa-dados/massa-dados.html", estilo: "btn-red-arriba", icone: "fa-users" }
     ]
   }
 ];

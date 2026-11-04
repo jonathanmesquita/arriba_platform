@@ -1,29 +1,39 @@
+/* =====================================================================
+   Menu e busca — FONTE ÚNICA dos nomes que aparecem no site.
+
+   Regra de nome (nov/2026): cada rótulo diz O QUE A FERRAMENTA FAZ, em
+   português, para quem não conhece o domínio — um recrutador tem de
+   entender sem perguntar. Sigla de nicho (CNAB, JWT) vai junto de uma
+   explicação; código interno ("Track 7", "DX001") não aparece.
+
+   Os CAMINHOS dos arquivos não mudaram: só o texto. Renomear pasta
+   quebraria link e import relativo (ver CLAUDE.md).
+   ===================================================================== */
 const menuData = {
     plataforma: {
-        label: "Plataforma",
+        label: "Sobre o projeto",
         children: {
             overview: {
-                label: "Visao geral",
-                badge: "Produto",
+                label: "Visão geral",
+                badge: "Comece aqui",
                 title: "Arriba Platform",
-                description: "Portal tecnico com ferramentas, documentacao, cases, labs e assistente inteligente.",
+                description: "Protótipo de estudos com ferramentas que rodam inteiras no navegador: validação de arquivos, SQL, editor web e um chat com IA.",
                 links: [
-                    ["Visao geral", "index.html"],
-                    ["Arquitetura", "pages/case-study/arriba-platform.html", true],
-                    ["Sobre Jonathan", "pages/about/about_jonathan.html", true]
+                    ["Página inicial", "index.html"],
+                    ["Sobre o autor", "pages/about/about_jonathan.html", true],
+                    ["Como o site foi construído", "pages/case-study/arriba-platform.html", true],
+                    ["Todos os estudos de caso", "pages/case-study/index.html", true]
                 ]
             },
             cases: {
-                label: "Case Study",
-                badge: "Portfolio",
-                title: "Cases tecnicos",
-                description: "Documentacao de decisoes tecnicas, arquitetura, deploy e IA.",
+                label: "Estudos de caso",
+                badge: "Decisões técnicas",
+                title: "Estudos de caso",
+                description: "O problema, a decisão tomada e o porquê de cada parte do projeto.",
                 links: [
-                    ["Todos os cases", "pages/case-study/index.html", true],
-                    ["PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["Arriba Platform", "pages/case-study/arriba-platform.html", true],
-                    ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
-                    ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true]
+                    ["Arquitetura do site", "pages/case-study/arriba-platform.html", true],
+                    ["Chatbot com IA", "pages/case-study/chatbot-ai.html", true],
+                    ["Deploy e DNS (Vercel, Render, Cloudflare)", "pages/case-study/deploy-cloud.html", true]
                 ]
             }
         }
@@ -31,212 +41,139 @@ const menuData = {
     ferramentas: {
         label: "Ferramentas",
         children: {
-            dados: {
-                label: "Dados",
-                badge: "Utilitarios",
-                title: "Ferramentas de dados",
-                description: "Validadores, conversores e utilitarios para rotina tecnica.",
+            validar: {
+                label: "Validar arquivos",
+                badge: "Validação",
+                title: "Validar arquivos",
+                description: "Confere o arquivo campo a campo e aponta a linha e a coluna do erro — sem enviar nada para servidor.",
                 links: [
-                    ["Validador JSON", "tools/dados/json-validator/json_validator.html"],
+                    ["Arquivo bancário (CNAB 400)", "tools/cobranca/cnab400/cnab400.html"],
+                    ["Validador de CSV", "tools/dados/csv-validator/csv-validator.html"],
+                    ["Validador de JSON", "tools/dados/json-validator/json_validator.html"]
+                ]
+            },
+            gerar: {
+                label: "Gerar dados de teste",
+                badge: "Massa de teste",
+                title: "Gerar dados de teste",
+                description: "Cria arquivos e documentos de exemplo com dados inventados, para testar sem usar dado de pessoa real.",
+                links: [
+                    ["Gerador de dados fictícios (CPF, nome, endereço)", "tools/cobranca/massa-dados/massa-dados.html"],
+                    ["Gerador de CSV por layout", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+                    ["Editor de cartas com variáveis", "tools/cobranca/modelo-carta-decoder/modelo-carta-builder.html"],
+                    ["Leitor de cartas modelo", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"]
+                ]
+            },
+            converter: {
+                label: "Converter e decodificar",
+                badge: "Conversão",
+                title: "Converter e decodificar",
+                description: "Transforma um formato em outro e revela o que está codificado.",
+                links: [
                     ["CSV para JSON", "tools/dados/csv-to-json/csv-to-json.html"],
-                    ["Calculadora de Hash", "tools/dados/hash-generator/hash-generator.html"],
-                    ["Boleto Base64 → PDF", "tools/dados/base64-pdf/base64-pdf.html"],
-                    ["Decodificador Universal", "tools/dados/decodificador/decodificador.html"],
-                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"],
-                    ["Descriptografador (MD5 + 3DES)", "https://decrypt.jm.dev.br/"],
+                    ["Base64 para PDF", "tools/dados/base64-pdf/base64-pdf.html"],
+                    ["Decodificador (Base64, URL, JWT, hex)", "tools/dados/decodificador/decodificador.html"],
+                    ["Calculadora de hash (MD5, SHA)", "tools/dados/hash-generator/hash-generator.html"]
                 ]
             },
-            crms: {
-                label: "CRMs",
-                badge: "Operacao",
-                title: "Ferramentas por CRM",
-                description: "Geracao de CSV, massa ficticia, suporte e apoio operacional, organizado por CRM.",
-                // Estrutura "por CRM": cada aba e um CRM. DataCob e o primeiro
-                // (unico com ferramentas hoje); "Outros CRM" fica vazia,
-                // pronta para quando surgir a primeira ferramenta de outro
-                // CRM — nao duplicar dados aqui, so adicionar a aba/links.
-                tabs: [
-                    {
-                        key: "datacob",
-                        label: "DataCob",
-                        links: [
-                            ["Gerador CSV DataCob", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
-                            ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
-                            ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"],
-                            ["Modelo Carta Decoder", "tools/datacob/modelo-carta-decoder/modelo-carta-decoder.html"],
-                            ["Validador CNAB 400", "tools/datacob/cnab400/cnab400.html"],
-                            ["Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
-                            ["Respostas Predefinidas", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
-                            ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-                            ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
-                            ["SQL Query T-SQL - Relatórios", "tools/datacob/query-builder/query-builder.html"],
-                            ["Modelo Carta Builder", "tools/datacob/modelo-carta-decoder/modelo-carta-builder.html"],
-                            ["Documentacao de erros", "pages/docs/datacob/erros-datacob.html", true]
-                        ]
-                    },
-                    {
-                        key: "outros",
-                        label: "Outros CRM",
-                        links: []
-                    }
-                ]
-            },
-            suporte: {
-                label: "Suporte",
-                badge: "IA",
-                title: "Ferramentas de Suporte",
-                description: "Copiloto de IA para triagem de chamados, templates Freshdesk e especificacao para Desenvolvimento.",
+            codigo: {
+                label: "Código e SQL",
+                badge: "Desenvolvimento",
+                title: "Código e SQL",
+                description: "Escreva e execute HTML, CSS, JavaScript e SQL direto no navegador.",
                 links: [
-                    ["PH3A Support Copilot", "tools/datacob/support-copilot/support-copilot.html"],
-                    ["Case Study Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["API Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"]
-                ]
-            },
-            cloudtools: {
-                label: "Cloud",
-                badge: "Deploy",
-                title: "Ferramentas Cloud",
-                description: "Acesso rapido a API, Render, Vercel, Cloudflare e documentacao tecnica.",
-                links: [
-                    ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["Status Freshdesk API", "https://api.arriba.jm.dev.br/freshdesk/status"],
-                    ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["Arquitetura Arriba", "pages/case-study/arriba-platform.html", true]
+                    ["Editor HTML, CSS e JS (preview ao vivo)", "tools/dados/editor-web/editor-web.html"],
+                    ["SQL Playground (simulador no navegador)", "tools/cobranca/sql-playground/sql-playground.html"],
+                    ["Construtor visual de consultas SQL", "tools/cobranca/query-builder/query-builder.html"]
                 ]
             }
         }
     },
-    docs: {
-        label: "Documentacao",
+    aprender: {
+        label: "Aprender",
         children: {
-            aprender: {
-                label: "Aprender",
-                badge: "Trilhas",
+            trilhas: {
+                label: "Trilhas",
+                badge: "Prática",
                 title: "Centro de Aprendizado",
-                description: "Trilhas com teoria, exemplos e simulador para praticar na hora.",
+                description: "Teoria curta, exemplo real e exercício corrigido na hora, com pontos e progresso.",
                 links: [
                     ["Centro de Aprendizado", "pages/aprender/index.html", true],
-                    ["Track 7 · Treinamento SQL", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-                    ["SQL Playground", "tools/datacob/sql-playground/sql-playground.html"],
-                    ["Editor Web (HTML/CSS/JS)", "tools/dados/editor-web/editor-web.html"]
+                    ["Curso de SQL com exercícios", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
+                    ["SQL Playground", "tools/cobranca/sql-playground/sql-playground.html"],
+                    ["Editor HTML, CSS e JS", "tools/dados/editor-web/editor-web.html"]
                 ]
             },
-            help: {
-                label: "Help Center",
-                badge: "Ajuda",
-                title: "Centro de Ajuda",
-                description: "Busca, topicos, tutoriais e documentacao rapida para suporte tecnico.",
+            diagnostico: {
+                label: "Guias de diagnóstico",
+                badge: "Checklists",
+                title: "Guias de diagnóstico",
+                description: "Roteiros curtos para investigar um problema antes de escalar.",
                 links: [
-                    ["Help Center", "pages/docs/help-center/index.html", true],
-                    ["Base de Conhecimento DataCob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],
-                    ["Documentacao DataCob", "pages/docs/datacob/erros-datacob.html", true],
-                    ["Blog de troubleshooting", "pages/docs/blog/index.html", true],
-                    ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"]
+                    ["Todos os guias", "pages/docs/blog/index.html", true],
+                    ["Falha de conexão com uma API", "pages/docs/blog/index.html#dx001", true],
+                    ["Acesso ou credencial recusada", "pages/docs/blog/index.html#lv005", true],
+                    ["Processamento interrompido", "pages/docs/blog/index.html#pr102", true]
                 ]
             },
             downloads: {
                 label: "Downloads",
                 badge: "Arquivos",
                 title: "Downloads",
-                description: "Modelos, exemplos e arquivos uteis para operacao e testes.",
+                description: "Modelos e exemplos para baixar e usar nos testes.",
                 links: [
-                    ["Central de Downloads", "pages/docs/downloads/index.html", true],
-                    ["Gerador CSV", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
-                    ["Massa de Dados", "tools/datacob/massa-dados/massa-dados.html"],
-                    ["Gerador de Manual DataCob", "tools/datacob/manual-builder/manual-builder.html"]
-                ]
-            },
-            errors: {
-                label: "Erros e topicos",
-                badge: "Blog",
-                title: "Erros e documentacao",
-                description: "Pesquise erros e encontre topicos em formato de blog tecnico.",
-                links: [
-                    ["Erro DX001 - Falha de conexao", "pages/docs/blog/index.html#dx001", true],
-                    ["Erro LV005 - Licenca invalida", "pages/docs/blog/index.html#lv005", true],
-                    ["Erro PR102 - Processamento interrompido", "pages/docs/blog/index.html#pr102", true]
-                ]
-            }
-        }
-    },
-    cloud: {
-        label: "DevOps e Cloud",
-        children: {
-            deploy: {
-                label: "Deploy",
-                badge: "Cloud",
-                title: "Deploy e DNS",
-                description: "Vercel, Render, Cloudflare e dominio proprio.",
-                links: [
-                    ["Deploy Cloud", "pages/case-study/deploy-cloud.html", true],
-                    ["API Arriba", "https://api.arriba.jm.dev.br"],
-                    ["Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
-                    ["Case de arquitetura", "pages/case-study/arriba-platform.html", true]
-                ]
-            },
-            api: {
-                label: "API e IA",
-                badge: "Backend",
-                title: "Backend e IA",
-                description: "API Node, OpenAI, Freshdesk, fallback local e proximos webhooks.",
-                links: [
-                    ["Chatbot AI", "pages/case-study/chatbot-ai.html", true],
-                    ["PH3A Support Copilot", "pages/case-study/ph3a-support-copilot.html", true],
-                    ["API publica", "https://api.arriba.jm.dev.br"],
-                    ["Freshdesk Status", "https://api.arriba.jm.dev.br/freshdesk/status"],
-                    ["Help Center", "pages/docs/help-center/index.html", true]
+                    ["Central de downloads", "pages/docs/downloads/index.html", true],
+                    ["Gerador de CSV por layout", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+                    ["Gerador de dados fictícios", "tools/cobranca/massa-dados/massa-dados.html"]
                 ]
             }
         }
     },
     lab: {
-        label: "Lab / Portfolios",
+        label: "Laboratório",
         children: {
-            personal: {
-                label: "Portfolios",
-                badge: "Lab",
-                title: "Projetos pessoais",
-                description: "GameDev, IA e experimentos.",
+            experimentos: {
+                label: "Experimentos",
+                badge: "Em andamento",
+                title: "Laboratório",
+                description: "Ideias em estágio inicial — protótipos que ainda não viraram ferramenta.",
                 links: [
-                    ["Todos os labs", "pages/lab/index.html", true],
-                    ["Portfolio GameDev", "pages/lab/gamedev/index.html", true],
-                    ["Lab IA", "pages/lab/ai/index.html", true]
+                    ["IA aplicada", "pages/lab/ai/index.html", true],
+                    ["Portfólio em pixel art", "pages/lab/gamedev/index.html", true],
+                    ["Interface e performance", "pages/lab/experiments/index.html", true],
+                    ["Comportamento e UX", "pages/lab/index.html", true]
                 ]
             }
         }
     }
 };
 
+/* [título, palavras-chave, caminho, rota?]
+   As palavras-chave são escritas SEM acento de propósito: normalizeSearch
+   tira o acento dos dois lados (ver .claude/rules/idioma-ptbr.md). */
 export const searchItems = [
-    ["PH3A Support Copilot", "Freshdesk suporte IA chamados triagem templates anotacao desenvolvimento especificacao", "tools/datacob/support-copilot/support-copilot.html"],
-    ["Case Support Copilot", "case study suporte clientes Freshdesk IA", "pages/case-study/ph3a-support-copilot.html", true],
-    ["API Freshdesk Status", "status api freshdesk render node", "https://api.arriba.jm.dev.br/freshdesk/status"],
-    ["Gerador CSV DataCob", "Carga titular contrato parcela combinada", "tools/datacob/arriba-csv-generator/csv-template-generator.html"],
-    ["Massa de Dados", "Dados ficticios CPF CNPJ DataCob CSV", "tools/datacob/massa-dados/massa-dados.html"],
-    ["Gerador de Manual DataCob", "manual pdf documentacao rotina passo a passo freshdesk help center", "tools/datacob/manual-builder/manual-builder.html"],
-    ["Validador CNAB 400", "cnab 400 multi banco bradesco 237 itau 341 bmp money plus 274 santander banco do brasil retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo", "tools/datacob/cnab400/cnab400.html"],
-    ["Help Center", "Ajuda documentacao suporte", "pages/docs/help-center/index.html", true],
-    ["Base de Conhecimento DataCob", "manuais internos categorias api integracoes recepcao distribuicao controles discador suporte datacob", "tools/datacob/support-copilot/docs/datacob-manuais/", true],
-    ["Cadastro Nova Carteira DataCob", "nova carteira grupo cliente fase regua boleto ocorrencia calculo acordo recibo layout padrao", "tools/datacob/support-copilot/docs/datacob-manuais/carteira/cadastro-nova-carteira-datacob/"],
-    ["API DataCob Token Usuarios", "api datacob swagger token usuario api key login ativar desativar 400 403", "tools/datacob/support-copilot/docs/datacob-manuais/api/cadastro-token-usuarios-datacob/"],
-    ["Downloads", "Modelos arquivos exemplos", "pages/docs/downloads/index.html", true],
-    ["Erro DX001", "Falha de conexao DataCob CRM", "pages/docs/blog/index.html#dx001", true],
-    ["Erro LV005", "Licenca invalida DataCob", "pages/docs/blog/index.html#lv005", true],
-    ["Erro PR102", "Processamento interrompido DataCob", "pages/docs/blog/index.html#pr102", true],
-    ["Chatbot AI", "OpenAI fallback local modos", "pages/case-study/chatbot-ai.html", true],
-    ["Deploy Cloud", "Vercel Render Cloudflare DNS", "pages/case-study/deploy-cloud.html", true],
-    ["API Arriba", "Node Render OpenAI Freshdesk backend", "https://api.arriba.jm.dev.br"],
-    ["Lab GameDev", "Pixel art Windows 98 portfolio", "pages/lab/gamedev/index.html", true],
-    ["Boleto Base64 → PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json api resposta chamado suporte download visualizar guru", "tools/dados/base64-pdf/base64-pdf.html"],
+    ["Arquivo bancário (CNAB 400)", "cnab 400 arquivo bancario banco multi banco bradesco 237 itau 341 bmp 274 retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo posicional", "tools/cobranca/cnab400/cnab400.html"],
+    ["Validador de CSV", "csv validador validar arquivo delimitador ponto e virgula cabecalho coluna layout importacao erro linha duplicada cpf cnpj invalido data valor decimal aspas rfc 4180 schema estrutura planilha", "tools/dados/csv-validator/csv-validator.html"],
+    ["Gerador de CSV por layout", "gerador csv carga titular contrato parcela layout recepcao modelo cabecalho exemplo arquivo", "tools/cobranca/arriba-csv-generator/csv-template-generator.html"],
+    ["Gerador de dados fictícios", "massa de dados massa de teste dados ficticios fake cpf cnpj nome telefone cep endereco email csv teste", "tools/cobranca/massa-dados/massa-dados.html"],
+    ["Editor de cartas com variáveis", "carta modelo template variaveis campos editor criador documento mala direta", "tools/cobranca/modelo-carta-decoder/modelo-carta-builder.html"],
+    ["Leitor de cartas modelo", "carta modelo template decodificador leitor html gzip variaveis campos impressao", "tools/cobranca/modelo-carta-decoder/modelo-carta-decoder.html"],
+    ["Base64 para PDF", "base64 boleto pdf decode decodificar converter arquivo data uri json download visualizar", "tools/dados/base64-pdf/base64-pdf.html"],
     ["Validador de JSON", "json validador validar formatar indentar sintaxe erro parse", "tools/dados/json-validator/json_validator.html"],
-    ["Decodificador Universal", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
-    ["Editor Web (HTML/CSS/JS)", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet w3schools aprender praticar", "tools/dados/editor-web/editor-web.html"],
-    ["Respostas Predefinidas", "respostas predefinidas prontas templates canned responses ticket freshdesk suporte datacob agendamento encerramento copiar", "tools/datacob/respostas-predefinidas/respostas-predefinidas.html"],
-    ["Descriptografador (MD5 + 3DES)", "descriptografador decrypt senha criptografada md5 3des hexadecimal base64 chave salt", "https://decrypt.jm.dev.br/"],
-    ["Track 7 · Treinamento SQL", "track 7 sql tsql sql server treinamento curso licao select where join group by having quiz gamificacao rafael boletos remessas retornos", "tools/datacob/treinamento-sql/treinamento-sql.html"],
-    ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema datacob financiado contrato parcela acordo negociacao historico telefone email endereco treinar praticar select join group by csv", "tools/datacob/sql-playground/sql-playground.html"],
-    ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself w3schools progresso pontos badges quiz exercicios simulador sql cnab base64 massa de dados datacob", "pages/aprender/index.html"],
-    ["SQL Query T-SQL - Relatórios", "sql query builder relatorios datacob diagrama tabelas filtros case when tsql contrato parcela acordo cliente export xlsx csv", "tools/datacob/query-builder/query-builder.html"],
+    ["Decodificador (Base64, URL, JWT, hex)", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
+    ["Editor HTML, CSS e JS", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet aprender praticar", "tools/dados/editor-web/editor-web.html"],
+    ["CSV para JSON", "csv json converter transformar tabela", "tools/dados/csv-to-json/csv-to-json.html"],
+    ["Calculadora de hash", "hash md5 sha1 sha256 checksum assinatura integridade", "tools/dados/hash-generator/hash-generator.html"],
+    ["Curso de SQL com exercícios", "sql tsql curso treinamento trilha licao select where join group by having quiz gamificacao exercicio sandbox", "tools/cobranca/treinamento-sql/treinamento-sql.html"],
+    ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema select join group by csv", "tools/cobranca/sql-playground/sql-playground.html"],
+    ["Construtor visual de consultas SQL", "sql query builder construtor consulta relatorios diagrama tabelas filtros case when tsql export xlsx csv", "tools/cobranca/query-builder/query-builder.html"],
+    ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself progresso pontos badges quiz exercicios simulador sql cnab base64", "pages/aprender/index.html", true],
+    ["Guias de diagnóstico", "erros topicos diagnostico checklist troubleshooting conexao api credencial processamento blog tecnico", "pages/docs/blog/index.html", true],
+    ["Downloads", "modelos arquivos exemplos baixar", "pages/docs/downloads/index.html", true],
+    ["Chatbot com IA (estudo de caso)", "chat chatbot ia assistente provedores base de conhecimento streaming", "pages/case-study/chatbot-ai.html", true],
+    ["Deploy e DNS (estudo de caso)", "vercel render cloudflare dns deploy hospedagem dominio", "pages/case-study/deploy-cloud.html", true],
+    ["Arquitetura do site (estudo de caso)", "case arquitetura decisoes site estatico tokens fonte unica", "pages/case-study/arriba-platform.html", true],
+    ["Portfólio em pixel art", "pixel art portfolio jogo gamedev", "pages/lab/gamedev/index.html", true],
 ];
 
 function normalizeSearch(value = "") {
@@ -349,12 +286,9 @@ function renderDetail(sectionKey, childKey, activeTabKey) {
             <div class="enterprise-menu-detail-list">
                 ${links.length ? links.map(([label, href, route]) => `
                     <a href="${href}" ${route ? "data-route" : ""}>${label}</a>
-                `).join("") : `<span class="enterprise-menu-empty">Em breve: ferramentas para outros CRMs.</span>`}
+                `).join("") : `<span class="enterprise-menu-empty">Nada aqui ainda.</span>`}
             </div>
 
-            <div class="enterprise-menu-note">
-                Navegacao em camadas, leve e sem travar o usuario. O menu troca de contexto ao passar o mouse ou clicar.
-            </div>
         </div>
     `;
 
@@ -399,24 +333,37 @@ function setupEnterpriseMenu() {
     });
 }
 
+/* ---------------------------------------------------------------------
+   Busca do topo.
+
+   O campo onde se digita e o campo da topbar (#topbarSearchInput) — o
+   painel logo abaixo mostra SO os resultados. Antes a topbar era um
+   botao falso (um <span> com o texto de placeholder) e o painel trazia
+   um segundo <input>: ao clicar apareciam dois campos de busca, um em
+   cima do outro. Se a pagina nao tiver o input da topbar, o painel cria
+   o proprio campo (fallback para paginas que so tem #searchToggleBtn).
+   --------------------------------------------------------------------- */
 function setupSearchPanel() {
+    const topbarInput = document.getElementById("topbarSearchInput");
+    const trigger = document.getElementById("searchToggleBtn");
+    if (!topbarInput && !trigger) return;
+
     if (!document.getElementById("oracleSearchPanel")) {
         const panel = document.createElement("div");
         panel.className = "oracle-search-panel";
         panel.id = "oracleSearchPanel";
         panel.innerHTML = `
-            <input type="text" id="oracleSearchInput" placeholder="Pesquisar erro, documentacao, ferramenta ou case..." />
-            <strong>Resultados e links rapidos</strong>
+            ${topbarInput ? "" : '<input type="search" id="oracleSearchInput" placeholder="Pesquisar erro, documentação, ferramenta ou case..." autocomplete="off" />'}
+            <strong>Resultados e links rápidos</strong>
             <div class="quick-links" id="oracleSearchResults"></div>
         `;
         document.body.appendChild(panel);
     }
 
-    const trigger = document.getElementById("searchToggleBtn");
     const panel = document.getElementById("oracleSearchPanel");
-    const input = document.getElementById("oracleSearchInput");
+    const input = topbarInput || document.getElementById("oracleSearchInput");
     const results = document.getElementById("oracleSearchResults");
-    if (!panel || !results) return;
+    if (!panel || !results || !input) return;
 
     function renderResults(query = "") {
         const normalized = normalizeSearch(query);
@@ -426,37 +373,90 @@ function setupSearchPanel() {
 
         results.innerHTML = filtered.length
             ? filtered.map(([title, keywords, href, route]) => `<a href="${href}" ${route ? "data-route" : ""}><strong>${title}</strong><br><small>${keywords}</small></a>`).join("")
-            : `<span>Nenhum resultado encontrado. Tente "DataCob", "Freshdesk", "Cloud", "CSV" ou "IA".</span>`;
+            : `<span>Nenhum resultado encontrado. Tente "CNAB", "CSV", "SQL" ou "editor".</span>`;
+    }
+
+    // Ancora o painel embaixo do campo da topbar (mesma largura), em vez
+    // de deixa-lo centralizado na tela como o CSS padrao faz.
+    function posicionarPainel() {
+        if (!topbarInput) return;
+        const caixa = topbarInput.getBoundingClientRect();
+        panel.style.transform = "none";
+        panel.style.left = `${Math.max(12, caixa.left)}px`;
+        panel.style.top = `${caixa.bottom + 8}px`;
+        panel.style.width = `${caixa.width}px`;
+    }
+
+    function abrirPainel() {
+        renderResults(input.value);
+        posicionarPainel();
+        panel.classList.add("active");
+        input.setAttribute("aria-expanded", "true");
+    }
+
+    function fecharPainel() {
+        panel.classList.remove("active");
+        input.setAttribute("aria-expanded", "false");
     }
 
     renderResults();
 
     trigger?.addEventListener("click", () => {
-        panel.classList.toggle("active");
-        renderResults();
-        if (panel.classList.contains("active")) input?.focus();
+        if (topbarInput) {
+            abrirPainel();
+            input.focus();
+            return;
+        }
+        if (panel.classList.contains("active")) fecharPainel();
+        else abrirPainel();
     });
 
-    input?.addEventListener("input", () => renderResults(input.value));
-    input?.addEventListener("keydown", event => {
+    if (topbarInput) {
+        topbarInput.addEventListener("focus", abrirPainel);
+        window.addEventListener("resize", () => {
+            if (panel.classList.contains("active")) posicionarPainel();
+        });
+        window.addEventListener("scroll", () => {
+            if (panel.classList.contains("active")) posicionarPainel();
+        }, { passive: true });
+    }
+
+    input.addEventListener("input", abrirPainel);
+    input.addEventListener("keydown", event => {
         if (event.key === "Enter") {
-            const first = results.querySelector("a");
-            if (first) first.click();
+            const primeiro = results.querySelector("a");
+            if (primeiro) primeiro.click();
+        }
+        if (event.key === "ArrowDown") {
+            const primeiro = results.querySelector("a");
+            if (primeiro) {
+                event.preventDefault();
+                primeiro.focus();
+            }
+        }
+        if (event.key === "Escape") {
+            // Em <input type="search"> o Esc limpa o campo por padrao, e essa
+            // limpeza dispara um evento "input" que reabriria o painel. Corta
+            // o comportamento nativo e fecha na mao.
+            event.preventDefault();
+            fecharPainel();
+            input.blur();
         }
     });
 
     document.addEventListener("click", event => {
-        if (panel.classList.contains("active") && !panel.contains(event.target) && !event.target.closest("#searchToggleBtn")) {
-            panel.classList.remove("active");
+        if (panel.classList.contains("active") && !panel.contains(event.target)
+            && event.target !== input && !event.target.closest("#searchToggleBtn")) {
+            fecharPainel();
         }
     });
 
     document.addEventListener("keydown", event => {
-        if (event.key === "Escape") panel.classList.remove("active");
+        if (event.key === "Escape") fecharPainel();
     });
 
     document.addEventListener("click", event => {
-        if (event.target.closest("#oracleSearchResults a")) panel.classList.remove("active");
+        if (event.target.closest("#oracleSearchResults a")) fecharPainel();
     });
 }
 

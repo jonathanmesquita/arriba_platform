@@ -1,29 +1,45 @@
-// js/chatbot.js
+// js/chatbot.js — Arriba Bot, o chat do site.
+//
+// Redesenhado em nov/2026 com três regras de escrita para chatbot:
+//
+// 1. Dizer o que é e o que sabe fazer, logo no primeiro balão. É um
+//    assistente AUTOMÁTICO que explica as ferramentas deste site — não um
+//    atendente, não um buscador geral.
+// 2. Quando não sabe, dizer que não sabe, e oferecer um caminho. Antes ele
+//    respondia "qual a capital da França" despejando três cartões de
+//    ferramenta sem explicação nenhuma.
+// 3. Falar com quem visita o site. A resposta vinha com "Quando encaminhar
+//    para DEV", "Gerar resposta para cliente" e "Abrir manual" — sobras do
+//    copiloto de suporte, que falava com atendente.
+//
+// O subtítulo do cabeçalho mostra DE ONDE vem a resposta (base do site ou
+// provedor de IA). Antes ele mostrava um "humor" do mascote ("Pensando na
+// melhor resposta"), que ficava preso depois que a resposta chegava.
+//
+// Estilo: assets/css/chatbot.css. Conteúdo: assets/data/base-conhecimento.js.
 
-import { DATACOB_KNOWLEDGE_BASE, DATACOB_QUICK_TOPICS } from '../data/datacob-knowledge-base.js';
+import { KNOWLEDGE_BASE as BASE_CONHECIMENTO, QUICK_TOPICS as TOPICOS_RAPIDOS } from '../data/base-conhecimento.js';
 
 import {
     PROVEDORES, getConfig, salvarConfig, limparConfig,
     configCompleta, conversar, testarConexao
 } from './llm-providers.js';
 
-// Quantas mensagens do historico vao junto a cada chamada. Segura o custo
-// por token e evita estourar a janela de contexto em modelo pequeno.
+// Quantas mensagens do histórico vão junto a cada chamada ao provedor.
+// Segura o custo por token e evita estourar a janela de modelo pequeno.
 const MAX_HISTORICO = 10;
 
-// Mascote do chat: 4 estados, um arquivo por estado em
-// assets/img/frames-arriba-sapo-laranja/ (sapo pixelado laranja, set/2026).
-// Eram 7 estados com o desenho anterior; o novo mascote tem estas quatro
-// poses, e MASCOT_ROTATION abaixo e o que anima o chat fechado.
-//   idle  - observando, parado
-//   think - bug encontrado (notebook, mao erguida)
-//   hack  - programando (debrucado no notebook; tambem no card da home)
-//   jump  - pequena vitoria (braco erguido)
-//
-// O desenho antigo (sapolingo_*.png) continua em assets/img/frames_arriba/
-// como BACKUP - nao e referenciado por nada, nao remover sem combinar.
-const MASCOT_DIR = 'frames-arriba-sapo-laranja';
+// Nota mínima da busca local para responder com um cartão. Abaixo disso a
+// pergunta vira "talvez seja uma destas" (ou vai para o provedor de IA).
+const NOTA_RESPOSTA_DIRETA = 14;
 
+// Mascote: sapo pixelado laranja, um arquivo por estado. A imagem muda com
+// a resposta (achou / não achou), mas NÃO anima sozinha: o rodízio
+// automático de imagens a cada 6,5 s saiu em nov/2026 (movimento sem pausa
+// — WCAG 2.2.2 — e enfeite que distrai).
+// O desenho antigo (sapolingo_*.png) continua em assets/img/frames_arriba/
+// como BACKUP — não é referenciado por nada; não remover sem combinar.
+const MASCOT_DIR = 'frames-arriba-sapo-laranja';
 const MASCOT_FRAMES = {
     idle: 'sapo-pixelado-laranja-observando.png',
     think: 'sapo-pixelado-laranja-bug-encontrado.png',
@@ -31,368 +47,222 @@ const MASCOT_FRAMES = {
     jump: 'sapo-pixelado-laranja-pequena-vitoria.png'
 };
 
-const MASCOT_ROTATION = ['idle', 'think', 'hack', 'jump'];
-
-const MASCOT_LABELS = {
-    idle: 'Pronto para ajudar',
-    think: 'Pensando na melhor resposta',
-    hack: 'Trabalhando nisso',
-    jump: 'Resposta encontrada'
-};
+// Conversa curta que não é pergunta sobre ferramenta. Comparadas já sem
+// acento e em minúsculas.
+const SAUDACAO = /^(oi|ola|ola+|e ai|eai|bom dia|boa tarde|boa noite|hey|hello|hi)\b/;
+const AGRADECIMENTO = /^(obrigad|valeu|vlw|brigad|thanks|thank you)/;
 
 export function initChatbot() {
     const chatbotBtn = document.getElementById('chatbotBtn');
     const chatbotPopup = document.getElementById('chatbot');
     const closeChatBtn = document.getElementById('closeChat');
+    const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
-    const sendChatBtn = document.getElementById('sendChat');
     const chatWindow = document.getElementById('chatWindow');
-    const modeButtons = document.querySelectorAll('.chat-mode-btn');
+    const subtitulo = document.getElementById('chatSubtitle');
 
-    let currentMode = 'datacob';
-    let currentMood = 'idle';
-    let isWaitingResponse = false;
-    let rotationIndex = 0;
-    // Historico da conversa, so em memoria: fecha a aba, some. Conversa de
-    // suporte pode ter dado de chamado, entao nao persiste.
-    const historico = [];
-    const knowledgeById = new Map(DATACOB_KNOWLEDGE_BASE.map((item) => [item.id, item]));
-
-    if (!chatbotBtn || !chatbotPopup || !closeChatBtn || !chatInput || !sendChatBtn || !chatWindow) {
+    if (!chatbotBtn || !chatbotPopup || !closeChatBtn || !chatForm || !chatInput || !chatWindow) {
         return;
     }
 
+    let currentMood = 'idle';
+    let aguardando = false;
+    // Histórico só em memória: fecha a aba, some.
+    const historico = [];
+    const knowledgeById = new Map(BASE_CONHECIMENTO.map((item) => [item.id, item]));
+
     const mascot = setupMascot();
     setMascotMood('idle');
-    window.setInterval(rotateMascot, 6500);
     montarPainelConfig();
+    boasVindas();
 
-    chatbotBtn.addEventListener('click', function () {
-        chatbotPopup.classList.toggle('d-none');
+    /* ---------------- Abrir e fechar ---------------- */
 
-        if (!chatbotPopup.classList.contains('d-none')) {
-            setMascotMood(currentMood);
-            chatInput.focus();
+    chatbotBtn.addEventListener('click', () => {
+        if (estaAberto()) fechar();
+        else abrir();
+    });
+
+    closeChatBtn.addEventListener('click', fechar);
+
+    chatbotPopup.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            e.stopPropagation();
+            fechar();
         }
     });
 
-    closeChatBtn.addEventListener('click', function () {
+    // Outros botões do site (topo e hero, em navigation-v2.js) abrem o chat
+    // tirando o d-none direto. Observar a classe mantém o aria-expanded do
+    // lançador certo seja quem for que abriu.
+    new MutationObserver(() => {
+        chatbotBtn.setAttribute('aria-expanded', String(estaAberto()));
+    }).observe(chatbotPopup, { attributes: true, attributeFilter: ['class'] });
+
+    function estaAberto() {
+        return !chatbotPopup.classList.contains('d-none');
+    }
+
+    function abrir() {
+        chatbotPopup.classList.remove('d-none');
+        chatInput.focus();
+    }
+
+    function fechar() {
         chatbotPopup.classList.add('d-none');
+        chatbotBtn.focus();
+    }
+
+    /* ---------------- Enviar ---------------- */
+
+    // <form> no lugar de ouvir "Enter": o envio pelo teclado, pelo botão e
+    // pelo "Ir" do teclado do celular passam pelo mesmo caminho.
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        enviar();
     });
 
-    modeButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            modeButtons.forEach(btn => btn.classList.remove('active'));
+    chatWindow.addEventListener('click', tratarClique);
 
-            this.classList.add('active');
-            currentMode = this.dataset.mode || 'datacob';
-            setMascotMood(getMoodByMode(currentMode));
+    async function enviar() {
+        const mensagem = chatInput.value.trim();
+        if (!mensagem || aguardando) return;
 
-            appendMessage(
-                'Arriba Bot',
-                `Modo alterado para: **${this.textContent.trim()}**`,
-                'bot-message'
-            );
-
-            chatInput.focus();
-        });
-    });
-
-    sendChatBtn.addEventListener('click', function () {
-        sendMessage();
-    });
-
-    chatWindow.addEventListener('click', handleKnowledgeAction);
-
-    chatInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-    async function sendMessage() {
-        const message = chatInput.value.trim();
-
-        if (!message) return;
-
-        appendMessage('Você', message, 'user-message');
+        appendMessage('Você', mensagem, 'user-message');
         chatInput.value = '';
-        isWaitingResponse = true;
-        setMascotMood('think');
 
-        const botTypingMsg = appendMessage(
-            'Arriba Bot',
-            'Digitando...',
-            'bot-message',
-            true
-        );
-
-        const localResult = searchDatacobKnowledge(message);
-        if (shouldUseLocalKnowledge(localResult)) {
-            botTypingMsg.remove();
-            renderLocalKnowledgeResponse(message, localResult);
-            isWaitingResponse = false;
+        const curta = normalizeText(mensagem);
+        if (SAUDACAO.test(curta) && curta.length <= 20) {
+            responderSaudacao();
+            return;
+        }
+        if (AGRADECIMENTO.test(curta)) {
+            setMascotMood('jump');
+            appendMessage('Arriba Bot', 'De nada. Se quiser conhecer outra ferramenta, é só perguntar.', 'bot-message');
             return;
         }
 
-        // A base local nao respondeu bem. Se houver provedor de IA
-        // configurado, e a vez dele; senao, mensagem offline de sempre.
+        const resultado = buscarNaBase(mensagem);
+        if (resultado.best && resultado.best.score >= NOTA_RESPOSTA_DIRETA) {
+            setMascotMood('jump');
+            appendRichBotMessage(renderCartao(resultado.best.item));
+            return;
+        }
+
+        // A base local não tem resposta direta. Com provedor de IA
+        // configurado, é a vez dele; sem, a resposta é honesta: não sei.
         const config = getConfig();
         if (config.provedor === 'local' || !configCompleta(config)) {
-            botTypingMsg.remove();
-            setMascotMood('idle');
-            appendMessage('Arriba Bot', getOfflineMessage(), 'bot-message');
-            isWaitingResponse = false;
+            responderSemResposta(resultado);
             return;
         }
 
-        historico.push({ role: 'user', content: message });
+        aguardando = true;
+        setMascotMood('hack');
+        const digitando = appendMessage('Arriba Bot', 'Digitando…', 'bot-message', true);
+        historico.push({ role: 'user', content: mensagem });
 
         const r = await conversar({
             config,
-            sistema: montarSistema(localResult),
+            sistema: montarSistema(resultado),
             mensagens: historico.slice(-MAX_HISTORICO)
         });
 
-        botTypingMsg.remove();
+        digitando.remove();
+        aguardando = false;
 
         if (r.ok) {
             historico.push({ role: 'assistant', content: r.texto });
             setMascotMood('jump');
             appendMessage('Arriba Bot', r.texto, 'bot-message');
-        } else {
-            // Falha do provedor nao pode deixar o usuario sem resposta:
-            // cai na base local e diz por que caiu.
-            historico.pop();
-            setMascotMood('idle');
-            appendMessage('Arriba Bot', getOfflineMessage(), 'bot-message');
-            appendMessage('Arriba Bot',
-                `⚠️ ${PROVEDORES[config.provedor]?.nome || config.provedor}: ${r.erro}`,
-                'bot-message');
-        }
-        isWaitingResponse = false;
-    }
-
-    /* Contexto do sistema: quem o modelo e, e o que a base local sabe
-       sobre a pergunta. Mandar so os trechos relevantes (e nao a base
-       inteira) mantem o custo baixo e a resposta ancorada no DataCob. */
-    function montarSistema(localResult) {
-        const trechos = (localResult?.matches || []).slice(0, 3).map(m => {
-            const item = m.item || m;
-            return `- ${item.titulo || item.id}: ${(item.resumo || item.descricao || '').slice(0, 300)}`;
-        }).join('\n');
-
-        return [
-            'Voce e o assistente da Arriba Platform, da PH3A, e atende o time de suporte do CRM DataCob.',
-            'Responda em portugues do Brasil, de forma direta e objetiva.',
-            'Se nao souber, diga que nao sabe e sugira abrir chamado — nao invente passo de tela nem codigo de erro.',
-            'Nunca peca nem repita dado pessoal de devedor (CPF, nome completo, telefone, endereco).',
-            trechos ? `\nTrechos da base de conhecimento do DataCob que podem ajudar:\n${trechos}` : ''
-        ].filter(Boolean).join('\n');
-    }
-
-    /* ---------------------------------------------------------------
-       Painel de configuração do provedor de IA.
-
-       Injetado por JS, e não escrito no HTML: o widget do chat aparece em
-       mais de uma página e duplicar esse formulário em cada uma seria
-       exatamente o que a regra de fonte única do projeto evita.
-       --------------------------------------------------------------- */
-    function montarPainelConfig() {
-        const barra = chatbotPopup.querySelector('.chat-mode-bar');
-        if (!barra) return;
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'chat-mode-btn';
-        btn.id = 'btnConfigIA';
-        btn.title = 'Configurar provedor de IA';
-        btn.innerHTML = '<i class="fa-solid fa-gear"></i>';
-        barra.appendChild(btn);
-
-        const painel = document.createElement('div');
-        painel.id = 'painelConfigIA';
-        painel.className = 'chat-config d-none';
-        chatbotPopup.insertBefore(painel, chatbotPopup.querySelector('.chat-window'));
-
-        btn.addEventListener('click', () => {
-            painel.classList.toggle('d-none');
-            if (!painel.classList.contains('d-none')) renderPainelConfig(painel);
-        });
-
-        atualizarSeloProvedor();
-    }
-
-    function renderPainelConfig(painel) {
-        const cfg = getConfig();
-        const p = PROVEDORES[cfg.provedor];
-
-        painel.innerHTML = `
-            <label class="chat-config-label">Provedor</label>
-            <select id="cfgProvedor" class="chat-config-input">
-                ${Object.values(PROVEDORES).map(x => `
-                    <option value="${x.id}" ${x.id === cfg.provedor ? 'selected' : ''}>${escapeHtml(x.nome)}</option>`).join('')}
-            </select>
-            <p class="chat-config-hint">${escapeHtml(p.resumo)}</p>
-
-            ${p.id === 'local' ? '' : `
-                <label class="chat-config-label">Modelo</label>
-                <input id="cfgModelo" class="chat-config-input" list="cfgModelos"
-                       value="${escapeAttr(cfg.modelo)}" placeholder="${escapeAttr(p.modelos[0] || '')}">
-                <datalist id="cfgModelos">
-                    ${p.modelos.map(m => `<option value="${escapeAttr(m)}"></option>`).join('')}
-                </datalist>
-
-                ${p.precisaUrl ? `
-                    <label class="chat-config-label">Endereço</label>
-                    <input id="cfgUrl" class="chat-config-input" value="${escapeAttr(cfg.url || p.urlPadrao)}">` : ''}
-
-                ${p.precisaChave ? `
-                    <label class="chat-config-label">Chave de API</label>
-                    <input id="cfgChave" class="chat-config-input" type="password" autocomplete="off"
-                           value="${escapeAttr(cfg.chave)}" placeholder="cole sua chave">
-                    ${p.linkChave ? `<p class="chat-config-hint">
-                        <a href="${escapeAttr(p.linkChave)}" target="_blank" rel="noopener noreferrer">Onde pegar a chave</a>
-                    </p>` : ''}` : ''}
-
-                ${p.ajudaSetup ? `<p class="chat-config-hint"><code>${escapeHtml(p.ajudaSetup)}</code></p>` : ''}
-
-                <div class="chat-config-aviso">
-                    <strong>⚠️ Leia antes de ativar</strong>
-                    <p>${escapeHtml(p.privacidade)} Não cole dado pessoal de devedor (CPF, nome completo, telefone).</p>
-                    ${p.precisaChave ? '<p>A chave fica só neste navegador e é visível no devtools de quem usa este computador. Use uma chave com limite de gasto.</p>' : ''}
-                </div>`}
-
-            <div class="chat-config-acoes">
-                <button type="button" id="cfgSalvar" class="btn btn-sm btn-primary">Salvar</button>
-                <button type="button" id="cfgTestar" class="btn btn-sm btn-outline-secondary">Testar conexão</button>
-                <button type="button" id="cfgLimpar" class="btn btn-sm btn-link">Voltar ao local</button>
-            </div>
-            <p class="chat-config-status" id="cfgStatus"></p>`;
-
-        painel.querySelector('#cfgProvedor').addEventListener('change', (e) => {
-            // Troca de provedor limpa modelo/chave: chave de um servico nao
-            // vale no outro e deixar o campo preenchido so confunde.
-            salvarConfig({ provedor: e.target.value, modelo: '', chave: '', url: '' });
-            renderPainelConfig(painel);
-            atualizarSeloProvedor();
-        });
-
-        const lerForm = () => ({
-            provedor: painel.querySelector('#cfgProvedor').value,
-            modelo: painel.querySelector('#cfgModelo')?.value || '',
-            chave: painel.querySelector('#cfgChave')?.value || '',
-            url: painel.querySelector('#cfgUrl')?.value || ''
-        });
-        const status = painel.querySelector('#cfgStatus');
-
-        painel.querySelector('#cfgSalvar').addEventListener('click', () => {
-            const cfgNovo = salvarConfig(lerForm());
-            atualizarSeloProvedor();
-            status.textContent = configCompleta(cfgNovo)
-                ? '✓ Salvo. O chat passa a usar este provedor quando a base local não tiver a resposta.'
-                : '⚠ Faltou preencher modelo ou chave — o chat segue no local até completar.';
-        });
-
-        painel.querySelector('#cfgTestar').addEventListener('click', async () => {
-            status.textContent = 'Testando...';
-            const r = await testarConexao(salvarConfig(lerForm()));
-            status.textContent = (r.ok ? '✓ ' : '✗ ') + r.texto;
-            atualizarSeloProvedor();
-        });
-
-        painel.querySelector('#cfgLimpar').addEventListener('click', () => {
-            limparConfig();
-            renderPainelConfig(painel);
-            atualizarSeloProvedor();
-            status.textContent = 'Voltou para a base local.';
-        });
-    }
-
-    /* Deixa visível no cabeçalho qual provedor está ativo — quem digita
-       precisa saber se o que escreve sai ou não do navegador. */
-    function atualizarSeloProvedor() {
-        const cfg = getConfig();
-        const ativo = configCompleta(cfg) ? cfg.provedor : 'local';
-        const alvo = chatbotPopup.querySelector('.card-header span');
-        if (alvo) {
-            alvo.textContent = ativo === 'local'
-                ? 'Arriba Bot · local'
-                : `Arriba Bot · ${PROVEDORES[ativo].nome.split(' ')[0]}`;
-        }
-        const btn = document.getElementById('btnConfigIA');
-        if (btn) btn.classList.toggle('active', ativo !== 'local');
-    }
-
-    function appendMessage(sender, text, type, isTyping = false) {
-        const msgDiv = document.createElement('div');
-
-        msgDiv.classList.add('chat-message', type);
-        const isBot = type === 'bot-message';
-        const content = isTyping
-            ? `<strong>${escapeHtml(sender)}:</strong><div><span class="typing-indicator">${escapeHtml(text)}</span></div>`
-            : `<strong>${escapeHtml(sender)}:</strong><div>${formatBotText(text)}</div>`;
-
-        if (isBot) {
-            msgDiv.classList.add('chat-message-with-avatar');
-            msgDiv.innerHTML = `
-                <img class="chat-message-avatar" src="${getMascotSrc(currentMood)}" alt="" aria-hidden="true">
-                <div class="chat-message-content">${content}</div>
-            `;
-        } else {
-            msgDiv.innerHTML = content;
-        }
-
-        chatWindow.appendChild(msgDiv);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-
-        return msgDiv;
-    }
-
-    function appendRichBotMessage(html) {
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('chat-message', 'bot-message', 'chat-message-with-avatar');
-        msgDiv.innerHTML = `
-            <img class="chat-message-avatar" src="${getMascotSrc(currentMood)}" alt="" aria-hidden="true">
-            <div class="chat-message-content">${html}</div>
-        `;
-        chatWindow.appendChild(msgDiv);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-        return msgDiv;
-    }
-
-    function shouldUseLocalKnowledge(result) {
-        return currentMode === 'datacob' || Number(result.best?.score || 0) >= 14;
-    }
-
-    function renderLocalKnowledgeResponse(query, result) {
-        if (result.best && result.best.score >= 14) {
-            setMascotMood(result.best.item.id.includes('erro') ? 'think' : 'jump');
-            appendRichBotMessage(renderKnowledgeCard(result.best.item, query));
             return;
         }
 
-        setMascotMood('think');
-        appendRichBotMessage(renderKnowledgeSuggestions(query, result.matches));
+        // Falha do provedor nunca deixa a pessoa sem resposta: diz o que
+        // aconteceu e responde pela base do site.
+        historico.pop();
+        const nome = PROVEDORES[config.provedor]?.nome || config.provedor;
+        appendMessage('Arriba Bot', `Não consegui falar com ${nome} agora (${r.erro}). Respondi pela base do site.`, 'bot-message');
+        responderSemResposta(resultado);
     }
 
-    function searchDatacobKnowledge(query = '') {
+    /* ---------------- Respostas ---------------- */
+
+    function boasVindas() {
+        appendMessage(
+            'Arriba Bot',
+            'Olá! Sou o Arriba Bot, o assistente automático deste site. Explico o que cada ferramenta faz e mostro onde ela fica.',
+            'bot-message'
+        );
+        appendMessage('Arriba Bot', 'Escolha um assunto ou escreva sua pergunta:', 'bot-message');
+        appendRespostasRapidas(TOPICOS_RAPIDOS.map((t) => ({ rotulo: t.rotulo, titulo: t.resumo, valor: t.rotulo })));
+    }
+
+    function responderSaudacao() {
+        setMascotMood('idle');
+        appendMessage('Arriba Bot', 'Olá! Posso explicar qualquer ferramenta do site. Por onde quer começar?', 'bot-message');
+        appendRespostasRapidas(TOPICOS_RAPIDOS.map((t) => ({ rotulo: t.rotulo, titulo: t.resumo, valor: t.rotulo })));
+    }
+
+    // Dois casos que antes davam a mesma resposta: "achei algo parecido" e
+    // "não tenho nada sobre isso". Misturar os dois era o que fazia a
+    // pergunta sobre a capital da França virar uma lista de ferramentas.
+    function responderSemResposta(resultado) {
+        setMascotMood('think');
+        if (resultado.matches.length) {
+            appendMessage('Arriba Bot', 'Não achei uma resposta exata. Talvez você procure uma destas:', 'bot-message');
+            appendRespostasRapidas(resultado.matches.map(({ item }) => ({
+                rotulo: item.titulo,
+                titulo: item.resumo,
+                valor: item.perguntaExemplo || item.titulo
+            })));
+            return;
+        }
+        appendMessage(
+            'Arriba Bot',
+            'Não sei responder isso. Eu só conheço as ferramentas deste site — sobre elas, posso ajudar com:',
+            'bot-message'
+        );
+        appendRespostasRapidas(TOPICOS_RAPIDOS.map((t) => ({ rotulo: t.rotulo, titulo: t.resumo, valor: t.rotulo })));
+    }
+
+    function renderCartao(item) {
+        const passos = (item.passos || []).map((p) => `<li>${escapeHtml(p)}</li>`).join('');
+        const bomSaber = (item.checklist || []).map((c) => `<li>${escapeHtml(c)}</li>`).join('');
+        return `
+            <article class="chat-card">
+                <h3>${escapeHtml(item.titulo)}</h3>
+                <p>${escapeHtml(item.resumo)}</p>
+                <p class="chat-card-where">Onde fica: <strong>${escapeHtml(item.caminhoTela || '')}</strong></p>
+                <div class="chat-card-actions">
+                    ${item.linkManual ? `<a class="chat-btn chat-btn-primary" href="${escapeAttr(item.linkManual)}">Abrir a ferramenta</a>` : ''}
+                    ${passos ? `
+                    <details>
+                        <summary>Ver passo a passo</summary>
+                        <ol>${passos}</ol>
+                        ${bomSaber ? `<div class="chat-good-to-know"><strong>Bom saber</strong><ul>${bomSaber}</ul></div>` : ''}
+                    </details>` : ''}
+                </div>
+            </article>
+        `;
+    }
+
+    /* ---------------- Busca na base local ---------------- */
+
+    function buscarNaBase(query = '') {
         const normalizedQuery = normalizeText(query);
         const tokens = normalizedQuery
             .split(/\s+/)
-            .filter((token) => token.length > 2 && !['quero', 'como', 'sobre', 'para', 'com', 'uma', 'uns', 'das', 'dos', 'que'].includes(token));
+            .filter((token) => token.length > 2 && !['quero', 'como', 'sobre', 'para', 'com', 'uma', 'uns', 'das', 'dos', 'que', 'qual', 'onde'].includes(token));
 
-        const matches = DATACOB_KNOWLEDGE_BASE
+        const matches = BASE_CONHECIMENTO
             .map((item) => {
                 const haystack = normalizeText([
                     item.titulo,
-                    item.produto,
                     item.categoria,
                     item.perguntaExemplo,
                     item.caminhoTela,
                     item.resumo,
-                    item.tipoFreshdeskSugerido,
-                    item.quandoEncaminharDev,
                     ...(item.palavrasChave || []),
                     ...(item.passos || []),
                     ...(item.checklist || [])
@@ -424,183 +294,257 @@ export function initChatbot() {
             .sort((a, b) => b.score - a.score || a.item.titulo.localeCompare(b.item.titulo))
             .slice(0, 4);
 
-        return {
-            query,
-            matches,
-            best: matches[0] || null
-        };
+        return { query, matches, best: matches[0] || null };
     }
 
-    function renderKnowledgeCard(item, query) {
-        const detailsId = `knowledge-details-${item.id}`;
-        return `
-            <article class="chat-knowledge-card" data-knowledge-card="${escapeHtml(item.id)}">
-                <div class="chat-knowledge-meta">
-                    <span>${escapeHtml(item.produto)}</span>
-                    <span>${escapeHtml(item.categoria)}</span>
-                    <span>${escapeHtml(item.tipoFreshdeskSugerido || 'Duvida')}</span>
-                </div>
-                <h4>${escapeHtml(item.titulo)}</h4>
-                <p>${escapeHtml(item.resumo)}</p>
-                <div class="chat-screen-path">
-                    <span>Caminho da tela</span>
-                    <strong>${escapeHtml(item.caminhoTela || 'A confirmar')}</strong>
-                </div>
-                <div class="chat-knowledge-details open" id="${detailsId}">
-                    <div>
-                        <strong>Passo a passo</strong>
-                        <ol>${(item.passos || []).map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
-                    </div>
-                    <div>
-                        <strong>Checklist</strong>
-                        <ul>${(item.checklist || []).map((check) => `<li>${escapeHtml(check)}</li>`).join('')}</ul>
-                    </div>
-                    <div class="chat-dev-note">
-                        <strong>Quando encaminhar para DEV</strong>
-                        <p>${escapeHtml(item.quandoEncaminharDev || 'Encaminhar apenas se houver erro tecnico reproduzivel apos validacao operacional.')}</p>
-                    </div>
-                </div>
-                <div class="chat-knowledge-actions">
-                    <button type="button" data-chat-toggle="${escapeHtml(detailsId)}">Ver passo a passo</button>
-                    <a href="${escapeAttr(item.linkManual || '/pages/docs/help-center/index.html')}" target="_blank" rel="noopener">Abrir manual</a>
-                    <button type="button" data-chat-copy="${escapeHtml(item.id)}">Copiar resposta</button>
-                    <button type="button" data-chat-client="${escapeHtml(item.id)}">Gerar resposta para cliente</button>
-                </div>
-                <small class="chat-query-note">Pergunta entendida: ${escapeHtml(query)}</small>
-            </article>
-        `;
-    }
+    /* Contexto do sistema para o provedor de IA: quem o modelo é e o que a
+       base local sabe sobre a pergunta. Só os trechos relevantes, não a
+       base inteira — custo baixo e resposta ancorada no site. */
+    function montarSistema(resultado) {
+        const trechos = (resultado?.matches || []).slice(0, 3).map(({ item }) =>
+            `- ${item.titulo}: ${(item.resumo || '').slice(0, 300)}`
+        ).join('\n');
 
-    function renderKnowledgeSuggestions(query, matches = []) {
-        const suggestions = matches.length ? matches : DATACOB_KNOWLEDGE_BASE.slice(0, 4).map((item) => ({ item, score: 0 }));
-        return `
-            <article class="chat-knowledge-card">
-                <div class="chat-knowledge-meta">
-                    <span>Base local</span>
-                    <span>Sem match exato</span>
-                </div>
-                <h4>Nao encontrei uma resposta exata para essa duvida.</h4>
-                <p>Escolha um tema proximo para eu abrir a orientacao padronizada ou tente escrever com uma palavra-chave da rotina.</p>
-                <div class="chat-suggestion-list">
-                    ${suggestions.map(({ item }) => `
-                        <button type="button" data-chat-suggestion="${escapeHtml(item.id)}">
-                            <strong>${escapeHtml(item.titulo)}</strong>
-                            <span>${escapeHtml(item.categoria)}</span>
-                        </button>
-                    `).join('')}
-                </div>
-                <small class="chat-query-note">Busca local: ${escapeHtml(query)}</small>
-            </article>
-        `;
-    }
-
-    async function handleKnowledgeAction(event) {
-        const topicButton = event.target.closest('[data-chat-topic]');
-        if (topicButton) {
-            sendPresetQuery(topicButton.dataset.chatTopic || '');
-            return;
-        }
-
-        const suggestionButton = event.target.closest('[data-chat-suggestion]');
-        if (suggestionButton) {
-            const item = knowledgeById.get(suggestionButton.dataset.chatSuggestion);
-            if (item) sendPresetQuery(item.perguntaExemplo || item.titulo);
-            return;
-        }
-
-        const toggleButton = event.target.closest('[data-chat-toggle]');
-        if (toggleButton) {
-            const details = document.getElementById(toggleButton.dataset.chatToggle);
-            details?.classList.toggle('open');
-            return;
-        }
-
-        const copyButton = event.target.closest('[data-chat-copy]');
-        if (copyButton) {
-            const item = knowledgeById.get(copyButton.dataset.chatCopy);
-            if (item) await copyText(buildPlainKnowledgeAnswer(item));
-            return;
-        }
-
-        const clientButton = event.target.closest('[data-chat-client]');
-        if (clientButton) {
-            const item = knowledgeById.get(clientButton.dataset.chatClient);
-            if (item) appendRichBotMessage(renderClientReplyCard(item));
-        }
-    }
-
-    function sendPresetQuery(text) {
-        const query = String(text || '').trim();
-        if (!query) return;
-        chatInput.value = query;
-        sendMessage();
-    }
-
-    function buildPlainKnowledgeAnswer(item) {
         return [
-            item.titulo,
-            '',
-            `Caminho: ${item.caminhoTela || 'A confirmar'}`,
-            '',
-            item.resumo,
-            '',
-            'Passo a passo:',
-            ...(item.passos || []).map((step, index) => `${index + 1}. ${step}`),
-            '',
-            'Checklist:',
-            ...(item.checklist || []).map((check) => `- ${check}`),
-            '',
-            `Manual: ${item.linkManual || 'Nao informado'}`,
-            '',
-            `Quando encaminhar para DEV: ${item.quandoEncaminharDev || 'Apenas se houver erro tecnico reproduzivel.'}`
-        ].join('\n');
+            'Você é o Arriba Bot, assistente automático da Arriba Platform, um protótipo de estudos com ferramentas técnicas.',
+            'Responda em português do Brasil, em frases curtas e diretas.',
+            'Se não souber, diga que não sabe — não invente passo de tela nem código de erro.',
+            'Nunca peça nem repita dado pessoal (CPF, nome completo, telefone, endereço).',
+            trechos ? `\nTrechos da base do site que podem ajudar:\n${trechos}` : ''
+        ].filter(Boolean).join('\n');
     }
 
-    function renderClientReplyCard(item) {
-        const clientReply = buildClientReply(item);
-        return `
-            <article class="chat-knowledge-card">
-                <div class="chat-knowledge-meta">
-                    <span>Resposta para cliente</span>
-                    <span>${escapeHtml(item.tipoFreshdeskSugerido || 'Duvida')}</span>
-                </div>
-                <h4>${escapeHtml(item.titulo)}</h4>
-                <p>${formatBotText(clientReply)}</p>
-                <div class="chat-knowledge-actions">
-                    <button type="button" data-chat-copy="${escapeHtml(item.id)}">Copiar orientacao completa</button>
-                </div>
-            </article>
-        `;
+    /* ---------------- Cliques dentro da conversa ---------------- */
+
+    function tratarClique(event) {
+        const botao = event.target.closest('[data-chat-reply]');
+        if (!botao) return;
+        // A resposta rápida vira a fala da pessoa, como se ela tivesse
+        // digitado — assim o histórico conta a conversa inteira.
+        chatInput.value = botao.dataset.chatReply || '';
+        enviar();
     }
 
-    function buildClientReply(item) {
-        const firstSteps = (item.passos || []).slice(0, 4).map((step, index) => `${index + 1}. ${step}`).join('\n');
-        return `
-Ola! Para essa rotina no DataCob, siga este caminho:
-${item.caminhoTela || 'Caminho a confirmar'}
+    /* ---------------- Montagem das mensagens ---------------- */
 
-Orientacao inicial:
-${firstSteps}
+    function appendMessage(sender, text, type, isTyping = false) {
+        const msg = document.createElement('div');
+        msg.classList.add('chat-message', type);
+        const corpo = isTyping
+            ? `<span class="typing-indicator">${escapeHtml(text)}</span>`
+            : formatBotText(text);
+        const fala = `<span class="chat-sr-only">${escapeHtml(sender)}:</span>${corpo}`;
 
-Antes de encaminhar para analise tecnica, valide os parametros e teste em um contrato de exemplo. Se o comportamento persistir mesmo com a parametrizacao correta, envie prints, log e exemplo para investigarmos.
-        `.trim();
-    }
-
-    async function copyText(text) {
-        try {
-            await navigator.clipboard.writeText(text);
-            setMascotMood('jump');
-            appendMessage('Arriba Bot', 'Resposta copiada para a area de transferencia.', 'bot-message');
-        } catch {
-            appendMessage('Arriba Bot', 'Nao consegui copiar automaticamente. Selecione o texto do card e copie manualmente.', 'bot-message');
+        if (type === 'bot-message') {
+            msg.innerHTML = `
+                <img class="chat-message-avatar" src="${getMascotSrc(currentMood)}" alt="" aria-hidden="true">
+                <div class="chat-message-content">${fala}</div>
+            `;
+        } else {
+            msg.innerHTML = fala;
         }
+
+        chatWindow.appendChild(msg);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        return msg;
     }
+
+    function appendRichBotMessage(html) {
+        const msg = document.createElement('div');
+        msg.classList.add('chat-message', 'bot-message');
+        msg.innerHTML = `
+            <img class="chat-message-avatar" src="${getMascotSrc(currentMood)}" alt="" aria-hidden="true">
+            <div class="chat-message-content"><span class="chat-sr-only">Arriba Bot:</span>${html}</div>
+        `;
+        chatWindow.appendChild(msg);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        return msg;
+    }
+
+    function appendRespostasRapidas(opcoes) {
+        const grupo = document.createElement('div');
+        grupo.className = 'chat-quick-replies';
+        grupo.setAttribute('role', 'group');
+        grupo.setAttribute('aria-label', 'Sugestões');
+        grupo.innerHTML = opcoes.map((o) => `
+            <button type="button" data-chat-reply="${escapeAttr(o.valor)}" title="${escapeAttr(o.titulo || '')}">${escapeHtml(o.rotulo)}</button>
+        `).join('');
+        chatWindow.appendChild(grupo);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    /* ---------------- Painel do provedor de IA ----------------
+       Injetado por JS, e não escrito no HTML, para o formulário existir em
+       um lugar só. */
+
+    function montarPainelConfig() {
+        const header = chatbotPopup.querySelector('.chat-header');
+        if (!header) return;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chat-header-btn';
+        btn.id = 'btnConfigIA';
+        btn.title = 'Configurar IA (opcional)';
+        btn.setAttribute('aria-label', 'Configurar provedor de IA (opcional)');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-controls', 'painelConfigIA');
+        btn.innerHTML = '<i class="fa-solid fa-gear" aria-hidden="true"></i>';
+        header.insertBefore(btn, closeChatBtn);
+
+        const painel = document.createElement('div');
+        painel.id = 'painelConfigIA';
+        painel.className = 'chat-config d-none';
+        chatbotPopup.insertBefore(painel, chatWindow);
+
+        btn.addEventListener('click', () => {
+            painel.classList.toggle('d-none');
+            const aberto = !painel.classList.contains('d-none');
+            btn.setAttribute('aria-expanded', String(aberto));
+            if (aberto) renderPainelConfig(painel);
+        });
+
+        atualizarFonte();
+    }
+
+    function renderPainelConfig(painel) {
+        const cfg = getConfig();
+        const p = PROVEDORES[cfg.provedor];
+
+        painel.innerHTML = `
+            <label class="chat-config-label" for="cfgProvedor">Provedor</label>
+            <select id="cfgProvedor" class="chat-config-input">
+                ${Object.values(PROVEDORES).map(x => `
+                    <option value="${x.id}" ${x.id === cfg.provedor ? 'selected' : ''}>${escapeHtml(x.nome)}</option>`).join('')}
+            </select>
+            <p class="chat-config-hint">${escapeHtml(p.resumo)}</p>
+
+            ${p.id === 'local' ? '' : `
+                <label class="chat-config-label" for="cfgModelo">Modelo</label>
+                <input id="cfgModelo" class="chat-config-input" list="cfgModelos"
+                       value="${escapeAttr(cfg.modelo)}" placeholder="${escapeAttr(p.modelos[0] || '')}">
+                <datalist id="cfgModelos">
+                    ${p.modelos.map(m => `<option value="${escapeAttr(m)}"></option>`).join('')}
+                </datalist>
+
+                ${p.precisaUrl ? `
+                    <label class="chat-config-label" for="cfgUrl">Endereço</label>
+                    <input id="cfgUrl" class="chat-config-input" value="${escapeAttr(cfg.url || p.urlPadrao)}">` : ''}
+
+                ${p.precisaChave ? `
+                    <label class="chat-config-label" for="cfgChave">Chave de API</label>
+                    <input id="cfgChave" class="chat-config-input" type="password" autocomplete="off"
+                           value="${escapeAttr(cfg.chave)}" placeholder="cole sua chave">
+                    ${p.linkChave ? `<p class="chat-config-hint">
+                        <a href="${escapeAttr(p.linkChave)}" target="_blank" rel="noopener noreferrer">Onde pegar a chave</a>
+                    </p>` : ''}` : ''}
+
+                ${p.ajudaSetup ? `<p class="chat-config-hint"><code>${escapeHtml(p.ajudaSetup)}</code></p>` : ''}
+
+                <div class="chat-config-aviso">
+                    <strong>Leia antes de ativar</strong>
+                    <p>${escapeHtml(p.privacidade)} Não cole dado pessoal (CPF, nome completo, telefone).</p>
+                    ${p.precisaChave ? '<p>A chave fica só neste navegador e aparece nas ferramentas de desenvolvedor de quem usa este computador. Use uma chave com limite de gasto.</p>' : ''}
+                </div>`}
+
+            <div class="chat-config-acoes">
+                <button type="button" id="cfgSalvar" class="chat-btn chat-btn-primary">Salvar</button>
+                <button type="button" id="cfgTestar" class="chat-btn chat-btn-secondary">Testar conexão</button>
+                <button type="button" id="cfgLimpar" class="chat-btn chat-btn-link">Usar só a base do site</button>
+            </div>
+            <p class="chat-config-status" id="cfgStatus" role="status"></p>`;
+
+        painel.querySelector('#cfgProvedor').addEventListener('change', (e) => {
+            // Troca de provedor limpa modelo/chave: chave de um serviço não
+            // vale no outro, e deixar o campo preenchido só confunde.
+            salvarConfig({ provedor: e.target.value, modelo: '', chave: '', url: '' });
+            renderPainelConfig(painel);
+            atualizarFonte();
+        });
+
+        const lerForm = () => ({
+            provedor: painel.querySelector('#cfgProvedor').value,
+            modelo: painel.querySelector('#cfgModelo')?.value || '',
+            chave: painel.querySelector('#cfgChave')?.value || '',
+            url: painel.querySelector('#cfgUrl')?.value || ''
+        });
+        const status = painel.querySelector('#cfgStatus');
+
+        painel.querySelector('#cfgSalvar').addEventListener('click', () => {
+            const cfgNovo = salvarConfig(lerForm());
+            atualizarFonte();
+            status.textContent = configCompleta(cfgNovo)
+                ? 'Salvo. Quando a base do site não tiver a resposta, o chat pergunta a este provedor.'
+                : 'Falta preencher o modelo ou a chave — até lá, o chat responde só pela base do site.';
+        });
+
+        painel.querySelector('#cfgTestar').addEventListener('click', async () => {
+            status.textContent = 'Testando…';
+            const r = await testarConexao(salvarConfig(lerForm()));
+            status.textContent = (r.ok ? 'Funcionou: ' : 'Não funcionou: ') + r.texto;
+            atualizarFonte();
+        });
+
+        painel.querySelector('#cfgLimpar').addEventListener('click', () => {
+            limparConfig();
+            renderPainelConfig(painel);
+            atualizarFonte();
+            status.textContent = 'Pronto: o chat responde só pela base do site.';
+        });
+    }
+
+    /* O subtítulo diz de onde vem a resposta. Quem digita precisa saber se
+       o que escreve pode sair do navegador. */
+    function atualizarFonte() {
+        const cfg = getConfig();
+        const ativo = configCompleta(cfg) ? cfg.provedor : 'local';
+        if (subtitulo) {
+            subtitulo.textContent = ativo === 'local'
+                ? 'Assistente automático · responde pela base do site'
+                : `Assistente automático · usa ${PROVEDORES[ativo].nome.split(' ')[0]} quando a base não cobre`;
+        }
+        const btn = document.getElementById('btnConfigIA');
+        if (btn) btn.classList.toggle('active', ativo !== 'local');
+    }
+
+    /* ---------------- Mascote ---------------- */
+
+    function setupMascot() {
+        chatbotBtn.classList.add('chatbot-mascot-button');
+
+        const buttonImage = document.createElement('img');
+        buttonImage.className = 'chatbot-mascot-button-img';
+        buttonImage.alt = '';
+        buttonImage.setAttribute('aria-hidden', 'true');
+        chatbotBtn.appendChild(buttonImage);
+
+        const headerImage = document.createElement('img');
+        headerImage.className = 'chatbot-mascot-header-img';
+        headerImage.alt = '';
+        headerImage.setAttribute('aria-hidden', 'true');
+        const header = chatbotPopup.querySelector('.chat-header');
+        header?.insertBefore(headerImage, header.firstChild);
+
+        return { buttonImage, headerImage };
+    }
+
+    function setMascotMood(mood) {
+        currentMood = MASCOT_FRAMES[mood] ? mood : 'idle';
+        const src = getMascotSrc(currentMood);
+        [mascot.buttonImage, mascot.headerImage].forEach((img) => { if (img) img.src = src; });
+    }
+
+    function getMascotSrc(mood) {
+        const filename = MASCOT_FRAMES[mood] || MASCOT_FRAMES.idle;
+        return new URL(`../img/${MASCOT_DIR}/${filename}`, import.meta.url).href;
+    }
+
+    /* ---------------- Texto ---------------- */
 
     function formatBotText(text = '') {
         return escapeHtml(text)
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n/g, '<br>')
-            .replace(/- /g, '&bull; ')
             .replace(
                 /(https?:\/\/[^\s<]+)/g,
                 '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
@@ -620,145 +564,11 @@ Antes de encaminhar para analise tecnica, valide os parametros e teste em um con
         return escapeHtml(text).replace(/`/g, '&#096;');
     }
 
-    function getOfflineMessage() {
-        return `
-**Modo offline ativo**
-
-A API nao respondeu agora.
-
-Posso ajudar com:
-- DataCob / Suporte
-- SQL
-- DevOps
-- API REST
-- Render
-- Vercel
-- Cloudflare
-
-Portais uteis:
-- https://ph3a.freshdesk.com/
-- https://suporte.ph3a.com.br/pt-BR/support/solutions
-        `.trim();
-    }
-
-    function setupMascot() {
-        chatbotBtn.classList.add('chatbot-mascot-button');
-        const oldIcon = chatbotBtn.querySelector('i');
-        if (oldIcon) oldIcon.setAttribute('aria-hidden', 'true');
-
-        const buttonImage = document.createElement('img');
-        buttonImage.className = 'chatbot-mascot-button-img';
-        buttonImage.alt = '';
-        buttonImage.setAttribute('aria-hidden', 'true');
-        chatbotBtn.appendChild(buttonImage);
-
-        const header = chatbotPopup.querySelector('.card-header');
-        const title = header?.querySelector('span');
-        const headerImage = document.createElement('img');
-        headerImage.className = 'chatbot-mascot-header-img';
-        headerImage.alt = '';
-        headerImage.setAttribute('aria-hidden', 'true');
-
-        const status = document.createElement('small');
-        status.className = 'chatbot-mascot-status';
-
-        if (header && title && !header.querySelector('.chatbot-header-left')) {
-            const left = document.createElement('div');
-            left.className = 'chatbot-header-left';
-            const titleWrap = document.createElement('div');
-            titleWrap.className = 'chatbot-title-wrap';
-
-            title.classList.add('chatbot-title');
-            titleWrap.appendChild(title);
-            titleWrap.appendChild(status);
-            left.appendChild(headerImage);
-            left.appendChild(titleWrap);
-            header.insertBefore(left, closeChatBtn);
-        }
-
-        const stage = document.createElement('div');
-        stage.className = 'chatbot-mascot-stage';
-        stage.innerHTML = `
-            <img class="chatbot-mascot-stage-img" alt="" aria-hidden="true">
-            <div>
-                <strong>PH3A Bot</strong>
-                <span>Manual interativo DataCob pronto para orientar o suporte.</span>
-            </div>
-        `;
-        chatWindow.appendChild(stage);
-
-        const quickTopics = document.createElement('div');
-        quickTopics.className = 'chat-quick-topics';
-        quickTopics.innerHTML = DATACOB_QUICK_TOPICS
-            .map((topic) => `<button type="button" data-chat-topic="${escapeAttr(topic)}">${escapeHtml(topic)}</button>`)
-            .join('');
-        chatWindow.appendChild(quickTopics);
-
-        return {
-            buttonImage,
-            headerImage,
-            status,
-            stageImage: stage.querySelector('.chatbot-mascot-stage-img'),
-            stageText: stage.querySelector('span')
-        };
-    }
-
-    function setMascotMood(mood) {
-        currentMood = MASCOT_FRAMES[mood] ? mood : 'idle';
-        const src = getMascotSrc(currentMood);
-        const label = MASCOT_LABELS[currentMood] || MASCOT_LABELS.idle;
-
-        [mascot.buttonImage, mascot.headerImage, mascot.stageImage].forEach((image) => {
-            if (image) image.src = src;
-        });
-
-        if (mascot.status) mascot.status.textContent = label;
-        if (mascot.stageText) mascot.stageText.textContent = label;
-        chatbotPopup.dataset.mascotMood = currentMood;
-        chatbotBtn.dataset.mascotMood = currentMood;
-    }
-
-    function rotateMascot() {
-        if (isWaitingResponse || !chatbotPopup.classList.contains('d-none')) return;
-        rotationIndex = (rotationIndex + 1) % MASCOT_ROTATION.length;
-        setMascotMood(MASCOT_ROTATION[rotationIndex]);
-    }
-
-    function getMoodByMode(mode) {
-        const moods = {
-            datacob: 'think',
-            sql: 'think',
-            devops: 'jump',
-            produtividade: 'hack',
-            geral: 'idle'
-        };
-        return moods[mode] || 'idle';
-    }
-
-    function inferMoodFromResponse(data = {}) {
-        if (MASCOT_FRAMES[data.mood]) return data.mood;
-        if (MASCOT_FRAMES[data.avatar]) return data.avatar;
-
-        const text = normalizeText(`${data.reply || ''} ${data.subject || ''} ${data.source || ''}`);
-
-        if (data.source === 'local-fallback') return 'think';
-        if (/erro|falha|bug|incidente|urgente|bloqueio|problema/.test(text)) return 'think';
-        if (/obrigado|sucesso|resolvido|aprovado|concluido|perfeito/.test(text)) return 'jump';
-        if (/checklist|validar|analise|duvida|sql|consulta/.test(text)) return 'think';
-        if (/deploy|cloud|render|vercel|github|publicado/.test(text)) return 'jump';
-        if (/produtividade|rotina|organiza/.test(text)) return 'hack';
-        return getMoodByMode(data.mode || currentMode);
-    }
-
     function normalizeText(text = '') {
         return String(text)
             .toLowerCase()
             .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
-    }
-
-    function getMascotSrc(mood) {
-        const filename = MASCOT_FRAMES[mood] || MASCOT_FRAMES.idle;
-        return new URL(`../img/${MASCOT_DIR}/${filename}`, import.meta.url).href;
+            .replace(/[̀-ͯ]/g, '')
+            .trim();
     }
 }

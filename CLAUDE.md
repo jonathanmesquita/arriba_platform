@@ -5,302 +5,290 @@ arquivo atualizado quando decisões de arquitetura mudarem.
 
 ## O que é
 
-**Arriba Platform** (`arriba.jm.dev.br`) — hub de ferramentas e utilitários para o
-time de suporte técnico + base de conhecimento + portfólio pessoal do Jonathan.
-Evoluindo **por partes** rumo a um visual Oracle Redwood (terroso, minimalista).
+**Arriba Platform** — **protótipo de estudos** em fullstack: validadores de arquivo
+(posicional e CSV), geradores, simulador SQL, editor web com preview ao vivo e um app de
+chat com IA. Tudo que é ferramenta roda **no navegador**; o único backend é o do app de
+chat, em `apps/`.
+
+**Não há conteúdo de empresa aqui.** Em out/2026 o projeto foi descaracterizado: saíram os
+87 manuais de operação (alguns com nome de cliente no caminho do arquivo), a base de erros,
+as respostas prontas, o copiloto de suporte e os layouts de negativação gerados a partir de
+planilhas de cliente. Ficou a engenharia — parsers, motores, sandbox e UI — com nomes
+neutros. Ao acrescentar algo, **não reintroduza nome de empresa, produto, cliente ou
+bureau**; dado de exemplo é fictício, sempre.
 
 ## Stack e hospedagem
 
-- **Frontend:** HTML/CSS/JavaScript puro + Bootstrap 5 (via CDN). **Sem framework, sem
-  build step** — decisão intencional (ferramentas pequenas, carregam instantâneo, deploy
-  estático). Não introduza React/Vue/Tailwind/bundler sem pedido explícito.
-- **Backend:** `arriba-api` — Node.js + Express, **API JSON pura** (sem template engine).
-  Integrações OpenAI e Freshdesk. Hospedado no Render.
-- **Infra/DNS:** Cloudflare (`jm.dev.br`). Deploy do front na Vercel (push → deploy automático).
+- **Site:** HTML/CSS/JavaScript puro + Bootstrap 5 (via CDN). **Sem framework, sem build
+  step** — decisão intencional (ferramentas pequenas, carregam instantâneo, deploy
+  estático). Não introduza React/Vue/Tailwind/bundler no site sem pedido explícito.
+- **`apps/` é exceção à regra acima, e só ela.** A pasta guarda aplicações que **não fazem
+  parte do site**: têm build próprio, backend e banco. Hoje há `apps/arriba-chat-ia/`
+  (React + Vite + Express + Prisma/Postgres) e `apps/comunicados/` (React + Vite + Express +
+  Prisma/**SQLite**). `.vercelignore` exclui `apps/` do deploy,
+  senão o código-fonte iria para o ar como arquivo estático. Cada app tem o próprio README
+  e `package.json` — **não** misture dependência de app com o site, e não importe nada de
+  `apps/` a partir de `assets/` ou `tools/`.
+- **Deploy:** Vercel (push → deploy automático). O app de chat ainda não foi implantado.
+
+## Estrutura de trabalho do repositório
+
+| Onde | O que guarda |
+|---|---|
+| `CLAUDE.md` | este arquivo: contexto, convenções e armadilhas por ferramenta |
+| `.claude/memory/` | [arquitetura](.claude/memory/architecture.md) (mapa), [decisões](.claude/memory/decisions.md) (ADRs) e [padrões](.claude/memory/patterns.md) (snippets) |
+| `.claude/rules/` | regras de comportamento por caminho (idioma, fila de trabalho) |
+| `tasks/` | a fila: `backlog`, `bugs`, `ideas`, `decisoes-pendentes`, `concluidas` |
+| `scripts/` | `changelog.sh`, o hook de commit e `conferir-contraste.mjs` |
+
+**Pendência identificada e não executada agora vira item em `tasks/`** — não comentário
+`// TODO`, não só na conversa. O que depende de decisão do dono vai para
+`tasks/decisoes-pendentes.md` e o trabalho continua pelo que não depende dela.
+
+Commits em **Conventional Commits** (`tipo(escopo): descrição`), validados pelo hook:
+
+```bash
+bash scripts/hooks/install-hooks.sh   # depois de clonar
+bash scripts/changelog.sh             # regenera o CHANGELOG a partir do git log
+
+# Conferência de contraste de todo o site, nos dois temas (sai 1 se reprovar).
+python3 -m http.server 8899 &         # na raiz
+cd scripts && npm install && npm run contraste
+```
+
+O `scripts/package.json` existe **só** para essa conferência — o site continua sem build e
+sem dependência. Não mova nada dele para a raiz.
 
 ## Regra de ouro: fonte única
 
 Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a fonte:
 
 - **Menu + busca:** `assets/js/navigation-v2.js`. O mega-menu é **gerado por JS**, não é
-  HTML fixo. Adicionar item ao menu = adicionar em `dados.links` (grupos sem CRM) ou dentro
-  de `crms.tabs[].links` (grupo "CRMs" → aba do CRM, ver abaixo); adicionar à busca =
+  HTML fixo. Adicionar item ao menu = adicionar em `links` do grupo; adicionar à busca =
   adicionar em `searchItems` (exportado). `assets/js/search.js` (busca da home) **importa**
-  esse mesmo `searchItems` — não duplicar dados de ferramentas lá, só adicionar em
-  `navigation-v2.js`. Rode `node --check` após editar.
-- **Grupo "CRMs" (multi-CRM, ago/2026):** `menuData.ferramentas.children.crms` usa `tabs`
-  (não `links` direto) — cada aba é um CRM (`{ key, label, links }`). Hoje só "DataCob" tem
-  ferramentas; "Outros CRM" existe vazia (mensagem "Em breve..."), pronta para quando surgir
-  a primeira ferramenta de outro CRM — só adicionar um novo objeto em `tabs[]` ou preencher
-  `links` da aba "outros". `renderDetail()` em `navigation-v2.js` já sabe renderizar `tabs`
-  (com botões estilo aba) ou `links` plano (usado por Dados/Suporte/Cloud) — não duplicar essa
-  lógica em outro lugar.
-- **Cores / design tokens:** `assets/css/tokens.css`. Define os tokens canônicos `--rw-*`
-  e aliases curtos (`--bg`, `--red`, ...). Ferramentas devem **linkar tokens.css e remover
-  o `:root{}` inline** — os aliases garantem que nada quebra durante a migração.
-- **Dark mode:** ativado por `body.dark-mode` (ver `assets/js/theme.js`). Salvo em localStorage.
+  esse mesmo `searchItems` — não duplicar dados de ferramentas lá. Rode `node --check`
+  após editar: não há build para acusar erro de sintaxe.
+  - **Regra de nome (nov/2026): o rótulo diz o que a ferramenta FAZ**, em português, para
+    quem não conhece o domínio — o teste é um recrutador entender sem perguntar. Sigla de
+    nicho vai com explicação ("Arquivo bancário (CNAB 400)"); código interno nunca aparece
+    na tela ("Track 7" virou "Curso de SQL"; "Erro DX001" virou "Falha de conexão com uma
+    API"). O menu agrupa por **ação** (validar, gerar, converter, código e SQL), não pelo
+    domínio. Nome novo muda em quatro lugares: menu/busca aqui, `<title>`/kicker/`<h1>` da
+    página, `caminhoTela` em `assets/data/base-conhecimento.js` e o README. **O caminho do
+    arquivo não muda** — renomear pasta quebra link e import relativo.
+- **Cores / design tokens:** `assets/css/tokens.css`. Paleta **boho tech / Deep Autumn**
+  (out/2026): terracota, oliva, mostarda e areia. Define os tokens canônicos `--rw-*`, os
+  aliases curtos (`--bg`, `--red`, ...) e os nomes `--cor-*`. Ferramentas devem **linkar
+  tokens.css e remover o `:root{}` inline** — trocar a paleta inteira é trocar valor nesse
+  arquivo, e foi o que permitiu a mudança sem tocar nas ferramentas.
+  - **Cada cor tem um uso, medido em contraste** (os números estão no cabeçalho do
+    arquivo): `--rw-red` é preenchimento de botão e texto sobre cartão; **texto sobre a
+    areia é `--rw-red-ink`** (a terracota pura dá 4,27 ali, abaixo de 4,5); `--rw-red-soft`
+    é realce, nunca fundo de botão com texto branco (3,13); `--rw-gold` é **fundo** de selo
+    com texto escuro, nunca texto (2,33); `--rw-accent` (mostarda) só sobre faixa escura.
+    `--rw-line` é divisória decorativa e `--rw-line-strong` é borda de **controle** (campo,
+    select), que precisa de 3:1 para a pessoa achar o campo.
+  - **Todo acento tem um par: a cor cheia e a tinta (`-ink`).** A cheia é preenchimento e
+    borda; a `-ink` é a de **texto** e **vira com o tema**. Vale para terracota
+    (`--rw-red` / `--rw-red-ink`), oliva, sucesso, aviso e erro — `--rw-ok`, `--rw-warn` e
+    `--rw-danger` nunca entram como `color:`, só `--rw-ok-ink`, `--rw-warn-ink`,
+    `--rw-danger-ink`. O motivo é medido: no tema escuro `--rw-red` clareia para #E08A55 e
+    **branco em cima dá 2,65** — por isso o que vai sobre a terracota é `--rw-on-primary`,
+    nunca `#fff` fixo (eram 23 botões assim).
+  - **`--dark` é cor de superfície, não de texto.** Usada como `color:`, ela some no tema
+    escuro — eram 23 ocorrências. Para texto, `--ink`.
+  - **E o inverso também:** `--ink` é cor de **texto**, não de superfície. Como `background`,
+    ela vira creme no tema escuro e o que estiver escrito em cima some — foi assim com o
+    mega-menu, o corpo do chat, as modais e a navbar, cada um com uma sobrescrita de tema
+    escuro por cima escondendo o problema. Superfície escura fixa é `--rw-dark` /
+    `--rw-dark-2` / `--rw-deep` / `--rw-deep-2`, e o texto em cima delas é **`--rw-on-dark`**
+    (também fixo: essas faixas são escuras nos dois temas, logo o texto não pode virar).
+  - **Sobrescrita `body.dark-mode` é sinal de cheiro.** Se a regra clara usa token, a
+    sobrescrita é desnecessária — e na prática era o lugar onde o cinza-azulado da paleta
+    antiga sobrevivia. Antes de escrever uma, verificar se o token já não resolve.
+  - **ARMADILHA DO ALIAS:** `--bg: var(--rw-bg)` é substituído **no elemento onde a
+    declaração está**. Declarado só em `:root`, o alias congela o valor claro, e o
+    `body.dark-mode` troca o canônico sem trocar o alias — foi assim que o tema escuro
+    nunca funcionou para quase todo o site, sem ninguém notar. Por isso o bloco de aliases
+    é declarado **nos três escopos** (`:root`, `body.dark-mode`, `[data-theme="dark"]`).
+    Alias novo entra nesse bloco, não no `:root`.
+  - **A conferência de contraste é por medição, não por leitura da paleta.** O que vale é o
+    que está pintado na tela: o fundo precisa ser **composto** camada a camada (um chip de
+    mostarda a 14% sobre o creme não é o creme), texto com alfa também, e `rgb(from …)` sai
+    do navegador como `color(srgb 0.95 0.9 0.86 / .72)` — componentes de 0 a 1, não de 0 a
+    255. Duas armadilhas de quem escreve o conferidor: ler esses componentes como 0–255
+    inventa reprovação, e pular elemento com filho **descarta todo botão com ícone** (medir
+    o texto próprio do nó).
+- **Dark mode:** ativado por `body.dark-mode` (ver `assets/js/theme.js`), salvo em
+  localStorage.
+- **Busca do topo (home):** o campo é o `<input id="topbarSearchInput">` da topbar em
+  `index.html`; o painel de resultados (`setupSearchPanel()` em `navigation-v2.js`) **não
+  tem campo próprio** e é ancorado por JS embaixo do campo, com a mesma largura. Em
+  `<input type="search">` o Esc limpa o campo e isso dispara `input` — o handler cancela o
+  comportamento nativo, senão o painel reabre sozinho ao fechar.
+- **Layouts de CSV:** `tools/cobranca/arriba-csv-generator/layouts-csv.js` — mesma fonte
+  para o gerador e para o validador, então CSV gerado pelo site passa no validador do site
+  por construção.
+- **Base do chat do site:** `assets/data/base-conhecimento.js`.
 
 ## Como adicionar uma ferramenta
 
 1. Criar `tools/<categoria>/<nome>/<nome>.html` + `script.js` (padrão: topbar → hero →
-   sidebar/main, `.btn-arriba`, `.panel`, `.card-section`). Copiar de uma ferramenta existente.
+   sidebar/main, `.btn-arriba`, `.panel`, `.card-section`). Copiar de uma existente.
 2. Linkar `tokens.css` **antes** dos outros CSS; não duplicar `:root`.
 3. Registrar no menu e na busca em `navigation-v2.js` (fonte única acima).
-4. Processamento de arquivo deve ser **client-side** (privacidade + custo zero + sem
-   cold-start do Render). Só usar o backend para IA/Freshdesk.
+4. Processamento de arquivo deve ser **client-side** — privacidade, custo zero e nenhum
+   servidor para manter.
 
 ## Gotchas específicos
 
-- **Validador CNAB 400** (`tools/datacob/cnab400/`, renomeado de "CNAB 400 (multi-banco)"
-  em ago/2026 — nome mais direto, alinhado a ferramentas concorrentes tipo ValidaCNAB):
-  motor genérico multi-banco (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú e BMP
-  Money Plus), com leitor (`parseArquivo`) e gerador (`gerarArquivo`) — a UI (`ui.js`) já
-  tem modo "Gerar" para as duas direções, baixando `.REM`/`.RET`. Posições do manual são
-  **1-indexadas e inclusivas**; `slice()` é 0-indexado exclusivo → usar `slice(ini-1, fim)`.
-  Bradesco Retorno **e** Remessa (header/detalhe/trailer) validados byte a byte contra
-  planilhas reais (`VALIDADOR_CNAB400_BRADESCO*.xlsx`) via round-trip parse→gerarArquivo;
-  Itaú só contra o manual (nenhuma linha real de Remessa/Retorno confirmada ainda). BMP
-  Money Plus (274, `banks/bmp.js`) validado contra 2 planilhas VALIDADOR próprias +
-  3 arquivos `.RET` reais distintos do cliente (round-trip byte a byte OK em 93 linhas
-  de detalhe: 15 + 42 + 36) **e agora também contra o manual oficial do BMP**
-  (bmpdocs.moneyp.com.br/baas/layouts-de-cnab/cnab-400, v13.1 05/2026) — o manual
-  confirmou a tabela completa de Header+Detalhe da Remessa e trouxe as tabelas oficiais
-  de Ocorrência/Motivo (Remessa e Retorno) — o BMP foi o primeiro banco com motivo
-  escopado por ocorrência (mesmo código de motivo significa coisas diferentes em
-  ocorrências diferentes), então `engine.js`/`parseDetalhe` passou a aceitar
-  `config.motivos[ocorrencia][cod]` (objeto aninhado) além do mapa plano
-  `config.motivos[cod]` já usado pelo Bradesco — checa aninhado primeiro, cai pro
-  plano se não achar, sem quebrar os bancos existentes. O Detalhe da Retorno segue
-  confirmado só por
-  planilha+arquivo real (o manual não trouxe a tabela completa da Retorno). Ordem de
-  confiança quando fontes divergem: **arquivo real > planilha com amostra própria >
-  manual oficial** (tabela sem amostra, mais sujeita a erro de transcrição) — ex.: o
-  manual descreve a posição 021-037 do Detalhe como um campo único "fornecido pela
-  BMP", mas planilha (com amostra real "0001"/"1005113"/"09") e arquivo real confirmam
-  que é decomposto em zero+carteira+agência+conta+dígito, então a decomposição foi
-  mantida. Também corrigido nessa rodada: `nossoNumero` da Remessa (071-081) era tipo
-  alfanumérico (bug — gerava com espaços em vez de zeros à esquerda), confirmado
-  numérico pela amostra da planilha ("00000000002") e pelo manual. O campo 293-295 do
-  detalhe de Retorno (que a planilha marcava inteiro como "brancos") na verdade é
-  brancos (293-294) + 1 dígito fixo "0" (295) antes da Data do Crédito — real venceu
-  aqui também (a amostra do manual dizia "brancos" nos 3, mas 51 linhas reais
-  discordam). Um arquivo de teste recebido no processo (`..._Nuevo.RET`) veio truncado
-  (linha de detalhe com 392 de 400 posições, trailer com contagem de títulos
-  inconsistente com o conteúdo) — descartado da validação, não é dado confiável; depois
-  veio a versão corrigida dele (`...BaixaDataCob_CNAB400BMP.RET`, 2 títulos), que bate
-  byte a byte, elevando o total validado para **95 linhas de detalhe reais** (15+42+36+2).
-  Esse arquivo corrigido, porém, **não tem Trailer** — foi o que motivou a conferência de
-  Trailer descrita abaixo.
-- **Conferência do Trailer (`engine.js`, `conferirTrailer`)**: na leitura, compara o que o
-  Trailer declara (quantidade de títulos e valor total) com o que foi lido, e avisa se
-  não fecha ou se o Trailer não existe. Isso pega arquivo truncado/editado à mão — o
-  `..._Nuevo.RET` acima, por exemplo, hoje é sinalizado automaticamente (declarava 36
-  títulos com 1 linha de detalhe), antes só dava pra achar na mão. É opt-in por banco via
-  `config.trailerConferencia = { quantidadeKey, valorKey }`: BMP usa os dois, Bradesco só
-  a quantidade (não há arquivo real de Bradesco com trailer pra confirmar qual soma o
-  valor total usa) e Itaú não declara (Trailer com totais separados por tipo de cobrança —
-  habilitar ali geraria aviso falso). O valor esperado sai da mesma regra da geração
-  (`trailerTotalFn`/`trailerTotalKey`), pra validação e geração não divergirem.
-  **Atenção:** no BMP o valor total do Trailer é a soma de `valorTitulo`, NÃO de
-  `valorPago` — os 3 arquivos reais com trailer provam isso (2.833,41 vs 2.893,99 e
-  11.137,21 vs 11.298,19). O gerador somava `valorPago` e escrevia trailer errado; foi
-  corrigido. Bradesco segue somando `valorPago || valorTitulo` porque é a regra herdada e
-  não temos arquivo real pra contestar.
-  Trailer de Retorno tem só posições 1-39 e 395-400 confirmadas — o manual sugere um
-  detalhamento por ocorrência a partir da posição ~40 (igual ao do Bradesco), mas
-  todos os arquivos reais disponíveis só têm ocorrência 06, insuficiente pra confirmar
-  as posições das outras ocorrências nesse detalhamento; resto fica `naoConfirmado`.
-  Ferramenta antiga `cnab400-bradesco/` foi aposentada — não recriar.
-  Ícone pequeno do banco na UI (`ui.js`, `BANK_ICONS`) usa SVGs em
-  `tools/datacob/cnab400/assets/icons/` (curados a partir de `assets/img/bancos/`, ver
-  abaixo) — ao adicionar um banco novo, copiar o SVG correspondente para essa pasta e
-  registrar em `BANK_ICONS`. Modo "Validar" tem botão "Editar e gerar novo arquivo"
-  (`ui.js`, `editAndRegenerate`) — depois de ler um arquivo com sucesso, leva header +
-  títulos extraídos para o modo "Gerar" já preenchidos (só os campos que aparecem no
-  formulário, i.e. `formFields`), para o usuário ajustar valores e baixar uma nova
-  versão sem redigitar tudo do zero. O modo "Gerar" também tem sua própria zona de
-  importação (`ui.js`, `importarArquivoNoGerador`) — dá pra soltar/selecionar um
-  .REM/.RET direto ali, sem precisar passar pelo "Validar" antes; ambos os caminhos
-  reaproveitam `preencherGeradorComDados()` pra preencher o formulário.
+- **Validador CNAB 400** (`tools/cobranca/cnab400/`): motor genérico multi-banco
+  (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú e BMP), com leitor (`parseArquivo`)
+  e gerador (`gerarArquivo`); a UI tem modo "Validar" e modo "Gerar", baixando `.REM`/`.RET`.
+  Posições do manual são **1-indexadas e inclusivas**; `slice()` é 0-indexado exclusivo →
+  usar `slice(ini-1, fim)`. O motor **não assume 400 posições** (`config.tamanhoRegistro`) e
+  aceita motivo escopado por ocorrência (`config.motivos[ocorrencia][cod]`) além do mapa
+  plano — checa aninhado primeiro, cai para o plano. Campo sem confirmação em fonte
+  confiável fica marcado como `naoConfirmado`, nunca estimado.
+- **Conferência do Trailer** (`engine.js`, `conferirTrailer`): compara o que o Trailer
+  declara (quantidade e valor total) com o que foi lido e avisa quando não fecha ou quando
+  não existe — é o que pega arquivo truncado ou editado à mão. Opt-in por banco via
+  `config.trailerConferencia`. O valor esperado sai da mesma regra da geração
+  (`trailerTotalFn`/`trailerTotalKey`), para validação e geração não divergirem.
+- **Ícone do banco na UI** (`ui.js`, `BANK_ICONS`): SVGs em
+  `tools/cobranca/cnab400/assets/icons/`, curados a partir de `assets/img/bancos/`. Banco
+  novo = copiar o SVG para essa pasta e registrar em `BANK_ICONS`.
+- **Validador de CSV** (`tools/dados/csv-validator/`): separa **dois assuntos que não se
+  misturam** — `parser.js` responde "o arquivo está bem formado?" (RFC 4180 de verdade:
+  aspas, `""` escapado, delimitador e quebra de linha dentro do campo; BOM, EOL, cabeçalho
+  duplicado) e `rules.js` responde "o conteúdo está certo?" (tipo, obrigatório, único,
+  tamanho, lista de valores, regex). **Não trocar o parser por `split(";")`:** endereço com
+  ponto e vírgula dentro de aspas é comum e o `split` transforma arquivo bom em arquivo
+  "corrompido". Campo vazio nunca é testado pelo tipo — quem cobra vazio é a regra
+  `obrigatorio`. O **tipo** de cada coluna em `schemas.js` é inferido da convenção de nome
+  (`Dt_*` = data, `Vl_*`/`Tx_*` = decimal, `Cpf_Cnpj`, `UF`, `Email`, `CEP`) — é
+  inferência, não dicionário oficial, por isso a tela deixa ajustar e desligar cada regra.
 - **Base64** (`tools/dados/base64-pdf/` e `decodificador/`): decode 100% no browser.
   `base64-pdf` extrai Base64 embutido em JSON automaticamente (detecta por magic bytes
   `%PDF`). `decodificador/` é o conversor universal (Base64, URL, HTML entities, hex,
-  binário, ROT13, JWT, Unicode escape) com detecção automática de formato e exemplos
-  prontos por formato.
-- **Dados que parecem código são dados:** `assets/data/datacob-knowledge-base.js` é usado
-  pela página de erros, pelo chatbot e pelo support-copilot. `assets/data/respostas-predefinidas.js`
-  é usado pelo support-copilot (aba "Respostas Prontas") e pela página standalone em
-  `tools/datacob/respostas-predefinidas/`. `assets/data/tracks/track-7-sql.js` alimenta o
-  Track 7 e `assets/data/datacob-sandbox-schema.js` alimenta o sandbox das lições e o SQL
-  Playground. Não remover nenhum desses.
+  binário, ROT13, JWT, Unicode escape) com detecção automática de formato.
 - **Geradores de dados fictícios BR** (nome/CPF válido/celular/CEP/endereço/e-mail) ficam
-  em `assets/js/fake-data-br.js` (módulo sem dependência de DOM, mesmo algoritmo de CPF já
-  usado em `massa-dados/script.js`). Reusar esse módulo em vez de reescrever geradores.
-- **Gamificação de trilhas** (pontos/badges/progresso) é genérica em `assets/js/gamification.js`,
-  100% `localStorage`, sem backend — track-agnóstica (recebe `trackId`). O Track 7
-  (`tools/datacob/treinamento-sql/`) é o primeiro consumidor; futuras trilhas reusam o
-  mesmo motor em vez de criar um novo.
-- **Sandbox SQL do Track 7** roda via AlaSQL 100% no navegador — nenhuma conexão com o SQL
-  Server real do DataCob. Desde set/2026 as 15 lições praticam contra o **schema real**
-  (`assets/data/datacob-sandbox-schema.js`, o mesmo do SQL Playground) com dados 100%
-  fictícios; o dataset genérico antigo (`track-7-sql-dataset.js`, tabelas
-  boletos/remessas/retornos que não existem no DataCob) foi removido depois da migração —
-  não recriar. Ao mexer no conteúdo das lições, **rode todas as queries contra o AlaSQL
-  antes de commitar**: `tryIt.query` e `exercicios[].solucao` das 15 lições (61 queries)
-  foram validadas uma a uma, e o simulador tem limites que o T-SQL real não tem (ver
-  gotcha da semeadura abaixo). O SQL Query Builder (`tools/datacob/query-builder/`) também
-  é só um gerador de texto de query + preview fictício, não executa nada contra o banco real.
-- **Semeadura do sandbox AlaSQL é fonte única em `assets/js/sql-sandbox.js`** —
-  `semearTabelas()` + `executarQuery()`. **Não use `SELECT * INTO tabela FROM ?`**: esse
-  comando NÃO funciona no AlaSQL 4 (estoura em `'xcolumns'`) e era exatamente o bug que
-  deixava o sandbox do Track 7 quebrado (nenhuma tabela criada → toda query respondia
-  "Table does not exist: boletos", com o erro escondido num `try/catch` que só logava
-  aviso). O que funciona é `DROP TABLE IF EXISTS` → `CREATE TABLE` → `INSERT INTO ...
-  SELECT * FROM ?` (idempotente, reload não duplica linha). Cuidado também com alias:
-  `AS Total` quebra o parser do AlaSQL (palavra reservada) — usar `Qtd_Linhas` e afins.
-- **SQL Playground** (`tools/datacob/sql-playground/`, set/2026): simulador SQL livre
-  ("Try it Yourself" fora das lições), com navegador de schema, exemplos prontos,
-  histórico, consultas salvas, estatísticas de uso e export CSV. Roda contra
-  `assets/data/datacob-sandbox-schema.js` — **as tabelas/colunas espelham o modelo real
-  do DataCob** (Cliente, Grupo, Financiado, Contrato, Parcela, Negociacao,
-  Negociacao_Parcela, Acordo, Parcela_Acordo, Historico, Ocorrencia_Sistema, Email,
-  Telefone, Endereco, extraídas do diagrama ER do banco), mas **os dados são 100%
-  inventados** (LGPD: nenhum nome/CPF/telefone/e-mail real). Continua sem nenhuma conexão
-  com o SQL Server real. Metadados de coluna/PK/FK e as consultas de exemplo saem do
-  mesmo arquivo (`DATACOB_SCHEMA`/`CONSULTAS_EXEMPLO`) — a UI não duplica lista de tabela.
+  em `assets/js/fake-data-br.js` (módulo sem dependência de DOM). Reusar em vez de
+  reescrever gerador.
+- **Gamificação de trilhas** (pontos/badges/progresso) é genérica em
+  `assets/js/gamification.js`, 100% `localStorage`, sem backend — recebe `trackId`. A
+  trilha de SQL é a primeira consumidora; trilha nova reusa o mesmo motor.
+- **Sandbox SQL** roda via AlaSQL 100% no navegador, contra `assets/data/sandbox-schema.js`
+  (modelo de cobrança com dados **100% inventados**). Ao mexer nas lições, **rode todas as
+  queries contra o AlaSQL antes de commitar** — o simulador tem limites que o T-SQL não tem.
+- **Semeadura do AlaSQL é fonte única em `assets/js/sql-sandbox.js`** (`semearTabelas()` +
+  `executarQuery()`). **Não use `SELECT * INTO tabela FROM ?`**: não funciona no AlaSQL 4
+  (estoura em `'xcolumns'`) e era o bug que deixava o sandbox quebrado, escondido num
+  `try/catch` que só logava aviso. O que funciona é `DROP TABLE IF EXISTS` → `CREATE TABLE`
+  → `INSERT INTO ... SELECT * FROM ?` (idempotente). Cuidado com alias: `AS Total` quebra o
+  parser (palavra reservada) — usar `Qtd_Linhas` e afins.
 - **Histórico/consultas salvas de SQL** ficam em `assets/js/sql-query-store.js` — módulo
-  genérico por `toolId`, 100% `localStorage` (mesmo padrão do `gamification.js`, sem
-  backend). Usado pelo SQL Playground e também pelo sandbox das lições do Track 7, que
-  grava as execuções com o `toolId` da trilha.
-- **Centro de Aprendizado** (`pages/aprender/`, set/2026): hub das trilhas/simuladores no
-  espírito do W3Schools — card por tópico com exemplo de código real + botão "Try it
-  Yourself", seção "Teste seus conhecimentos" e painel de progresso. Adicionar tópico =
-  adicionar um objeto em `TOPICOS` (em `pages/aprender/script.js`); nenhum card é escrito
-  à mão no HTML. O painel de progresso **não tem dados próprios**: soma o que
-  `gamification.js` (pontos/lições/badges) e `sql-query-store.js` (execuções/salvas) já
-  gravam — se entrar uma segunda trilha, é só somar ali. Feito a partir de um clone da
-  home do W3Schools enviado como referência, mas **sem** trazer marca, logo, imagens ou
-  paleta de lá: identidade Redwood do site, mesma decisão que foi tomada no query-builder
-  (recebido em Tailwind/jsx e refeito no padrão do site).
-- **Editor Web / "Try it Yourself"** (`tools/dados/editor-web/`, set/2026): o editor
-  HTML/CSS/JS com preview ao vivo, no estilo do W3Schools — três abas viram um documento
-  só, renderizado num `<iframe srcdoc>`. **O `sandbox` do iframe é de propósito
-  `allow-scripts allow-forms allow-modals allow-popups` SEM `allow-same-origin`**: assim o
-  JavaScript do usuário executa de verdade mas fica em origem opaca, sem alcançar o
-  `localStorage` nem o DOM da página (testado: `localStorage`/`parent.document` estouram
-  `SecurityError`). **Não adicione `allow-same-origin`** — junto com `allow-scripts` isso
-  anula o sandbox e o código digitado passaria a ler/escrever tudo do site. Como o iframe
-  está em outra origem, o console dele não é legível daqui: `PONTE_CONSOLE` (em `script.js`)
-  é injetada no documento gerado, sobrescreve `console.log/info/warn/error` e escuta
-  `error`/`unhandledrejection`, mandando tudo pro pai via `postMessage`; o pai valida a
-  mensagem por `evento.source === preview.contentWindow` (o `origin` vem `"null"`, então
-  não serve para conferir). O `.html` baixado / aberto em nova aba é montado **sem** a
-  ponte (`montarDocumento({ comPonte: false })`), pra não vazar código de instrumentação no
-  arquivo do usuário. Rascunho fica em `localStorage` (`arribaEditorWeb:rascunho`), mesmo
-  padrão sem backend do resto do site. Adicionar exemplo = adicionar objeto em `EXEMPLOS`.
-- **Chatbot e provedores de IA** (`assets/js/chatbot.js` + `assets/js/llm-providers.js`,
-  set/2026): o chat **não chama mais o `arriba-api`**. O padrão agora é `local` — responde
-  pela base `datacob-knowledge-base.js` no próprio navegador, sem rede, sem chave, sem
-  custo (era o que o `/chat` já fazia na prática, preso em `source: "local-fallback"`).
-  IA de verdade é **opt-in**, configurada pelo usuário no painel da engrenagem do chat:
-  `ollama` (LLM na máquina de quem usa, modelo do artigo do Akita), `openai`, `anthropic`
-  e `gemini` (BYOK). `llm-providers.js` é a fonte única de provedor — quem quiser um novo
-  adiciona lá e nada mais muda. Ordem: base local primeiro (curada e instantânea);
-  provedor só quando a local não tem resposta; falha do provedor **sempre** cai na local,
-  nunca deixa o usuário sem resposta. Cada API tem formato próprio (system dentro ou fora
-  das mensagens, chave em header ou query, `assistant` vs `model`) — isso fica todo isolado
-  em `montarRequisicao()`. **A chave fica no localStorage de quem digitou** e a chamada sai
-  do navegador dela: não há backend aqui para guardar segredo. Por isso o painel avisa que
-  o texto sai da máquina e que não se deve colar dado de devedor, e o cabeçalho do chat
-  mostra qual provedor está ativo. Nunca commitar chave nem colocá-la em variável de build:
-  tudo que vai para um site estático é público. O histórico da conversa é só em memória —
-  conversa de suporte pode ter dado de chamado e não deve persistir.
-- **Integridade de CDN (SRI)** (set/2026): todas as 111 tags de `cdn.jsdelivr`/`cdnjs` têm
-  `integrity` + `crossorigin`. Ao adicionar biblioteca nova de CDN, **gerar o hash junto** —
-  sem ele, comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do
-  pacote npm correspondente (`npm pack <pkg>@<versão>` → `openssl dgst -sha384 -binary
-  <arquivo> | openssl base64 -A`), porque o endpoint `/npm/` do jsdelivr serve o arquivo do
-  tarball verbatim. **Sempre pinar versão exata**: `alasql@4` era tag flutuante e mudava
-  sozinha, o que impede fixar hash.
-- **Biblioteca de logos de bancos** (`assets/img/bancos/`, ago/2026): cópia integral do
-  repositório [Bancos-em-SVG](https://github.com/Tgentil/Bancos-em-SVG) (87 bancos, SVG),
-  guardada como fonte para quando novos bancos forem adicionados a ferramentas do site
-  (hoje só o Validador CNAB 400 usa, ver acima). Não é gerada nem processada por build —
-  são arquivos estáticos; copiar o SVG desejado para a pasta `assets/icons/` da ferramenta
-  em vez de referenciar `assets/img/bancos/` diretamente.
+  genérico por `toolId`, 100% `localStorage`. Usado pelo playground e pela trilha.
+- **Centro de Aprendizado** (`pages/aprender/`): card por tópico com exemplo de código real
+  + "Try it Yourself". Adicionar tópico = adicionar um objeto em `TOPICOS`
+  (`pages/aprender/script.js`); nenhum card é escrito à mão no HTML. O painel de progresso
+  **não tem dados próprios**: soma o que `gamification.js` e `sql-query-store.js` gravam.
+- **Editor Web** (`tools/dados/editor-web/`): três abas viram um documento só, renderizado
+  num `<iframe srcdoc>`. **O `sandbox` é de propósito `allow-scripts allow-forms
+  allow-modals allow-popups` SEM `allow-same-origin`**: o JS do usuário executa de verdade
+  mas fica em origem opaca, sem alcançar `localStorage` nem o DOM da página. **Não adicione
+  `allow-same-origin`** — junto com `allow-scripts` isso anula o sandbox. Como o iframe está
+  em outra origem, o console dele não é legível daqui: `PONTE_CONSOLE` é injetada no
+  documento gerado e manda tudo via `postMessage`; o pai valida por
+  `evento.source === preview.contentWindow` (o `origin` vem `"null"`). O `.html` baixado sai
+  **sem** a ponte.
+- **Chatbot e provedores de IA** (`assets/js/chatbot.js` + `assets/js/llm-providers.js`): o
+  padrão é `local` — responde pela base `assets/data/base-conhecimento.js` no próprio
+  navegador, sem rede, sem chave, sem custo. IA de verdade é **opt-in**, configurada no
+  painel da engrenagem: `ollama` (modelo na máquina de quem usa), `openai`, `anthropic` e
+  `gemini` (BYOK). `llm-providers.js` é a fonte única de provedor. Ordem: base local
+  primeiro; provedor só quando a local não cobre; falha do provedor **sempre** cai na local.
+  **A chave fica no localStorage de quem digitou** e a chamada sai do navegador dela: não há
+  backend aqui para guardar segredo. Nunca commitar chave nem colocá-la em variável de
+  build — tudo que vai para um site estático é público. O histórico da conversa é só em
+  memória.
+  - **Escrita do chat (nov/2026):** o primeiro balão diz que é um **assistente automático**
+    e o que ele faz; quando não sabe, diz "não sei" e oferece caminho — "achei algo
+    parecido" e "não tenho nada" são respostas **diferentes** (misturar as duas era o que
+    fazia "qual a capital da França" virar uma lista de ferramentas). O subtítulo mostra
+    **de onde vem a resposta** (base do site ou provedor), não um humor do mascote. Fala com
+    quem visita o site: nada de "encaminhar para DEV" ou "resposta para cliente".
+  - **Estilo em `assets/css/chatbot.css`, fonte única** — antes eram ~550 linhas em
+    `style.css` que se sobrescreviam. O widget **não usa as classes `.card` do Bootstrap**:
+    as regras globais de `.card-header` (com `!important` no tema escuro) brigavam com o
+    cabeçalho. O lançador **não anima sozinho** (movimento automático sem pausa fere a WCAG
+    2.2.2); movimento só no hover, e some com `prefers-reduced-motion`.
+- **Base de conhecimento do app de chat** (`apps/arriba-chat-ia/server/src/knowledge/`): o
+  chat do app consulta a **documentação do próprio repositório** antes de chamar o modelo.
+  É cópia importada, não leitura ao vivo (`npm run kb:import` ou o botão na aba "Base de
+  conhecimento" do admin). Fontes: `assets/data/base-conhecimento.js` e os arquivos de
+  `README.md`, `CLAUDE.md`, `.claude/memory/`, `tasks/` e `pages/docs/`. A busca é a textual
+  do Postgres com dicionário português, sem embeddings — decisão medida: nessa escala a
+  busca nativa responde e é uma dependência a menos. O importador corta frase que se repete
+  em muitos documentos (era 48% do texto quando a base eram páginas de template), e isso
+  depende de `textoDeHtml()` **preservar a quebra de bloco**. A resposta cita `[1]`, `[2]` e
+  as fontes ficam gravadas em `Message.knowledgeUsed`.
+- **Comunicados** (`apps/comunicados/`, out/2026): portal de cartas modelo e disparo de
+  e-mail. **SQLite**, e não Postgres: roda na máquina de quem opera, e um arquivo em
+  `dados/` elimina servidor de banco, porta e usuário para administrar. Quatro regras
+  moram no código e não podem ser afrouxadas sem pensar: a senha do SMTP é cifrada
+  (AES-256-GCM) e **nunca volta por HTTP** — campo vazio na tela significa "mantém",
+  não "apaga"; todo erro de envio passa por `envios/mascarar.ts` antes de ser guardado,
+  porque o diálogo SMTP traz o `AUTH LOGIN` com a credencial; os destinatários vão em
+  **CCO** com o remetente no "Para", senão um cliente vê a lista dos outros; e o
+  descadastro é consultado em **todo** disparo, inclusive em lista colada à mão. As
+  variáveis da carta (`{{nome}}`, `{{cliente}}`…) são declaradas em
+  `cartas/variaveis.ts` — fonte única da tela, do preenchimento e da conferência — e o
+  valor é **escapado** no corpo HTML (nome com `<` quebraria o layout; com `<script>`,
+  executaria no cliente de e-mail de quem recebe). **Personalização só funciona com lote
+  de 1**: o lote vira uma mensagem só, então `{{nome}}` fica vazio quando há mais de um
+  destinatário. `SMTP_MODO_TESTE=1` grava `.eml` em `dados/saida/` em vez de mandar pela
+  rede — é como o fluxo é testado sem servidor.
+- **Integridade de CDN (SRI)**: toda tag de `cdn.jsdelivr`/`cdnjs` tem `integrity` +
+  `crossorigin`. Ao adicionar biblioteca de CDN, **gerar o hash junto** — sem ele,
+  comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do pacote npm
+  (`npm pack <pkg>@<versão>` → `openssl dgst -sha384 -binary <arquivo> | openssl base64 -A`).
+  **Sempre pinar versão exata**: tag flutuante muda sozinha e impede fixar hash.
+- **Biblioteca de logos de bancos** (`assets/img/bancos/`): 205 SVGs de 87 bancos, guardados como fonte
+  para quando novos bancos entrarem no CNAB. Copiar o SVG desejado para a pasta
+  `assets/icons/` da ferramenta em vez de referenciar essa pasta diretamente.
 
-## Status por partes
+## Estado atual
 
-- [x] **Parte 1 — Limpeza.** Órfãos confirmados sem referência (seguro remover):
-  `index_old_2.html`, `pages/lab/index_lab.html`, `pages/lab/psychology/index.html`,
-  `components/splash.html`, `assets/js/tools/json_validador.js`, `desktop.ini`.
-  Adicionar ao `.gitignore`: `desktop.ini .DS_Store Thumbs.db dist/ .vercel/ .env*`
-- [x] **Parte 2 — Tokens CSS** em fonte única (`assets/css/tokens.css`) + README de portfólio.
-- [x] **Parte 3 — Catálogo de erros unificado.** Canônica agora em
-  `pages/docs/datacob/erros-datacob.html` (13KB, ex-`erros/erros-datacob.html`).
-  `support-copilot/docs/datacob/` renomeado para `docs/datacob-manuais/`; todas as
-  referências (`search.js`, `index.html`, `navigation-v2.js`, `manuals-index*.js`,
-  autorreferências internas dos manuais) reapontadas.
-- [x] **Parte 4 (parcial) — Base de Conhecimento navegável.** Dados de
-  `manuals-index.js`/`manuals-index-2025.additions.js` limpos (sem entradas fictícias,
-  quebradas ou duplicadas; 65 manuais reais indexados 1x cada). Hub +
-  20 páginas de índice por categoria em `docs/datacob-manuais/<categoria>/index.html`.
-  Integrado ao mega-menu, à busca do topo e ao Knowledge Router do Help Center.
-  - [ ] **Pendente:** padronizar visualmente os 61 manuais "genéricos" (template
-    `manual-2025.css`, sem imagem/breadcrumb) para o nível dos 5 "premium"
-    (`article.css` próprio, imagens, breadcrumb, CTA).
-- [x] **Parte 5 — Ferramentas e trilha nova (jul/2026).** Itaú (341) adicionado ao CNAB 400
-  multi-banco (`banks/itau.js`); Decodificador Universal (`tools/dados/decodificador/`);
-  Respostas Predefinidas — aba no Support Copilot + página standalone, fonte única em
-  `assets/data/respostas-predefinidas.js`; Track 7 "Treinamento SQL" (15 lições,
-  sandbox AlaSQL, gamificação) em `tools/datacob/treinamento-sql/`; SQL Query T-SQL -
-  Relatórios (`tools/datacob/query-builder/`, recebido com Tailwind/jsx/docs redundantes —
-  refeito no padrão do site); `search.js` da home deixou de duplicar dados de ferramentas
-  (importa `searchItems` de `navigation-v2.js`).
-  - [ ] **Pendente:** `arriba-api` (`/chat` e `/support/copilot/analyze`) está sempre em
-    `source: "local-fallback"` — integração OpenAI parece fora do ar no Render (fora deste
-    repo, precisa checar env vars/logs do serviço). O fallback local de conhecimento também
-    retornou artigo errado num teste (relevância ruim), vale investigar no `arriba-api`.
-- [x] **Parte 6 — CNAB Bradesco real + menu multi-CRM (ago/2026).** Retorno e Remessa
-  Bradesco corrigidos com dados reais (planilhas `VALIDADOR_CNAB400_BRADESCO*.xlsx` +
-  manual oficial "Layout da Cobrança Bradesco" v05/2008) — Remessa estava quase toda com
-  campos "não confirmado"; agora bate byte a byte com fonte real e oficial (testado
-  ponta a ponta no navegador: preencher formulário → gerar → baixar `.REM`/`.RET`). Menu
-  reorganizado: "DataCob" (item direto em Ferramentas) virou "CRMs" com abas — ver
-  `crms.tabs` acima — preparando o site para ferramentas de outros CRMs além do DataCob.
-  - [ ] **Pendente (roadmap, sem trabalho iniciado):** mais bancos no CNAB 400 (Banco do
-    Brasil, Santander...) — a arquitetura já suporta (só criar `banks/<banco>.js` e
-    registrar em `banks/registry.js`), falta manual/planilha validadora de cada banco para
-    implementar com o mesmo rigor usado no Bradesco (não estimar posições "prováveis").
-    Também falta a primeira ferramenta de "Outros CRM" (aba já existe, vazia).
-- [x] **Parte 7 — BMP Money Plus + rename + ícones de banco (ago/2026).** BMP (274)
-  adicionado ao CNAB 400 (`banks/bmp.js`) usando 2 planilhas VALIDADOR próprias + 3
-  arquivos `.RET` reais do cliente (sem manual oficial ainda — documentado no código e
-  aqui). Ferramenta renomeada de "CNAB 400 (multi-banco)" para "Validador CNAB 400"
-  (menu, busca, título, hero). Ícone pequeno do banco adicionado ao lado do nome na UI
-  (Bradesco/Itaú/BMP), sem alterar o layout existente — biblioteca de logos completa
-  (87 bancos) salva em `assets/img/bancos/` para uso futuro.
-- [x] **Parte 8 — Editar/importar arquivo no modo Gerar + 3º arquivo real do BMP
-  (ago/2026).** Botão "Editar e gerar novo arquivo" no modo Validar e zona de
-  importação própria dentro do modo Gerar (ambos levam cabeçalho + títulos de um
-  .REM/.RET lido direto para o formulário de gerar, ver gotcha do CNAB 400 acima).
-  BMP Money Plus revalidado com mais um arquivo `.RET` real (36 títulos) — achou e
-  corrigiu um campo do detalhe de Retorno que a planilha marcava errado como
-  "brancos" (293-295; na real são 2 brancos + 1 dígito fixo "0"); um outro arquivo
-  de teste recebido no processo veio truncado e foi descartado (ver gotcha).
-- [x] **Parte 9 — Centro de Aprendizado + SQL Playground + Editor Web (set/2026).** Hub
-  `pages/aprender/` no espírito do W3Schools; SQL Playground (simulador SQL livre) e
-  `sql-query-store.js` (histórico/consultas salvas); 15 lições do Track 7 migradas para o
-  schema real do DataCob (dados 100% fictícios) e semeadura do AlaSQL unificada em
-  `sql-sandbox.js` — que consertou o sandbox das lições, quebrado em produção; Editor Web
-  HTML/CSS/JS com preview ao vivo em `tools/dados/editor-web/` (ver gotcha acima),
-  fechando o "Try it Yourself" também para front-end, não só para SQL.
-- [ ] i18n PT/EN · command palette `Ctrl/Cmd+K`.
-- [ ] Screenshot/GIF real em `docs/preview.png` para o README de portfólio (ainda placeholder).
+Entregue e funcionando:
+
+- Validador CNAB 400 (Bradesco, Itaú e BMP), validar e gerar, com conferência de trailer.
+- Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
+- Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.
+- Massa de dados fictícios e decodificador/criador de modelo de carta.
+- Centro de Aprendizado, trilha de SQL com gamificação e SQL Playground (AlaSQL).
+- Editor Web com preview ao vivo e sandbox endurecido.
+- Chat do site (base local + provedores BYOK) e `apps/arriba-chat-ia` (multi-provedor,
+  streaming SSE, administração, auditoria e base de conhecimento).
+- `apps/comunicados`: portal de cartas modelo e disparo de e-mail em lotes, com
+  descadastro, histórico por destinatário e configuração de servidor SMTP.
+
+O que falta está em `tasks/` — e as decisões que dependem do dono, em
+`tasks/decisoes-pendentes.md`.
 
 ## Convenções de trabalho
 
-- Antes de apagar qualquer arquivo, **verificar referências com `grep`** — nunca remover às cegas.
-- Commits pequenos e por parte. Mensagens no formato `tipo(escopo): descrição`.
+- Antes de apagar qualquer arquivo, **verificar referências com `grep`** — nunca remover às
+  cegas. Depois de renomear caminho, conferir também **import relativo** (`../../`), que não
+  aparece numa busca pelo caminho a partir da raiz.
+- Commits pequenos e por parte, em `tipo(escopo): descrição`.
 - Respostas e comentários em **português (Brasil)**.
-- Preservar o visual/tom retro-criativo e a paleta Deep Autumn/Redwood em todos os entregáveis.
+- Preservar o visual/tom retro-criativo e a paleta boho tech (terracota, oliva, mostarda,
+  areia). **Cor nova entra em `tokens.css`, nunca escrita à mão no HTML da ferramenta** — e
+  antes de adotar, medir o contraste do par (texto × fundo) em que ela vai ser usada.
+- Depois de mexer em cor, rodar `scripts/conferir-contraste.mjs` nos **dois** temas: ela
+  pega cor fixa esquecida que a paleta no papel não mostra. Ela mede só o que está **visível
+  no carregamento** — painel aberto, menu aberto e resultado preenchido continuam sendo
+  conferência manual.
+- Dado de exemplo é sempre fictício: nome, CPF/CNPJ, telefone, e-mail, endereço e número de
+  contrato em fixture, exemplo de campo ou schema de sandbox são inventados.

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Validação de Conventional Commits
+# Instalado via: scripts/hooks/install-hooks.sh
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Ignora commits de merge, rebase, etc.
+if echo "$COMMIT_MSG" | grep -qE "^(Merge|Revert|fixup!|squash!)"; then
+    exit 0
+fi
+
+# Padrão: tipo(escopo opcional): descrição
+PATTERN="^(feat|fix|chore|docs|refactor|test|style|perf|ci|build)(\(.+\))?: .{1,100}$"
+
+if ! echo "$COMMIT_MSG" | grep -qE "$PATTERN"; then
+    echo ""
+    echo "  ✗ Mensagem de commit inválida!"
+    echo ""
+    echo "  Formato exigido: tipo(escopo)?: descrição curta"
+    echo ""
+    echo "  Tipos aceitos:"
+    echo "    feat     - nova funcionalidade"
+    echo "    fix      - correção de bug"
+    echo "    chore    - tarefas de manutenção"
+    echo "    docs     - documentação"
+    echo "    refactor - refatoração sem mudança de comportamento"
+    echo "    test     - adição ou correção de testes"
+    echo "    style    - formatação, sem mudança de lógica"
+    echo "    perf     - melhoria de performance"
+    echo "    ci       - mudanças de CI/CD"
+    echo "    build    - build system ou dependências"
+    echo ""
+    echo "  Exemplos válidos:"
+    echo "    feat(api): adicionar endpoint de autenticação"
+    echo "    fix(web): corrigir layout em mobile"
+    echo "    chore(infra): atualizar versão da imagem"
+    echo "    chore: atualizar dependências"
+    echo ""
+    echo "  Sua mensagem: \"$COMMIT_MSG\""
+    echo ""
+    exit 1
+fi
+
+exit 0

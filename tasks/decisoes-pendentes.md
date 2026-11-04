@@ -18,6 +18,27 @@ Três itens dele voltam atrás em decisões registradas — por isso estão aqui
 **O que trava:** decidir se o dashboard e as respostas predefinidas vivem num repositório
 privado (e o site público só mostra uma versão com dado inventado) ou se ficam de fora.
 
+## ⏳ O `arriba-api` é público e guarda o que saiu do site em outubro
+
+Medido em 04/11/2026, ao anexar o repositório para o login com Microsoft:
+
+| O quê | Quanto |
+|---|---|
+| Catálogos de manual e pacote (`modules/knowledge/`) | ~9.500 linhas |
+| Nome de **cliente real** em caminho de manual | havan, willbank, wedoo, cobransaas |
+| Menções a empresa, produto e help desk | mais de 1.700 |
+| Copiloto de Freshdesk (`modules/freshdesk/`, `routes/freshdesk.routes.js`) | ~3.000 linhas |
+
+Em outubro, no site, esse mesmo material foi classificado como risco **alto** e removido.
+
+**O que trava:** apagar os arquivos hoje não tira do histórico do git — num repositório
+público, qualquer um ainda lê as versões antigas. As saídas reais são: (a) tornar o
+repositório **privado** (configuração do GitHub, só o dono faz; resolve inclusive o histórico);
+(b) descaracterizar como foi feito no site e aceitar que o histórico continua exposto; ou
+(c) as duas. O login com Microsoft já entregue não depende dessa escolha.
+
+---
+
 ## ⏳ Contato na página "Sobre o autor"
 
 A página foi refeita com a apresentação do README. Faltam LinkedIn e e-mail — o README tinha

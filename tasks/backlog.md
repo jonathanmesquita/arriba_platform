@@ -99,13 +99,16 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 Itens do documento de status do dono que viram trabalho. Os que contradizem decisões já
 tomadas estão em `decisoes-pendentes.md`, não aqui.
 
-- [ ] Backend do login com Microsoft (Azure AD) 📅 2026-11-04 🔺 alta #area/infra #esforco/m
-  - Contexto: a metade do navegador já existe — `auth/callback/` faz Authorization Code com
-    PKCE, sem `client_secret`, que é o fluxo certo para site estático. Falta o servidor
-    validar o token antes de liberar rota protegida.
-  - Local: repositório `arriba-api` (não está neste)
-  - Ação: middleware Express que confere assinatura (JWKS do tenant), `aud`, `iss` e `exp`.
-    App registrado hoje no tenant pessoal; o de produção depende de outro dono.
+- [ ] Ligar o login com Microsoft de ponta a ponta 📅 2026-11-04 🔺 alta #area/infra #esforco/p
+  - Contexto: o backend está pronto no `arriba-api`, branch `claude/gerador-arquivos-web-n2oi6p`
+    (`3817965`, 21 testes): confere assinatura, emissor, audiência, validade e escopo, e recusa
+    tenant genérico e token do Graph. Falta o que não é código desta API.
+  - Ação: (1) no registro do app, *Expor uma API* com o escopo `access_as_user`; (2) em
+    `auth/callback/`, trocar o escopo padrão `User.Read` (token do Graph, que a API recusa)
+    por `api://<client-id>/access_as_user`; (3) definir `AZURE_TENANT_ID`, `AZURE_API_AUDIENCE`
+    e **`ARRIBA_JWT_SECRET`** no Render; (4) abrir o PR do branch.
+  - Nota: nenhuma rota confere papel (`role`) — quem entra pelo Microsoft acessa o mesmo que o
+    admin. Se for para ter diferença, é a próxima peça.
 - [ ] Teste de carga dos 3 endpoints Escobs 📅 2026-11-04 🔼 média #area/qa #esforco/m
   - Contexto: collection e environments do Postman foram entregues e validados (freio
     automático 10/10, login 6/6), mas só existem como download: o ambiente foi reciclado e o

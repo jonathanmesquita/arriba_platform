@@ -53,14 +53,25 @@
 #chatbotBtn:hover .chatbot-mascot-button-img { transform: translateY(-3px); }
 
 /* ---------------- Janela ---------------- */
+/* Camada e altura (corrigidas em nov/2026, depois de quebrar no ar):
+   o topo do site (.enterprise-topbar) é fixo na camada 1060. Com o chat
+   em 1050, em qualquer tela com menos de ~800 px de altura o cabeçalho do
+   chat — com o botão de FECHAR — ficava atrás do topo. Agora:
+   - camada 1070: acima do topo, abaixo do mega-menu e da busca (3000+);
+   - altura: até 600 px; cabe abaixo do topo (176 px = 92 do lançador +
+     84 do topo) quando há espaço; em tela baixa encolhe até 300 px; e
+     NUNCA passa de 100dvh - 100 px, para o cabeçalho não sair da tela.
+   `dvh` desconta a barra do navegador no celular; a linha com `vh` antes
+   é o plano B de navegador antigo. Conferido em 8 tamanhos de tela. */
 .chatbot-popup {
   position: fixed;
   right: 20px;
   bottom: 92px;
-  z-index: 1050;
+  z-index: 1070;
   width: 380px;
   max-width: calc(100vw - 32px);
-  height: min(600px, calc(100vh - 120px));
+  height: min(600px, max(300px, calc(100vh - 176px)), calc(100vh - 100px));
+  height: min(600px, max(300px, calc(100dvh - 176px)), calc(100dvh - 100px));
   display: flex;
   flex-direction: column;
   border: 1px solid var(--line);
@@ -476,6 +487,7 @@
     width: auto;
     max-width: none;
     height: calc(100vh - 100px);
+    height: calc(100dvh - 100px);
   }
 
   #chatbotBtn { right: 15px; bottom: 15px; }

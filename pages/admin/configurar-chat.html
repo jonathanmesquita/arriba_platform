@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Área de administração: fora do menu, da busca e dos buscadores. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Configurar o chat (administração) - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px; background: var(--surface); border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 22px; padding: 0 28px;
+      position: sticky; top: 0; z-index: 30;
+    }
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero { background: var(--bg); border-bottom: 1px solid var(--line); padding: 40px 0 28px; }
+    .container-page { width: min(860px, calc(100% - 32px)); margin-inline: auto; }
+    .kicker { color: var(--rw-red-ink); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); line-height: .98; letter-spacing: -.06em; font-weight: 300; margin: 0 0 14px; }
+    .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; margin: 0 0 8px; }
+
+    .section { padding: 22px 0 50px; display: grid; gap: 16px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 0; padding: 18px 20px; }
+    .panel h2 { font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 14px; }
+
+    .acesso-topo { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+    .estado { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
+    .estado .ponto { width: 10px; height: 10px; border-radius: 50%; background: var(--line-strong); flex: none; }
+    .estado[data-estado="admin"] .ponto { background: var(--rw-ok); }
+    .estado[data-estado="admin"] { color: var(--ok-ink); }
+
+    .form-linha { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-top: 14px; }
+    .campo { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1 1 200px; margin-top: 12px; }
+    .form-linha .campo { margin-top: 0; }
+    .campo label { font-size: .82rem; font-weight: 800; color: var(--ink); }
+    .campo input, .campo select {
+      width: 100%; min-height: 42px; border: 1px solid var(--line-strong); border-radius: 6px;
+      background: var(--surface); color: var(--ink); padding: 8px 11px; font-size: .95rem;
+    }
+    .campo input:focus-visible, .campo select:focus-visible,
+    button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+
+    .btn-arriba {
+      min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px;
+      font-weight: 900; cursor: pointer; font-size: .9rem; display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none;
+    }
+    .btn-arriba[disabled] { opacity: .6; cursor: progress; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
+    .btn-red-arriba:hover { background: var(--rw-red-ink); }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line-strong); }
+    .btn-outline-arriba { background: transparent; border-color: var(--line-strong); color: var(--ink); }
+    .btn-link-arriba { background: transparent; color: var(--rw-red-ink); text-decoration: underline; padding-inline: 6px; }
+
+    .acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; align-items: center; }
+    .dica { color: var(--muted); font-size: .86rem; line-height: 1.5; margin: 6px 0 0; }
+    .dica a, .nota a { color: var(--rw-red-ink); }
+    code { color: var(--rw-red-ink); overflow-wrap: anywhere; }
+
+    .aviso { margin-top: 12px; padding: 10px 12px; border-radius: 7px; border-left: 4px solid var(--line-strong); background: var(--surface-soft); font-size: .9rem; line-height: 1.5; }
+    .aviso[data-tipo="erro"] { border-left-color: var(--rw-danger); color: var(--danger-ink); }
+    .aviso[data-tipo="ok"] { border-left-color: var(--rw-ok); color: var(--ok-ink); }
+    .aviso[data-tipo="info"] { border-left-color: var(--gold); color: var(--ink); }
+
+    .leia { margin-top: 14px; padding: 12px 14px; border-left: 4px solid var(--gold); border-radius: 7px; background: var(--surface-soft); font-size: .88rem; line-height: 1.55; }
+    .leia strong { display: block; margin-bottom: 4px; }
+    .leia p { margin: 0 0 4px; }
+
+    .situacao { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 4px; font-weight: 800; }
+    .selo { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px 11px; font-size: .82rem; font-weight: 800; color: var(--ink); }
+    .selo[data-tipo="externo"] { border-color: var(--rw-warn); color: var(--warn-ink); }
+    .selo[data-tipo="local"] { border-color: var(--rw-ok); color: var(--ok-ink); }
+
+    .status { margin: 12px 0 0; font-weight: 700; line-height: 1.5; min-height: 1.5em; }
+    .status[data-tipo="ok"] { color: var(--ok-ink); }
+    .status[data-tipo="erro"] { color: var(--danger-ink); }
+
+    .nota { border-left: 4px solid var(--gold); background: var(--surface-soft); padding: 12px 14px; border-radius: 7px; font-size: .88rem; color: var(--ink); line-height: 1.6; }
+
+    @media (max-width: 700px) {
+      .topbar { padding: 0 16px; gap: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../index.html" class="brand">ARRIBA</a>
+    <a href="../../index.html" class="back-link">← Voltar para o início</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Administração · área restrita</span>
+      <h1>Configurar o chat do site</h1>
+      <p>
+        O chat responde pela base de conhecimento do próprio site. Aqui o administrador pode ligar um
+        provedor de IA para quando a base não tiver a resposta.
+      </p>
+      <p>Esta página só abre para quem entra com a conta de administrador da Arriba API.</p>
+    </div>
+  </section>
+
+  <main class="container-page section">
+    <!-- ============ ACESSO ============ -->
+    <section class="panel" aria-labelledby="tituloAcesso">
+      <div class="acesso-topo">
+        <h2 id="tituloAcesso" style="margin:0">Acesso</h2>
+        <span class="estado" id="estado" data-estado="verificando" role="status" aria-live="polite">
+          <span class="ponto" aria-hidden="true"></span><span id="estadoTexto">Verificando…</span>
+        </span>
+      </div>
+
+      <form id="formLogin" class="form-linha" autocomplete="on" hidden>
+        <div class="campo">
+          <label for="usuario">Usuário</label>
+          <input id="usuario" name="username" autocomplete="username" required>
+        </div>
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <input id="senha" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn-arriba btn-red-arriba" id="btnEntrar"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>Entrar</button>
+      </form>
+
+      <div class="acoes" id="blocoConectado" hidden>
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnSair"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sair</button>
+      </div>
+
+      <div id="avisoAcesso" class="aviso" hidden role="alert"></div>
+    </section>
+
+    <!-- ============ CONFIGURAÇÃO (só administrador) ============ -->
+    <section class="panel" aria-labelledby="tituloConfig" id="painelConfig" hidden>
+      <h2 id="tituloConfig">Provedor de IA do chat</h2>
+      <p class="situacao">Hoje o chat deste navegador: <span class="selo" id="situacao"></span></p>
+
+      <form id="formConfig" novalidate>
+        <div class="campo">
+          <label for="cfgProvedor">Provedor</label>
+          <select id="cfgProvedor"></select>
+          <p class="dica" id="cfgResumo"></p>
+        </div>
+        <div id="camposProvedor"></div>
+
+        <div class="acoes">
+          <button type="submit" class="btn-arriba btn-red-arriba" id="cfgSalvar"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>Salvar</button>
+          <button type="button" class="btn-arriba btn-light-arriba" id="cfgTestar"><i class="fa-solid fa-plug" aria-hidden="true"></i>Testar conexão</button>
+          <button type="button" class="btn-arriba btn-link-arriba" id="cfgLimpar">Usar só a base do site</button>
+        </div>
+        <p class="status" id="cfgStatus" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <div class="nota">
+      <strong>Onde isto vale.</strong> A configuração fica <strong>neste navegador</strong> — é onde a
+      chave do provedor é guardada, e de onde sai a chamada. Visitantes não veem esta página nem o atalho
+      de configuração no chat: para eles, o chat responde só pela base do site. Ligar IA para todos os
+      visitantes exige guardar a chave no servidor, não no navegador — é a próxima fase da Arriba API.
+    </div>
+  </main>
+
+  <script type="module" src="configurar-chat.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+
+</html>

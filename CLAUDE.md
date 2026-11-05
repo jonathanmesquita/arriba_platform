@@ -8,9 +8,10 @@ arquivo atualizado quando decisões de arquitetura mudarem.
 **Arriba Platform** — **protótipo de estudos** em fullstack: validadores de arquivo
 (posicional e CSV), geradores, simulador SQL, editor web com preview ao vivo e um app de
 chat com IA. Tudo que é ferramenta roda **no navegador**; o único backend é o do app de
-chat, em `apps/`. **Exceção única:** a tela "Validar e consultar pela API"
-(`tools/dados/api-privada/`) chama a Arriba API, que mora em **outro repositório**
-(`arriba-api`, privado, no Render).
+chat, em `apps/`. **Exceções:** a tela "Validar e consultar pela API"
+(`tools/dados/api-privada/`) e a página de administração do chat (`pages/admin/`) chamam
+a Arriba API, que mora em **outro repositório** (`arriba-api`, privado, no Render) — as
+duas pelo mesmo módulo, `assets/js/arriba-api.js`.
 
 **Não há conteúdo de empresa aqui.** Em out/2026 o projeto foi descaracterizado: saíram os
 87 manuais de operação (alguns com nome de cliente no caminho do arquivo), a base de erros,
@@ -132,6 +133,10 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   para o gerador e para o validador, então CSV gerado pelo site passa no validador do site
   por construção.
 - **Base do chat do site:** `assets/data/base-conhecimento.js`.
+- **Acesso à Arriba API:** `assets/js/arriba-api.js` — endereço da API (`?api=` só
+  localhost), `chamarApi()`, login/sessão e o atalho de administrador. A tela da API e a
+  página de administração do chat importam daqui; não reescrever `fetch` para a API em
+  outra tela.
 
 ## Como adicionar uma ferramenta
 
@@ -220,14 +225,28 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   Preview da Vercel (`*.vercel.app`) **não** entra: não é o mesmo site nem está no CORS.
 - **Chatbot e provedores de IA** (`assets/js/chatbot.js` + `assets/js/llm-providers.js`): o
   padrão é `local` — responde pela base `assets/data/base-conhecimento.js` no próprio
-  navegador, sem rede, sem chave, sem custo. IA de verdade é **opt-in**, configurada no
-  painel da engrenagem: `ollama` (modelo na máquina de quem usa), `openai`, `anthropic` e
-  `gemini` (BYOK). `llm-providers.js` é a fonte única de provedor. Ordem: base local
-  primeiro; provedor só quando a local não cobre; falha do provedor **sempre** cai na local.
+  navegador, sem rede, sem chave, sem custo. IA de verdade é **opt-in** e **só o
+  administrador configura**, em `pages/admin/configurar-chat.html`: `ollama` (modelo na
+  máquina de quem usa), `openai`, `anthropic` e `gemini` (BYOK). `llm-providers.js` é a
+  fonte única de provedor. Ordem: base local primeiro; provedor só quando a local não
+  cobre; falha do provedor **sempre** cai na local.
   **A chave fica no localStorage de quem digitou** e a chamada sai do navegador dela: não há
   backend aqui para guardar segredo. Nunca commitar chave nem colocá-la em variável de
   build — tudo que vai para um site estático é público. O histórico da conversa é só em
   memória.
+  - **Configuração só para administrador (nov/2026).** O painel que a engrenagem abria
+    dentro do chat, à vista de qualquer visitante, virou a página
+    `pages/admin/configurar-chat.html` (fora do menu, da busca e com `noindex`). Ela só mostra
+    o formulário depois que a **Arriba API** confirma, pelo cookie, uma sessão com
+    `role: "admin"`. No chat, a engrenagem virou um **link** para essa página e só aparece no
+    navegador em que o administrador já entrou — uma marca em `localStorage`
+    (`arribaAdmin:atalho`, de `arriba-api.js`) que **só decide se o atalho aparece**, sem
+    dar acesso a nada. Assim o chat não chama a API a cada página (acordaria o Render à
+    toa). Honestidade sobre o que isso protege: esconder formulário em site estático não é
+    segurança; é aceitável porque **não há segredo do site** nesse formulário — a chave do
+    provedor é de quem digita e fica no navegador dele. A configuração vale **para aquele
+    navegador**: IA para todos os visitantes exige guardar a chave no servidor (fase 3 da
+    API, no backlog).
   - **Escrita do chat (nov/2026):** o primeiro balão diz que é um **assistente automático**
     e o que ele faz; quando não sabe, diz "não sei" e oferece caminho — "achei algo
     parecido" e "não tenho nada" são respostas **diferentes** (misturar as duas era o que
@@ -291,6 +310,8 @@ Entregue e funcionando:
 - Editor Web com preview ao vivo e sandbox endurecido.
 - Tela "Validar e consultar pela API", ligada à Arriba API privada (login por cookie
   `HttpOnly` ou chave só em memória).
+- Configuração do chat em página de administração, aberta só com sessão de administrador
+  na Arriba API.
 - Chat do site (base local + provedores BYOK) e `apps/arriba-chat-ia` (multi-provedor,
   streaming SSE, administração, auditoria e base de conhecimento).
 - `apps/comunicados`: portal de cartas modelo e disparo de e-mail em lotes, com

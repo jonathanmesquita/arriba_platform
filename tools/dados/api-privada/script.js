@@ -25,20 +25,9 @@
    ===================================================================== */
 
 import { gerarCelular, gerarCpf } from "../../../assets/js/fake-data-br.js";
-
-const API_PADRAO = "https://api.arriba.jm.dev.br";
-const TEMPO_LIMITE_MS = 70_000;     // o plano grátis do Render leva até ~50 s para acordar
-const AVISO_DEMORA_MS = 3_000;
-
-/* `?api=http://localhost:3000` aponta a tela para a API rodando na sua
-   máquina. SÓ localhost: aceitar qualquer endereço deixaria alguém mandar
-   um link com ?api=site-dele e receber a senha digitada aqui. */
-function enderecoDaApi() {
-  const pedido = new URLSearchParams(location.search).get("api");
-  if (pedido && /^http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?$/.test(pedido)) return pedido;
-  return API_PADRAO;
-}
-const API = enderecoDaApi();
+/* Endereço da API, chamada, login e o atalho de administrador ficam em
+   arriba-api.js — a página de configuração do chat usa o mesmo módulo. */
+import { API, API_PADRAO, MENSAGEM_DEMORA, chamarApi, entrar, lembrarAdmin, lerSessao, sair as sairDaApi } from "../../../assets/js/arriba-api.js";
 
 /* ---------------------------------------------------------------------
    Operações: o que a tela sabe pedir. Espelha o GET /v1 da API.
@@ -137,38 +126,12 @@ function el(tag, props = {}, filhos = []) {
 /* ---------------------------------------------------------------------
    Chamada à API
    --------------------------------------------------------------------- */
+const avisarDemora = () => mostrarAviso("info", MENSAGEM_DEMORA);
+
 async function chamar(metodo, caminho, corpo) {
-  const cabecalhos = {};
-  if (corpo !== undefined) cabecalhos["content-type"] = "application/json";
-  if (chaveNaMemoria) cabecalhos["x-api-key"] = chaveNaMemoria;
-
-  const inicio = performance.now();
-  const avisoDemora = setTimeout(() => mostrarAviso("info",
-    "A API está demorando: o plano grátis do Render dorme sem uso e a primeira chamada pode levar até 50 segundos. Aguarde."), AVISO_DEMORA_MS);
-
   try {
-    const resposta = await fetch(API + caminho, {
-      method: metodo,
-      headers: cabecalhos,
-      body: corpo === undefined ? undefined : JSON.stringify(corpo),
-      credentials: "include",
-      signal: AbortSignal.timeout(TEMPO_LIMITE_MS)
-    });
-    let dados = null;
-    try { dados = await resposta.json(); } catch { dados = null; }
-    return { status: resposta.status, ms: Math.round(performance.now() - inicio), dados };
-  } catch (erro) {
-    const tempo = erro?.name === "TimeoutError";
-    return {
-      status: 0,
-      ms: Math.round(performance.now() - inicio),
-      dados: null,
-      falhaRede: tempo
-        ? `A API não respondeu em ${TEMPO_LIMITE_MS / 1000} segundos.`
-        : "Não foi possível falar com a API (sem internet, API fora do ar ou bloqueio de CORS)."
-    };
+    return await chamarApi(metodo, caminho, { corpo, chave: chaveNaMemoria, aoDemorar: avisarDemora });
   } finally {
-    clearTimeout(avisoDemora);
     if (!$("avisoAcesso").dataset.fixo) esconderAviso();
   }
 }
@@ -203,15 +166,20 @@ function definirEstado(novo, usuario = null) {
   $("estadoTexto").textContent = textos[novo];
   $("blocoEntrar").hidden = !(novo === "fora");
   $("blocoConectado").hidden = !(novo === "sessao" || novo === "chave");
+  /* O atalho para a configuração do chat é de administrador: só aparece
+     com sessão (a chave de API não abre a página de configuração). */
+  $("linkConfigChat").hidden = novo !== "sessao";
 }
 
 async function verificarSessao() {
-  const r = await chamar("GET", "/auth/status");
-  if (r.status === 200 && r.dados?.authenticated && r.dados.user) {
-    definirEstado("sessao", r.dados.user.username);
+  const sessao = await lerSessao({ aoDemorar: avisarDemora });
+  if (!$("avisoAcesso").dataset.fixo) esconderAviso();
+  if (sessao.conectado) {
+    definirEstado("sessao", sessao.usuario);
+    lembrarAdmin(sessao.papel === "admin");
   } else {
     definirEstado("fora");
-    if (r.status === 0) mostrarAviso("erro", r.falhaRede, true);
+    if (sessao.falhaRede) mostrarAviso("erro", sessao.falhaRede, true);
   }
 }
 
@@ -222,22 +190,18 @@ async function entrarComSenha(evento) {
   const usuario = $("usuario").value.trim();
   const senha = $("senha").value;
 
-  const r = await chamar("POST", "/auth/login", { username: usuario, password: senha });
+  const r = await entrar(usuario, senha, { aoDemorar: avisarDemora });
   $("senha").value = "";
   botao.disabled = false;
 
-  if (r.status === 200 && r.dados?.authenticated) {
+  if (r.ok) {
     chaveNaMemoria = null;
     esconderAviso();
-    definirEstado("sessao", r.dados.user?.username || usuario);
+    definirEstado("sessao", r.usuario);
+    lembrarAdmin(r.papel === "admin");
     return;
   }
-  const motivos = {
-    401: "Usuário ou senha não conferem.",
-    429: r.dados?.error || "Muitas tentativas. Espere alguns minutos — ou entre com a chave de API.",
-    500: r.dados?.error || "A API recusou criar a sessão (falta configuração no servidor)."
-  };
-  mostrarAviso("erro", r.falhaRede || motivos[r.status] || `A API respondeu ${r.status}.`, true);
+  mostrarAviso("erro", r.mensagem, true);
   $("senha").focus();
 }
 
@@ -256,15 +220,20 @@ async function entrarComChave(evento) {
     return;
   }
   chaveNaMemoria = null;
+  /* A API diz qual é o engano provável (variável não resolvida, hash no
+     lugar da chave, par diferente) e a "impressão" do que chegou: os 8
+     primeiros caracteres do SHA-256, para comparar com o começo do hash
+     cadastrado no Render sem ninguém mostrar a chave. */
   const motivo = r.dados?.code === "CHAVE_INVALIDA"
-    ? "Essa chave não está cadastrada na API. Confira se é a chave (arb_…) do mesmo par cujo hash está no Render."
+    ? `Essa chave não está cadastrada na API. ${r.dados.dica || "Confira se é a chave (arb_…) do mesmo par cujo hash está no Render."}` +
+      (r.dados.impressao ? ` Impressão da chave digitada: ${r.dados.impressao}.` : "")
     : (r.falhaRede || r.dados?.error || `A API respondeu ${r.status}.`);
   mostrarAviso("erro", motivo, true);
 }
 
 async function sair() {
   chaveNaMemoria = null;
-  await chamar("POST", "/auth/logout");
+  await sairDaApi();
   definirEstado("fora");
   mostrarAviso("ok", "Você saiu. A sessão foi encerrada e a chave, se havia, foi esquecida.", true);
 }
@@ -469,7 +438,7 @@ function mostrarResposta(r, pedido) {
     filhos.push(veredito("Sem resposta", "erro"), el("p", { texto: r.falhaRede }));
   } else if (r.dados?.ok === false) {
     filhos.push(veredito(r.dados.error || "A API recusou o pedido", "erro"));
-    filhos.push(listaDeDados([["Código do erro", r.dados.code], ["O que fazer", r.dados.message]]));
+    filhos.push(listaDeDados([["Código do erro", r.dados.code], ["O que fazer", r.dados.message || r.dados.dica], ["Impressão da chave enviada", r.dados.impressao]]));
     if (r.dados.tentativas) filhos.push(listaDeProblemas(r.dados.tentativas.map((t) => ({ mensagem: t }))));
     if (r.dados.problemas) filhos.push(listaDeProblemas(r.dados.problemas));
   } else if (r.dados) {

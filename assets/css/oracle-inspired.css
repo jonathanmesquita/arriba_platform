@@ -461,8 +461,16 @@ body.dark-mode .rw-doc-card {
 .enterprise-menu-close {
     border: 0;
     background: transparent;
+    /* Sem cor declarada, o <button> herda o preto padrão do navegador e
+       some no tema escuro. --ink vira com o tema. */
+    color: var(--ink);
     font-size: 2rem;
     cursor: pointer;
+}
+
+.enterprise-menu-close:focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 2px;
 }
 
 .enterprise-menu-column,

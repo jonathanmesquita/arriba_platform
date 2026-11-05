@@ -80,9 +80,10 @@ const menuData = {
                 label: "Código e SQL",
                 badge: "Desenvolvimento",
                 title: "Código e SQL",
-                description: "Escreva e execute HTML, CSS, JavaScript e SQL direto no navegador.",
+                description: "Escreva e execute HTML, CSS, JavaScript e SQL no navegador, e teste a API do projeto.",
                 links: [
                     ["Editor HTML, CSS e JS (preview ao vivo)", "tools/dados/editor-web/editor-web.html"],
+                    ["Validar e consultar pela API (área restrita)", "tools/dados/api-privada/api-privada.html"],
                     ["SQL Playground (simulador no navegador)", "tools/cobranca/sql-playground/sql-playground.html"],
                     ["Construtor visual de consultas SQL", "tools/cobranca/query-builder/query-builder.html"]
                 ]
@@ -162,6 +163,7 @@ export const searchItems = [
     ["Validador de JSON", "json validador validar formatar indentar sintaxe erro parse", "tools/dados/json-validator/json_validator.html"],
     ["Decodificador (Base64, URL, JWT, hex)", "decodificador decode encode codificar base64 url html entities hexadecimal hex binario rot13 unicode escape jwt token json web token", "tools/dados/decodificador/decodificador.html"],
     ["Editor HTML, CSS e JS", "editor web html css javascript js try it yourself playground preview ao vivo iframe sandbox testar codigo front-end frontend pagina snippet aprender praticar", "tools/dados/editor-web/editor-web.html"],
+    ["Validar e consultar pela API", "api privada backend rest endpoint validar consultar cpf cnpj alfanumerico email celular telefone cep endereco viacep brasilapi banco bancos csv json postman curl chave login area restrita render express", "tools/dados/api-privada/api-privada.html"],
     ["CSV para JSON", "csv json converter transformar tabela", "tools/dados/csv-to-json/csv-to-json.html"],
     ["Calculadora de hash", "hash md5 sha1 sha256 checksum assinatura integridade", "tools/dados/hash-generator/hash-generator.html"],
     ["Curso de SQL com exercícios", "sql tsql curso treinamento trilha licao select where join group by having quiz gamificacao exercicio sandbox", "tools/cobranca/treinamento-sql/treinamento-sql.html"],

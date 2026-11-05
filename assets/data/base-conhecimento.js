@@ -105,6 +105,26 @@ export const KNOWLEDGE_BASE = [
     linkManual: "/tools/dados/editor-web/editor-web.html"
   },
   {
+    id: "api-privada",
+    titulo: "Validar e consultar dados pela API do projeto",
+    produto: "Ferramentas",
+    categoria: "API",
+    palavrasChave: ["api", "backend", "validar", "consultar", "cep", "cnpj", "cpf", "celular", "postman", "curl"],
+    perguntaExemplo: "O site tem API? Dá para consultar um CEP?",
+    caminhoTela: "Ferramentas › Código e SQL › Validar e consultar pela API",
+    resumo:
+      "A única tela que conversa com um servidor: a Arriba API valida CPF, CNPJ (inclusive o " +
+      "alfanumérico), e-mail, celular, CSV e JSON, e consulta CEP, CNPJ e bancos em APIs públicas. " +
+      "É área restrita — a API é privada e a chave não fica no código do site.",
+    passos: [
+      "Entre com usuário e senha, ou com a chave de API (fica só na memória da aba).",
+      "Escolha o que validar ou consultar e preencha — ou use o exemplo fictício.",
+      "Veja a resposta explicada, o JSON completo e o comando curl equivalente."
+    ],
+    checklist: ["Sem acesso, a tela só mostra como funciona", "Documento validado vai no corpo, não na URL"],
+    linkManual: "/tools/dados/api-privada/api-privada.html"
+  },
+  {
     id: "sql-praticar",
     titulo: "Praticar SQL sem banco de dados",
     produto: "Aprender",

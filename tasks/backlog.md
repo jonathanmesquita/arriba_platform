@@ -97,20 +97,16 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 ## API privada (`arriba-api`)
 
 Pedido de 05/11: API só para o dono testar, depois uma plataforma de controle de API com
-APIs públicas e gratuitas, depois integração com IA. A primeira fase está pronta no branch
-`claude/gerador-arquivos-web-n2oi6p` do `arriba-api` (`61835cd`, 43 testes).
+APIs públicas e gratuitas, depois integração com IA. A primeira fase está no ar desde 05/11 (PR #1 do
+`arriba-api`), com a tela "Validar e consultar pela API" no site.
 
-- [ ] Pôr no ar o acesso privado por chave 📅 2026-11-05 🔺 alta #area/infra #esforco/p
-  - Contexto: no branch, a API é privada por padrão (só `/`, `/healthz` e `/auth/*` ficam
-    abertas) e ganhou `/v1/validar/*` e `/v1/consultar/*`. Hoje, em produção, as rotas do
-    Freshdesk respondem sem identificação.
-  - Ação: (1) `npm run chave:gerar -- postman` e guardar a chave; (2) cadastrar o hash em
-    `ARRIBA_API_KEYS` no Render (serviço `arriba-api` → Environment); (3) abrir o PR e mesclar; (4) testar com
-    `docs/exemplos.http`, que inclui o caso sem chave (tem de dar 401).
-  - Atenção: sem `ARRIBA_API_KEYS`, toda rota fechada responde `503 ACESSO_NAO_CONFIGURADO`.
-    O webhook do Freshdesk, se estiver em uso, precisa do header `x-api-key`.
-  - Não conferido ao vivo: ViaCEP e BrasilAPI ficam fora da rede da sessão que escreveu o
-    código; os testes simulam as respostas. A primeira chamada real confirma os formatos.
+- [ ] Conferir as consultas reais (CEP, CNPJ, bancos) 📅 2026-11-05 🔼 média #area/infra #esforco/p
+  - Contexto: a API está no ar e privada, e a validação foi conferida ao vivo (CNPJ
+    alfanumérico, 200 com chave). As consultas não: ViaCEP e BrasilAPI ficam fora da rede da
+    sessão que escreveu o código, e os testes simulam as respostas.
+  - Ação: na tela "Validar e consultar pela API" (ou no Postman), consultar um CEP duas vezes
+    (a segunda deve vir `cache: true`), um CNPJ real e um banco. Se o formato vier diferente,
+    o ajuste é em `modules/consulta/publicas.js` do `arriba-api`.
 - [ ] Plataforma de controle de API 📅 2026-11-05 🔼 média #area/infra #esforco/g
   - Contexto: fase 2 do pedido. A base já existe: as consultas de `/v1/consultar` têm
     tempo-limite, cache, fonte e tempo de resposta em cada chamada.

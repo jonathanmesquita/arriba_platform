@@ -78,11 +78,16 @@ flowchart LR
     CF --> FE[Vercel · static site<br/>HTML · CSS · JS]
     FE -. runs in the browser .-> TOOLS[File and SQL tools<br/>CNAB 400 · CSV · Base64 · SQL sandbox]
     FE -. optional, visitor's own key .-> LLM[AI provider<br/>Ollama · OpenAI · Anthropic · Gemini]
+    FE -. sign-in required .-> API[Arriba API · private<br/>Render · Express]
+    API --> PUB[Public APIs<br/>ViaCEP · BrasilAPI]
     APP[apps/arriba-chat-ia<br/>Express · Postgres] --> LLM
 ```
 
-The site's tools never touch a backend — they process files locally. A server only exists for
-the apps in `apps/`, which need sessions, history and encrypted keys.
+The site's tools never touch a backend — they process files locally. The one exception is the
+**API console**, which calls the project's private API (a separate repository): you sign in with
+a password that returns an `HttpOnly` cookie, or paste an API key that lives only in the tab's
+memory. No secret is ever shipped with the static site. Other servers only exist for the apps in
+`apps/`, which need sessions, history and encrypted keys.
 
 ## Featured tools
 
@@ -95,6 +100,7 @@ the apps in `apps/`, which need sessions, history and encrypted keys.
 | **SQL Playground + SQL course** | An in-browser database with schema explorer, history and saved queries, plus lessons with exercises graded on the spot |
 | **Visual SQL query builder** | Builds T-SQL reports by picking tables and filters |
 | **Live web editor** | HTML, CSS and JS with live preview in a sandboxed iframe |
+| **API console** (sign-in required) | Validates CPF, CNPJ (including the 2026 alphanumeric format), e-mail, phone, CSV and JSON, and looks up postal codes, companies and banks in free public APIs — through the project's private API |
 | **Converters** | CSV→JSON, Base64→PDF, decoder (Base64, URL, JWT, hex), hash calculator |
 | **AI chat app** (`apps/arriba-chat-ia`) | Multi-provider chat with streaming, admin panel, audit log and a knowledge base built from this repo's docs |
 | **Mail templates app** (`apps/comunicados`) | Letter templates with variables and batched e-mail sending, with unsubscribe handling |
@@ -135,7 +141,10 @@ arriba_platform/
 - [ ] Automated tests for the site's pure logic (CSV parser, CNAB engine, validation rules)
 - [ ] Contrast audit for opened states (chat, menu, modals), not only the page on load
 - [ ] Deploy the chat app (managed Postgres, secrets outside the repo)
-- [ ] Sign-in with Microsoft (Azure AD) on the backend
+- [x] Sign-in with Microsoft (Azure AD) on the backend
+- [x] Private API with key/password access, data validation and public-API lookups
+- [ ] API control panel: per-endpoint volume, errors and latency
+- [ ] AI providers (OpenAI, Gemini) behind the private API
 - [ ] Bilingual content (PT/EN) and a `Ctrl/Cmd + K` command palette
 
 ## About the author

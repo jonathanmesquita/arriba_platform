@@ -94,6 +94,38 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
     que o tema entrar, elas precisam virar o par cheia/`-ink` como no site.
   - Local: `apps/*/web/src/styles.css`
 
+## API privada (`arriba-api`)
+
+Pedido de 05/11: API só para o dono testar, depois uma plataforma de controle de API com
+APIs públicas e gratuitas, depois integração com IA. A primeira fase está pronta no branch
+`claude/gerador-arquivos-web-n2oi6p` do `arriba-api` (`61835cd`, 43 testes).
+
+- [ ] Pôr no ar o acesso privado por chave 📅 2026-11-05 🔺 alta #area/infra #esforco/p
+  - Contexto: no branch, a API é privada por padrão (só `/`, `/healthz` e `/auth/*` ficam
+    abertas) e ganhou `/v1/validar/*` e `/v1/consultar/*`. Hoje, em produção, as rotas do
+    Freshdesk respondem sem identificação.
+  - Ação: (1) `npm run chave:gerar -- postman` e guardar a chave; (2) cadastrar o hash em
+    `ARRIBA_API_KEYS` na Vercel; (3) abrir o PR e mesclar; (4) testar com
+    `docs/exemplos.http`, que inclui o caso sem chave (tem de dar 401).
+  - Atenção: sem `ARRIBA_API_KEYS`, toda rota fechada responde `503 ACESSO_NAO_CONFIGURADO`.
+    O webhook do Freshdesk, se estiver em uso, precisa do header `x-api-key`.
+  - Não conferido ao vivo: ViaCEP e BrasilAPI ficam fora da rede da sessão que escreveu o
+    código; os testes simulam as respostas. A primeira chamada real confirma os formatos.
+- [ ] Plataforma de controle de API 📅 2026-11-05 🔼 média #area/infra #esforco/g
+  - Contexto: fase 2 do pedido. A base já existe: as consultas de `/v1/consultar` têm
+    tempo-limite, cache, fonte e tempo de resposta em cada chamada.
+  - Ação: registrar cada chamada (rota, fonte, status, ms, se veio do cache) e mostrar numa
+    tela — volume, erro e lentidão por API. Antes, decidir onde guardar: a Vercel não tem
+    disco, então é banco gerenciado (Postgres/KV) ou só memória.
+  - Candidatas grátis e sem chave para somar: BrasilAPI (feriados, DDD, FIPE, ISBN),
+    IBGE (localidades), Banco Central (câmbio PTAX, SGS).
+- [ ] Integração com IA na API (OpenAI, Gemini e outros) 📅 2026-11-05 🔼 média #area/chat-ia #esforco/m
+  - Contexto: fase 3. Já há **três** implementações de provedor: `llm-providers.js` no site
+    (BYOK), `apps/arriba-chat-ia` (multi-provedor no servidor) e o `/chat` do `arriba-api`
+    (só OpenAI). Uma quarta seria mais uma cópia para manter.
+  - Ação: decidir qual delas a API reaproveita; a chave do provedor fica em variável da
+    Vercel, nunca no código, e a rota passa pelo mesmo portão de acesso.
+
 ## Do status de nov/2026
 
 Itens do documento de status do dono que viram trabalho. Os que contradizem decisões já
@@ -106,7 +138,7 @@ tomadas estão em `decisoes-pendentes.md`, não aqui.
   - Ação: (1) no registro do app, *Expor uma API* com o escopo `access_as_user`; (2) em
     `auth/callback/`, trocar o escopo padrão `User.Read` (token do Graph, que a API recusa)
     por `api://<client-id>/access_as_user`; (3) definir `AZURE_TENANT_ID`, `AZURE_API_AUDIENCE`
-    e **`ARRIBA_JWT_SECRET`** no Render; (4) abrir o PR do branch.
+    e **`ARRIBA_JWT_SECRET`** na Vercel (a API saiu do Render); (4) abrir o PR do branch.
   - Nota: nenhuma rota confere papel (`role`) — quem entra pelo Microsoft acessa o mesmo que o
     admin. Se for para ter diferença, é a próxima peça.
 - [ ] Teste de carga dos 3 endpoints Escobs — ⏸️ em espera (decisão do dono, 05/11) 📅 2026-11-04 🔽 baixa #area/qa #esforco/m

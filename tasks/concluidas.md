@@ -3,6 +3,7 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Licença MIT no repositório (`LICENSE`), com marcas de terceiros excluídas no README e link no rodapé ✅ 2026-11-05 #area/docs
 - [x] Chat do site redesenhado: conversa honesta, acessível e com estilo em fonte única ✅ 2026-11-05 #area/site
 - [x] Decidido: contato da página "Sobre o autor" fica em branco — o repositório oficial está sendo criado ✅ 2026-11-05 #area/site
 - [x] Login com Microsoft validado no servidor (`arriba-api`, branch da sessão) ✅ 2026-11-04 #area/infra

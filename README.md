@@ -151,7 +151,13 @@ background (technical support + hospitality tech) as an edge, not a gap.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+The code and text written for this project are released under the [MIT License](LICENSE).
+
+The license covers only the author's own work. Third-party logos and trademarks are **not**
+covered and remain the property of their owners — notably the bank logos in
+`assets/img/bancos/` and `tools/cobranca/cnab400/assets/icons/`. Bank names appear only to
+describe which public CNAB 400 specification a tool reads. Libraries loaded from CDNs
+(Bootstrap, Font Awesome, AlaSQL and others) keep their own licenses.
 
 ---
 

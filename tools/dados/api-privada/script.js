@@ -256,8 +256,13 @@ async function entrarComChave(evento) {
     return;
   }
   chaveNaMemoria = null;
+  /* A API diz qual é o engano provável (variável não resolvida, hash no
+     lugar da chave, par diferente) e a "impressão" do que chegou: os 8
+     primeiros caracteres do SHA-256, para comparar com o começo do hash
+     cadastrado no Render sem ninguém mostrar a chave. */
   const motivo = r.dados?.code === "CHAVE_INVALIDA"
-    ? "Essa chave não está cadastrada na API. Confira se é a chave (arb_…) do mesmo par cujo hash está no Render."
+    ? `Essa chave não está cadastrada na API. ${r.dados.dica || "Confira se é a chave (arb_…) do mesmo par cujo hash está no Render."}` +
+      (r.dados.impressao ? ` Impressão da chave digitada: ${r.dados.impressao}.` : "")
     : (r.falhaRede || r.dados?.error || `A API respondeu ${r.status}.`);
   mostrarAviso("erro", motivo, true);
 }
@@ -469,7 +474,7 @@ function mostrarResposta(r, pedido) {
     filhos.push(veredito("Sem resposta", "erro"), el("p", { texto: r.falhaRede }));
   } else if (r.dados?.ok === false) {
     filhos.push(veredito(r.dados.error || "A API recusou o pedido", "erro"));
-    filhos.push(listaDeDados([["Código do erro", r.dados.code], ["O que fazer", r.dados.message]]));
+    filhos.push(listaDeDados([["Código do erro", r.dados.code], ["O que fazer", r.dados.message || r.dados.dica], ["Impressão da chave enviada", r.dados.impressao]]));
     if (r.dados.tentativas) filhos.push(listaDeProblemas(r.dados.tentativas.map((t) => ({ mensagem: t }))));
     if (r.dados.problemas) filhos.push(listaDeProblemas(r.dados.problemas));
   } else if (r.dados) {

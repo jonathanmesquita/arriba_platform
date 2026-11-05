@@ -8,7 +8,9 @@ arquivo atualizado quando decisões de arquitetura mudarem.
 **Arriba Platform** — **protótipo de estudos** em fullstack: validadores de arquivo
 (posicional e CSV), geradores, simulador SQL, editor web com preview ao vivo e um app de
 chat com IA. Tudo que é ferramenta roda **no navegador**; o único backend é o do app de
-chat, em `apps/`.
+chat, em `apps/`. **Exceção única:** a tela "Validar e consultar pela API"
+(`tools/dados/api-privada/`) chama a Arriba API, que mora em **outro repositório**
+(`arriba-api`, privado, no Render).
 
 **Não há conteúdo de empresa aqui.** Em out/2026 o projeto foi descaracterizado: saíram os
 87 manuais de operação (alguns com nome de cliente no caminho do arquivo), a base de erros,
@@ -202,6 +204,20 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   documento gerado e manda tudo via `postMessage`; o pai valida por
   `evento.source === preview.contentWindow` (o `origin` vem `"null"`). O `.html` baixado sai
   **sem** a ponte.
+- **Validar e consultar pela API** (`tools/dados/api-privada/`, nov/2026): a única tela que
+  chama servidor — `https://api.arriba.jm.dev.br`, repositório `arriba-api`. **A API é
+  privada e nenhum segredo entra neste repositório**: site estático é público por definição.
+  Dois jeitos de entrar, nenhum grava nada no navegador: (1) **usuário e senha** →
+  `POST /auth/login` devolve cookie `HttpOnly` que o JS não lê, mandado sozinho com
+  `credentials: "include"`. Funciona porque `arriba.jm.dev.br` e `api.arriba.jm.dev.br` são o
+  mesmo *site* (`dev.br` é sufixo público, então o cookie `SameSite=Lax` vai junto) e a API
+  libera CORS só para esta origem; (2) **chave de API** digitada na hora, guardada numa
+  variável do módulo — some ao recarregar, **nunca** em `localStorage`/`sessionStorage`.
+  `?api=` só aceita `http://localhost`: aceitar qualquer endereço deixaria um link
+  `?api=site-dele` receber a senha digitada. Resposta da API é escrita com `textContent`,
+  nunca `innerHTML` (o endereço da ViaCEP é dado de terceiro). O exemplo de consulta de CNPJ
+  **não existe de propósito**: consulta precisa de CNPJ real, e exemplo aqui é fictício.
+  Preview da Vercel (`*.vercel.app`) **não** entra: não é o mesmo site nem está no CORS.
 - **Chatbot e provedores de IA** (`assets/js/chatbot.js` + `assets/js/llm-providers.js`): o
   padrão é `local` — responde pela base `assets/data/base-conhecimento.js` no próprio
   navegador, sem rede, sem chave, sem custo. IA de verdade é **opt-in**, configurada no
@@ -273,6 +289,8 @@ Entregue e funcionando:
 - Massa de dados fictícios e decodificador/criador de modelo de carta.
 - Centro de Aprendizado, trilha de SQL com gamificação e SQL Playground (AlaSQL).
 - Editor Web com preview ao vivo e sandbox endurecido.
+- Tela "Validar e consultar pela API", ligada à Arriba API privada (login por cookie
+  `HttpOnly` ou chave só em memória).
 - Chat do site (base local + provedores BYOK) e `apps/arriba-chat-ia` (multi-provedor,
   streaming SSE, administração, auditoria e base de conhecimento).
 - `apps/comunicados`: portal de cartas modelo e disparo de e-mail em lotes, com

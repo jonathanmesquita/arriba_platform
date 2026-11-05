@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validar e consultar pela API - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px; background: var(--surface); border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 22px; padding: 0 28px;
+      position: sticky; top: 0; z-index: 30;
+    }
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero { background: var(--bg); border-bottom: 1px solid var(--line); padding: 40px 0 28px; }
+    .container-page { width: min(1200px, calc(100% - 32px)); margin-inline: auto; }
+    .kicker { color: var(--rw-red-ink); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: .98; letter-spacing: -.06em; font-weight: 300; margin: 0 0 14px; }
+    .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 860px; margin: 0 0 8px; }
+
+    .section { padding: 22px 0 50px; display: grid; gap: 16px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 0; padding: 18px 20px; }
+    .panel h2 { font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 14px; }
+
+    /* ---------- Acesso ---------- */
+    .acesso-topo { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+    .estado { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
+    .estado .ponto { width: 10px; height: 10px; border-radius: 50%; background: var(--line-strong); flex: none; }
+    .estado[data-estado="sessao"] .ponto, .estado[data-estado="chave"] .ponto { background: var(--rw-ok); }
+    .estado[data-estado="sessao"], .estado[data-estado="chave"] { color: var(--ok-ink); }
+
+    .form-linha { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-top: 14px; }
+    .campo { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1 1 200px; }
+    .campo label { font-size: .82rem; font-weight: 800; color: var(--ink); }
+    .campo input, .campo select, .campo textarea {
+      width: 100%; min-height: 42px; border: 1px solid var(--line-strong); border-radius: 6px;
+      background: var(--surface); color: var(--ink); padding: 8px 11px; font-size: .95rem;
+    }
+    .campo textarea { min-height: 170px; font-family: Consolas, Monaco, monospace; font-size: .84rem; line-height: 1.5; resize: vertical; white-space: pre; }
+    .campo input:focus-visible, .campo select:focus-visible, .campo textarea:focus-visible,
+    button:focus-visible, summary:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+
+    .btn-arriba {
+      min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px;
+      font-weight: 900; cursor: pointer; font-size: .9rem; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-arriba[disabled] { opacity: .6; cursor: progress; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
+    .btn-red-arriba:hover { background: var(--rw-red-ink); }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line-strong); }
+    .btn-outline-arriba { background: transparent; border-color: var(--line-strong); color: var(--ink); }
+
+    details.alternativa { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+    details.alternativa summary { cursor: pointer; font-weight: 800; color: var(--rw-red-ink); }
+    .nota-pequena { color: var(--muted); font-size: .84rem; line-height: 1.5; margin: 8px 0 0; }
+    .aviso { margin-top: 12px; padding: 10px 12px; border-radius: 7px; border-left: 4px solid var(--line-strong); background: var(--surface-soft); font-size: .9rem; line-height: 1.5; }
+    .aviso[data-tipo="erro"] { border-left-color: var(--rw-danger); color: var(--danger-ink); }
+    .aviso[data-tipo="ok"] { border-left-color: var(--rw-ok); color: var(--ok-ink); }
+    .aviso[data-tipo="info"] { border-left-color: var(--gold); color: var(--ink); }
+
+    /* ---------- Operações ---------- */
+    .trabalho { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+    .grupo-ops { margin-bottom: 12px; }
+    .grupo-ops > span { display: block; font-size: .72rem; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+    .ops { display: flex; flex-wrap: wrap; gap: 6px; }
+    .op {
+      border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); border-radius: 999px;
+      padding: 6px 13px; font-size: .84rem; font-weight: 800; cursor: pointer;
+    }
+    .op:hover { border-color: var(--red); }
+    .op[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: var(--rw-on-primary); }
+    .op-descricao { color: var(--muted); font-size: .9rem; line-height: 1.5; margin: 6px 0 0; }
+    .rota { font-family: Consolas, Monaco, monospace; font-size: .8rem; color: var(--ink); background: var(--surface-soft); border: 1px solid var(--line); border-radius: 5px; padding: 2px 7px; }
+    .acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+    /* ---------- Resposta ---------- */
+    .resposta-vazia { color: var(--muted); line-height: 1.6; margin: 0; }
+    .linha-status { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .selo { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px 11px; font-size: .8rem; font-weight: 800; color: var(--ink); }
+    .selo[data-tipo="ok"] { border-color: var(--rw-ok); color: var(--ok-ink); }
+    .selo[data-tipo="erro"] { border-color: var(--rw-danger); color: var(--danger-ink); }
+    .selo[data-tipo="aviso"] { border-color: var(--rw-warn); color: var(--warn-ink); }
+
+    .veredito { font-size: 1.25rem; font-weight: 900; margin: 0 0 8px; }
+    .veredito[data-tipo="ok"] { color: var(--ok-ink); }
+    .veredito[data-tipo="erro"] { color: var(--danger-ink); }
+    .lista-problemas { margin: 6px 0 0; padding-left: 20px; line-height: 1.55; }
+    .dados { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 8px 0 0; }
+    .dados dt { color: var(--muted); font-weight: 700; font-size: .88rem; }
+    .dados dd { margin: 0; overflow-wrap: anywhere; }
+
+    .tabela-wrap { overflow-x: auto; margin-top: 8px; }
+    table.bancos { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    table.bancos th, table.bancos td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+    table.bancos th { color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; }
+
+    details.bruto { margin-top: 14px; }
+    details.bruto summary { cursor: pointer; font-weight: 800; color: var(--rw-red-ink); }
+    pre.codigo {
+      background: var(--rw-dark); color: var(--rw-on-dark); border-radius: 7px; padding: 12px 14px;
+      font-size: .8rem; line-height: 1.5; overflow-x: auto; margin: 8px 0 0; max-height: 420px;
+    }
+
+    .nota {
+      border-left: 4px solid var(--gold); background: var(--surface-soft); padding: 12px 14px;
+      border-radius: 7px; font-size: .88rem; color: var(--ink); line-height: 1.6;
+    }
+    /* O rosa padrão do Bootstrap para <code> não passa no contraste (4,3 no
+       claro, 3,5 no escuro); a tinta da terracota vira com o tema. */
+    code { color: var(--rw-red-ink); }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+
+    @media (max-width: 900px) {
+      .trabalho { grid-template-columns: 1fr; }
+      .topbar { padding: 0 16px; gap: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para o início</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">API privada · área restrita</span>
+      <h1>Validar e consultar pela API</h1>
+      <p>
+        Esta tela chama a <strong>Arriba API</strong>, o backend do projeto: valida CPF, CNPJ, e-mail,
+        celular, CSV e JSON, e consulta CEP, CNPJ e bancos em APIs públicas e gratuitas.
+      </p>
+      <p>
+        A API é privada: só responde a quem entra. A chave de acesso <strong>não está no código desta
+        página</strong> — um site estático não guarda segredo, tudo que vem para o navegador é público.
+      </p>
+    </div>
+  </section>
+
+  <main class="container-page section">
+    <!-- ============ ACESSO ============ -->
+    <section class="panel" aria-labelledby="tituloAcesso">
+      <div class="acesso-topo">
+        <h2 id="tituloAcesso" style="margin:0">Acesso</h2>
+        <span class="estado" id="estado" data-estado="verificando" role="status" aria-live="polite">
+          <span class="ponto" aria-hidden="true"></span><span id="estadoTexto">Verificando…</span>
+        </span>
+      </div>
+
+      <div id="blocoEntrar" hidden>
+        <form id="formLogin" class="form-linha" autocomplete="on">
+          <div class="campo">
+            <label for="usuario">Usuário</label>
+            <input id="usuario" name="username" autocomplete="username" required>
+          </div>
+          <div class="campo">
+            <label for="senha">Senha</label>
+            <input id="senha" name="password" type="password" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn-arriba btn-red-arriba" id="btnEntrar"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>Entrar</button>
+        </form>
+        <p class="nota-pequena">
+          A senha vai direto para a API, que devolve um cookie de sessão que o JavaScript desta página
+          não consegue ler. Nada fica salvo aqui.
+        </p>
+
+        <details class="alternativa">
+          <summary>Prefiro usar a chave de API</summary>
+          <form id="formChave" class="form-linha" autocomplete="off">
+            <div class="campo">
+              <label for="chave">Chave (começa com <code>arb_</code>)</label>
+              <input id="chave" type="password" autocomplete="off" spellcheck="false" required>
+            </div>
+            <button type="submit" class="btn-arriba btn-light-arriba">Usar só nesta aba</button>
+          </form>
+          <p class="nota-pequena">
+            A chave fica <strong>só na memória desta aba</strong>: some ao recarregar e não é gravada no
+            navegador. Use em computador seu — qualquer extensão do navegador enxerga o que se digita.
+          </p>
+        </details>
+      </div>
+
+      <div id="blocoConectado" hidden>
+        <div class="acoes">
+          <button type="button" class="btn-arriba btn-outline-arriba" id="btnSair"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sair</button>
+        </div>
+      </div>
+
+      <div id="avisoAcesso" class="aviso" hidden role="alert"></div>
+    </section>
+
+    <!-- ============ TRABALHO ============ -->
+    <div class="trabalho">
+      <section class="panel" aria-labelledby="tituloPedido">
+        <h2 id="tituloPedido">O que testar</h2>
+
+        <div class="grupo-ops">
+          <span id="rotuloValidar">Validar</span>
+          <div class="ops" role="group" aria-labelledby="rotuloValidar" id="opsValidar"></div>
+        </div>
+        <div class="grupo-ops">
+          <span id="rotuloConsultar">Consultar (APIs públicas)</span>
+          <div class="ops" role="group" aria-labelledby="rotuloConsultar" id="opsConsultar"></div>
+        </div>
+
+        <p class="op-descricao" id="opDescricao"></p>
+
+        <form id="formOperacao">
+          <div id="camposOperacao"></div>
+          <div class="acoes">
+            <button type="submit" class="btn-arriba btn-red-arriba" id="btnEnviar"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Enviar</button>
+            <button type="button" class="btn-arriba btn-light-arriba" id="btnExemplo">Preencher com exemplo fictício</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel" aria-labelledby="tituloResposta">
+        <h2 id="tituloResposta">Resposta</h2>
+        <div id="resposta" aria-live="polite">
+          <p class="resposta-vazia">Escolha o que testar, preencha e envie. A resposta da API aparece aqui,
+            explicada, com o JSON completo logo abaixo.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="nota">
+      <strong>Como esta tela protege o acesso.</strong> O login cria um cookie <code>HttpOnly</code>:
+      o navegador manda junto em cada chamada, mas nenhum script consegue ler o valor nem levá-lo para
+      outro lugar. Funciona porque o site e a API são o mesmo
+      <em>site</em> (<code>arriba.jm.dev.br</code> e <code>api.arriba.jm.dev.br</code>) e a API só libera
+      CORS para esta origem. Dez senhas erradas em 15 minutos travam o login.
+      Documento validado vai no corpo da requisição, não na URL, para não ficar gravado em log.
+    </div>
+  </main>
+
+  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+
+</html>

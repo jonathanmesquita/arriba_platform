@@ -94,6 +94,34 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
     que o tema entrar, elas precisam virar o par cheia/`-ink` como no site.
   - Local: `apps/*/web/src/styles.css`
 
+## API privada (`arriba-api`)
+
+Pedido de 05/11: API só para o dono testar, depois uma plataforma de controle de API com
+APIs públicas e gratuitas, depois integração com IA. A primeira fase está no ar desde 05/11 (PR #1 do
+`arriba-api`), com a tela "Validar e consultar pela API" no site.
+
+- [ ] Conferir as consultas reais (CEP, CNPJ, bancos) 📅 2026-11-05 🔼 média #area/infra #esforco/p
+  - Contexto: a API está no ar e privada, e a validação foi conferida ao vivo (CNPJ
+    alfanumérico, 200 com chave). As consultas não: ViaCEP e BrasilAPI ficam fora da rede da
+    sessão que escreveu o código, e os testes simulam as respostas.
+  - Ação: na tela "Validar e consultar pela API" (ou no Postman), consultar um CEP duas vezes
+    (a segunda deve vir `cache: true`), um CNPJ real e um banco. Se o formato vier diferente,
+    o ajuste é em `modules/consulta/publicas.js` do `arriba-api`.
+- [ ] Plataforma de controle de API 📅 2026-11-05 🔼 média #area/infra #esforco/g
+  - Contexto: fase 2 do pedido. A base já existe: as consultas de `/v1/consultar` têm
+    tempo-limite, cache, fonte e tempo de resposta em cada chamada.
+  - Ação: registrar cada chamada (rota, fonte, status, ms, se veio do cache) e mostrar numa
+    tela — volume, erro e lentidão por API. Antes, decidir onde guardar: o plano grátis do Render não tem
+    disco, então é banco gerenciado (Postgres/KV) ou só memória.
+  - Candidatas grátis e sem chave para somar: BrasilAPI (feriados, DDD, FIPE, ISBN),
+    IBGE (localidades), Banco Central (câmbio PTAX, SGS).
+- [ ] Integração com IA na API (OpenAI, Gemini e outros) 📅 2026-11-05 🔼 média #area/chat-ia #esforco/m
+  - Contexto: fase 3. Já há **três** implementações de provedor: `llm-providers.js` no site
+    (BYOK), `apps/arriba-chat-ia` (multi-provedor no servidor) e o `/chat` do `arriba-api`
+    (só OpenAI). Uma quarta seria mais uma cópia para manter.
+  - Ação: decidir qual delas a API reaproveita; a chave do provedor fica em variável da
+    hospedagem, nunca no código, e a rota passa pelo mesmo portão de acesso.
+
 ## Do status de nov/2026
 
 Itens do documento de status do dono que viram trabalho. Os que contradizem decisões já

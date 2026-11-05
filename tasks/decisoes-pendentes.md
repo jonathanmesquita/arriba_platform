@@ -63,7 +63,7 @@ e em duas categorias bem diferentes.
 | ~~**Imagem servida pelo site da Oracle**~~ — **resolvido em 04/11**: estava só na página Sobre antiga, que foi refeita | 3 `<img>` | não | `https://www.oracle.com/a/ocom/img/fe-nav-close-black.svg` — o navegador de quem visita busca o arquivo **no servidor da Oracle** |
 | **Nome "Oracle" no design** | `oracle-inspired.css`, README, comentários | sim | "Oracle-inspired", "Oracle style" |
 | **Nomes de banco no CNAB** `banks/*.js` | 3 módulos | sim | `bradesco.js`, `itau.js`, `bmp.js` |
-| **Arquivo de licença / créditos** | **nenhum** | — | o repositório não declara licença própria nem origem de asset de terceiro |
+| ~~**Arquivo de licença**~~ — **resolvido em 05/11**: `LICENSE` MIT na raiz; o README exclui logos e marcas de terceiros | 1 arquivo | sim | falta só creditar asset de terceiro (item 6) |
 
 ### O que é decisão sua, e por quê
 
@@ -89,8 +89,10 @@ não de necessidade.
 **5. "Oracle-inspired".** Descreve a inspiração do layout, não se passa pela Oracle. Se a
 régua for "nenhuma empresa", vira "mega-menu corporativo" e o arquivo muda de nome.
 
-**6. Licença.** O repositório é público e não diz sob que termos — e o README afirma "MIT" com link para um `LICENSE` que **não existe**. Vale decidir a licença
-do que é seu e creditar o que não é (as bandeiras de idioma, as fontes).
+**6. Licença.** ~~Decidir a licença~~ — **resolvido em 05/11**: MIT, mesmo texto do
+`arriba-api`, e o README diz que logos e marcas de terceiros ficam de fora. Continua em
+aberto só **creditar** o que não é seu (as bandeiras de idioma, as fontes) — e, se os 205
+logos ficarem (item 2), dizer de onde vieram.
 
 > Nota: isto é inventário do que está no repositório, não parecer jurídico.
 

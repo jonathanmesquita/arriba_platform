@@ -3,6 +3,9 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Tela "Validar e consultar pela API" no site: login por cookie `HttpOnly` ou chave só em memória, nenhum segredo no repositório ✅ 2026-11-05 #area/site
+- [x] API privada no ar (`arriba-api` PR #1): chave de API, validações e consultas a APIs públicas, 44 testes ✅ 2026-11-05 #area/infra
+- [x] Licença MIT no repositório (`LICENSE`), com marcas de terceiros excluídas no README e link no rodapé ✅ 2026-11-05 #area/docs
 - [x] Chat do site redesenhado: conversa honesta, acessível e com estilo em fonte única ✅ 2026-11-05 #area/site
 - [x] Decidido: contato da página "Sobre o autor" fica em branco — o repositório oficial está sendo criado ✅ 2026-11-05 #area/site
 - [x] Login com Microsoft validado no servidor (`arriba-api`, branch da sessão) ✅ 2026-11-04 #area/infra

@@ -148,8 +148,10 @@
 
 .chat-header-btn:focus-visible { outline: 2px solid var(--rw-accent); outline-offset: 2px; }
 
-/* Engrenagem acesa = há provedor de IA externo ativo: o que for digitado
-   pode sair do navegador. Mostarda sobre a faixa escura, texto escuro. */
+/* Engrenagem: atalho para a configuração, só no navegador do administrador
+   (é um link, não um botão). Acesa = há provedor de IA externo ativo: o que
+   for digitado pode sair do navegador. Mostarda sobre a faixa escura. */
+a.chat-header-btn { text-decoration: none; }
 #btnConfigIA.active {
   background: var(--rw-accent);
   border-color: var(--rw-accent);
@@ -404,79 +406,6 @@
 
 .chat-send:hover { background: var(--rw-red-ink); border-color: var(--rw-red-ink); }
 .chat-send:focus-visible { outline: 3px solid var(--rw-red-ink); outline-offset: 2px; }
-
-/* ---------------- Painel de configuração do provedor de IA ----------------
-   Injetado por chatbot.js (montarPainelConfig). */
-.chat-config {
-  max-height: 320px;
-  overflow-y: auto;
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface-soft);
-  font-size: .86rem;
-}
-
-.chat-config.d-none { display: none; }
-
-.chat-config-label {
-  display: block;
-  margin: 8px 0 3px;
-  font-size: .7rem;
-  font-weight: 900;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.chat-config-input {
-  width: 100%;
-  min-height: 36px;
-  padding: 5px 9px;
-  border: 1px solid var(--line-strong);
-  border-radius: 6px;
-  background: var(--surface);
-  color: var(--ink);
-  font-size: .86rem;
-}
-
-.chat-config-hint {
-  margin: 5px 0 0;
-  color: var(--muted);
-  font-size: .76rem;
-  line-height: 1.45;
-}
-
-.chat-config-hint code { font-size: .72rem; word-break: break-all; }
-.chat-config-hint a { color: var(--rw-red-ink); }
-
-.chat-config-aviso {
-  margin-top: 10px;
-  padding: 9px 11px;
-  border-left: 3px solid var(--gold);
-  border-radius: 6px;
-  background: rgb(from var(--gold) r g b / .14);
-  color: var(--rw-olive-ink);
-  font-size: .76rem;
-  line-height: 1.45;
-}
-
-.chat-config-aviso strong { display: block; margin-bottom: 4px; }
-.chat-config-aviso p { margin: 0 0 4px; }
-
-.chat-config-acoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.chat-config-status {
-  margin: 8px 0 0;
-  font-size: .78rem;
-  font-weight: 700;
-  color: var(--muted);
-  line-height: 1.4;
-}
 
 /* ---------------- Celular ---------------- */
 @media (max-width: 576px) {

@@ -16,14 +16,23 @@
 // provedor de IA). Antes ele mostrava um "humor" do mascote ("Pensando na
 // melhor resposta"), que ficava preso depois que a resposta chegava.
 //
+// Configuração do provedor de IA: NÃO mora mais aqui. Até nov/2026 era um
+// painel aberto pela engrenagem, à vista de qualquer visitante; agora é a
+// página de administração pages/admin/configurar-chat.html, que só abre o
+// formulário depois que a Arriba API confirma a sessão de administrador.
+// O chat só mostra a engrenagem — um LINK para essa página — no navegador
+// em que o administrador já entrou (arriba-api.js, pareceAdmin()).
+//
 // Estilo: assets/css/chatbot.css. Conteúdo: assets/data/base-conhecimento.js.
 
 import { KNOWLEDGE_BASE as BASE_CONHECIMENTO, QUICK_TOPICS as TOPICOS_RAPIDOS } from '../data/base-conhecimento.js';
 
-import {
-    PROVEDORES, getConfig, salvarConfig, limparConfig,
-    configCompleta, conversar, testarConexao
-} from './llm-providers.js';
+import { PROVEDORES, getConfig, configCompleta, conversar } from './llm-providers.js';
+import { pareceAdmin } from './arriba-api.js';
+
+// Caminho absoluto: o chat é carregado a partir de páginas em pastas
+// diferentes, e o link relativo quebraria fora da raiz.
+const PAGINA_CONFIG = '/pages/admin/configurar-chat.html';
 
 // Quantas mensagens do histórico vão junto a cada chamada ao provedor.
 // Segura o custo por token e evita estourar a janela de modelo pequeno.
@@ -73,7 +82,7 @@ export function initChatbot() {
 
     const mascot = setupMascot();
     setMascotMood('idle');
-    montarPainelConfig();
+    montarAtalhoAdmin();
     boasVindas();
 
     /* ---------------- Abrir e fechar ---------------- */
@@ -373,124 +382,24 @@ export function initChatbot() {
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-    /* ---------------- Painel do provedor de IA ----------------
-       Injetado por JS, e não escrito no HTML, para o formulário existir em
-       um lugar só. */
+    /* ---------------- Atalho de administração ----------------
+       Visitante não vê nada. No navegador em que o administrador já entrou,
+       a engrenagem leva à página de configuração — que confere a sessão
+       na API de novo: a marca local só decide se o atalho aparece. */
 
-    function montarPainelConfig() {
+    function montarAtalhoAdmin() {
         const header = chatbotPopup.querySelector('.chat-header');
-        if (!header) return;
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'chat-header-btn';
-        btn.id = 'btnConfigIA';
-        btn.title = 'Configurar IA (opcional)';
-        btn.setAttribute('aria-label', 'Configurar provedor de IA (opcional)');
-        btn.setAttribute('aria-expanded', 'false');
-        btn.setAttribute('aria-controls', 'painelConfigIA');
-        btn.innerHTML = '<i class="fa-solid fa-gear" aria-hidden="true"></i>';
-        header.insertBefore(btn, closeChatBtn);
-
-        const painel = document.createElement('div');
-        painel.id = 'painelConfigIA';
-        painel.className = 'chat-config d-none';
-        chatbotPopup.insertBefore(painel, chatWindow);
-
-        btn.addEventListener('click', () => {
-            painel.classList.toggle('d-none');
-            const aberto = !painel.classList.contains('d-none');
-            btn.setAttribute('aria-expanded', String(aberto));
-            if (aberto) renderPainelConfig(painel);
-        });
-
+        if (header && pareceAdmin()) {
+            const link = document.createElement('a');
+            link.className = 'chat-header-btn';
+            link.id = 'btnConfigIA';
+            link.href = PAGINA_CONFIG;
+            link.title = 'Configurar o chat (administração)';
+            link.setAttribute('aria-label', 'Configurar o chat (área de administração)');
+            link.innerHTML = '<i class="fa-solid fa-gear" aria-hidden="true"></i>';
+            header.insertBefore(link, closeChatBtn);
+        }
         atualizarFonte();
-    }
-
-    function renderPainelConfig(painel) {
-        const cfg = getConfig();
-        const p = PROVEDORES[cfg.provedor];
-
-        painel.innerHTML = `
-            <label class="chat-config-label" for="cfgProvedor">Provedor</label>
-            <select id="cfgProvedor" class="chat-config-input">
-                ${Object.values(PROVEDORES).map(x => `
-                    <option value="${x.id}" ${x.id === cfg.provedor ? 'selected' : ''}>${escapeHtml(x.nome)}</option>`).join('')}
-            </select>
-            <p class="chat-config-hint">${escapeHtml(p.resumo)}</p>
-
-            ${p.id === 'local' ? '' : `
-                <label class="chat-config-label" for="cfgModelo">Modelo</label>
-                <input id="cfgModelo" class="chat-config-input" list="cfgModelos"
-                       value="${escapeAttr(cfg.modelo)}" placeholder="${escapeAttr(p.modelos[0] || '')}">
-                <datalist id="cfgModelos">
-                    ${p.modelos.map(m => `<option value="${escapeAttr(m)}"></option>`).join('')}
-                </datalist>
-
-                ${p.precisaUrl ? `
-                    <label class="chat-config-label" for="cfgUrl">Endereço</label>
-                    <input id="cfgUrl" class="chat-config-input" value="${escapeAttr(cfg.url || p.urlPadrao)}">` : ''}
-
-                ${p.precisaChave ? `
-                    <label class="chat-config-label" for="cfgChave">Chave de API</label>
-                    <input id="cfgChave" class="chat-config-input" type="password" autocomplete="off"
-                           value="${escapeAttr(cfg.chave)}" placeholder="cole sua chave">
-                    ${p.linkChave ? `<p class="chat-config-hint">
-                        <a href="${escapeAttr(p.linkChave)}" target="_blank" rel="noopener noreferrer">Onde pegar a chave</a>
-                    </p>` : ''}` : ''}
-
-                ${p.ajudaSetup ? `<p class="chat-config-hint"><code>${escapeHtml(p.ajudaSetup)}</code></p>` : ''}
-
-                <div class="chat-config-aviso">
-                    <strong>Leia antes de ativar</strong>
-                    <p>${escapeHtml(p.privacidade)} Não cole dado pessoal (CPF, nome completo, telefone).</p>
-                    ${p.precisaChave ? '<p>A chave fica só neste navegador e aparece nas ferramentas de desenvolvedor de quem usa este computador. Use uma chave com limite de gasto.</p>' : ''}
-                </div>`}
-
-            <div class="chat-config-acoes">
-                <button type="button" id="cfgSalvar" class="chat-btn chat-btn-primary">Salvar</button>
-                <button type="button" id="cfgTestar" class="chat-btn chat-btn-secondary">Testar conexão</button>
-                <button type="button" id="cfgLimpar" class="chat-btn chat-btn-link">Usar só a base do site</button>
-            </div>
-            <p class="chat-config-status" id="cfgStatus" role="status"></p>`;
-
-        painel.querySelector('#cfgProvedor').addEventListener('change', (e) => {
-            // Troca de provedor limpa modelo/chave: chave de um serviço não
-            // vale no outro, e deixar o campo preenchido só confunde.
-            salvarConfig({ provedor: e.target.value, modelo: '', chave: '', url: '' });
-            renderPainelConfig(painel);
-            atualizarFonte();
-        });
-
-        const lerForm = () => ({
-            provedor: painel.querySelector('#cfgProvedor').value,
-            modelo: painel.querySelector('#cfgModelo')?.value || '',
-            chave: painel.querySelector('#cfgChave')?.value || '',
-            url: painel.querySelector('#cfgUrl')?.value || ''
-        });
-        const status = painel.querySelector('#cfgStatus');
-
-        painel.querySelector('#cfgSalvar').addEventListener('click', () => {
-            const cfgNovo = salvarConfig(lerForm());
-            atualizarFonte();
-            status.textContent = configCompleta(cfgNovo)
-                ? 'Salvo. Quando a base do site não tiver a resposta, o chat pergunta a este provedor.'
-                : 'Falta preencher o modelo ou a chave — até lá, o chat responde só pela base do site.';
-        });
-
-        painel.querySelector('#cfgTestar').addEventListener('click', async () => {
-            status.textContent = 'Testando…';
-            const r = await testarConexao(salvarConfig(lerForm()));
-            status.textContent = (r.ok ? 'Funcionou: ' : 'Não funcionou: ') + r.texto;
-            atualizarFonte();
-        });
-
-        painel.querySelector('#cfgLimpar').addEventListener('click', () => {
-            limparConfig();
-            renderPainelConfig(painel);
-            atualizarFonte();
-            status.textContent = 'Pronto: o chat responde só pela base do site.';
-        });
     }
 
     /* O subtítulo diz de onde vem a resposta. Quem digita precisa saber se

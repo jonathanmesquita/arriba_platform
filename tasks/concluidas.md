@@ -3,6 +3,7 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Configuração do chat movida para página de administração (só abre com sessão de administrador na API); visitante não vê mais a engrenagem ✅ 2026-11-05 #area/site
 - [x] Tela "Validar e consultar pela API" no site: login por cookie `HttpOnly` ou chave só em memória, nenhum segredo no repositório ✅ 2026-11-05 #area/site
 - [x] API privada no ar (`arriba-api` PR #1): chave de API, validações e consultas a APIs públicas, 44 testes ✅ 2026-11-05 #area/infra
 - [x] Licença MIT no repositório (`LICENSE`), com marcas de terceiros excluídas no README e link no rodapé ✅ 2026-11-05 #area/docs

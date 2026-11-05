@@ -18,7 +18,14 @@ Três itens dele voltam atrás em decisões registradas — por isso estão aqui
 **O que trava:** decidir se o dashboard e as respostas predefinidas vivem num repositório
 privado (e o site público só mostra uma versão com dado inventado) ou se ficam de fora.
 
-## ⏳ O `arriba-api` é público e guarda o que saiu do site em outubro
+## ✅ ~~O `arriba-api` é público e guarda o que saiu do site em outubro~~
+
+**Resolvido em 05/11:** o repositório foi tornado **privado** (saída "a" abaixo), o que esconde
+também o histórico. O conteúdo de empresa continua lá dentro, fechado, e as rotas do Freshdesk
+passaram a exigir login (API privada por padrão). O texto abaixo fica como registro.
+
+<details><summary>Registro original</summary>
+
 
 Medido em 04/11/2026, ao anexar o repositório para o login com Microsoft:
 
@@ -40,6 +47,8 @@ público, qualquer um ainda lê as versões antigas. As saídas reais são: (a) 
 repositório **privado** (configuração do GitHub, só o dono faz; resolve inclusive o histórico);
 (b) descaracterizar como foi feito no site e aceitar que o histórico continua exposto; ou
 (c) as duas. O login com Microsoft já entregue não depende dessa escolha.
+
+</details>
 
 ---
 
@@ -98,7 +107,14 @@ logos ficarem (item 2), dizer de onde vieram.
 
 ---
 
-## ⏳ Até onde vai a descaracterização do projeto
+## ✅ ~~Até onde vai a descaracterização do projeto~~
+
+**Resolvido em out/2026 com a saída B** ("remover operação, manter engenharia"), como registra
+o `CLAUDE.md`: saíram manuais, base de erros, respostas prontas, copiloto e layouts de cliente.
+Conferido em 05/11: nenhuma ocorrência de nome de empresa ou cliente fora de `apps/`, `tasks/`
+e do histórico. O texto abaixo fica como registro.
+
+### O pedido original
 
 **Pedido:** "projeto de estudos — tirar tudo que relaciona a uma empresa específica, quero
 que seja um protótipo apenas."
@@ -130,7 +146,7 @@ risco (nome de cliente em caminho de arquivo), que A e C mantêm.
 **O que trava:** sem a escolha, não dá para mexer — A, B e C mudam os mesmos arquivos em
 direções diferentes, e metade do caminho fica pior que qualquer um dos três.
 
-- **Solução:** _(escreva aqui a letra escolhida e eu executo numa passada só)_
+- **Solução:** B (executada em out/2026).
 
 ---
 

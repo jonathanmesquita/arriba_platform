@@ -4,6 +4,15 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 
 ## Qualidade do site
 
+- [ ] Testes automáticos em todo PR (GitHub Actions) 📅 2026-11-05 🔺 alta #area/infra #esforco/p 🤖
+  - Contexto: os PRs de hoje só tinham a checagem da Vercel (o site publica). Nada roda os 49
+    testes do `arriba-api` nem `node --check` e a conferência de contraste do site — quem
+    garantiu foi a sessão que rodou na mão. Num merge feito sem essa sessão, um teste
+    quebrado vai para o ar.
+  - Ação: `arriba-api` → workflow com `npm ci && npm test` em `pull_request`; site →
+    `node --check` em todo `.js` fora de `apps/` e a conferência de contraste com
+    `python3 -m http.server`. Marcar como checagem obrigatória na proteção da `main`.
+
 - [ ] Testes para a lógica pura do site 📅 2026-10-02 🔼 média #area/ferramentas #esforco/m 🤖
   - Contexto: os dois apps têm 77 testes; o **site não tem nenhum**. E é no site que mora a
     lógica onde errar é caro: `parser.js` (RFC 4180 — aspas, `""` escapado, delimitador e

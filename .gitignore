@@ -33,3 +33,5 @@ dist/
 .vercel/
 .env
 .env.*
+# O modelo (só nomes, sem valor) TEM de ir para o git: o README manda copiá-lo.
+!.env.example

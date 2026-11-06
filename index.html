@@ -369,9 +369,17 @@
             color: #fff;
         }
 
+        /* Vitrine com três peças sobrepostas: o painel em cima, o cartão da
+           pergunta embaixo à esquerda e o cartão de capa à direita. A capa
+           fica numa FAIXA PRÓPRIA, entre o selo "AI" e o cartão da pergunta:
+           a vitrine tem ~620 px e os dois cartões lado a lado pediriam 740,
+           então quando os dois ficavam no rodapé a capa cobria a pergunta.
+           Altura e posição andam juntas (--vitrine-altura, --capa-base). */
         .ai-showcase {
+            --vitrine-altura: 560px;
+            --capa-base: 190px;   /* acima do cartão da pergunta (~160 px + folga) */
             position: relative;
-            min-height: 430px;
+            min-height: var(--vitrine-altura);
             cursor: pointer;
             outline: none;
         }
@@ -492,7 +500,7 @@
         .hero-cover-card {
             position: absolute;
             right: 0;
-            bottom: 76px;
+            bottom: var(--capa-base);
             width: min(300px, 42vw);
             min-height: 182px;
             border: 1px solid rgba(255, 255, 255, .26);
@@ -913,13 +921,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .ai-showcase {
-                min-height: 420px;
-            }
-
             .hero-cover-card {
                 right: 18px;
-                bottom: 34px;
                 width: min(280px, 52vw);
             }
         }

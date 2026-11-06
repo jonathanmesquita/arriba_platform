@@ -3,6 +3,9 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Cartão de capa não cobre mais a pergunta no topo da home (faixa própria; conferido em 13 larguras) ✅ 2026-11-06 #area/site
+- [x] Documentação do layout padrão do Gerador de CSV recriada, gerada de `layouts-csv.js` ✅ 2026-11-06 #area/ferramentas
+- [x] `.env.example` dos dois apps no git (`!.env.example` no `.gitignore`) ✅ 2026-11-06 #area/chat-ia
 - [x] Testes automáticos em todo PR: workflow no site (sintaxe, 22 testes da lógica, contraste) e no `arriba-api` (testes e `npm audit`) ✅ 2026-11-06 #area/infra
 - [x] Testes da lógica do site: parser CSV, regras, CNAB 400 (6 layouts, ida e volta) e dados fictícios ✅ 2026-11-06 #area/ferramentas
 - [x] Conferência de contraste com estados abertos (chat, mega-menu, busca) e sem falso alarme de transição ✅ 2026-11-06 #area/site

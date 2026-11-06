@@ -3,6 +3,9 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Testes automáticos em todo PR: workflow no site (sintaxe, 22 testes da lógica, contraste) e no `arriba-api` (testes e `npm audit`) ✅ 2026-11-06 #area/infra
+- [x] Testes da lógica do site: parser CSV, regras, CNAB 400 (6 layouts, ida e volta) e dados fictícios ✅ 2026-11-06 #area/ferramentas
+- [x] Conferência de contraste com estados abertos (chat, mega-menu, busca) e sem falso alarme de transição ✅ 2026-11-06 #area/site
 - [x] Configuração do chat movida para página de administração (só abre com sessão de administrador na API); visitante não vê mais a engrenagem ✅ 2026-11-05 #area/site
 - [x] Tela "Validar e consultar pela API" no site: login por cookie `HttpOnly` ou chave só em memória, nenhum segredo no repositório ✅ 2026-11-05 #area/site
 - [x] API privada no ar (`arriba-api` PR #1): chave de API, validações e consultas a APIs públicas, 44 testes ✅ 2026-11-05 #area/infra

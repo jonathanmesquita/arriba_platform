@@ -4,24 +4,6 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 
 ## Qualidade do site
 
-- [ ] Testes automáticos em todo PR (GitHub Actions) 📅 2026-11-05 🔺 alta #area/infra #esforco/p 🤖
-  - Contexto: os PRs de hoje só tinham a checagem da Vercel (o site publica). Nada roda os 49
-    testes do `arriba-api` nem `node --check` e a conferência de contraste do site — quem
-    garantiu foi a sessão que rodou na mão. Num merge feito sem essa sessão, um teste
-    quebrado vai para o ar.
-  - Ação: `arriba-api` → workflow com `npm ci && npm test` em `pull_request`; site →
-    `node --check` em todo `.js` fora de `apps/` e a conferência de contraste com
-    `python3 -m http.server`. Marcar como checagem obrigatória na proteção da `main`.
-
-- [ ] Testes para a lógica pura do site 📅 2026-10-02 🔼 média #area/ferramentas #esforco/m 🤖
-  - Contexto: os dois apps têm 77 testes; o **site não tem nenhum**. E é no site que mora a
-    lógica onde errar é caro: `parser.js` (RFC 4180 — aspas, `""` escapado, delimitador e
-    quebra de linha dentro do campo), `engine.js` do CNAB (fatias 1-indexadas do manual),
-    `rules.js` (CPF/CNPJ, data) e `fake-data-br.js`. São ~1.070 linhas, **todas sem DOM**:
-    `node --test` roda os módulos como estão, verificado.
-  - Local: `tools/dados/csv-validator/`, `tools/cobranca/cnab400/engine.js`, `assets/js/`
-  - Ação: `scripts/package.json` já existe para ferramenta de manutenção; acrescentar
-    `npm test` ali, começando pelo parser de CSV, que é o de regra mais sutil.
 - [ ] Apagar a cópia morta do patch de Tipo_Registro 📅 2026-10-02 🔽 baixa #area/ferramentas #esforco/p 🤖
   - Contexto: `patch-tipo-registro-layout.js` (251 linhas) não é carregado por página nenhuma
     — o HTML só carrega `script.js` e `bmp-layout.js`. A sequência que ele define já está
@@ -90,13 +72,6 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
     três cópias para manter em sincronia.
   - Ação: gerar o `:root` dos apps a partir do `tokens.css` no build, ou publicar os tokens
     como um arquivo compartilhado.
-- [ ] Conferir contraste também nos estados abertos 📅 2026-10-02 🔼 média #area/site #esforco/m 🤖
-  - Contexto: `scripts/conferir-contraste.mjs` mede o que está pintado **no carregamento**.
-    Os piores defeitos de tema não estavam ali — estavam no chat aberto, no mega-menu e na
-    modal, que a conferência de página nunca vê. Foram achados com um segundo roteiro, que
-    abria cada estado antes de medir, e esse roteiro não ficou no repositório.
-  - Ação: acrescentar ao script um modo que abre os estados (chat, mega-menu, busca, painel
-    de resultado, `<details>`) antes de medir, com a lista declarada por página.
 - [ ] Tema escuro nos dois apps 📅 2026-10-02 🔽 baixa #area/site #esforco/m 🤖
   - Contexto: `apps/arriba-chat-ia` e `apps/comunicados` não têm tema escuro — por isso as
     cores semânticas fixas deles (`#8c2430`, `#14603c`, `#7a5a00`) ainda passam. No dia em

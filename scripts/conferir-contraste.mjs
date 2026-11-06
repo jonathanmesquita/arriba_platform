@@ -17,6 +17,9 @@
  * `package.json` na raiz de propósito: o site não tem build, e esta
  * conferência é ferramenta de manutenção, não dependência do site.
  *
+ * Mede cada página no carregamento E uma lista de estados abertos (chat,
+ * mega-menu, busca — ver ESTADOS), que a medição de carregamento não vê.
+ *
  * Variáveis: BASE (padrão http://localhost:8899/), PLAYWRIGHT_CHROMIUM.
  * Sai com código 1 se algum texto ficar abaixo do mínimo da WCAG 2.1
  * (4,5:1 normal; 3:1 para texto grande e para limite de controle).
@@ -123,6 +126,58 @@ const medir = (p) => p.evaluate(() => {
   return achados;
 });
 
+/* Estados abertos: a medição de carregamento nunca vê o que só aparece
+   depois de um clique — e foi ali que estavam os piores defeitos de tema
+   (o "X" preto do mega-menu no escuro, o chat, as modais). Cada estado
+   diz a página, como abrir e o nome que sai no relatório. Estado novo de
+   interface com cor própria entra nesta lista. */
+const ESTADOS = [
+  { pagina: "index.html", nome: "chat aberto", abrir: async (p) => { await p.click("#chatbotBtn"); } },
+  {
+    pagina: "index.html", nome: "chat respondendo", abrir: async (p) => {
+      await p.click("#chatbotBtn");
+      await p.fill("#chatInput", "validar csv");
+      await p.press("#chatInput", "Enter");
+      await p.waitForTimeout(700);
+      await p.$$eval("#chatWindow details", (ds) => ds.forEach((d) => { d.open = true; }));
+    }
+  },
+  {
+    pagina: "index.html", nome: "chat do administrador (engrenagem acesa)", abrir: async (p) => {
+      await p.evaluate(() => {
+        localStorage.setItem("arribaAdmin:atalho", "1");
+        localStorage.setItem("arribaLLM:config", JSON.stringify({ provedor: "openai", modelo: "x", chave: "y", url: "" }));
+      });
+      await p.reload({ waitUntil: "domcontentloaded" });
+      await p.waitForTimeout(350);
+      await p.click("#chatbotBtn");
+    },
+    limpar: async (p) => p.evaluate(() => { localStorage.removeItem("arribaAdmin:atalho"); localStorage.removeItem("arribaLLM:config"); })
+  },
+  {
+    pagina: "index.html", nome: "mega-menu aberto (Ferramentas › Código e SQL)", abrir: async (p) => {
+      await p.click("#enterpriseMenuToggle");
+      await p.click('[data-section="ferramentas"]');
+      await p.waitForTimeout(150);
+      await p.evaluate(() => [...document.querySelectorAll("#enterpriseMenu button")].find((b) => b.textContent.includes("Código e SQL"))?.click());
+    }
+  },
+  {
+    pagina: "index.html", nome: "busca com resultados", abrir: async (p) => {
+      await p.fill("#topbarSearchInput", "csv");
+      await p.waitForTimeout(400);
+    }
+  }
+];
+
+/* Liga o tema escuro SEM animação. O site anima a troca de cor; medir
+   no meio da transição lia um marrom intermediário e reprovava texto que
+   passa — falso alarme que aparecia numa rodada e sumia na outra. */
+async function ativarEscuro(p) {
+  await p.addStyleTag({ content: "*, *::before, *::after { transition: none !important; animation: none !important; }" });
+  await p.evaluate(() => document.body.classList.add("dark-mode"));
+}
+
 const lista = paginas();
 const navegador = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM || undefined });
 const pagina = await navegador.newPage({ viewport: { width: 1360, height: 900 } });
@@ -134,7 +189,7 @@ let limpas = 0;
 for (const caminho of lista) {
   for (const tema of ["claro", "escuro"]) {
     await pagina.goto(BASE + caminho, { waitUntil: "domcontentloaded" });
-    if (tema === "escuro") await pagina.evaluate(() => document.body.classList.add("dark-mode"));
+    if (tema === "escuro") await ativarEscuro(pagina);
     await pagina.waitForTimeout(350);
 
     let achados = [];
@@ -157,7 +212,43 @@ for (const caminho of lista) {
   }
 }
 
-console.log(`${lista.length} páginas × 2 temas · ${limpas} combinações limpas · ${total} textos abaixo do mínimo\n`);
+let estadosLimpos = 0;
+for (const estado of ESTADOS) {
+  for (const tema of ["claro", "escuro"]) {
+    const rotulo = `${estado.pagina} [${estado.nome}]`;
+    let achados = [];
+    try {
+      await pagina.goto(BASE + estado.pagina, { waitUntil: "domcontentloaded" });
+      await pagina.waitForTimeout(350);
+      await estado.abrir(pagina);
+      if (tema === "escuro") await ativarEscuro(pagina);
+      await pagina.waitForTimeout(350);
+      achados = await medir(pagina);
+    } catch (erro) {
+      /* Estado que não abre mais (botão renomeado, página mudou) é falha da
+         conferência, não "limpo": senão a lista envelhece em silêncio. */
+      console.error(`não consegui abrir o estado ${rotulo} (${tema}): ${erro.message}`);
+      total += 1;
+      continue;
+    } finally {
+      if (estado.limpar) await estado.limpar(pagina).catch(() => {});
+    }
+    if (!achados.length) { estadosLimpos += 1; continue; }
+    total += achados.length;
+    for (const a of achados) {
+      const chave = `${a.assinatura} | ${tema}`;
+      if (!porRegra.has(chave)) porRegra.set(chave, { ...a, paginas: new Set(), ocorrencias: 0 });
+      const reg = porRegra.get(chave);
+      reg.paginas.add(rotulo);
+      reg.ocorrencias += 1;
+      if (a.razao < reg.razao) Object.assign(reg, { razao: a.razao, texto: a.texto, cor: a.cor, fundo: a.fundo });
+    }
+  }
+}
+
+console.log(`${lista.length} páginas × 2 temas · ${limpas} combinações limpas`);
+console.log(`${ESTADOS.length} estados abertos × 2 temas · ${estadosLimpos} combinações limpas`);
+console.log(`${total} textos abaixo do mínimo\n`);
 for (const [chave, reg] of [...porRegra].sort((a, b) => b[1].ocorrencias - a[1].ocorrencias)) {
   console.log(`${String(reg.ocorrencias).padStart(3)}x  ${chave}`);
   console.log(`      pior: ${reg.razao} (mín. ${reg.minimo})  "${reg.texto}"  ${reg.cor} sobre ${reg.fundo}`);

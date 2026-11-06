@@ -54,13 +54,18 @@ Commits em **Conventional Commits** (`tipo(escopo): descrição`), validados pel
 bash scripts/hooks/install-hooks.sh   # depois de clonar
 bash scripts/changelog.sh             # regenera o CHANGELOG a partir do git log
 
+# Testes da lógica das ferramentas (parser CSV, regras, CNAB 400, dados fictícios).
+cd scripts && npm test
+
 # Conferência de contraste de todo o site, nos dois temas (sai 1 se reprovar).
 python3 -m http.server 8899 &         # na raiz
 cd scripts && npm install && npm run contraste
 ```
 
-O `scripts/package.json` existe **só** para essa conferência — o site continua sem build e
-sem dependência. Não mova nada dele para a raiz.
+O `scripts/package.json` existe **só** para essas conferências — o site continua sem build e
+sem dependência. Não mova nada dele para a raiz. **As duas rodam sozinhas em todo PR**
+(`.github/workflows/conferencias.yml`), junto com `node --check` em todo `.js` fora de
+`apps/`; o `arriba-api` tem o próprio workflow com os testes dele.
 
 ## Regra de ouro: fonte única
 
@@ -331,8 +336,10 @@ O que falta está em `tasks/` — e as decisões que dependem do dono, em
   areia). **Cor nova entra em `tokens.css`, nunca escrita à mão no HTML da ferramenta** — e
   antes de adotar, medir o contraste do par (texto × fundo) em que ela vai ser usada.
 - Depois de mexer em cor, rodar `scripts/conferir-contraste.mjs` nos **dois** temas: ela
-  pega cor fixa esquecida que a paleta no papel não mostra. Ela mede só o que está **visível
-  no carregamento** — painel aberto, menu aberto e resultado preenchido continuam sendo
-  conferência manual.
+  pega cor fixa esquecida que a paleta no papel não mostra. Mede cada página no
+  carregamento **e** os estados abertos da lista `ESTADOS` (chat aberto e respondendo, chat
+  do administrador, mega-menu, busca) — interface nova que só aparece depois de um clique
+  entra nessa lista. O tema escuro é ligado **sem transição**: medir no meio da animação de
+  cor reprovava texto bom numa rodada e passava na outra.
 - Dado de exemplo é sempre fictício: nome, CPF/CNPJ, telefone, e-mail, endereço e número de
   contrato em fixture, exemplo de campo ou schema de sandbox são inventados.

@@ -52,19 +52,15 @@ repositório **privado** (configuração do GitHub, só o dono faz; resolve incl
 
 ---
 
-## ⏳ O repositório antigo precisa ficar privado
+## ✅ ~~O repositório antigo precisa ficar privado~~
 
-**Feito em 13/11:** o histórico recomeçou. Este repositório é novo e começa num commit
-único, com o projeto como estava naquele dia; o anterior foi renomeado pelo dono e guarda
-todas as versões antigas, com os 25 PRs — e, neles, os manuais com nome de cliente e as
-imagens de terceiros removidos.
+**Resolvido em 13/11:** o histórico recomeçou. Este repositório é novo e começa num commit
+único, com o projeto como estava naquele dia; o anterior foi renomeado e **tornado privado**
+pelo dono (conferido na lista de repositórios no mesmo dia). É lá que ficam as versões
+antigas e os 25 PRs — e, neles, os manuais com nome de cliente e as imagens de terceiros
+removidos. Aqui não há PR nem commit anterior a essa data.
 
-**O que trava (só o dono faz):** conferir que o repositório antigo está **privado**
-(*Settings → Danger Zone → Change visibility*). Renomear não esconde nada: enquanto ele
-for público, o material continua acessível, só que em outro endereço. Depois disso este
-item fecha.
-
-- **Solução:** _(confirmar que o antigo está privado)_
+Falta só religar a Vercel a este repositório, para o deploy automático voltar.
 
 ---
 

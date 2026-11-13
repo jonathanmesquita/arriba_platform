@@ -1,0 +1,293 @@
+// Comunicados — envio de e-mail a partir de cartas modelo.
+//
+// POR QUE SQLITE: a ferramenta roda na máquina de quem opera, numa rede
+// corporativa, e o volume é de centenas de destinatários por disparo —
+// não de milhões. Um arquivo `dados/comunicados.db` elimina servidor de
+// banco, porta aberta, usuário e senha para administrar. Se um dia virar
+// multiusuário de verdade, trocar o provider para postgresql e rodar a
+// migração é o caminho; o schema abaixo já evita o que seria específico
+// de SQLite.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------------------------------------------------------------------
+// Acesso
+// ---------------------------------------------------------------------
+
+enum Papel {
+  ADMIN     // configura servidor, usuários e tudo mais
+  OPERADOR  // escreve carta e dispara, não mexe em configuração
+}
+
+model Usuario {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  nome          String
+  senhaHash     String
+  papel         Papel    @default(OPERADOR)
+  ativo         Boolean  @default(true)
+
+  /// Revogação de sessão sem tabela de sessão: incrementou, todo token
+  /// emitido antes para este usuário deixa de valer.
+  tokenVersion  Int      @default(0)
+
+  ultimoLoginEm DateTime?
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+
+  cartas        CartaModelo[]
+  envios        Envio[]
+  auditoria     Auditoria[]
+
+  @@map("usuarios")
+}
+
+// ---------------------------------------------------------------------
+// Configuração do servidor de e-mail
+// ---------------------------------------------------------------------
+
+/// Linha única (id fixo "unica"): é a configuração do sistema, não um
+/// cadastro. Guardar como tabela — e não como .env — porque quem troca a
+/// senha do SMTP é o administrador pela tela, sem redeploy.
+model ConfigSmtp {
+  id        String  @id @default("unica")
+
+  host      String
+  porta     Int     @default(587)
+
+  /// true = TLS direto desde a conexão (porta 465). false = STARTTLS,
+  /// que é o que a porta 587 usa.
+  sslDireto Boolean @default(false)
+
+  /// Só para servidor interno com certificado próprio. Ligar isso num
+  /// provedor comercial é desligar a verificação à toa.
+  aceitarCertificadoInvalido Boolean @default(false)
+
+  usuario       String?
+  /// AES-256-GCM, formato versionado "v1.<iv>.<tag>.<ct>". Nunca sai por
+  /// HTTP: a tela só sabe se existe senha salva.
+  senhaCifrada  String?
+
+  remetenteEmail String
+  remetenteNome  String
+
+  /// Disparo em massa: quantos destinatários por lote e quantos minutos
+  /// entre um lote e o próximo. Existe porque provedor de e-mail tem
+  /// limite por mensagem e por hora — estourar derruba a reputação do
+  /// remetente antes de derrubar o envio.
+  loteTamanho      Int @default(5)
+  loteIntervaloMin Int @default(1)
+
+  /// Teto do anexo, em MB. O provedor costuma recusar acima de 10–25 MB.
+  anexoMaxMb       Int @default(10)
+
+  ultimoTesteEm       DateTime?
+  ultimoTesteOk       Boolean?
+  ultimoTesteMensagem String?
+
+  atualizadoEm DateTime @updatedAt
+
+  @@map("config_smtp")
+}
+
+// ---------------------------------------------------------------------
+// Cadastros
+// ---------------------------------------------------------------------
+
+model Produto {
+  id    String  @id @default(cuid())
+  nome  String  @unique
+  ativo Boolean @default(true)
+
+  clientes Cliente[]
+  cartas   CartaModelo[]
+
+  criadoEm DateTime @default(now())
+
+  @@map("produtos")
+}
+
+model Cliente {
+  id        String   @id @default(cuid())
+  nome      String
+  produtoId String?
+  produto   Produto? @relation(fields: [produtoId], references: [id], onDelete: SetNull)
+  ativo     Boolean  @default(true)
+
+  contatos  Contato[]
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([produtoId])
+  @@map("clientes")
+}
+
+/// Um cliente pode ter vários e-mails (operação, financeiro, diretoria).
+/// O disparo é por contato, não por cliente.
+model Contato {
+  id        String  @id @default(cuid())
+  clienteId String
+  cliente   Cliente @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  nome      String?
+  email     String
+  ativo     Boolean @default(true)
+
+  criadoEm  DateTime @default(now())
+
+  @@unique([clienteId, email])
+  @@index([email])
+  @@map("contatos")
+}
+
+/// Quem pediu para não receber mais. É consultado em TODO disparo, e o
+/// destinatário descadastrado nunca é enviado — nem por engano, nem por
+/// lista antiga colada à mão.
+model Descadastro {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  motivo   String?
+  criadoEm DateTime @default(now())
+
+  @@map("descadastros")
+}
+
+// ---------------------------------------------------------------------
+// Cartas modelo
+// ---------------------------------------------------------------------
+
+model CartaModelo {
+  id        String   @id @default(cuid())
+  nome      String
+  assunto   String
+
+  /// Corpo em HTML. As variáveis são `{{nome}}`, `{{cliente}}` e afins —
+  /// ver `cartas/variaveis.ts`, que é a fonte única do que existe.
+  corpoHtml String
+
+  produtoId String?
+  produto   Produto? @relation(fields: [produtoId], references: [id], onDelete: SetNull)
+
+  criadoPorId String?
+  criadoPor   Usuario? @relation(fields: [criadoPorId], references: [id], onDelete: SetNull)
+
+  anexos Anexo[]
+  envios Envio[]
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([produtoId])
+  @@map("cartas_modelo")
+}
+
+model Anexo {
+  id       String      @id @default(cuid())
+  cartaId  String
+  carta    CartaModelo @relation(fields: [cartaId], references: [id], onDelete: Cascade)
+
+  nomeArquivo String
+  /// Caminho relativo dentro de `dados/anexos/` — o arquivo não vai para
+  /// o banco (SQLite com blob grande fica lento e difícil de inspecionar).
+  caminho     String
+  tamanhoBytes Int
+  tipoMime     String
+
+  criadoEm DateTime @default(now())
+
+  @@index([cartaId])
+  @@map("anexos")
+}
+
+// ---------------------------------------------------------------------
+// Envios
+// ---------------------------------------------------------------------
+
+enum StatusEnvio {
+  RASCUNHO
+  AGENDADO
+  ENVIANDO
+  CONCLUIDO
+  CANCELADO
+}
+
+enum StatusDestinatario {
+  PENDENTE
+  ENVIADO
+  FALHOU
+  DESCADASTRADO
+}
+
+model Envio {
+  id      String @id @default(cuid())
+  cartaId String?
+  carta   CartaModelo? @relation(fields: [cartaId], references: [id], onDelete: SetNull)
+
+  /// Assunto e corpo são COPIADOS da carta no momento do envio. Editar a
+  /// carta depois não pode reescrever o que já foi enviado — o que a
+  /// pessoa recebeu é o que tem de aparecer no histórico.
+  assunto   String
+  corpoHtml String
+
+  status       StatusEnvio @default(RASCUNHO)
+  agendadoPara DateTime?
+  iniciadoEm   DateTime?
+  concluidoEm  DateTime?
+
+  criadoPorId String?
+  criadoPor   Usuario? @relation(fields: [criadoPorId], references: [id], onDelete: SetNull)
+
+  destinatarios EnvioDestinatario[]
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@index([status, agendadoPara])
+  @@map("envios")
+}
+
+model EnvioDestinatario {
+  id      String @id @default(cuid())
+  envioId String
+  envio   Envio  @relation(fields: [envioId], references: [id], onDelete: Cascade)
+
+  email       String
+  nome        String?
+  clienteNome String?
+
+  status    StatusDestinatario @default(PENDENTE)
+  /// Mensagem do servidor quando falhou. Nunca contém senha nem header
+  /// de autenticação (ver `envios/mascarar.ts`).
+  erro       String?
+  lote       Int?
+  enviadoEm  DateTime?
+
+  @@index([envioId, status])
+  @@map("envio_destinatarios")
+}
+
+/// Rastro do que foi feito e por quem. Guardado para a pergunta que
+/// sempre aparece depois: "quem disparou isso e quando?".
+model Auditoria {
+  id        String   @id @default(cuid())
+  usuarioId String?
+  usuario   Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  acao    String
+  alvo    String?
+  detalhe String?
+  ip      String?
+
+  criadoEm DateTime @default(now())
+
+  @@index([criadoEm])
+  @@map("auditoria")
+}

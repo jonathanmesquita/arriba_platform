@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Área de administração: fora do menu, da busca e dos buscadores. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Painel da API (administração) - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      min-height: 64px; background: var(--surface); border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 22px; padding: 0 28px;
+      position: sticky; top: 0; z-index: 30;
+    }
+    .brand { color: var(--red); font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.04em; }
+    .back-link { color: var(--ink); font-weight: 800; text-decoration: none; font-size: .95rem; }
+
+    .hero { background: var(--bg); border-bottom: 1px solid var(--line); padding: 40px 0 28px; }
+    .container-page { width: min(860px, calc(100% - 32px)); margin-inline: auto; }
+    .kicker { color: var(--rw-red-ink); text-transform: uppercase; letter-spacing: .18em; font-weight: 900; font-size: .78rem; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); line-height: .98; letter-spacing: -.06em; font-weight: 300; margin: 0 0 14px; }
+    .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; margin: 0 0 8px; }
+
+    .section { padding: 22px 0 50px; display: grid; gap: 16px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 0; padding: 18px 20px; }
+    .panel h2 { font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 14px; }
+
+    .acesso-topo { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+    .estado { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
+    .estado .ponto { width: 10px; height: 10px; border-radius: 50%; background: var(--line-strong); flex: none; }
+    .estado[data-estado="admin"] .ponto { background: var(--rw-ok); }
+    .estado[data-estado="admin"] { color: var(--ok-ink); }
+
+    .form-linha { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-top: 14px; }
+    .campo { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1 1 200px; margin-top: 12px; }
+    .form-linha .campo { margin-top: 0; }
+    .campo label { font-size: .82rem; font-weight: 800; color: var(--ink); }
+    .campo input, .campo select {
+      width: 100%; min-height: 42px; border: 1px solid var(--line-strong); border-radius: 6px;
+      background: var(--surface); color: var(--ink); padding: 8px 11px; font-size: .95rem;
+    }
+    .campo input:focus-visible, .campo select:focus-visible,
+    button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+
+    .btn-arriba {
+      min-height: 42px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px;
+      font-weight: 900; cursor: pointer; font-size: .9rem; display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none;
+    }
+    .btn-arriba[disabled] { opacity: .6; cursor: progress; }
+    .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
+    .btn-red-arriba:hover { background: var(--rw-red-ink); }
+    .btn-light-arriba { background: var(--surface-soft); color: var(--ink); border-color: var(--line-strong); }
+    .btn-outline-arriba { background: transparent; border-color: var(--line-strong); color: var(--ink); }
+    .btn-link-arriba { background: transparent; color: var(--rw-red-ink); text-decoration: underline; padding-inline: 6px; }
+
+    .acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; align-items: center; }
+    .dica { color: var(--muted); font-size: .86rem; line-height: 1.5; margin: 6px 0 0; }
+    .dica a, .nota a { color: var(--rw-red-ink); }
+    code { color: var(--rw-red-ink); overflow-wrap: anywhere; }
+
+    .aviso { margin-top: 12px; padding: 10px 12px; border-radius: 7px; border-left: 4px solid var(--line-strong); background: var(--surface-soft); font-size: .9rem; line-height: 1.5; }
+    .aviso[data-tipo="erro"] { border-left-color: var(--rw-danger); color: var(--danger-ink); }
+    .aviso[data-tipo="ok"] { border-left-color: var(--rw-ok); color: var(--ok-ink); }
+    .aviso[data-tipo="info"] { border-left-color: var(--gold); color: var(--ink); }
+
+    .leia { margin-top: 14px; padding: 12px 14px; border-left: 4px solid var(--gold); border-radius: 7px; background: var(--surface-soft); font-size: .88rem; line-height: 1.55; }
+    .leia strong { display: block; margin-bottom: 4px; }
+    .leia p { margin: 0 0 4px; }
+
+    .situacao { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 4px; font-weight: 800; }
+    .selo { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px 11px; font-size: .82rem; font-weight: 800; color: var(--ink); }
+    .selo[data-tipo="externo"] { border-color: var(--rw-warn); color: var(--warn-ink); }
+    .selo[data-tipo="local"] { border-color: var(--rw-ok); color: var(--ok-ink); }
+
+    .status { margin: 12px 0 0; font-weight: 700; line-height: 1.5; min-height: 1.5em; }
+    .status[data-tipo="ok"] { color: var(--ok-ink); }
+    .status[data-tipo="erro"] { color: var(--danger-ink); }
+
+    .nota { border-left: 4px solid var(--gold); background: var(--surface-soft); padding: 12px 14px; border-radius: 7px; font-size: .88rem; color: var(--ink); line-height: 1.6; }
+
+    @media (max-width: 700px) {
+      .topbar { padding: 0 16px; gap: 14px; }
+    }
+
+    /* ---------- Painel ---------- */
+    .container-page { width: min(1200px, calc(100% - 32px)); }
+    .controles { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-end; justify-content: space-between; }
+    .controles h2 { align-self: center; }
+    .controles .acoes { flex-wrap: nowrap; align-items: flex-end; margin-top: 0; }
+    .controles .campo { flex: 0 1 220px; margin-top: 0; min-width: 170px; }
+    .origem { color: var(--muted); font-size: .86rem; margin: 10px 0 0; }
+    .origem strong { color: var(--ink); }
+
+    .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+    .tile { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+    .tile .rotulo { color: var(--muted); font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin: 0; }
+    .tile .valor { font-size: 2rem; font-weight: 300; letter-spacing: -.03em; margin: 4px 0 0; font-variant-numeric: tabular-nums; }
+    .tile .detalhe { color: var(--muted); font-size: .82rem; margin: 2px 0 0; }
+
+    /* Colunas: uma série (volume), a cor do tema para gráfico. Barra fina
+       com ponta arredondada e base reta; o resto da faixa é ar. */
+    .grafico { position: relative; margin-top: 8px; }
+    .grafico-area { display: flex; align-items: flex-end; gap: 2px; height: 180px; border-bottom: 1px solid var(--line-strong); padding: 0 2px; }
+    .coluna { flex: 1 1 0; height: 100%; display: flex; align-items: flex-end; justify-content: center; cursor: default; min-width: 4px; }
+    .coluna:focus-visible { outline: 2px solid var(--red); outline-offset: 1px; }
+    .coluna span { display: block; width: min(24px, 70%); background: var(--rw-grafico); border-radius: 4px 4px 0 0; min-height: 0; }
+    .coluna:hover span, .coluna:focus-visible span { opacity: .8; }
+    .eixo { display: flex; justify-content: space-between; color: var(--muted); font-size: .76rem; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    .grade-topo { position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--line); }
+    .grade-topo span { position: absolute; right: 0; top: -1.2em; color: var(--muted); font-size: .74rem; }
+    .dica-grafico { position: absolute; pointer-events: none; background: var(--rw-dark); color: var(--rw-on-dark); border-radius: 6px; padding: 6px 9px; font-size: .8rem; white-space: nowrap; transform: translate(-50%, -110%); box-shadow: var(--shadow); z-index: 2; }
+
+    .tabela-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    td.rota { font-family: Consolas, Monaco, monospace; font-size: .84rem; overflow-wrap: anywhere; }
+    .vazio { color: var(--muted); margin: 6px 0 0; }
+    .duas { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+    details.alt { margin-top: 10px; }
+    details.alt summary { cursor: pointer; font-weight: 800; color: var(--rw-red-ink); }
+
+    @media (max-width: 900px) {
+      .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .duas { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../index.html" class="brand">ARRIBA</a>
+    <a href="../../tools/dados/api-privada/api-privada.html" class="back-link">← Voltar para a tela da API</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Administração · área restrita</span>
+      <h1>Painel da API</h1>
+      <p>
+        O que a Arriba API anda fazendo: quantas chamadas, quais falham, quais demoram e quanto o
+        cache poupa das APIs públicas. Cada chamada fica registrada só pelo <strong>molde da rota</strong>
+        — nunca o CPF, o CEP ou o CNPJ que passou por ela.
+      </p>
+    </div>
+  </section>
+
+  <main class="container-page section">
+    <!-- ============ ACESSO ============ -->
+    <section class="panel" aria-labelledby="tituloAcesso">
+      <div class="acesso-topo">
+        <h2 id="tituloAcesso" style="margin:0">Acesso</h2>
+        <span class="estado" id="estado" data-estado="verificando" role="status" aria-live="polite">
+          <span class="ponto" aria-hidden="true"></span><span id="estadoTexto">Verificando…</span>
+        </span>
+      </div>
+
+      <form id="formLogin" class="form-linha" autocomplete="on" hidden>
+        <div class="campo">
+          <label for="usuario">Usuário</label>
+          <input id="usuario" name="username" autocomplete="username" required>
+        </div>
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <input id="senha" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn-arriba btn-red-arriba" id="btnEntrar"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>Entrar</button>
+      </form>
+
+      <div class="acoes" id="blocoConectado" hidden>
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnSair"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sair</button>
+      </div>
+
+      <div id="avisoAcesso" class="aviso" hidden role="alert"></div>
+    </section>
+
+
+    <!-- ============ PAINEL (só administrador) ============ -->
+    <div id="painel" class="section" style="padding:0" hidden>
+      <section class="panel" aria-labelledby="tituloResumo">
+        <div class="controles">
+          <h2 id="tituloResumo" style="margin:0">Resumo</h2>
+          <div class="acoes">
+            <div class="campo">
+              <label for="periodo">Período</label>
+              <select id="periodo">
+                <option value="1">Última hora</option>
+                <option value="24" selected>Últimas 24 horas</option>
+                <option value="168">Últimos 7 dias</option>
+                <option value="720">Últimos 30 dias</option>
+              </select>
+            </div>
+            <button type="button" class="btn-arriba btn-light-arriba" id="btnAtualizar"><i class="fa-solid fa-rotate" aria-hidden="true"></i>Atualizar</button>
+          </div>
+        </div>
+        <p class="origem" id="origem"></p>
+        <div class="tiles" id="tiles" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="tituloVolume">
+        <h2 id="tituloVolume">Chamadas no período</h2>
+        <div id="grafico"></div>
+      </section>
+
+      <div class="duas">
+        <section class="panel" aria-labelledby="tituloRotas">
+          <h2 id="tituloRotas">Por rota</h2>
+          <div id="porRota"></div>
+        </section>
+        <section class="panel" aria-labelledby="tituloFontes">
+          <h2 id="tituloFontes">Por API pública</h2>
+          <div id="porFonte"></div>
+        </section>
+      </div>
+
+      <section class="panel" aria-labelledby="tituloUltimas">
+        <h2 id="tituloUltimas">Últimas chamadas</h2>
+        <div id="ultimas"></div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="painel-api.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+
+</html>

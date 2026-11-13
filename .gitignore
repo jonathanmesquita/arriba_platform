@@ -1,0 +1,37 @@
+# Binaries
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio specific files
+*.suo
+*.user
+*.vspscc
+*.vssscc
+*.bak
+*.vs/
+
+# NuGet packages
+packages/
+
+# Resharper
+*.DotSettings
+
+# Node.js (if you have front-end in the same repo)
+node_modules/
+
+# Temp files
+*~
+*.log
+
+# SO
+desktop.ini
+.DS_Store
+Thumbs.db
+
+# Front / build
+dist/
+.vercel/
+.env
+.env.*
+# O modelo (só nomes, sem valor) TEM de ir para o git: o README manda copiá-lo.
+!.env.example

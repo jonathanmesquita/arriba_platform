@@ -1,0 +1,54 @@
+# Conferências do site em todo PR e em todo push na main.
+# O site não tem build: o que pode quebrar sem ninguém ver é sintaxe de
+# JavaScript (não há bundler para acusar), a lógica pura das ferramentas
+# e o contraste de cor nos dois temas.
+name: Conferências
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  sintaxe-e-logica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Sintaxe de todo JavaScript do site (fora de apps/)
+        run: |
+          falhas=0
+          for f in $(git ls-files '*.js' '*.mjs' | grep -v '^apps/'); do
+            node --check "$f" || { echo "::error file=$f::erro de sintaxe"; falhas=1; }
+          done
+          exit $falhas
+      - name: Testes da lógica das ferramentas
+        working-directory: scripts
+        run: node --test "tests/*.test.mjs"
+
+  contraste:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Dependências da conferência
+        working-directory: scripts
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Servidor local do site
+        run: |
+          python3 -m http.server 8899 >/dev/null 2>&1 &
+          sleep 2
+      - name: Contraste nos dois temas (carregamento e estados abertos)
+        working-directory: scripts
+        run: npm run contraste

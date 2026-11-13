@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Arriba Platform: prototipo de estudos em fullstack — validadores de arquivo, simulador SQL, editor web e um chat com IA, tudo rodando no navegador." />
+    <title>Arriba Platform | Protótipo de estudos</title>
+    <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Arriba Platform" />
+    <meta property="og:title" content="Arriba Platform | Protótipo de estudos" />
+    <meta property="og:description" content="Prototipo de estudos em fullstack: validadores de arquivo, simulador SQL, editor web e chat com IA." />
+    <meta property="og:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/arriba-hero-bg.webp" />
+    <meta property="og:url" content="https://arriba.jm.dev.br/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Arriba Platform | Protótipo de estudos" />
+    <meta name="twitter:description" content="Prototipo de estudos em fullstack: validadores de arquivo, simulador SQL, editor web e chat com IA." />
+    <meta name="twitter:image" content="https://arriba.jm.dev.br/assets/img/capas-wallpaper-menus/arriba-hero-bg.webp" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous" />
+    <link rel="stylesheet" href="assets/css/tokens.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/oracle-inspired.css" />
+    <link rel="stylesheet" href="assets/css/chatbot.css" />
+    <style>
+        body.rw-body {
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        .portfolio-shell {
+            min-height: 100vh;
+        }
+
+        .enterprise-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1060;
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .enterprise-topbar-inner {
+            display: grid;
+            grid-template-columns: auto auto minmax(220px, 1fr) auto;
+            align-items: center;
+            gap: 20px;
+            min-height: 72px;
+            padding: 0 28px;
+        }
+
+        .enterprise-brand {
+            color: var(--rw-red-ink);
+            font-size: 1.55rem;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .enterprise-brand small {
+            color: var(--ink);
+            display: block;
+            font-size: .68rem;
+            font-weight: 800;
+            letter-spacing: .12em;
+            margin-top: -6px;
+            text-transform: uppercase;
+        }
+
+        .enterprise-search {
+            width: 100%;
+            max-width: 840px;
+            height: 48px;
+            border: 1px solid #cfc8c1;
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 18px;
+            text-align: left;
+        }
+
+        .enterprise-search:hover,
+        .enterprise-search:focus-within {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgb(from var(--red) r g b / .12);
+        }
+
+        .enterprise-search input {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            border: 0;
+            outline: none;
+            background: transparent;
+            /* A topbar e a caixa de busca sao brancas nos dois temas (regra
+               acima), entao a cor do texto aqui e fixa - usar var(--ink)
+               deixaria o texto claro sobre branco no modo escuro. */
+            color: #2b2724;
+            font-size: .95rem;
+            font-family: inherit;
+        }
+
+        .enterprise-search input::placeholder {
+            color: #6d6863;
+        }
+
+        .enterprise-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .enterprise-icon-btn,
+        .enterprise-flag-btn {
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 4px;
+            background: transparent;
+            color: var(--ink);
+            display: grid;
+            place-items: center;
+        }
+
+        .enterprise-icon-btn:hover,
+        .enterprise-flag-btn:hover {
+            background: rgba(0, 0, 0, .06);
+        }
+
+        .enterprise-nav {
+            background: var(--dark);
+            color: #fff;
+        }
+
+        .enterprise-nav-inner {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            overflow-x: auto;
+            padding: 0 28px;
+        }
+
+        .enterprise-nav a,
+        .enterprise-nav button {
+            min-height: 54px;
+            display: inline-flex;
+            align-items: center;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            color: #fff;
+            font-size: .92rem;
+            font-weight: 800;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .enterprise-nav a:hover,
+        .enterprise-nav a.active,
+        .enterprise-nav button:hover {
+            border-bottom-color: var(--rw-accent-teal);
+        }
+
+        .category-band {
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            padding: 26px 0 24px;
+        }
+
+        /* Faixa de categorias: 8 colunas = 4 tiles por grupo, UMA linha so.
+           E o limite do layout (mesma ideia da faixa da Oracle que serviu de
+           referencia) - se entrar um tile novo aqui, outro precisa sair, senao
+           a grade quebra numa segunda linha e o alinhamento com os titulos
+           "Infraestrutura"/"Aplicacoes" se perde. Ferramenta nova entra no
+           mega-menu e na busca (navigation-v2.js), nao obrigatoriamente aqui. */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(8, minmax(100px, 1fr));
+            gap: 16px;
+        }
+
+        .category-group-title {
+            grid-row: 1;
+            color: var(--muted);
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin: 0 0 4px;
+        }
+
+        .category-group-title--infra { grid-column: 1 / 5; }
+        .category-group-title--apps { grid-column: 5 / 9; }
+
+        @media (max-width: 1100px) {
+            .category-group-title--infra,
+            .category-group-title--apps {
+                grid-column: 1 / -1;
+                grid-row: auto;
+            }
+        }
+
+        .category-tile {
+            min-height: 118px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            display: grid;
+            place-items: center;
+            padding: 16px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 800;
+            box-shadow: none;
+            transition: border-color .18s ease, background-color .18s ease;
+        }
+
+        .category-tile:hover {
+            color: var(--ink);
+            border-color: var(--red);
+            transform: translateY(-3px);
+        }
+
+        .portfolio-hero {
+            --hero-accent: var(--rw-accent-teal);
+            --hero-deep: var(--rw-deep-2);
+            --hero-bg-image: url("assets/img/capas-wallpaper-menus/arriba-hero-bg.webp");
+            position: relative;
+            background: var(--rw-deep-2);
+            color: #fff;
+            overflow: hidden;
+            padding: clamp(58px, 7vw, 92px) 0 clamp(118px, 8vw, 136px);
+            isolation: isolate;
+            transition: background-color .45s ease;
+        }
+
+        .portfolio-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+            background:
+                /* Quase opaco a esquerda (onde fica o texto do hero) e leve a
+                   direita, para a arte de fundo aparecer sem afogar. O veu e
+                   terroso, nao azul: a arte de fundo e fria e, sem isso, a
+                   faixa do hero briga com a areia do resto da pagina. */
+                linear-gradient(90deg, rgba(30, 23, 19, .96) 0%, rgba(36, 28, 23, .86) 42%, rgba(36, 28, 23, .42) 100%),
+                var(--hero-bg-image) center/cover no-repeat;
+            /* Puxa a arte para o lado quente sem trocar o arquivo. */
+            background-blend-mode: normal, luminosity;
+            transform: scale(1.02);
+            transition: opacity .45s ease, transform 8s ease;
+        }
+
+        .portfolio-hero::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0;
+            height: 160px;
+            z-index: -1;
+            background: linear-gradient(0deg, rgba(0, 0, 0, .32), transparent);
+            pointer-events: none;
+        }
+
+        .portfolio-hero.is-changing::before {
+            opacity: .72;
+            transform: scale(1.04);
+        }
+
+        .portfolio-hero .rw-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sobre faixa escura o acento é a mostarda; sobre o creme, o tom
+           de texto (declarado acima). */
+        .portfolio-hero .hero-eyebrow,
+        .architecture-board .hero-eyebrow { color: var(--hero-accent, var(--rw-accent)); }
+
+        .portfolio-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, .9fr) minmax(430px, 1.1fr);
+            align-items: center;
+            gap: 54px;
+        }
+
+        .hero-eyebrow {
+            /* Mostarda só sobre a faixa escura (7,73); sobre o creme ela dá
+               2,09 e reprova — por isso o padrão aqui é o tom de texto. */
+            color: var(--rw-red-ink);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: .75rem;
+            font-weight: 900;
+            letter-spacing: .14em;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        .hero-eyebrow::before {
+            content: "";
+            width: 34px;
+            height: 2px;
+            background: var(--gold);
+        }
+
+        .portfolio-hero h1 {
+            max-width: 720px;
+            font-size: clamp(2.45rem, 5vw, 5.2rem);
+            font-weight: 300;
+            line-height: 1.02;
+            margin-bottom: 24px;
+        }
+
+        .portfolio-hero p {
+            max-width: 690px;
+            color: rgba(255, 255, 255, .88);
+            font-size: 1.08rem;
+            line-height: 1.75;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        .enterprise-btn {
+            /* <button> tem fundo e borda próprios do navegador; sem zerar
+               aqui, a mesma classe fica cinza em botão e transparente em
+               link. */
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            min-height: 46px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 0 22px;
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .enterprise-btn-primary {
+            background: var(--surface);
+            color: var(--ink);
+        }
+
+        .enterprise-btn-primary:hover {
+            color: var(--ink);
+            background: var(--rw-tint);
+        }
+
+        .enterprise-btn-secondary {
+            border: 1px solid rgba(255, 255, 255, .7);
+            color: #fff;
+        }
+
+        .enterprise-btn-secondary:hover {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+        }
+
+        /* Vitrine com três peças sobrepostas: o painel em cima, o cartão da
+           pergunta embaixo à esquerda e o cartão de capa à direita. A capa
+           fica numa FAIXA PRÓPRIA, entre o selo "AI" e o cartão da pergunta:
+           a vitrine tem ~620 px e os dois cartões lado a lado pediriam 740,
+           então quando os dois ficavam no rodapé a capa cobria a pergunta.
+           Altura e posição andam juntas (--vitrine-altura, --capa-base). */
+        .ai-showcase {
+            --vitrine-altura: 560px;
+            --capa-base: 190px;   /* acima do cartão da pergunta (~160 px + folga) */
+            position: relative;
+            min-height: var(--vitrine-altura);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .ai-showcase:focus-visible {
+            border-radius: 14px;
+            box-shadow: 0 0 0 4px rgba(115, 201, 199, .34);
+        }
+
+        .dashboard-panel {
+            background: #f7f2ed;
+            color: #2d2926;
+            border-radius: 8px;
+            box-shadow: 0 34px 90px rgba(0, 0, 0, .45);
+            margin-left: auto;
+            max-width: 620px;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd2ca;
+            padding: 20px 24px 12px;
+        }
+
+        .dashboard-header strong {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.12rem;
+            font-weight: 700;
+        }
+
+        .dashboard-chart {
+            height: 242px;
+            margin: 0 24px 24px;
+            border-left: 1px solid #d8d0ca;
+            border-bottom: 1px solid #d8d0ca;
+            background:
+                linear-gradient(180deg, transparent 24%, rgba(0, 0, 0, .05) 24% 25%, transparent 25% 49%, rgba(0, 0, 0, .05) 49% 50%, transparent 50% 74%, rgba(0, 0, 0, .05) 74% 75%, transparent 75%),
+                linear-gradient(90deg, rgba(115, 201, 199, .4) 0 8%, rgba(115, 201, 199, .52) 8% 22%, rgb(from var(--red) r g b / .14) 22% 44%, rgba(115, 201, 199, .3) 44% 63%, rgb(from var(--red) r g b / .16) 63% 82%, rgba(115, 201, 199, .5) 82% 100%);
+            clip-path: polygon(0 70%, 8% 24%, 18% 16%, 27% 28%, 36% 74%, 48% 78%, 62% 65%, 73% 72%, 84% 55%, 94% 32%, 100% 28%, 100% 100%, 0 100%);
+        }
+
+        .ai-badge {
+            position: absolute;
+            right: 16px;
+            top: 78px;
+            width: 88px;
+            height: 88px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #73c9c7, var(--red));
+            box-shadow: 0 24px 54px rgba(0, 0, 0, .32);
+            color: #fff;
+            font-size: 2.4rem;
+            font-weight: 900;
+        }
+
+        .assistant-card {
+            position: absolute;
+            left: 12px;
+            bottom: 14px;
+            width: min(440px, 88%);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .92);
+            color: #2d2926;
+            box-shadow: 0 24px 58px rgba(0, 0, 0, .24);
+            overflow: hidden;
+        }
+
+        .assistant-question {
+            display: grid;
+            grid-template-columns: 58px 1fr;
+            align-items: center;
+            gap: 14px;
+            padding: 18px;
+            background: rgba(231, 184, 91, .38);
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .assistant-question img {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--surface);
+            border: 3px solid #fff;
+        }
+
+        .assistant-search {
+            display: grid;
+            grid-template-columns: 1fr 54px 74px;
+            min-height: 58px;
+            border-top: 1px solid rgba(0, 0, 0, .08);
+        }
+
+        .assistant-search span,
+        .assistant-search button {
+            border: 0;
+            border-right: 1px solid rgba(0, 0, 0, .08);
+            background: var(--surface);
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+        }
+
+        .assistant-search button:last-child {
+            justify-content: center;
+            background: var(--red);
+            color: var(--rw-on-primary);
+            font-size: 1.5rem;
+        }
+
+        .hero-cover-card {
+            position: absolute;
+            right: 0;
+            bottom: var(--capa-base);
+            width: min(300px, 42vw);
+            min-height: 182px;
+            border: 1px solid rgba(255, 255, 255, .26);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .9);
+            color: #211f1d;
+            box-shadow: 0 26px 70px rgba(0, 0, 0, .34);
+            overflow: hidden;
+            transform: translateZ(0);
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        .hero-cover-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 34px 86px rgba(0, 0, 0, .42);
+        }
+
+        .hero-cover-card img {
+            width: 100%;
+            height: 118px;
+            object-fit: cover;
+            background: #f4eee9;
+            display: block;
+        }
+
+        .hero-cover-card.is-logo img {
+            object-fit: contain;
+            padding: 24px;
+        }
+
+        .hero-cover-card span {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            font-weight: 900;
+        }
+
+        .hero-cover-card span::after {
+            content: "\f061";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--hero-accent);
+        }
+
+        .hero-carousel-controls {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            z-index: 4;
+            width: min(940px, calc(100% - 42px));
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: auto minmax(160px, 1fr) auto;
+            gap: 18px;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1px solid rgba(255, 255, 255, .16);
+            border-radius: 8px;
+            background: rgba(22, 25, 29, .72);
+            backdrop-filter: blur(16px);
+        }
+
+        .hero-carousel-copy {
+            color: rgba(255, 255, 255, .88);
+            font-size: .92rem;
+            font-weight: 800;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .hero-carousel-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-carousel-btn {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(255, 255, 255, .28);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            display: inline-grid;
+            place-items: center;
+            transition: background .18s ease, border-color .18s ease, transform .18s ease;
+        }
+
+        .hero-carousel-btn:hover,
+        .hero-carousel-btn:focus-visible {
+            background: rgba(255, 255, 255, .18);
+            border-color: rgba(255, 255, 255, .7);
+            transform: translateY(-1px);
+        }
+
+        .hero-carousel-toggle {
+            min-width: 42px;
+        }
+
+        .hero-carousel-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .hero-carousel-dot {
+            width: 54px;
+            height: 7px;
+            border: 1px solid rgba(255, 255, 255, .45);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .12);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .hero-carousel-dot::before {
+            content: "";
+            display: block;
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--surface);
+            transition: width .25s ease;
+        }
+
+        .hero-carousel-dot[aria-current="true"] {
+            border-color: #fff;
+            background: rgba(255, 255, 255, .24);
+        }
+
+        .hero-carousel-dot[aria-current="true"]::before {
+            width: 100%;
+        }
+
+        .section-wrap {
+            padding: 74px 0;
+        }
+
+        .section-heading {
+            max-width: 850px;
+            margin-bottom: 30px;
+        }
+
+        .section-heading span {
+            color: var(--rw-red-ink);
+            display: inline-block;
+            font-size: .76rem;
+            font-weight: 900;
+            letter-spacing: .14em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            font-size: clamp(2rem, 3.2vw, 3.4rem);
+            font-weight: 300;
+            letter-spacing: 0;
+            line-height: 1.12;
+            margin-bottom: 14px;
+            text-transform: none;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 1.02rem;
+            line-height: 1.75;
+        }
+
+        .portfolio-card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .portfolio-card {
+            min-height: 250px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            padding: 24px;
+            text-decoration: none;
+            box-shadow: none;
+            transition: border-color .18s ease, background-color .18s ease;
+        }
+
+        .portfolio-card:hover {
+            color: var(--ink);
+            border-color: var(--red);
+            transform: translateY(-4px);
+        }
+
+        .portfolio-card i {
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            background: #f0ebe5;
+            color: var(--rw-red-ink);
+            display: grid;
+            place-items: center;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-card span {
+            color: var(--rw-red-ink);
+            font-size: .72rem;
+            font-weight: 900;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .portfolio-card h3 {
+            font-size: 1.22rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            margin: 10px 0 12px;
+            text-transform: none;
+        }
+
+        .portfolio-card p {
+            color: var(--muted);
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        .case-band {
+            background: var(--rw-surface-2);
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr);
+            gap: 42px;
+            align-items: stretch;
+        }
+
+        .case-copy {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 34px;
+            border: 1px solid var(--line);
+        }
+
+        .case-copy h2 {
+            font-size: clamp(2rem, 3.3vw, 3.35rem);
+            font-weight: 300;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .case-copy p {
+            color: var(--muted);
+            line-height: 1.75;
+        }
+
+        .metric-list {
+            display: grid;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .metric-list div {
+            border-left: 4px solid var(--red);
+            padding-left: 14px;
+        }
+
+        .metric-list strong {
+            display: block;
+            font-size: 1.35rem;
+        }
+
+        .architecture-board {
+            position: relative;
+            border-radius: 8px;
+            background: #16332b;
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(255, 255, 255, .07) 0, transparent 46%),
+                radial-gradient(circle at 88% 82%, rgba(255, 255, 255, .06) 0, transparent 50%);
+            color: #fff;
+            padding: 30px;
+            overflow: hidden;
+        }
+
+        .architecture-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1fr;
+            align-items: center;
+            gap: 14px;
+            margin: 22px 0;
+        }
+
+        .architecture-node {
+            min-height: 104px;
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .08);
+            display: grid;
+            align-content: center;
+            gap: 6px;
+            padding: 18px;
+        }
+
+        .architecture-node small {
+            color: rgba(255, 255, 255, .7);
+        }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+        .region-grid h6 {
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .region-grid a {
+            color: var(--rw-red-ink);
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-decoration: none;
+        }
+
+        /* Rodapé (nov/2026). Sem "versão" e sem "Atualizado em": o site não tem
+           build, então esses textos teriam de ser trocados à mão e um dia
+           mentiriam. O link do GitHub mostra a data do último commit, sempre
+           certa. Sem links de cookie ou de anúncio: o site não usa nenhum dos
+           dois — conferido no código. */
+        .enterprise-footer {
+            background: var(--surface);
+            border-top: 1px solid var(--line);
+            padding: 28px 0 22px;
+        }
+
+        .enterprise-footer-inner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 40px;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .enterprise-footer-about { max-width: 560px; }
+
+        .enterprise-footer-about strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--ink);
+            font-size: .95rem;
+            font-weight: 800;
+        }
+
+        .enterprise-footer-about p {
+            margin: 0;
+            color: var(--muted);
+            font-size: .88rem;
+            line-height: 1.5;
+        }
+
+        .enterprise-footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 22px;
+        }
+
+        /* Link sem cor declarada caía no azul padrão do navegador. */
+        .enterprise-footer-links a {
+            color: var(--rw-red-ink);
+            font-size: .92rem;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .enterprise-footer-links a:hover { color: var(--ink); }
+
+        .enterprise-footer-copy {
+            margin: 18px 0 0;
+            padding-top: 14px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: .82rem;
+        }
+
+        .enterprise-footer-copy a {
+            color: var(--rw-red-ink);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .enterprise-footer-copy a:hover { color: var(--ink); }
+
+        .enterprise-footer-sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 1100px) {
+            .category-grid,
+            .portfolio-card-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .portfolio-hero-grid,
+            .case-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-cover-card {
+                right: 18px;
+                width: min(280px, 52vw);
+            }
+        }
+
+        @media (max-width: 720px) {
+            .enterprise-topbar-inner {
+                grid-template-columns: auto 1fr auto;
+                padding: 0 14px;
+            }
+
+            .enterprise-search {
+                grid-column: 1 / -1;
+                order: 2;
+                max-width: none;
+                margin-bottom: 12px;
+            }
+
+            .enterprise-topbar-inner {
+                min-height: 124px;
+            }
+
+            .enterprise-actions {
+                gap: 2px;
+            }
+
+            .category-grid,
+            .portfolio-card-grid,
+            .region-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-hero-grid {
+                gap: 32px;
+            }
+
+            .portfolio-hero {
+                padding-bottom: 42px;
+            }
+
+            .dashboard-panel {
+                max-width: 100%;
+            }
+
+            .ai-badge {
+                right: 8px;
+                width: 70px;
+                height: 70px;
+                font-size: 1.9rem;
+            }
+
+            .assistant-card {
+                position: relative;
+                left: auto;
+                bottom: auto;
+                width: 100%;
+                margin-top: 16px;
+            }
+
+            .hero-cover-card {
+                position: relative;
+                right: auto;
+                bottom: auto;
+                width: 100%;
+                margin-top: 16px;
+            }
+
+            .hero-cover-card img {
+                height: 150px;
+            }
+
+            .hero-carousel-controls {
+                position: relative;
+                left: auto;
+                bottom: auto;
+                width: calc(100% - 28px);
+                transform: none;
+                margin: 22px auto 0;
+                grid-template-columns: 1fr;
+                justify-items: stretch;
+                gap: 12px;
+            }
+
+            .hero-carousel-copy {
+                text-align: center;
+                white-space: normal;
+            }
+
+            .hero-carousel-nav {
+                justify-content: center;
+            }
+
+            .hero-carousel-dot {
+                width: 38px;
+            }
+
+            .architecture-row {
+                grid-template-columns: 1fr;
+            }
+
+            .architecture-row > span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100 rw-body">
+    <div class="portfolio-shell">
+        <header class="enterprise-topbar" role="banner">
+            <div class="enterprise-topbar-inner">
+                <button class="enterprise-icon-btn" type="button" id="enterpriseMenuToggle" aria-label="Abrir menu" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <a class="enterprise-brand" href="index.html" aria-label="Arriba Platform Home">
+                    ARRIBA
+                    <small>Protótipo</small>
+                </a>
+
+                <!-- Campo de busca real: quem digita aqui ja filtra. O painel de
+                     resultados (gerado por navigation-v2.js) abre logo abaixo e NAO
+                     tem campo proprio - antes tinha, e apareciam dois campos. -->
+                <div class="enterprise-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="topbarSearchInput" autocomplete="off" role="combobox"
+                        aria-label="Pesquisar na Arriba Platform"
+                        aria-expanded="false" aria-controls="oracleSearchResults"
+                        placeholder="Pesquisar ferramentas, trilhas ou documentação" />
+                </div>
+
+                <div class="enterprise-actions">
+                    <button type="button" class="enterprise-flag-btn" data-bs-toggle="modal" data-bs-target="#languageModal" aria-label="Selecionar pais ou regiao">
+                        <img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="Bandeira do Brasil" width="24" height="24" id="currentLanguageFlag">
+                    </button>
+                    <button type="button" class="enterprise-icon-btn" id="toggleTheme" aria-label="Alternar tema">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <button type="button" class="enterprise-icon-btn" id="openChatFromTopbar" aria-label="Abrir Arriba Bot">
+                        <i class="far fa-comment"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="enterprise-nav" aria-label="Navegação principal">
+            <div class="enterprise-nav-inner">
+                <button type="button" id="enterpriseMenuOpenProducts">Menu</button>
+                <a href="#tools-section">Ferramentas</a>
+                <a href="#ia-section">IA</a>
+                <a href="#architecture-section">Arquitetura</a>
+                <a href="pages/aprender/index.html" data-route>Aprender</a>
+                <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
+                <a href="pages/lab/index.html" data-route>Laboratório</a>
+            </div>
+        </nav>
+
+        <div class="enterprise-menu-backdrop" id="enterpriseMenuBackdrop"></div>
+        <aside class="enterprise-menu" id="enterpriseMenu" aria-label="Menu principal"></aside>
+
+        <section class="category-band" aria-label="Categorias principais">
+            <div class="rw-container">
+                <div class="category-grid">
+                    <h2 class="category-group-title category-group-title--infra">Arquivos e dados</h2>
+                    <h2 class="category-group-title category-group-title--apps">Código e aprendizado</h2>
+
+                    <a class="category-tile" href="tools/cobranca/cnab400/cnab400.html">Arquivo bancário (CNAB 400)</a>
+                    <a class="category-tile" href="tools/dados/csv-validator/csv-validator.html">Validador de CSV</a>
+                    <a class="category-tile" href="tools/cobranca/arriba-csv-generator/csv-template-generator.html">Gerador de CSV</a>
+                    <a class="category-tile" href="tools/cobranca/massa-dados/massa-dados.html">Dados fictícios</a>
+
+                    <a class="category-tile" href="tools/dados/editor-web/editor-web.html">Editor HTML, CSS e JS</a>
+                    <a class="category-tile" href="tools/cobranca/sql-playground/sql-playground.html">SQL Playground</a>
+                    <a class="category-tile" href="tools/cobranca/treinamento-sql/treinamento-sql.html">Curso de SQL</a>
+                    <a class="category-tile" href="pages/aprender/index.html" data-route>Centro de Aprendizado</a>
+                </div>
+            </div>
+        </section>
+
+        <main id="appContent" class="flex-grow-1">
+            <section class="portfolio-hero">
+                <div class="rw-container portfolio-hero-grid">
+                    <div>
+                        <span class="hero-eyebrow">Protótipo de estudos</span>
+                        <h1>Ferramentas técnicas que rodam inteiras no navegador.</h1>
+                        <p>
+                            Um protótipo de estudos em fullstack: validadores de arquivo posicional e CSV,
+                            simulador SQL, editor com preview ao vivo e um chat com IA — sem servidor
+                            no meio, sem dado de ninguém saindo da máquina.
+                        </p>
+
+                        <div class="hero-actions">
+                            <a class="enterprise-btn enterprise-btn-primary" href="tools/cobranca/cnab400/cnab400.html">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                Validar um arquivo bancário
+                            </a>
+                            <a class="enterprise-btn enterprise-btn-secondary" href="pages/case-study/arriba-platform.html" data-route>
+                                Ver a arquitetura
+                            </a>
+                            <button type="button" class="enterprise-btn enterprise-btn-secondary" id="openChatFromHero">
+                                Perguntar ao bot
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ai-showcase" aria-label="Demonstração visual do assistente">
+                        <div class="dashboard-panel">
+                            <div class="dashboard-header">
+                                <strong>Arquivo lido e conferido campo a campo, no navegador</strong>
+                                <span>Demonstração</span>
+                            </div>
+                            <div class="dashboard-chart" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="ai-badge" aria-hidden="true">AI</div>
+
+                        <div class="assistant-card">
+                            <div class="assistant-question">
+                                <img src="assets/img/frames-arriba-sapo-laranja/sapo-pixelado-laranja-programando.png" alt="Mascote da Arriba programando no notebook">
+                                <span>Qual arquivo precisa ser validado agora?</span>
+                            </div>
+                            <div class="assistant-search">
+                                <span>Buscar ou perguntar a Arriba</span>
+                                <button type="button" aria-label="Abrir conversa"><i class="fa-regular fa-message"></i></button>
+                                <button type="button" aria-label="Executar busca"><i class="fa-solid fa-toggle-on"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-wrap" id="tools-section">
+                <div class="rw-container">
+                    <div class="section-heading">
+                        <span>Ferramentas</span>
+                        <h2>Ferramentas que resolvem trabalho de verdade.</h2>
+                        <p>
+                            Cada uma nasceu de uma rotina real — validar arquivo, gerar dado de teste,
+                            consultar banco — e roda inteira no navegador: o arquivo não sai da sua máquina.
+                        </p>
+                    </div>
+
+                    <div class="portfolio-card-grid">
+                        <a class="portfolio-card" href="tools/cobranca/cnab400/cnab400.html">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <span>Arquivo bancário</span>
+                            <h3>Validador CNAB 400</h3>
+                            <p>Lê e gera o arquivo de cobrança que os bancos trocam com as empresas (padrão CNAB de 400 posições), campo a campo.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/dados/csv-validator/csv-validator.html">
+                            <i class="fa-solid fa-table-list"></i>
+                            <span>Dados</span>
+                            <h3>Validador de CSV</h3>
+                            <p>Separa "o arquivo está bem formado?" (RFC 4180) de "o conteúdo está certo?" (regras por coluna).</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/dados/editor-web/editor-web.html">
+                            <i class="fa-solid fa-code"></i>
+                            <span>Front-end</span>
+                            <h3>Editor HTML, CSS e JS</h3>
+                            <p>Preview ao vivo — o código roda isolado, sem alcançar a página do site.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/cobranca/sql-playground/sql-playground.html">
+                            <i class="fa-solid fa-database"></i>
+                            <span>SQL</span>
+                            <h3>SQL Playground</h3>
+                            <p>Banco de dados de treino no navegador, com explorador de tabelas, histórico e consultas salvas.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/cobranca/massa-dados/massa-dados.html">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Testes</span>
+                            <h3>Gerador de dados fictícios</h3>
+                            <p>Nome, CPF/CNPJ válido, telefone e endereço inventados, para testar sem dado de pessoa real.</p>
+                        </a>
+
+                        <a class="portfolio-card" href="tools/dados/decodificador/decodificador.html">
+                            <i class="fa-solid fa-right-left"></i>
+                            <span>Utilitários</span>
+                            <h3>Decodificador</h3>
+                            <p>Base64, URL, hex, binário, JWT e entidades HTML, com detecção automática do formato.</p>
+                        </a>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-wrap case-band" id="ia-section">
+                <div class="rw-container case-grid">
+                    <div class="case-copy">
+                        <span class="hero-eyebrow">IA no protótipo</span>
+                        <h2>Chat com base de conhecimento e provedor configurável.</h2>
+                        <p>
+                            O chat responde primeiro pela base local do próprio repositório — sem rede,
+                            sem chave, instantâneo. IA de verdade é opcional: quem quiser liga um provedor
+                            (local ou de nuvem) com a própria chave, que fica no navegador de quem digitou.
+                        </p>
+
+                        <div class="metric-list">
+                            <div><strong>Base local primeiro</strong><span>Resposta curada e instantânea, sem custo por pergunta.</span></div>
+                            <div><strong>Falha nunca deixa sem resposta</strong><span>Erro do provedor volta para a base local.</span></div>
+                            <div><strong>A chave é de quem usa</strong><span>Site estático não guarda segredo — e o painel avisa disso.</span></div>
+                        </div>
+                    </div>
+
+                    <div class="architecture-board" id="architecture-section">
+                        <span class="hero-eyebrow">Como funciona</span>
+                        <h2 class="h3">Da pergunta à resposta com fonte.</h2>
+                        <div class="architecture-row">
+                            <div class="architecture-node"><strong>Pergunta</strong><small>No navegador</small></div>
+                            <span><i class="fa-solid fa-arrow-right"></i></span>
+                            <div class="architecture-node"><strong>Base local</strong><small>Busca por relevância</small></div>
+                            <span><i class="fa-solid fa-arrow-right"></i></span>
+                            <div class="architecture-node"><strong>Provedor (opcional)</strong><small>Só quando a base não cobre</small></div>
+                        </div>
+                        <p class="mb-0 text-white-50">
+                            O que há para explicar aqui é a decisão: onde o segredo mora, o que acontece
+                            quando o provedor falha e por que a base vem antes do modelo.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-wrap">
+                <div class="rw-container">
+                    <div class="section-heading">
+                        <span>Estudos de caso</span>
+                        <h2>As decisões por trás do protótipo.</h2>
+                    </div>
+
+                    <div class="portfolio-card-grid">
+                        <a class="portfolio-card" href="pages/case-study/arriba-platform.html" data-route>
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>Arquitetura</span>
+                            <h3>Como o site foi construído</h3>
+                            <p>Arquitetura, decisões técnicas e evolução do projeto.</p>
+                        </a>
+                        <a class="portfolio-card" href="pages/case-study/chatbot-ai.html" data-route>
+                            <i class="fa-solid fa-robot"></i>
+                            <span>IA</span>
+                            <h3>Chatbot com IA</h3>
+                            <p>Base local primeiro, provedor opcional e o que acontece quando ele falha.</p>
+                        </a>
+                        <a class="portfolio-card" href="pages/case-study/deploy-cloud.html" data-route>
+                            <i class="fa-solid fa-cloud"></i>
+                            <span>Cloud</span>
+                            <h3>Deploy e DNS</h3>
+                            <p>Vercel, Render, Cloudflare, domínio próprio e ambiente de produção.</p>
+                        </a>
+                        <a class="portfolio-card" href="pages/aprender/index.html" data-route>
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>Aprender</span>
+                            <h3>Centro de Aprendizado</h3>
+                            <p>Trilhas com exemplo real, simulador e exercício corrigido na hora.</p>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="enterprise-footer">
+            <div class="rw-container">
+                <div class="enterprise-footer-inner">
+                    <div class="enterprise-footer-about">
+                        <strong>Arriba Platform · protótipo de estudos de Jonathan Mesquita</strong>
+                        <p>Sem cookies e sem rastreamento: o que o site guarda (tema, progresso, rascunhos) fica só no seu navegador.</p>
+                    </div>
+                    <nav class="enterprise-footer-links" aria-label="Links do rodapé">
+                        <a href="pages/about/about_jonathan.html" data-route>Sobre o autor</a>
+                        <a href="pages/case-study/index.html" data-route>Estudos de caso</a>
+                        <a href="https://github.com/jonathanmesquita/arriba_platform" target="_blank" rel="noopener">Código no GitHub<span class="enterprise-footer-sr"> (abre em nova aba)</span></a>
+                    </nav>
+                </div>
+                <p class="enterprise-footer-copy">© 2026 Jonathan Mesquita · código sob <a href="https://github.com/jonathanmesquita/arriba_platform/blob/main/LICENSE" target="_blank" rel="noopener">licença MIT<span class="enterprise-footer-sr"> (abre em nova aba)</span></a></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Chat do site. Estilo em assets/css/chatbot.css, comportamento em
+         assets/js/chatbot.js. Não usa as classes .card do Bootstrap de
+         propósito: as regras globais de .card-header (com !important no
+         tema escuro) brigavam com o cabeçalho do chat. -->
+    <button id="chatbotBtn" type="button" aria-label="Abrir o chat do Arriba Bot" aria-controls="chatbot" aria-expanded="false">
+        <i class="fas fa-comments" aria-hidden="true"></i>
+    </button>
+
+    <section id="chatbot" class="chatbot-popup d-none" aria-labelledby="chatTitle">
+        <header class="chat-header">
+            <div class="chat-header-text">
+                <h2 class="chat-title" id="chatTitle">Arriba Bot</h2>
+                <span class="chat-subtitle" id="chatSubtitle">Assistente automático · responde pela base do site</span>
+            </div>
+            <button type="button" id="closeChat" class="chat-header-btn" aria-label="Fechar o chat">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </header>
+
+        <div class="chat-window" id="chatWindow" role="log" aria-live="polite" aria-label="Conversa com o Arriba Bot"></div>
+
+        <form class="chat-form" id="chatForm" autocomplete="off">
+            <label for="chatInput" class="chat-sr-only">Sua pergunta</label>
+            <input type="text" id="chatInput" class="chat-input" placeholder="Pergunte sobre uma ferramenta" maxlength="300">
+            <button type="submit" id="sendChat" class="chat-send">Enviar</button>
+        </form>
+    </section>
+
+    <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="languageModalLabel">Selecione o idioma</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body px-4 pb-4">
+                    <div class="region-grid">
+                        <div>
+                            <h6>Americas</h6>
+                            <a href="#" class="select-lang" data-lang-code="pt" data-flag="br" data-country="Brasil"><img src="assets/img/bandeiras_idiomas/flg-br.svg" alt="" width="20" height="20"> Brasil</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="us" data-country="Estados Unidos"><img src="assets/img/bandeiras_idiomas/flg-us.svg" alt="" width="20" height="20"> United States</a>
+                            <a href="#" class="select-lang" data-lang-code="es" data-flag="mx" data-country="Mexico"><img src="assets/img/bandeiras_idiomas/flg-mx.svg" alt="" width="20" height="20"> Mexico</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="ca" data-country="Canada"><img src="assets/img/bandeiras_idiomas/flg-ca.svg" alt="" width="20" height="20"> Canada - English</a>
+                        </div>
+                        <div>
+                            <h6>Asia Pacific</h6>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="au" data-country="Australia"><img src="assets/img/bandeiras_idiomas/flg-au.svg" alt="" width="20" height="20"> Australia</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="in" data-country="India"><img src="assets/img/bandeiras_idiomas/flg-in.svg" alt="" width="20" height="20"> India</a>
+                            <a href="#" class="select-lang" data-lang-code="ko" data-flag="kr" data-country="Coreia do Sul"><img src="assets/img/bandeiras_idiomas/flg-kr.svg" alt="" width="20" height="20"> Korea</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="za" data-country="South Africa"><img src="assets/img/bandeiras_idiomas/flg-za.svg" alt="" width="20" height="20"> South Africa</a>
+                        </div>
+                        <div>
+                            <h6>Europe</h6>
+                            <a href="#" class="select-lang" data-lang-code="fr" data-flag="fr" data-country="Franca"><img src="assets/img/bandeiras_idiomas/flg-fr.svg" alt="" width="20" height="20"> France</a>
+                            <a href="#" class="select-lang" data-lang-code="de" data-flag="de" data-country="Alemanha"><img src="assets/img/bandeiras_idiomas/flg-de.svg" alt="" width="20" height="20"> Deutschland</a>
+                            <a href="#" class="select-lang" data-lang-code="es" data-flag="es" data-country="Espanha"><img src="assets/img/bandeiras_idiomas/flg-es.svg" alt="" width="20" height="20"> Espana</a>
+                            <a href="#" class="select-lang" data-lang-code="en" data-flag="us" data-country="United Kingdom"><img src="assets/img/bandeiras_idiomas/flg-us.svg" alt="" width="20" height="20"> United Kingdom</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/navigation-v2.js"></script>
+    <script src="assets/js/docs-search.js"></script>
+    <script type="module" src="assets/js/router.js"></script>
+    <script>
+        document.getElementById("enterpriseMenuOpenProducts")?.addEventListener("click", () => {
+            document.getElementById("enterpriseMenuToggle")?.click();
+        });
+
+        (() => {
+            const hero = document.querySelector(".portfolio-hero");
+            if (!hero) return;
+
+            const slides = [
+                {
+                    eyebrow: "Protótipo de estudos",
+                    title: "Ferramentas técnicas que rodam inteiras no navegador.",
+                    copy: "Validadores de arquivo bancário e CSV, simulador SQL, editor com preview ao vivo e um chat com IA — sem servidor no meio, sem dado de ninguém saindo da máquina.",
+                    primary: { label: "Ver as ferramentas", href: "#tools-section", icon: "fa-table-list" },
+                    secondary: { label: "Ver a arquitetura", href: "pages/case-study/arriba-platform.html" },
+                    cover: "assets/img/capas-wallpaper-menus/arriba-hero-card.webp",
+                    bg: "assets/img/capas-wallpaper-menus/arriba-hero-bg.webp",
+                    coverLabel: "Portal de ferramentas",
+                    dashboard: "Arquivo lido e conferido campo a campo, no navegador",
+                    question: "Qual arquivo precisa ser validado agora?",
+                    accent: "#D9A93C",   // mostarda: 7,73 de contraste sobre a faixa escura
+                    deep: "#241C17",     // charcoal terroso, no lugar do cinza frio
+                    summary: "Ferramentas de dados, SQL e front-end que rodam no navegador."
+                }
+            ];
+
+            const eyebrow = hero.querySelector(".hero-eyebrow");
+            const title = hero.querySelector("h1");
+            const copy = hero.querySelector("p");
+            const actions = hero.querySelector(".hero-actions");
+            const primary = actions?.querySelector(".enterprise-btn-primary");
+            const secondary = actions?.querySelector(".enterprise-btn-secondary");
+            const dashboardTitle = hero.querySelector(".dashboard-header strong");
+            const assistantQuestion = hero.querySelector(".assistant-question span");
+            const showcase = hero.querySelector(".ai-showcase");
+            const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            const isCarousel = slides.length > 1;
+            let current = 0;
+            let timer = null;
+            let paused = false;
+
+            if (isCarousel) {
+                hero.setAttribute("aria-roledescription", "carousel");
+                hero.setAttribute("aria-live", "polite");
+                showcase?.setAttribute("role", "button");
+                showcase?.setAttribute("tabindex", "0");
+                showcase?.setAttribute("aria-label", "Avançar slide do portal");
+            }
+
+            const cover = document.createElement("button");
+            cover.type = "button";
+            cover.className = "hero-cover-card";
+            cover.setAttribute("aria-label", "Avançar para o próximo destaque");
+            cover.innerHTML = '<img alt=""><span></span>';
+            showcase?.appendChild(cover);
+
+            let controls = null;
+            let dotsWrap = null;
+            let summary = null;
+            let toggleBtn = null;
+
+            if (isCarousel) {
+                controls = document.createElement("div");
+                controls.className = "hero-carousel-controls";
+                controls.innerHTML = `
+                    <div class="hero-carousel-copy" id="heroCarouselSummary"></div>
+                    <div class="hero-carousel-dots" role="tablist" aria-label="Destaques do portal"></div>
+                    <div class="hero-carousel-nav">
+                        <button type="button" class="hero-carousel-btn" data-hero-prev aria-label="Slide anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button type="button" class="hero-carousel-btn" data-hero-next aria-label="Proximo slide"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button type="button" class="hero-carousel-btn hero-carousel-toggle" data-hero-toggle aria-label="Pausar carousel"><i class="fa-solid fa-pause"></i></button>
+                    </div>
+                `;
+                hero.appendChild(controls);
+
+                dotsWrap = controls.querySelector(".hero-carousel-dots");
+                summary = controls.querySelector("#heroCarouselSummary");
+                toggleBtn = controls.querySelector("[data-hero-toggle]");
+            }
+
+            const dots = isCarousel ? slides.map((slide, index) => {
+                const dot = document.createElement("button");
+                dot.type = "button";
+                dot.className = "hero-carousel-dot";
+                dot.setAttribute("role", "tab");
+                dot.setAttribute("aria-label", `Ir para ${slide.coverLabel}`);
+                dot.addEventListener("click", () => goTo(index, true));
+                dotsWrap.appendChild(dot);
+                return dot;
+            }) : [];
+
+            function setLink(link, config) {
+                if (!link || !config) return;
+                link.href = config.href;
+                link.removeAttribute("data-route");
+                link.innerHTML = `${config.icon ? `<i class="fa-solid ${config.icon}"></i>` : ""}${config.label}`;
+            }
+
+            function goTo(index, userAction = false) {
+                current = (index + slides.length) % slides.length;
+                const slide = slides[current];
+                hero.classList.add("is-changing");
+                // `bg` e a arte de fundo (widescreen); `cover` e a miniatura do
+                // card. Sem `bg`, o fundo cai no `cover` - que e o comportamento
+                // antigo, mas estica uma imagem retrato na largura toda.
+                hero.style.setProperty("--hero-bg-image", `url("${slide.bg || slide.cover}")`);
+                hero.style.setProperty("--hero-accent", slide.accent);
+                hero.style.setProperty("--hero-deep", slide.deep);
+                hero.style.backgroundColor = slide.deep;
+
+                if (eyebrow) eyebrow.textContent = slide.eyebrow;
+                if (title) title.textContent = slide.title;
+                if (copy) copy.textContent = slide.copy;
+                setLink(primary, slide.primary);
+                setLink(secondary, slide.secondary);
+                if (dashboardTitle) dashboardTitle.textContent = slide.dashboard;
+                if (assistantQuestion) assistantQuestion.textContent = slide.question;
+                if (summary) summary.textContent = slide.summary;
+
+                cover.classList.toggle("is-logo", slide.coverFit === "logo");
+                const coverImg = cover.querySelector("img");
+                const coverText = cover.querySelector("span");
+                if (coverImg) {
+                    coverImg.src = slide.cover;
+                    coverImg.alt = slide.coverLabel;
+                }
+                if (coverText) coverText.textContent = slide.coverLabel;
+
+                dots.forEach((dot, dotIndex) => {
+                    const active = dotIndex === current;
+                    dot.setAttribute("aria-current", active ? "true" : "false");
+                    dot.setAttribute("aria-selected", active ? "true" : "false");
+                });
+
+                window.setTimeout(() => hero.classList.remove("is-changing"), 360);
+                if (userAction) restart();
+            }
+
+            function next(userAction = false) { goTo(current + 1, userAction); }
+            function previous() { goTo(current - 1, true); }
+            function stop() {
+                window.clearInterval(timer);
+                timer = null;
+            }
+            function start() {
+                if (!isCarousel || reducedMotion || paused || timer) return;
+                timer = window.setInterval(() => next(false), 5000);
+            }
+            function restart() {
+                stop();
+                start();
+            }
+            function syncToggle() {
+                if (!toggleBtn) return;
+                toggleBtn.setAttribute("aria-label", paused ? "Retomar carousel" : "Pausar carousel");
+                toggleBtn.innerHTML = paused ? '<i class="fa-solid fa-play"></i>' : '<i class="fa-solid fa-pause"></i>';
+            }
+
+            controls?.querySelector("[data-hero-prev]")?.addEventListener("click", previous);
+            controls?.querySelector("[data-hero-next]")?.addEventListener("click", () => next(true));
+            toggleBtn?.addEventListener("click", () => {
+                paused = !paused;
+                if (paused) stop();
+                else start();
+                syncToggle();
+            });
+            if (isCarousel) cover.addEventListener("click", () => next(true));
+            showcase?.addEventListener("click", (event) => {
+                if (!isCarousel) return;
+                if (event.target.closest(".assistant-search button, .hero-cover-card")) return;
+                next(true);
+            });
+            showcase?.addEventListener("keydown", (event) => {
+                if (!isCarousel) return;
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    next(true);
+                }
+            });
+            hero.addEventListener("keydown", (event) => {
+                if (event.key === "ArrowRight") next(true);
+                if (event.key === "ArrowLeft") previous();
+            });
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) stop();
+                else start();
+            });
+
+            goTo(0, false);
+            syncToggle();
+            start();
+        })();
+    </script>
+</body>
+</html>

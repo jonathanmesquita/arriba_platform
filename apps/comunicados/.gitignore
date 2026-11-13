@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+
+# Banco SQLite, anexos enviados e e-mails gravados em modo de teste
+dados/
+
+# Client gerado pelo Prisma
+server/generated/

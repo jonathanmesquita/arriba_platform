@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de hash (MD5, SHA) - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../../../assets/css/style.css" />
+  <link rel="stylesheet" href="../../../assets/css/oracle-inspired.css" />
+  <style>
+    body{background:var(--bg);color:var(--ink)}
+    .tool-shell{width:min(980px,calc(100% - 40px));margin:48px auto}
+    .tool-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:28px;box-shadow:0 10px 28px rgba(0,0,0,.06)}
+    .tool-brand{color:var(--red);font-weight:900;text-decoration:none;font-size:1.35rem}
+    textarea{min-height:180px;font-family:Consolas,monospace}
+    /* Botões pelos tokens: os .btn-dark do Bootstrap têm cor fixa e somem no tema escuro. */
+    .btn-principal{background:var(--red);color:var(--rw-on-primary);border:1px solid transparent;font-weight:800}
+    .btn-principal:hover,.btn-principal:focus-visible{background:var(--rw-red-ink);color:var(--rw-on-primary)}
+    .btn-secundario{background:transparent;color:var(--ink);border:1px solid var(--line-strong);font-weight:800}
+    .btn-secundario:hover,.btn-secundario:focus-visible{background:var(--surface-soft);color:var(--ink)}
+  </style>
+</head>
+<body>
+  <main class="tool-shell">
+    <a class="tool-brand" href="../../../index.html">ARRIBA</a>
+    <section class="tool-card mt-4">
+      
+      <h1>Calculadora de Hash</h1>
+      <p class="text-muted">Gere SHA-256 no navegador para textos simples.</p>
+      <div class="mb-3">
+        <label class="form-label fw-bold" for="hashInput">Texto</label>
+        <textarea class="form-control" id="hashInput" placeholder="Digite o texto..."></textarea>
+      </div>
+      <button class="btn btn-principal" id="hashBtn">Gerar SHA-256</button>
+      <hr>
+      <pre id="hashOutput" style="white-space:pre-wrap;background:#101010;color:#eaeaea;padding:16px;border-radius:8px;">Aguardando...</pre>
+    
+    </section>
+  </main>
+  <script>
+document.getElementById('hashBtn').onclick=async()=>{
+  const txt=document.getElementById('hashInput').value;
+  const data=new TextEncoder().encode(txt);
+  const digest=await crypto.subtle.digest('SHA-256', data);
+  const hash=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  document.getElementById('hashOutput').textContent=hash;
+};
+</script>
+    <script type="module">
+        import { initThemeToggle } from "../../../assets/js/theme.js";
+        initThemeToggle();
+    </script>
+</body>
+</html>

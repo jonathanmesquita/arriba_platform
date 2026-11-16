@@ -33,6 +33,11 @@ bureau**; dado de exemplo é fictício, sempre.
   e `package.json` — **não** misture dependência de app com o site, e não importe nada de
   `apps/` a partir de `assets/` ou `tools/`.
 - **Deploy:** Vercel (push → deploy automático). O app de chat ainda não foi implantado.
+  **Ao trocar de repositório, a ligação da Vercel não vai junto:** renomear um repositório
+  no GitHub mantém a integração apontando para ele (ela é pelo número, não pelo nome). Em
+  nov/2026 isso deixou o site publicando a versão de três dias antes, sem erro em lugar
+  nenhum. O sinal de que está certo é o commit em "Source" do deploy de produção ser um da
+  `main` deste repositório.
 
 ## Estrutura de trabalho do repositório
 

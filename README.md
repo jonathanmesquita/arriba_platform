@@ -101,6 +101,8 @@ memory. No secret is ever shipped with the static site. Other servers only exist
 | **Visual SQL query builder** | Builds T-SQL reports by picking tables and filters |
 | **Live web editor** | HTML, CSS and JS with live preview in a sandboxed iframe |
 | **API console** (sign-in required) | Validates CPF, CNPJ (including the 2026 alphanumeric format), e-mail, phone, CSV and JSON, and looks up postal codes, companies and banks in free public APIs — through the project's private API |
+| **DNS and e-mail checker** | Checks whether the records a provider asked for are actually published, and reviews SPF, DKIM and DMARC — queried from the browser over DNS-over-HTTPS |
+| **Device and IP info** | Public IP, browser, operating system, screen and time zone, in one block to paste into a support ticket |
 | **Converters** | CSV→JSON, Base64→PDF, decoder (Base64, URL, JWT, hex), hash calculator |
 | **AI chat app** (`apps/arriba-chat-ia`) | Multi-provider chat with streaming, admin panel, audit log and a knowledge base built from this repo's docs |
 | **Mail templates app** (`apps/comunicados`) | Letter templates with variables and batched e-mail sending, with unsubscribe handling |

@@ -7,6 +7,7 @@ aqui fica só o registro com data.
 - [x] Histórico do git recomeçado num repositório novo, com um commit único; o anterior foi renomeado pelo dono e uma cópia do histórico antigo foi entregue a ele. Nomes de cliente e de produto saíram também dos documentos ✅ 2026-11-13 #area/infra
 - [x] Dígito do RG conferido contra um gerador de referência (caso incluído nos testes) ✅ 2026-11-13 #area/ferramentas
 - [x] Contraste: 74 textos reprovados que a conferência local não via (rosa do `<code>` e cinza do `.text-muted` do Bootstrap, botões escuros no tema escuro, cores do modelo de carta); a conferência agora falha se o CDN não carregar ✅ 2026-11-13 #area/site
+- [x] Ferramentas de rede: "Meu IP, navegador e sistema" e "Conferir DNS e e-mail de um domínio" (registros esperados, SPF, DKIM, DMARC, consulta avulsa), 100% no navegador, com 20 testes de lógica ✅ 2026-11-16 #area/ferramentas
 - [x] Gerador de RG no gerador de dados fictícios (dígito verificador no padrão de São Paulo, com ou sem pontuação); o RG da "pessoa completa" passou a ter dígito válido ✅ 2026-11-13 #area/ferramentas
 - [x] Gerador de dados fictícios: "Copiar dados" leva só os registros, sem a linha de título (o arquivo baixado continua com ela) ✅ 2026-11-13 #area/ferramentas
 - [x] Rota antiga `POST /chat` apagada do `arriba-api` (um caminho de chat só: widget do site + IA do servidor) ✅ 2026-11-12 #area/infra

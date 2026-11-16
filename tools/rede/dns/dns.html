@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Confira se os registros de DNS de um domínio estão publicados e analise SPF, DKIM e DMARC, direto do navegador." />
+
+  <title>Conferir DNS e e-mail de um domínio - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../rede.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para o início</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Rede e internet · DNS</span>
+      <h1>Conferir DNS e e-mail de um domínio</h1>
+      <p>
+        Veja se os registros que o provedor mandou cadastrar já estão publicados, e se o SPF, o DKIM
+        e o DMARC do domínio estão certos. A consulta sai do seu navegador para um resolvedor
+        público de DNS; o projeto não tem servidor no meio.
+      </p>
+    </div>
+  </section>
+
+  <main class="container-page section">
+    <section class="panel card-section">
+      <div class="modos" role="group" aria-label="O que você quer fazer">
+        <button type="button" class="modo" data-modo="esperados" aria-pressed="true">Conferir registros</button>
+        <button type="button" class="modo" data-modo="email" aria-pressed="false">E-mail do domínio (SPF, DKIM, DMARC)</button>
+        <button type="button" class="modo" data-modo="avulsa" aria-pressed="false">Consulta avulsa</button>
+      </div>
+
+      <!-- ============ CONFERIR REGISTROS ============ -->
+      <form id="formEsperados" data-painel="esperados" novalidate>
+        <h2>Conferir registros</h2>
+        <p class="descricao">
+          Cole os registros que o provedor de e-mail ou de hospedagem pediu. A tela consulta cada um e
+          diz se está publicado, diferente ou faltando.
+        </p>
+        <label for="textoEsperados">Registros esperados</label>
+        <textarea id="textoEsperados" class="form-control" spellcheck="false" autocomplete="off" aria-describedby="dicaEsperados"
+          placeholder="em1.exemplo.com.br
+s1._domainkey.exemplo.com.br
+_dmarc.exemplo.com.br
+
+u1.wl.envio.exemplo.net
+s1.domainkey.u1.wl.envio.exemplo.net
+v=DMARC1; p=quarantine; rua=mailto:ti@exemplo.com.br"></textarea>
+        <p class="dica" id="dicaEsperados">
+          Dois jeitos de colar: os nomes num bloco e os valores em outro, separados por uma linha em
+          branco e na mesma ordem; ou um registro por linha, com o nome, um espaço e o valor. O tipo
+          (CNAME, TXT, A, MX) é deduzido do valor.
+        </p>
+        <div class="acoes">
+          <button type="submit" class="btn-arriba btn-red-arriba" id="btnEsperados">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>Conferir
+          </button>
+          <button type="button" class="btn-arriba btn-outline-arriba hidden" id="btnCopiarEsperados">
+            <i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copiar resultado</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- ============ E-MAIL DO DOMÍNIO ============ -->
+      <form id="formEmail" data-painel="email" class="hidden" novalidate>
+        <h2>E-mail do domínio</h2>
+        <p class="descricao">
+          Lê os registros que dizem quem pode enviar e-mail em nome do domínio e explica o que cada um
+          faz e o que está errado.
+        </p>
+        <div class="campo-linha">
+          <div class="campo">
+            <label for="dominioEmail">Domínio</label>
+            <input id="dominioEmail" class="form-control" placeholder="exemplo.com.br" autocomplete="off" spellcheck="false" inputmode="url">
+          </div>
+          <div class="campo">
+            <label for="seletores">Seletores de DKIM (opcional)</label>
+            <input id="seletores" class="form-control" placeholder="s1, s2" autocomplete="off" spellcheck="false" aria-describedby="dicaSeletores">
+          </div>
+        </div>
+        <p class="dica" id="dicaSeletores">
+          O DKIM fica num nome que cada provedor escolhe (o "seletor"), e o DNS não permite listar
+          todos. Em branco, a tela tenta os mais comuns.
+        </p>
+        <div class="acoes">
+          <button type="submit" class="btn-arriba btn-red-arriba" id="btnEmail">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>Analisar
+          </button>
+          <button type="button" class="btn-arriba btn-outline-arriba" id="btnExemploEmail">Usar um domínio de exemplo</button>
+        </div>
+      </form>
+
+      <!-- ============ CONSULTA AVULSA ============ -->
+      <form id="formAvulsa" data-painel="avulsa" class="hidden" novalidate>
+        <h2>Consulta avulsa</h2>
+        <p class="descricao">Pergunte ao DNS por um nome e um tipo de registro, e veja a resposta como ela vem.</p>
+        <div class="campo-linha">
+          <div class="campo">
+            <label for="nomeAvulsa">Nome</label>
+            <input id="nomeAvulsa" class="form-control" placeholder="www.exemplo.com.br" autocomplete="off" spellcheck="false" inputmode="url">
+          </div>
+          <div class="campo estreito">
+            <label for="tipoAvulsa">Tipo</label>
+            <select id="tipoAvulsa" class="form-select">
+              <option value="A">A (endereço IPv4)</option>
+              <option value="AAAA">AAAA (endereço IPv6)</option>
+              <option value="CNAME">CNAME (apelido)</option>
+              <option value="MX">MX (e-mail)</option>
+              <option value="TXT">TXT (texto)</option>
+              <option value="NS">NS (servidores de nomes)</option>
+              <option value="CAA">CAA (certificados)</option>
+            </select>
+          </div>
+        </div>
+        <div class="acoes">
+          <button type="submit" class="btn-arriba btn-red-arriba" id="btnAvulsa">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>Consultar
+          </button>
+        </div>
+      </form>
+
+      <p class="status-linha" id="estado" role="status" aria-live="polite"></p>
+      <div class="resultados" id="resultados"></div>
+    </section>
+
+    <p class="nota">
+      <strong>O que esta tela vê.</strong> Ela pergunta a um resolvedor público (Google Public DNS e,
+      se ele falhar, Cloudflare), que guarda as respostas por um tempo. Registro recém-cadastrado
+      pode levar de minutos a algumas horas para aparecer. Aqui se confere o que está
+      <em>publicado</em>; se o provedor de e-mail já aceitou, quem diz é o painel dele.
+    </p>
+  </main>
+
+  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+</html>

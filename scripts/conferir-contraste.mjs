@@ -189,6 +189,25 @@ const ESTADOS = [
       await p.click("#btnCopy");
       await p.waitForSelector('#btnCopy[data-estado="copiado"]');
     }
+  },
+  {
+    /* Os cartões de resultado do DNS (verde, amarelo e vermelho) só existem
+       depois da consulta. Aqui o resolvedor é simulado: a conferência de
+       contraste não pode depender da rede nem de um domínio de terceiro. */
+    pagina: "tools/rede/dns/dns.html", nome: "resultado da conferência de DNS", abrir: async (p) => {
+      await p.route(/dns\.google|cloudflare-dns\.com/, async (rota) => {
+        const nome = new URL(rota.request().url()).searchParams.get("name");
+        const corpo = nome === "ok.exemplo.com.br"
+          ? { Status: 0, Answer: [{ name: nome + ".", type: 5, TTL: 300, data: "destino.exemplo.net." }] }
+          : nome === "difere.exemplo.com.br"
+            ? { Status: 0, Answer: [{ name: nome + ".", type: 5, TTL: 300, data: "outro.exemplo.net." }] }
+            : { Status: 3 };
+        await rota.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(corpo) });
+      });
+      await p.fill("#textoEsperados", "ok.exemplo.com.br destino.exemplo.net\ndifere.exemplo.com.br destino.exemplo.net\nfalta.exemplo.com.br destino.exemplo.net");
+      await p.click("#btnEsperados");
+      await p.waitForSelector('.item[data-tipo="erro"]');
+    }
   }
 ];
 

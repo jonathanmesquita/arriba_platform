@@ -210,6 +210,28 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   espaço mesmo vazia, para não empurrar o botão na hora do toque. No celular o menu lateral
   vira um `<select>` montado da mesma lista (`generatorMeta`). As opções escolhidas ficam em
   `localStorage` (`arribaMassaDados:opcoes`) só como conveniência de quem usa.
+- **Rede e diagnóstico** (`tools/rede/`, nov/2026): duas telas de suporte que **não usam
+  servidor do projeto**. A lógica mora fora do `script.js` para ter teste
+  (`scripts/tests/rede.test.mjs`, resolvedor simulado): `dns/dns-logica.js` e
+  `meu-dispositivo/detectar.js`.
+  - **DNS** sai do navegador por DNS sobre HTTPS (Google Public DNS; Cloudflare de reserva),
+    os dois em JSON e com CORS aberto. Três modos: conferir os registros que o provedor
+    mandou cadastrar, analisar o e-mail do domínio (SPF, DKIM, DMARC, MX) e consulta avulsa.
+    Resposta de DNS é **conteúdo de terceiro**: entra por `textContent`, nunca `innerHTML`
+    (TXT aceita qualquer texto, inclusive `<script>`).
+  - **O DKIM não é listável:** o seletor é escolhido pelo provedor e o DNS não permite listar
+    os nomes de uma zona. A tela tenta os seletores conhecidos e **diz que não achar não é
+    prova de que não existe** — senão a ferramenta mente.
+  - Dois enganos de cadastro são detectados por **tentativa**, não por adivinhação: domínio
+    repetido no nome (consulta `nome.zona.zona`) e CNAME criado como TXT. `zonaProvavel()` é
+    palpite (não lê a lista pública de sufixos) e serve só para isso.
+  - **Versão de sistema congelada não é repetida como verdade:** o Chrome no Android diz
+    sempre "Android 10" e o macOS diz sempre "10.15.7"; Windows 10 e 11 se apresentam igual
+    sem Client Hints. Nesses casos `detectarSistema()` devolve a versão vazia e uma
+    `observacao` explicando — era isso ou mostrar um número errado com cara de certo.
+  - **Uma página não enxerga o próprio IP público** (quem enxerga é o servidor do outro
+    lado), daí o serviço externo (ipify). Falha dele não pode derrubar a tela: o resto é
+    local e continua.
 - **Gamificação de trilhas** (pontos/badges/progresso) é genérica em
   `assets/js/gamification.js`, 100% `localStorage`, sem backend — recebe `trackId`. A
   trilha de SQL é a primeira consumidora; trilha nova reusa o mesmo motor.
@@ -368,6 +390,8 @@ Entregue e funcionando:
 - Validador CNAB 400 (Bradesco, Itaú e BMP), validar e gerar, com conferência de trailer.
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.
+- Rede e diagnóstico: "Meu IP, navegador e sistema" e "Conferir DNS e e-mail de um domínio"
+  (registros esperados, SPF, DKIM, DMARC), tudo pelo navegador.
 - Massa de dados fictícios e decodificador/criador de modelo de carta.
 - Centro de Aprendizado, trilha de SQL com gamificação e SQL Playground (AlaSQL).
 - Editor Web com preview ao vivo e sandbox endurecido.

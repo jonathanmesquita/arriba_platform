@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Veja o seu IP público, o navegador e o sistema operacional, e copie tudo para enviar ao suporte." />
+
+  <title>Meu IP, navegador e sistema - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../rede.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para o início</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Rede e internet · Diagnóstico</span>
+      <h1>Meu IP, navegador e sistema</h1>
+      <p>
+        O que o seu computador ou celular mostra para os sites: endereço IP, navegador e sistema
+        operacional. Feito para copiar e mandar a quem está atendendo o seu chamado.
+      </p>
+      <div class="acoes">
+        <button type="button" class="btn-arriba btn-red-arriba" id="btnCopiarTudo">
+          <i class="fa-regular fa-copy" aria-hidden="true" id="btnCopiarTudoIcone"></i><span id="btnCopiarTudoTexto">Copiar tudo para o suporte</span>
+        </button>
+        <a class="btn-arriba btn-outline-arriba" href="../dns/dns.html">
+          <i class="fa-solid fa-globe" aria-hidden="true"></i>Conferir DNS de um domínio
+        </a>
+      </div>
+      <p class="status-linha" id="estado" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <main class="container-page section">
+    <!-- ============ IP ============ -->
+    <section class="panel card-section" aria-labelledby="tituloIp">
+      <div class="topo-cartao">
+        <h2 id="tituloIp">Meu IP</h2>
+        <button type="button" class="btn-arriba btn-outline-arriba btn-pequeno" id="btnCopiarIp" disabled>
+          <i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copiar IP</span>
+        </button>
+      </div>
+      <p class="valor-grande" id="ipPrincipal" aria-live="polite">Consultando…</p>
+      <dl class="dados" id="dadosIp" style="margin-top: 12px"></dl>
+      <p class="nota" id="notaIp">
+        Uma página não enxerga o próprio IP público: quem enxerga é o servidor do outro lado. Por isso
+        esta tela pergunta a um serviço público (ipify). Ele vê o seu IP, como qualquer site que você
+        visita, e nada mais é enviado.
+      </p>
+    </section>
+
+    <div class="grade-2">
+      <!-- ============ NAVEGADOR ============ -->
+      <section class="panel card-section" aria-labelledby="tituloNavegador">
+        <div class="topo-cartao"><h2 id="tituloNavegador">Meu navegador</h2></div>
+        <p class="valor-grande" id="navegadorPrincipal"></p>
+        <dl class="dados" id="dadosNavegador" style="margin-top: 12px"></dl>
+      </section>
+
+      <!-- ============ SISTEMA ============ -->
+      <section class="panel card-section" aria-labelledby="tituloSistema">
+        <div class="topo-cartao"><h2 id="tituloSistema">Meu sistema operacional</h2></div>
+        <p class="valor-grande" id="sistemaPrincipal"></p>
+        <dl class="dados" id="dadosSistema" style="margin-top: 12px"></dl>
+        <p class="dica" id="observacaoSistema"></p>
+      </section>
+    </div>
+
+    <!-- ============ TELA E CONEXÃO ============ -->
+    <section class="panel card-section" aria-labelledby="tituloTela">
+      <div class="topo-cartao"><h2 id="tituloTela">Tela, idioma e conexão</h2></div>
+      <dl class="dados" id="dadosTela"></dl>
+    </section>
+
+    <!-- ============ IDENTIFICAÇÃO BRUTA ============ -->
+    <section class="panel card-section" aria-labelledby="tituloUa">
+      <div class="topo-cartao"><h2 id="tituloUa">Identificação que o navegador envia</h2></div>
+      <p class="descricao">
+        É o texto bruto (User-Agent) que vai em toda visita a um site. Os navegadores atuais
+        escondem parte dele de propósito, para dificultar o rastreamento.
+      </p>
+      <pre class="caixa-codigo" id="userAgent" tabindex="0" role="region" aria-labelledby="tituloUa"></pre>
+    </section>
+  </main>
+
+  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+</html>

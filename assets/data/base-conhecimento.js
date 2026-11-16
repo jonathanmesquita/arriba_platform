@@ -163,6 +163,49 @@ export const KNOWLEDGE_BASE = [
     ],
     checklist: ["Os documentos passam na validação de dígito, mas não pertencem a ninguém"],
     linkManual: "/tools/cobranca/massa-dados/massa-dados.html"
+  },
+  {
+    id: "meu-dispositivo",
+    titulo: "Descobrir meu IP, navegador e sistema",
+    produto: "Ferramentas",
+    categoria: "Rede",
+    palavrasChave: ["ip", "navegador", "sistema", "versao", "dispositivo", "suporte", "chamado"],
+    perguntaExemplo: "O suporte pediu meu IP e a versão do navegador. Onde vejo isso?",
+    caminhoTela: "Ferramentas › Rede e diagnóstico › Meu IP, navegador e sistema",
+    resumo:
+      "Mostra o endereço IP público, o navegador, o sistema operacional, a tela e o fuso horário, " +
+      "e junta tudo num texto para colar no chamado.",
+    passos: [
+      "Abra a tela: ela já preenche tudo sozinha.",
+      "Clique em \"Copiar tudo para o suporte\" e cole no chamado."
+    ],
+    checklist: [
+      "O IP vem de um serviço público, porque uma página não enxerga o próprio IP",
+      "Windows 10 e 11 se apresentam igual em muitos navegadores: quando não dá para saber, a tela diz isso"
+    ],
+    linkManual: "/tools/rede/meu-dispositivo/meu-dispositivo.html"
+  },
+  {
+    id: "dns-dominio",
+    titulo: "Conferir DNS e e-mail de um domínio",
+    produto: "Ferramentas",
+    categoria: "Rede",
+    palavrasChave: ["dns", "dominio", "cname", "spf", "dkim", "dmarc", "propagacao", "email"],
+    perguntaExemplo: "Cadastrei os registros que o provedor pediu. Já estão no ar?",
+    caminhoTela: "Ferramentas › Rede e diagnóstico › Conferir DNS e e-mail de um domínio",
+    resumo:
+      "Consulta o DNS pelo navegador e diz se cada registro esperado está publicado, diferente ou " +
+      "faltando; analisa SPF, DKIM e DMARC e explica o que cada um faz.",
+    passos: [
+      "Cole os registros que o provedor mandou cadastrar e clique em Conferir.",
+      "Para o e-mail, use a aba do domínio: ela lê SPF, DKIM e DMARC e aponta o que está errado.",
+      "Registro recém-criado pode levar horas para aparecer — a tela diz isso quando não acha."
+    ],
+    checklist: [
+      "A consulta sai do navegador para um resolvedor público; o projeto não tem servidor no meio",
+      "Dois erros comuns de cadastro são detectados: domínio repetido no nome e CNAME criado como TXT"
+    ],
+    linkManual: "/tools/rede/dns/dns.html"
   }
 ];
 

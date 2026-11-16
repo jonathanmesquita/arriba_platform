@@ -87,6 +87,16 @@ const menuData = {
                     ["SQL Playground (simulador no navegador)", "tools/cobranca/sql-playground/sql-playground.html"],
                     ["Construtor visual de consultas SQL", "tools/cobranca/query-builder/query-builder.html"]
                 ]
+            },
+            rede: {
+                label: "Rede e diagnóstico",
+                badge: "Suporte",
+                title: "Rede e diagnóstico",
+                description: "O que o seu equipamento mostra para os sites, e se os registros de um domínio estão publicados.",
+                links: [
+                    ["Meu IP, navegador e sistema", "tools/rede/meu-dispositivo/meu-dispositivo.html"],
+                    ["Conferir DNS e e-mail de um domínio", "tools/rede/dns/dns.html"]
+                ]
             }
         }
     },
@@ -170,6 +180,8 @@ export const searchItems = [
     ["SQL Playground", "sql playground simulador sandbox alasql try it yourself consulta query historico consultas salvas schema select join group by csv", "tools/cobranca/sql-playground/sql-playground.html"],
     ["Construtor visual de consultas SQL", "sql query builder construtor consulta relatorios diagrama tabelas filtros case when tsql export xlsx csv", "tools/cobranca/query-builder/query-builder.html"],
     ["Centro de Aprendizado", "aprender centro aprendizado hub trilhas curso treinamento tutorial licoes exemplos try it yourself progresso pontos badges quiz exercicios simulador sql cnab base64", "pages/aprender/index.html", true],
+    ["Meu IP, navegador e sistema", "meu ip endereco ip publico ipv4 ipv6 navegador browser user agent versao sistema operacional windows android ios macos linux resolucao tela fuso idioma suporte chamado diagnostico dispositivo", "tools/rede/meu-dispositivo/meu-dispositivo.html"],
+    ["Conferir DNS e e-mail de um domínio", "dns dominio registro cname txt mx a aaaa ns propagacao spf dkim dmarc domainkey seletor email autenticacao spam caixa de entrada resolvedor nslookup dig zona apontamento", "tools/rede/dns/dns.html"],
     ["Guias de diagnóstico", "erros topicos diagnostico checklist troubleshooting conexao api credencial processamento blog tecnico", "pages/docs/blog/index.html", true],
     ["Downloads", "modelos arquivos exemplos baixar", "pages/docs/downloads/index.html", true],
     ["Chatbot com IA (estudo de caso)", "chat chatbot ia assistente provedores base de conhecimento streaming", "pages/case-study/chatbot-ai.html", true],

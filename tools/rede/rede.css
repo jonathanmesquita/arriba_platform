@@ -1,0 +1,432 @@
+/* =====================================================================
+   Estilo das ferramentas de rede (tools/rede/). As duas telas dividem
+   este arquivo para não haver duas cópias do mesmo botão e do mesmo selo.
+   Cores só por token (assets/css/tokens.css, linkado antes na página).
+   ===================================================================== */
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.topbar {
+  min-height: 64px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.brand {
+  color: var(--red);
+  font-size: 1.35rem;
+  font-weight: 900;
+  text-decoration: none;
+  letter-spacing: -.04em;
+}
+
+.back-link {
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: none;
+  font-size: .95rem;
+}
+
+.hero {
+  background:
+    radial-gradient(circle at 90% 10%, rgb(from var(--red) r g b / .08), transparent 28%),
+    linear-gradient(90deg, var(--bg) 0%, var(--surface) 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 30px 0 24px;
+}
+
+.container-page {
+  width: min(1080px, calc(100% - 44px));
+  margin-inline: auto;
+}
+
+.kicker {
+  color: var(--rw-red-ink);
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  font-weight: 900;
+  font-size: .78rem;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: clamp(2.1rem, 4.4vw, 3.2rem);
+  line-height: 1.02;
+  letter-spacing: -.06em;
+  font-weight: 300;
+  margin: 0 0 12px;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  max-width: 760px;
+  margin: 0;
+}
+
+.section {
+  padding: 24px 0 60px;
+  display: grid;
+  gap: 18px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+.card-section { padding: 22px 24px; }
+
+.card-section h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin: 0 0 6px;
+}
+
+.card-section h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.descricao {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 16px;
+  max-width: 72ch;
+}
+
+.dica {
+  color: var(--muted);
+  font-size: .86rem;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+.dica a,
+.descricao a { color: var(--rw-red-ink); }
+
+/* ---------- campos ---------- */
+
+label {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 6px;
+  font-size: .94rem;
+}
+
+.campo-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.campo { flex: 1 1 220px; min-width: 0; }
+.campo.estreito { flex: 0 1 170px; }
+
+.form-control,
+.form-select,
+textarea.form-control {
+  min-height: 44px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background-color: var(--surface);
+  color: var(--ink);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+textarea.form-control {
+  min-height: 190px;
+  font-family: Consolas, Monaco, monospace;
+  font-size: .88rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.form-control::placeholder { color: var(--muted); opacity: .85; }
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--red);
+  background-color: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 0 0 .22rem rgb(from var(--red) r g b / .18);
+}
+
+/* A seta do <select> é imagem escura fixa do Bootstrap; no tema escuro ela
+   some sobre o campo. Imagem não lê token, daí a exceção. */
+body.dark-mode .form-select {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23F3E8DC' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* ---------- botões ---------- */
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.btn-arriba {
+  min-height: 44px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  padding: 9px 16px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-arriba[disabled] { opacity: .6; cursor: progress; }
+
+.btn-arriba:focus-visible,
+.modo:focus-visible,
+a:focus-visible,
+pre:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+}
+
+.btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
+.btn-red-arriba:hover { background: var(--rw-red-ink); color: var(--rw-on-primary); }
+
+.btn-outline-arriba { background: transparent; border-color: var(--line-strong); color: var(--ink); }
+.btn-outline-arriba:hover { background: var(--surface-soft); color: var(--ink); }
+
+.btn-pequeno { min-height: 36px; padding: 5px 11px; font-size: .86rem; }
+
+.btn-arriba[data-estado="copiado"] { border-color: var(--rw-ok); color: var(--ok-ink); }
+
+/* ---------- linha de estado e selos ---------- */
+
+/* O espaço fica reservado mesmo vazia, para o que vem embaixo não pular. */
+.status-linha {
+  margin: 12px 0 0;
+  min-height: 1.45em;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.45;
+}
+
+.status-linha[data-tipo="ok"] { color: var(--ok-ink); font-weight: 700; }
+.status-linha[data-tipo="erro"] { color: var(--danger-ink); font-weight: 700; }
+
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: .8rem;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* A situação nunca é só cor: cada selo traz ícone e palavra. */
+.selo[data-tipo="ok"] { border-color: var(--rw-ok); color: var(--ok-ink); }
+.selo[data-tipo="aviso"] { border-color: var(--rw-warn); color: var(--warn-ink); }
+.selo[data-tipo="erro"] { border-color: var(--rw-danger); color: var(--danger-ink); }
+
+/* ---------- pares rótulo/valor ---------- */
+
+.dados {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) minmax(0, 1fr);
+  gap: 8px 18px;
+  margin: 0;
+}
+
+.dados dt { color: var(--muted); font-weight: 700; font-size: .9rem; }
+.dados dd { margin: 0; overflow-wrap: anywhere; }
+
+.valor-grande {
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.mono { font-family: Consolas, Monaco, monospace; font-size: .88rem; }
+
+.nota {
+  border-left: 4px solid var(--gold);
+  background: var(--surface-soft);
+  padding: 10px 14px;
+  border-radius: 7px;
+  font-size: .88rem;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 14px 0 0;
+}
+
+.grade-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.topo-cartao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  margin-bottom: 14px;
+}
+
+.topo-cartao h2 { margin: 0; }
+
+/* Escuro nos dois temas: superfície fixa, com o texto fixo que a acompanha. */
+.caixa-codigo {
+  background: var(--rw-dark);
+  color: var(--rw-on-dark);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
+  font-family: Consolas, Monaco, monospace;
+  font-size: .86rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- modos (DNS) ---------- */
+
+.modos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.modo {
+  min-height: 44px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.modo:hover { background: var(--surface-soft); }
+
+.modo[aria-pressed="true"] {
+  background: var(--blue-soft);
+  border-color: var(--red);
+}
+
+/* ---------- resultados (DNS) ---------- */
+
+.resultados { display: grid; gap: 12px; margin-top: 18px; }
+.resultados:empty { display: none; }
+
+.resumo-geral {
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.item {
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--surface);
+  min-width: 0;
+}
+
+.item[data-tipo="ok"] { border-left-color: var(--rw-ok); }
+.item[data-tipo="aviso"] { border-left-color: var(--rw-warn); }
+.item[data-tipo="erro"] { border-left-color: var(--rw-danger); }
+
+.item-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-bottom: 6px;
+}
+
+.item-nome { font-weight: 800; overflow-wrap: anywhere; min-width: 0; }
+.item p { margin: 6px 0 0; line-height: 1.5; }
+.item ul { margin: 6px 0 0; padding-left: 20px; line-height: 1.5; }
+.item .dados { margin-top: 8px; grid-template-columns: minmax(84px, max-content) minmax(0, 1fr); gap: 4px 12px; }
+.item .dados dd { font-family: Consolas, Monaco, monospace; font-size: .86rem; }
+
+.tabela-rolagem { overflow-x: auto; }
+
+table.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+
+.tabela th,
+.tabela td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.tabela th { color: var(--muted); font-weight: 800; font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; }
+.tabela td.mono { overflow-wrap: anywhere; }
+
+.hidden { display: none !important; }
+
+@media (max-width: 760px) {
+  .grade-2 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; }
+  .container-page { width: calc(100% - 32px); }
+  .card-section { padding: 18px 16px; }
+  .dados { grid-template-columns: 1fr; gap: 2px; }
+  .dados dd { margin-bottom: 8px; }
+  .acoes .btn-arriba:not(.btn-pequeno) { flex: 1 1 100%; justify-content: center; }
+}

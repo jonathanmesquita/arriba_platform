@@ -63,20 +63,16 @@ removidos. Aqui não há PR nem commit anterior a essa data.
 
 ---
 
-## ⏳ A Vercel ainda não está ligada a este repositório
+## ✅ ~~A Vercel ainda não está ligada a este repositório~~
 
-Conferido em 16/11 com o primeiro PR daqui: os testes automáticos rodaram, mas a Vercel não
-apareceu no PR nem no commit mesclado, e o GitHub não registra nenhum deploy deste
-repositório. No antigo, todo PR trazia a verificação dela. O site segue no ar com a última
-versão publicada de lá — igual a esta, fora documentos —, mas **mudança nova não é
-publicada** até a ligação ser refeita.
+**Resolvido em 16/11:** o dono refez a ligação. O que tinha acontecido: ao renomear o
+repositório antigo, o GitHub manteve a integração apontando para ele (a ligação é pelo
+número do repositório, não pelo nome), então a Vercel continuou seguindo o
+`arriba_platform_antigo` e publicando o commit de 13/11. Nada do que foi mesclado aqui
+depois disso chegava ao ar.
 
-**O que trava (só o dono faz):** no projeto da Vercel, *Settings → Git*: desconectar o
-repositório atual e conectar `arriba_platform`. Se ele não aparecer na lista, liberar o
-acesso em GitHub → *Settings → Applications → Vercel → Configure*. Para conferir depois:
-o próximo PR deve mostrar a verificação da Vercel.
-
-- **Solução:** _(religar)_
+**Como conferir que continua certo:** no deploy de produção, o commit em "Source" tem de
+ser um da `main` **deste** repositório.
 
 ---
 

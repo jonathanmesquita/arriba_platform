@@ -60,7 +60,23 @@ pelo dono (conferido na lista de repositórios no mesmo dia). É lá que ficam a
 antigas e os 25 PRs — e, neles, os manuais com nome de cliente e as imagens de terceiros
 removidos. Aqui não há PR nem commit anterior a essa data.
 
-Falta só religar a Vercel a este repositório, para o deploy automático voltar.
+
+---
+
+## ⏳ A Vercel ainda não está ligada a este repositório
+
+Conferido em 16/11 com o primeiro PR daqui: os testes automáticos rodaram, mas a Vercel não
+apareceu no PR nem no commit mesclado, e o GitHub não registra nenhum deploy deste
+repositório. No antigo, todo PR trazia a verificação dela. O site segue no ar com a última
+versão publicada de lá — igual a esta, fora documentos —, mas **mudança nova não é
+publicada** até a ligação ser refeita.
+
+**O que trava (só o dono faz):** no projeto da Vercel, *Settings → Git*: desconectar o
+repositório atual e conectar `arriba_platform`. Se ele não aparecer na lista, liberar o
+acesso em GitHub → *Settings → Applications → Vercel → Configure*. Para conferir depois:
+o próximo PR deve mostrar a verificação da Vercel.
+
+- **Solução:** _(religar)_
 
 ---
 

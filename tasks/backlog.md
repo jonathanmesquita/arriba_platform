@@ -4,6 +4,9 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 
 ## Qualidade do site
 
+- [ ] Decidir o que fazer com `assets/icons/favicon_old.ico` 📅 2026-11-16 🔽 baixa #area/site #esforco/p 🤖
+  - Contexto: é o ícone cinza anterior, renomeado pelo dono ao subir o novo; nenhuma página o referencia (conferido com grep)
+  - Ação: apagar, se a cópia não for mais necessária — o git guarda o arquivo de qualquer forma
 - [ ] Campos de texto continuam brancos no tema escuro nas telas de CSV→JSON e hash 📅 2026-11-13 🔽 baixa #area/site #esforco/p 🤖
   - Contexto: o `.form-control` do Bootstrap pinta fundo branco fixo; o texto digitado fica legível (passa no contraste), mas a caixa branca destoa do tema escuro
   - Local: `tools/dados/csv-to-json/csv-to-json.html`, `tools/dados/hash-generator/hash-generator.html`

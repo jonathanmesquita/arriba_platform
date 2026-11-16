@@ -371,6 +371,16 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do pacote npm
   (`npm pack <pkg>@<versão>` → `openssl dgst -sha384 -binary <arquivo> | openssl base64 -A`).
   **Sempre pinar versão exata**: tag flutuante muda sozinha e impede fixar hash.
+- **Ícone do site** (`assets/icons/`, nov/2026): o **mascote do projeto** (o sapo verde de
+  `assets/img/frames_arriba/`, o mesmo do chat), em arte de pixel. `favicon.ico` traz 16,
+  32, 48 e 64 — **desenho feito pelo dono**, não reamostrado por script. `apple-touch-icon.png`
+  (180) é gerado a partir do 64 do `.ico`, com dois cuidados: **vizinho mais próximo**, senão
+  a reamostragem suave borra o quadriculado da arte, e **fundo opaco** (`--rw-bg`, areia) sem
+  canto arredondado nosso, porque o iOS ignora transparência e aplica a máscara dele.
+  As páginas linkam os dois, com `sizes` no `.ico` para o navegador escolher o tamanho certo.
+  - Ao trocar a arte, refazer o `apple-touch-icon.png` a partir do novo `.ico` e conferir que
+    ele **decodifica** no navegador (`new Image().decode()`), não só que o arquivo é servido.
+  - `favicon_old.ico` é o ícone cinza anterior, guardado pelo dono; nenhuma página o usa.
 - **Imagens: só o que é do projeto.** `assets/img/` guarda o fundo e o cartão do topo da
   home, as bandeiras de idioma e o mascote (o sapo laranja em uso e o desenho antigo, de
   backup). Em nov/2026 saíram 233 arquivos que não eram: logos de bancos, logo de empresa e

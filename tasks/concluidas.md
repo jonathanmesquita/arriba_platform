@@ -3,6 +3,7 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] CNAB 400: validação de conteúdo na leitura (erros e avisos por linha e campo) e antes de gerar (campo marcado, download bloqueado com erro, arquivo gerado conferido pelas mesmas regras); 33 de 48 defeitos que passavam sem aviso agora são pegos, e 6 jeitos de o gerador gravar dado errado em silêncio viraram erro ✅ 2026-11-17 #area/ferramentas
 - [x] Gerador de dados fictícios revisado para uso rápido: gera sozinho, "Copiar" junto do resultado, menu com rótulos curtos, seletor no celular, opções lembradas, arquivo igual à tela; README da ferramenta reescrito ✅ 2026-11-13 #area/ferramentas
 - [x] Histórico do git recomeçado num repositório novo, com um commit único; o anterior foi renomeado pelo dono e uma cópia do histórico antigo foi entregue a ele. Nomes de cliente e de produto saíram também dos documentos ✅ 2026-11-13 #area/infra
 - [x] Dígito do RG conferido contra um gerador de referência (caso incluído nos testes) ✅ 2026-11-13 #area/ferramentas

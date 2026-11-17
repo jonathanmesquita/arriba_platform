@@ -25,6 +25,14 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 
 ## Ferramentas
 
+- [ ] CNAB: conferir o dígito verificador do CPF/CNPJ do pagador na leitura e no gerador 📅 2026-11-17 🔽 baixa #area/ferramentas #esforco/p 🤖
+  - Contexto: o algoritmo do CPF/CNPJ é público e já está testado em `assets/js/fake-data-br.js`; hoje o CNAB só confere tamanho e se é dígito (`validacao.js`)
+  - Local: `tools/cobranca/cnab400/validacao.js` (`validarValor`, `validarLinhas`), campo `numInscPagador`
+  - Ação: validar só quando `codInscPagador` indica CPF (01) ou CNPJ (02); aviso, não erro, enquanto o tipo não for confirmado no manual de cada banco
+- [ ] CNAB: dígito verificador do nosso número, tabelas de espécie/instrução por banco e validador de CNAB 240 📅 2026-11-17 🔺 alta #area/ferramentas #esforco/g 🤖
+  - Contexto: precisa do manual de cada banco; a sessão não abriu os PDFs (rede) e não preencheu de memória
+  - Ação: ver `tasks/decisoes-pendentes.md` ("Manuais de CNAB") — destravar o acesso e então implementar item a item, marcando `naoConfirmado` o que não achar na fonte
+
 - [ ] Mais bancos no validador CNAB 400 📅 2026-10-01 🔽 baixa #area/ferramentas #esforco/g
   - Contexto: a arquitetura já suporta (criar `banks/<banco>.js` e registrar no registry).
   - Local: `tools/cobranca/cnab400/banks/`

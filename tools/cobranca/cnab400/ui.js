@@ -14,6 +14,7 @@
 
 import { BANKS } from "./banks/registry.js";
 import { parseArquivo, gerarArquivo } from "./engine.js";
+import { lerEValidar, validarValor, validarLinhas } from "./validacao.js";
 
 let currentBank = null; // { code, nome, config }
 let currentDirecao = "retorno"; // "remessa" | "retorno"
@@ -219,7 +220,7 @@ function runParse() {
   }
 
   try {
-    const data = parseArquivo(text, direcaoConfig());
+    const data = lerEValidar(text, direcaoConfig(), { direcao: currentDirecao });
     lastParsedData = data;
 
     document.getElementById("chipLines").textContent = data.totalLinhas;
@@ -233,34 +234,48 @@ function runParse() {
     renderTitulos(data.titulos);
     document.getElementById("readerResult").classList.remove("hidden");
 
-    const msg = hValid
-      ? `Arquivo lido: ${data.titulos.length} título(s) extraído(s).`
-      : "Header inválido — " + data.header._erros.join("; ");
-    setMsg("readerMsg", msg, hValid ? "ok" : "error");
+    const nErros = data.erros.length;
+    let msg;
+    let tipo;
+    if (!hValid) { msg = "Header inválido — " + data.header._erros.join("; "); tipo = "error"; }
+    else if (nErros) {
+      msg = `Arquivo lido, mas com ${nErros} ${nErros === 1 ? "erro" : "erros"} de conteúdo: ${data.titulos.length} título(s) extraído(s).`;
+      tipo = "error";
+    } else {
+      msg = `Arquivo lido: ${data.titulos.length} título(s) extraído(s), sem erros de conteúdo.`;
+      tipo = "ok";
+    }
+    setMsg("readerMsg", msg, tipo);
 
     // Avisos ganham bloco próprio, e TODOS aparecem: antes ficavam
     // espremidos na mesma linha da mensagem, cortados nos 3 primeiros, e
     // só apareciam quando o header era válido — ou seja, num arquivo com
     // header ruim os problemas de estrutura ficavam invisíveis.
-    renderAvisos(data.avisos);
+    renderAvisos(data.avisos, data.problemas);
   } catch (err) {
     lastParsedData = null;
     setMsg("readerMsg", "Erro ao processar: " + err.message, "error");
   }
 }
 
-function renderAvisos(avisos = []) {
+// Mostra tudo o que a leitura encontrou, em duas listas: erros (o conteúdo
+// está objetivamente errado) e avisos (provável problema ou estrutura).
+function renderAvisos(avisosEstrutura = [], problemas = []) {
   const box = document.getElementById("readerAvisos");
   if (!box) return;
-  if (!avisos.length) {
+  const erros = problemas.filter(p => p.nivel === "erro").map(p => p.mensagem);
+  const avisos = [...avisosEstrutura, ...problemas.filter(p => p.nivel === "aviso").map(p => p.mensagem)];
+  if (!erros.length && !avisos.length) {
     box.classList.add("hidden");
     box.innerHTML = "";
     return;
   }
+  const lista = (titulo, itens) => itens.length
+    ? `<strong>${titulo}</strong><ul>${itens.map(a => `<li>${escHtml(a)}</li>`).join("")}</ul>` : "";
   box.classList.remove("hidden");
-  box.innerHTML = `
-    <strong>⚠️ ${avisos.length} ${avisos.length === 1 ? "aviso de estrutura" : "avisos de estrutura"}</strong>
-    <ul>${avisos.map(a => `<li>${escHtml(a)}</li>`).join("")}</ul>`;
+  box.innerHTML =
+    lista(`${erros.length} ${erros.length === 1 ? "erro" : "erros"} de conteúdo`, erros) +
+    lista(`${avisos.length} ${avisos.length === 1 ? "aviso" : "avisos"}`, avisos);
 }
 
 function renderTitulos(titulos) {
@@ -484,6 +499,7 @@ function generatorViewHtml() {
     </div>
 
     <div class="validation-msg" id="genMsg">Preencha os campos e gere o arquivo, ou importe um arquivo acima para editar.</div>
+    <div class="validation-msg warn hidden" id="genProblemas"></div>
     <pre class="gen-preview hidden" id="genPreview"></pre>`;
 }
 
@@ -531,29 +547,108 @@ function collectGenerator() {
   return { header, detalhes };
 }
 
+// Valida o que está digitado ANTES de gerar. O gerador completa e corta sem
+// avisar (letra some, número perde os dígitos da esquerda, texto é cortado),
+// então a conferência olha o texto bruto do campo, não o valor já tratado.
+function limparMarcas(container) {
+  container.querySelectorAll(".field-erro").forEach(n => n.remove());
+  container.querySelectorAll("[data-k]").forEach(el => {
+    el.classList.remove("field-invalid");
+    el.removeAttribute("aria-invalid");
+  });
+}
+
+function validarFormulario(container, kind, rotuloLinha) {
+  const problemas = [];
+  limparMarcas(container);
+  container.querySelectorAll("[data-k]").forEach(el => {
+    const def = fieldDef(el.dataset.k, kind);
+    if (!def) return;
+    const achados = validarValor(def, el.value);
+    if (!achados.length) return;
+    const nome = def.nome || def.key;
+    for (const a of achados) problemas.push({ nivel: a.nivel, texto: `${rotuloLinha}, ${nome}: ${a.mensagem}` });
+    const erro = achados.find(a => a.nivel === "erro");
+    if (erro) { el.classList.add("field-invalid"); el.setAttribute("aria-invalid", "true"); }
+    const nota = document.createElement("div");
+    nota.className = "field-erro" + (erro ? "" : " aviso");
+    nota.textContent = achados.map(a => a.mensagem).join(" ");
+    el.insertAdjacentElement("afterend", nota);
+  });
+  return problemas;
+}
+
+function mostrarProblemasDoGerador(erros, avisos) {
+  const box = document.getElementById("genProblemas");
+  if (!box) return;
+  if (!erros.length && !avisos.length) { box.classList.add("hidden"); box.innerHTML = ""; return; }
+  const lista = (titulo, itens) => itens.length
+    ? `<strong>${titulo}</strong><ul>${itens.map(t => `<li>${escHtml(t)}</li>`).join("")}</ul>` : "";
+  box.classList.remove("hidden");
+  box.innerHTML =
+    lista(`${erros.length} ${erros.length === 1 ? "erro" : "erros"} — o arquivo não foi gerado`, erros) +
+    lista(`${avisos.length} ${avisos.length === 1 ? "aviso" : "avisos"}`, avisos);
+}
+
 function runGenerate() {
   const headerContainer = document.querySelector(".form-grid");
   const rows = [...document.querySelectorAll("#detRows .det-row")];
+  const preview = document.getElementById("genPreview");
+
+  const bloquear = () => {
+    lastGeneratedLines = null;
+    document.getElementById("btnDownload").disabled = true;
+    preview.classList.add("hidden");
+  };
+
+  if (!rows.length) { bloquear(); setMsg("genMsg", "Adicione ao menos um título.", "error"); return; }
 
   const headerOk = validarObrigatorios(headerContainer, "header");
   const rowsOk = rows.every(row => validarObrigatorios(row, "detalhe"));
 
-  if (!rows.length) { setMsg("genMsg", "Adicione ao menos um título.", "error"); return; }
-  if (!headerOk || !rowsOk) { setMsg("genMsg", "Preencha os campos obrigatórios destacados em vermelho.", "error"); return; }
+  // Obrigatórios vazios também entram no conjunto (a marcação vermelha é
+  // refeita pela conferência abaixo, que limpa e remarca).
+  const problemas = [
+    ...validarFormulario(headerContainer, "header", "Cabeçalho"),
+    ...rows.flatMap((row, i) => validarFormulario(row, "detalhe", `Título ${i + 1}`)),
+  ];
+  const erros = problemas.filter(p => p.nivel === "erro").map(p => p.texto);
+  const avisos = problemas.filter(p => p.nivel === "aviso").map(p => p.texto);
 
+  if (erros.length || !headerOk || !rowsOk) {
+    bloquear();
+    mostrarProblemasDoGerador(erros, avisos);
+    setMsg("genMsg", `Corrija os campos destacados em vermelho (${erros.length} ${erros.length === 1 ? "erro" : "erros"}) para gerar o arquivo.`, "error");
+    return;
+  }
+
+  const cfg = direcaoConfig();
   const { header, detalhes } = collectGenerator();
-  const linhas = gerarArquivo(direcaoConfig(), { header, detalhes });
-  const allOk = linhas.every(l => l.length === 400);
-  const preview = document.getElementById("genPreview");
+  const linhas = gerarArquivo(cfg, { header, detalhes });
+  const tamanho = cfg.tamanhoRegistro || 400;
+  const allOk = linhas.every(l => l.length === tamanho);
+
+  // Autoverificação: o arquivo gerado passa pelas mesmas regras da leitura.
+  // Se aparecer erro aqui, o defeito é do gerador/layout, não de quem digitou.
+  const doArquivo = validarLinhas(linhas, cfg, { direcao: currentDirecao });
+  const errosArquivo = doArquivo.filter(p => p.nivel === "erro").map(p => p.mensagem);
+  // Acento já foi avisado pelo formulário, junto do campo: não repetir.
+  const avisosArquivo = doArquivo.filter(p => p.nivel === "aviso" && p.codigo !== "acento").map(p => p.mensagem);
+  mostrarProblemasDoGerador(errosArquivo, [...avisos, ...avisosArquivo]);
+
   preview.textContent = linhas.join("\n");
   preview.classList.remove("hidden");
+
+  const bom = allOk && !errosArquivo.length;
   setMsg(
     "genMsg",
-    `Arquivo gerado: ${linhas.length} linha(s). Comprimento das linhas: ${allOk ? "todas com 400 ✓" : "DIVERGENTE ✗"}.`,
-    allOk ? "ok" : "error"
+    bom
+      ? `Arquivo gerado: ${linhas.length} linha(s), todas com ${tamanho} posições, e conferido pelas mesmas regras da leitura: sem erros.`
+      : `Arquivo gerado com problema: ${allOk ? "" : "linhas com tamanho divergente; "}${errosArquivo.length} erro(s) na conferência. Download bloqueado.`,
+    bom ? "ok" : "error"
   );
-  lastGeneratedLines = allOk ? linhas : null;
-  document.getElementById("btnDownload").disabled = !allOk;
+  lastGeneratedLines = bom ? linhas : null;
+  document.getElementById("btnDownload").disabled = !bom;
 }
 
 function downloadFile() {

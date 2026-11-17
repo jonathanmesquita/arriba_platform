@@ -247,3 +247,25 @@ site estático. Pode continuar aqui (com `.vercelignore` excluindo do deploy) ou
 repositório próprio via `git subtree`.
 
 - **Solução:** _(aqui ou repositório próprio)_
+
+---
+
+## 🙋 Manuais de CNAB: liberar o acesso e dizer o que é "a página"
+
+A validação de conteúdo do CNAB 400 foi feita (ver `CLAUDE.md`), mas a pesquisa das regras de
+cada banco ficou **parcial**: a rede da sessão bloqueia os sites dos bancos e só entraram
+resumos de busca — nenhuma regra foi preenchida de memória.
+
+**O que trava:** dígito verificador do nosso número, tabelas de espécie e instrução por banco e
+qualquer coisa de CNAB 240 (estrutura de lotes e segmentos P/Q/R/S/T/U).
+
+1. **Liberar os domínios** em *Network access* do ambiente (menu da nuvem no título da sessão →
+   Edit → Allowed domains; <https://code.claude.com/docs/en/cloud-environments#network-access>):
+   `download.itau.com.br`, `www.bb.com.br`, `www.sicredi.com.br`, `cms.santander.com.br`,
+   `www.banrisul.com.br`, `qive.com.br`, `cms-assets-p.c6bank.com.br`, `febraban.org.br`,
+   `tdn.totvs.com`.
+2. **Dizer o que é "a página" pedida:** uma ferramenta nova de **CNAB 240** (validar/gerar), uma
+   página de **referência das regras** (texto, sem ferramenta), ou as duas?
+
+O trabalho que não depende disso segue pelo que está no `tasks/backlog.md`.
+

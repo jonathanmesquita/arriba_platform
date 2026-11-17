@@ -253,11 +253,15 @@ function formatarReais(valor) {
 }
 
 // Lê um arquivo de retorno CNAB 400 conforme o config do banco escolhido.
-export function parseArquivo(texto, config) {
-  const lines = String(texto || "")
+export function dividirLinhas(texto) {
+  return String(texto || "")
     .split(String.fromCharCode(0x1a)).join("")
     .split(/\r\n|\r|\n/)
     .filter(l => l.length > 0);
+}
+
+export function parseArquivo(texto, config) {
+  const lines = dividirLinhas(texto);
 
   if (lines.length === 0) throw new Error("Arquivo vazio.");
 

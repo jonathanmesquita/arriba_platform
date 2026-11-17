@@ -180,6 +180,27 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   não existe — é o que pega arquivo truncado ou editado à mão. Opt-in por banco via
   `config.trailerConferencia`. O valor esperado sai da mesma regra da geração
   (`trailerTotalFn`/`trailerTotalKey`), para validação e geração não divergirem.
+- **Validação de conteúdo do CNAB** (`validacao.js`, nov/2026): até então o motor **lia** e
+  **gerava**, mas não dizia quando o conteúdo estava errado — 33 de 48 defeitos plantados
+  (letra no valor, data 99/99/99, sequencial repetido…) passavam sem nenhum aviso, e o gerador
+  gravava dado errado em silêncio (`padField` tira a letra, perde os dígitos da esquerda e
+  corta o texto). Agora há dois lados, sem DOM e com testes (`scripts/tests/cnab400-validacao.test.mjs`):
+  - **Leitura:** `lerEValidar(texto, config, { direcao })` = `parseArquivo` + `problemas`
+    estruturados (`nivel`, `linha`, `campo`, posições, `mensagem`). `avisos` (strings do motor)
+    continua como estava. **Erro** é o que é certo: letra em campo numérico, data impossível,
+    campo `fixo` diferente no detalhe/trailer, caractere de controle. **Aviso** é o provável:
+    sequencial fora de ordem, ocorrência fora da tabela, tipo de registro não descrito, acento,
+    nosso número repetido (**só na remessa** — no retorno o mesmo título repete de verdade).
+  - **Geração:** `validarValor`/`validarDados` olham o **texto digitado**, antes do `padField`
+    (que já esconde o problema). A tela marca o campo, escreve o motivo embaixo dele, **bloqueia
+    o download com erro** e, depois de gerar, passa o arquivo pelas mesmas regras da leitura
+    (autoverificação: erro ali é defeito do layout, não de quem digitou). Pontuação de CPF/CEP
+    é tolerada; ano fora de 1971–2070 em DDMMAA é erro (leria outro século).
+  - **Campo numérico em branco não é reportado** de propósito: não há fonte confirmando se cada
+    layout quer zeros ou brancos. A regra do projeto continua — o que não se confirma em fonte
+    não vira erro. **Não estão implementados** (dependem do manual do banco, que a sessão não
+    conseguiu abrir): dígito verificador do nosso número, tabelas de espécie e instrução, e
+    qualquer regra de CNAB 240. Estão em `tasks/backlog.md` e `tasks/decisoes-pendentes.md`.
 - **Ícone do banco na UI** (`ui.js`, `bankIconHtml`): um ícone **neutro** de banco, igual
   para todos. **Não há logo de banco no repositório** (nov/2026): os 3 que apareciam na tela
   e a biblioteca de 205 SVGs saíram, por serem marca registrada de terceiro. O que identifica
@@ -402,7 +423,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 
 Entregue e funcionando:
 
-- Validador CNAB 400 (Bradesco, Itaú e BMP), validar e gerar, com conferência de trailer.
+- Validador CNAB 400 (Bradesco, Itaú e BMP), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.
 - Rede e diagnóstico: "Meu IP, navegador e sistema" e "Conferir DNS e e-mail de um domínio"

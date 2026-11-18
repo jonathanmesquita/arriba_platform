@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Confere a estrutura de um arquivo CNAB 240: tamanho das linhas, lotes, tipos de registro e totais dos trailers, direto no navegador." />
+
+  <title>Conferir a estrutura de um arquivo CNAB 240 - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" sizes="16x16 32x32 48x48 64x64" />
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../rede/rede.css">
+  <style>
+    /* Link do Bootstrap é azul fixo e reprova sobre a areia; tinta do projeto. */
+    main a:not(.btn-arriba) { color: var(--rw-red-ink); }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../../index.html" class="brand">ARRIBA</a>
+    <a href="../../../index.html" class="back-link">← Voltar para o início</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Arquivo bancário · Padrão CNAB 240</span>
+      <h1>Conferir a estrutura de um arquivo CNAB 240</h1>
+      <p>
+        Cole o conteúdo ou envie um arquivo <strong>.REM/.RET/.TXT</strong> de 240 posições. A tela confere
+        o tamanho das linhas, a ordem dos registros (arquivo → lotes → detalhes), os números de lote e os
+        totais dos trailers. Tudo no navegador; nada é enviado a servidor.
+      </p>
+    </div>
+  </section>
+
+  <main class="container-page section">
+    <section class="panel card-section">
+      <h2>Arquivo</h2>
+      <p class="descricao">
+        Dica: o arquivo é lido como texto Latin-1, o formato de troca dos bancos. Para conferir um arquivo do
+        CNAB 400, use a tela do <a href="../cnab400/cnab400.html">arquivo bancário (CNAB 400)</a>.
+      </p>
+
+      <label for="arquivo240">Enviar arquivo</label>
+      <input type="file" id="arquivo240" class="form-control" accept=".rem,.ret,.txt,.cnab" />
+
+      <label for="texto240" style="margin-top:14px">…ou colar o conteúdo</label>
+      <textarea id="texto240" class="form-control" spellcheck="false" autocomplete="off" aria-describedby="dica240"
+        placeholder="Cada linha do arquivo tem 240 caracteres."></textarea>
+      <p class="dica" id="dica240">
+        Linhas de outro tamanho são apontadas, e o conteúdo delas não é conferido (os campos ficariam deslocados).
+      </p>
+
+      <div class="acoes">
+        <button type="button" class="btn-arriba btn-red-arriba" id="btnValidar240">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>Conferir estrutura
+        </button>
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnExemplo240">
+          <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>Carregar exemplo (só a estrutura)
+        </button>
+        <button type="button" class="btn-arriba btn-outline-arriba" id="btnLimpar240">
+          <i class="fa-solid fa-eraser" aria-hidden="true"></i>Limpar
+        </button>
+      </div>
+      <p class="status-linha" id="status240" role="status"></p>
+    </section>
+
+    <section class="panel card-section hidden" id="resultado240" aria-live="polite">
+      <div class="topo-cartao">
+        <h2>Resultado</h2>
+        <span id="selos240"></span>
+      </div>
+      <div id="resumo240"></div>
+      <div id="listas240" class="resultados"></div>
+      <div id="lotes240" class="tabela-rolagem"></div>
+    </section>
+
+    <section class="panel card-section">
+      <h2>O que esta tela confere — e o que não confere</h2>
+      <div class="grade-2">
+        <div>
+          <h3>Confere</h3>
+          <ul class="descricao">
+            <li>Todas as linhas com 240 caracteres.</li>
+            <li>Código do banco (posições 1–3) e lote (4–7) numéricos.</li>
+            <li>Primeira linha Header de arquivo, com lote 0000; última linha Trailer de arquivo.</li>
+            <li>Cada lote: Header de lote → detalhes → Trailer de lote, com o mesmo número de lote.</li>
+            <li>Sequencial dos detalhes no lote (9–13) e código do segmento (14).</li>
+            <li>Totais do Trailer de arquivo (lotes e registros) e do Trailer de lote.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Não confere</h3>
+          <ul class="descricao">
+            <li>Os campos <strong>dentro</strong> de cada segmento (valores, datas, nosso número, ocorrências): cada banco adapta o layout, e sem o manual do banco qualquer regra ali seria palpite.</li>
+            <li>Dígito verificador do nosso número e tabelas de códigos por banco.</li>
+            <li>Não há modo "gerar" para o 240 pelo mesmo motivo; o <a href="../cnab400/cnab400.html">CNAB 400</a> gera arquivo para três bancos.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="nota">
+        Veja o que cada padrão define e as fontes consultadas em
+        <a href="../../../pages/docs/padroes-cnab.html">Padrões CNAB 240 e 400: o que cada um define</a>.
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initThemeToggle } from "../../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+</html>

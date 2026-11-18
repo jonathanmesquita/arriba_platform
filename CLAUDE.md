@@ -210,6 +210,19 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   nos layouts também é fictício: um nome de empresa e um CNPJ que vieram de um manual foram
   trocados. A validação já achou um conflito real nos dados (Bradesco retorno, "Carteira": 1
   posição declarada, exemplo de 2 dígitos) — está em `tasks/backlog.md`.
+- **CNAB 240** (`tools/cobranca/cnab240/`, nov/2026): confere só a **estrutura** — o que as
+  fontes consultadas confirmam: tamanho da linha (240), banco (1–3), lote (4–7), tipo de
+  registro (8: 0, 1, 3, 5, 9), sequencial no lote (9–13) e segmento (14) nos detalhes, e os
+  totais dos trailers (lote 18–23; arquivo 18–23 lotes e 24–29 registros, header e trailers
+  incluídos). A lógica é `validacao240.js` (sem DOM, `scripts/tests/cnab240.test.mjs`); a tela
+  só desenha. **Não há campo de dentro de segmento nem modo "gerar"**: cada banco adapta o layout
+  e os manuais não abriram a partir da sessão (rede), então qualquer posição ali seria palpite —
+  a tela diz isso. Quando os manuais forem lidos, o caminho é o mesmo do CNAB 400: um arquivo por
+  banco declarando os campos (`naoConfirmado` onde faltar fonte). **Trailer de lote que não fecha é
+  aviso, não erro** (a contagem inclui header e trailer do lote no padrão FEBRABAN, mas o manual do
+  banco manda). `pages/docs/padroes-cnab.html` é a página de referência: o que 240 e 400 definem,
+  com as fontes. **Atenção à premissa:** só o 240 é padrão FEBRABAN com estrutura comum; o 400 é
+  descrito banco a banco — por isso o projeto tem um layout de 400 *por banco*.
 - **Ícone do banco na UI** (`ui.js`, `bankIconHtml`): um ícone **neutro** de banco, igual
   para todos. **Não há logo de banco no repositório** (nov/2026): os 3 que apareciam na tela
   e a biblioteca de 205 SVGs saíram, por serem marca registrada de terceiro. O que identifica
@@ -433,6 +446,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 Entregue e funcionando:
 
 - Validador CNAB 400 (Bradesco, Itaú e BMP), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
+- CNAB 240: conferência de estrutura (lotes, tipos de registro, trailers) e página de referência dos padrões 240 e 400.
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.
 - Rede e diagnóstico: "Meu IP, navegador e sistema" e "Conferir DNS e e-mail de um domínio"

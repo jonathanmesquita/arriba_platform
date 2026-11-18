@@ -94,6 +94,7 @@ memory. No secret is ever shipped with the static site. Other servers only exist
 | Tool | What it does |
 |---|---|
 | **Bank file validator (CNAB 400)** | Reads and generates the fixed-width file banks exchange with companies (three banks), field by field, checks the trailer totals, and flags wrong content (letters in numeric fields, impossible dates, values that would be silently truncated) |
+| **Bank file validator (CNAB 240)** | Checks the structure of a 240-position file (line length, file → batch → detail order, batch numbers, trailer totals). It does not check the fields inside each segment, because every bank adapts that layout; a reference page explains what the 240 and 400 standards define, with sources |
 | **CSV validator** | Separates "is the file well-formed?" (RFC 4180) from "is the content right?" (per-column rules) |
 | **CSV generator by layout** | Builds sample CSV files from a layout — the same source the validator uses |
 | **Test-data generator** | Fictitious names, valid CPF, RG and CNPJ (check digits computed), phones and addresses |

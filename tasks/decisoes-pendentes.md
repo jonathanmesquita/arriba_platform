@@ -264,8 +264,9 @@ qualquer coisa de CNAB 240 (estrutura de lotes e segmentos P/Q/R/S/T/U).
    `download.itau.com.br`, `www.bb.com.br`, `www.sicredi.com.br`, `cms.santander.com.br`,
    `www.banrisul.com.br`, `qive.com.br`, `cms-assets-p.c6bank.com.br`, `febraban.org.br`,
    `tdn.totvs.com`.
-2. **Dizer o que é "a página" pedida:** uma ferramenta nova de **CNAB 240** (validar/gerar), uma
-   página de **referência das regras** (texto, sem ferramenta), ou as duas?
+2. ~~Dizer o que é "a página" pedida~~ — respondido em 18/11/2026: **as duas**, para CNAB 240 e
+   400. Feitas: conferência de estrutura do 240 e página de referência. Falta o que depende dos
+   manuais (acima): campos de dentro dos segmentos e o modo "gerar" do 240.
 
 O trabalho que não depende disso segue pelo que está no `tasks/backlog.md`.
 

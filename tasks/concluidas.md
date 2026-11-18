@@ -3,6 +3,7 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] CNAB 240: conferência de estrutura (tamanho, lotes, tipos de registro, trailers) e página de referência dos padrões 240 e 400, com fontes; menu, busca e base do chat atualizados ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 400, modo Gerar mais direto: abre pronto (banco, remessa, Gerar), só os obrigatórios à vista, opcionais recolhidos, "Preencher com exemplo" fictício; exemplos de nome/CNPJ que vieram de manual trocados por dados inventados ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 400: validação de conteúdo na leitura (erros e avisos por linha e campo) e antes de gerar (campo marcado, download bloqueado com erro, arquivo gerado conferido pelas mesmas regras); 33 de 48 defeitos que passavam sem aviso agora são pegos, e 6 jeitos de o gerador gravar dado errado em silêncio viraram erro ✅ 2026-11-17 #area/ferramentas
 - [x] Gerador de dados fictícios revisado para uso rápido: gera sozinho, "Copiar" junto do resultado, menu com rótulos curtos, seletor no celular, opções lembradas, arquivo igual à tela; README da ferramenta reescrito ✅ 2026-11-13 #area/ferramentas

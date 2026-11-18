@@ -33,6 +33,10 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
   - Contexto: o campo declara 1 posição, mas o exemplo era "09" (2 dígitos) — a validação do gerador apontou o conflito. O exemplo virou "9" para caber; a largura real não foi confirmada
   - Local: `tools/cobranca/cnab400/banks/bradesco.js:84`
   - Ação: confirmar no manual do banco (ver "Manuais de CNAB" em `decisoes-pendentes.md`) e marcar `naoConfirmado` se continuar sem fonte
+- [ ] CNAB 240: campos de dentro dos segmentos por banco e modo "gerar" 📅 2026-11-18 🔺 alta #area/ferramentas #esforco/g 🤖
+  - Contexto: hoje a tela só confere a estrutura (`tools/cobranca/cnab240/validacao240.js`); o conteúdo dos segmentos P/Q/R/S/T/U muda de banco para banco
+  - Ação: depende dos manuais (ver "Manuais de CNAB" em `decisoes-pendentes.md`); então um arquivo por banco declarando campos, `naoConfirmado` onde faltar fonte, reaproveitando o motor do CNAB 400 onde servir
+  - Observação: linha de tamanho errado não entra na contagem do lote, então o aviso de "trailer de lote não fecha" aparece junto do erro de tamanho — aceitável, mas dá para refinar
 - [ ] CNAB: dígito verificador do nosso número, tabelas de espécie/instrução por banco e validador de CNAB 240 📅 2026-11-17 🔺 alta #area/ferramentas #esforco/g 🤖
   - Contexto: precisa do manual de cada banco; a sessão não abriu os PDFs (rede) e não preencheu de memória
   - Ação: ver `tasks/decisoes-pendentes.md` ("Manuais de CNAB") — destravar o acesso e então implementar item a item, marcando `naoConfirmado` o que não achar na fonte

@@ -211,14 +211,26 @@
     .det-title { font-size: 1.05rem; font-weight: 800; margin: 20px 0 10px; }
     .det-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 40px;
-      gap: 8px; align-items: end;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px 12px; align-items: start;
       border: 1px solid var(--line); border-radius: 10px;
       padding: 12px; margin-bottom: 10px; background: var(--surface-soft);
     }
-    .det-row label { font-size: .76rem; margin-bottom: 3px; }
+    .det-row > div { position: relative; min-width: 0; }
+    /* Rótulo de até três linhas, com o * e o ? no fluxo do texto: a altura mínima mantém os campos alinhados entre si. */
+    .det-row label { display: block; min-height: 3.6em; font-size: .76rem; margin-bottom: 3px; line-height: 1.2; }
     .det-row .form-control, .det-row .form-select { min-height: 38px; font-size: .82rem; }
-    .det-remove { width: 40px; justify-self: end; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger-ink); }
+    /* A ajuda do campo flutua sobre a linha, em vez de empurrar os outros campos. */
+    .det-row .field-help-box {
+      position: absolute; z-index: 20; left: 0; top: calc(100% - 2px);
+      width: max(100%, 250px); max-width: 80vw; margin: 0;
+      background: var(--surface); border: 1px solid var(--line-strong); border-left: 4px solid var(--gold);
+      box-shadow: var(--shadow);
+    }
+    .det-row > div:nth-last-child(-n+3) .field-help-box { left: auto; right: 0; }
+    /* Uma coluna só (celular): não há campo ao lado para alinhar, então o rótulo não reserva altura. */
+    @media (max-width: 520px) { .det-row label { min-height: 0; } }
+    .det-remove { width: 40px; justify-self: end; align-self: end; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger-ink); }
 
     .gen-preview {
       background: #101010; color: #f3f3f3; border-radius: 8px; padding: 16px; margin-top: 16px;

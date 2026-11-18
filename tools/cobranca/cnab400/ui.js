@@ -645,6 +645,7 @@ function preencherExemplo() {
       else if (def.key === "nomePagador") valor = semAcento(gerarNome()).slice(0, tam);
       else if (def.key === "numInscPagador") valor = gerarCpf();
       else if (def.key === "codInscPagador") valor = "01"; // 01 = CPF, o documento gerado acima
+      else if (def.exemploFn) valor = def.exemploFn(indice); // exemplo que depende do título (ex.: com dígito verificador)
       else if (def.key === "nossoNumero" && /^\d+$/.test(valor)) {
         valor = String(BigInt(valor) + BigInt(indice)).padStart(valor.length, "0"); // um número por título
       }

@@ -33,6 +33,10 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
   - Contexto: o campo declara 1 posição, mas o exemplo era "09" (2 dígitos) — a validação do gerador apontou o conflito. O exemplo virou "9" para caber; a largura real não foi confirmada
   - Local: `tools/cobranca/cnab400/banks/bradesco.js:84`
   - Ação: confirmar no manual do banco (ver "Manuais de CNAB" em `decisoes-pendentes.md`) e marcar `naoConfirmado` se continuar sem fonte
+- [ ] CNAB Inter 400: confirmar a numeração "ocorrência 01–04" do trailer do retorno e montar tipos 2 e 3 na tela 📅 2026-11-18 🔽 baixa #area/ferramentas #esforco/m 🤖
+  - Contexto: o manual do Inter não liga os códigos do detalhe (02 aberto, 03 erro, 06 pago, 07 cancelado) à numeração do trailer; hoje o gerador grava o trailer do retorno zerado. Os registros tipo 2 (mensagens, descontos 2 e 3) e tipo 3 (e-mail e beneficiário final) são lidos e validados, mas a tela só monta o tipo 1
+  - Local: `tools/cobranca/cnab400/banks/inter.js` (`RETORNO_TRAILER_FIELDS`, comentário do cabeçalho)
+  - Ação: perguntar ao banco ou achar um arquivo de retorno real; depois ligar `trailerConferencia` e o gerador
 - [ ] CNAB 240: campos de dentro dos segmentos por banco e modo "gerar" 📅 2026-11-18 🔺 alta #area/ferramentas #esforco/g 🤖
   - Contexto: hoje a tela só confere a estrutura (`tools/cobranca/cnab240/validacao240.js`); o conteúdo dos segmentos P/Q/R/S/T/U muda de banco para banco
   - Ação: depende dos manuais (ver "Manuais de CNAB" em `decisoes-pendentes.md`); então um arquivo por banco declarando campos, `naoConfirmado` onde faltar fonte, reaproveitando o motor do CNAB 400 onde servir

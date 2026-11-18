@@ -17,17 +17,30 @@ const trocar = (linha, def, texto) => {
   return linha.slice(0, def.ini - 1) + texto.padEnd(tam, " ").slice(0, tam) + linha.slice(def.fim);
 };
 const campo = (cfg, chave) => cfg.detalheFields.find((d) => d.key === chave);
-// Nosso número diferente por título: repetido é aviso legítimo, e aqui não é o assunto.
+/* Arquivo "como a tela gera": cada campo obrigatório com o exemplo declarado no
+   layout (ou o exemplo calculado por título, como o nosso número com DV). Só o
+   nosso número muda de um título para o outro: repetido seria aviso legítimo. */
+const exemploDe = (def, i) => {
+  if (def.exemploFn) return def.exemploFn(i);
+  if (def.fmt === "valor") return Number(String(def.exemplo ?? "0").replace(/\./g, "").replace(",", ".")) || 0;
+  return def.exemplo;
+};
 const gerar = (cfg) => {
-  const nn = campo(cfg, "nossoNumero");
-  const oc = campo(cfg, "ocorrencia");
-  const codigo = Object.keys(cfg.ocorrencias || {})[0];
-  const detalhes = [1, 2].map((i) => ({
-    valorTitulo: 100 + i,
-    ...(nn ? { nossoNumero: String(i) } : {}),
-    ...(oc && codigo ? { ocorrencia: codigo } : {}),   // vazio viraria "00", que não consta na tabela
-  }));
-  return gerarArquivo(cfg, { header: {}, detalhes });
+  const doBloco = (chaves, defs, i) => Object.fromEntries(
+    (chaves || [])
+      .map((k) => defs.find((d) => d.key === k))
+      .filter((d) => d && d.obrigatorio && exemploDe(d, i) !== undefined)
+      .map((d) => [d.key, exemploDe(d, i)]));
+  const detalhes = [1, 2].map((i) => {
+    const d = { valorTitulo: 100 + i, ...doBloco(cfg.formFields?.detalhe, cfg.detalheFields, i) };
+    const nn = campo(cfg, "nossoNumero");
+    if (nn && !nn.exemploFn) d.nossoNumero = String(i);
+    const oc = campo(cfg, "ocorrencia");
+    const codigo = Object.keys(cfg.ocorrencias || {})[0];
+    if (oc && codigo) d.ocorrencia = codigo;   // vazio viraria "00", que não consta na tabela
+    return d;
+  });
+  return gerarArquivo(cfg, { header: doBloco(cfg.formFields?.header, cfg.headerFields, 0), detalhes });
 };
 
 test("arquivo gerado pelo próprio site não gera erro nem aviso (sem falso alarme)", () => {

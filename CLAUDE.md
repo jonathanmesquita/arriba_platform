@@ -168,7 +168,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 ## Gotchas específicos
 
 - **Validador CNAB 400** (`tools/cobranca/cnab400/`): motor genérico multi-banco
-  (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú e BMP), com leitor (`parseArquivo`)
+  (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú, BMP e Inter), com leitor (`parseArquivo`)
   e gerador (`gerarArquivo`); a UI tem modo "Validar" e modo "Gerar", baixando `.REM`/`.RET`.
   Posições do manual são **1-indexadas e inclusivas**; `slice()` é 0-indexado exclusivo →
   usar `slice(ini-1, fim)`. O motor **não assume 400 posições** (`config.tamanhoRegistro`) e
@@ -223,6 +223,20 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   banco manda). `pages/docs/padroes-cnab.html` é a página de referência: o que 240 e 400 definem,
   com as fontes. **Atenção à premissa:** só o 240 é padrão FEBRABAN com estrutura comum; o 400 é
   descrito banco a banco — por isso o projeto tem um layout de 400 *por banco*.
+- **Banco Inter no CNAB 400** (`banks/inter.js`, nov/2026): vem **só do manual** (v2.2, 26/08/2024,
+  enviado pelo dono) — sem arquivo real nem planilha de amostra, ao contrário do Bradesco e do
+  BMP. Por isso o que prova o layout é o **exemplo do próprio manual** (DV do nosso número:
+  `0001`+`110`+`0004309540` → 1, no teste), a ida e volta e as regras que o manual declara. O
+  manual tem **erros de "tamanho" em 3 itens** (a posição manda; o cabeçalho do arquivo lista
+  cada um) e uma lista de descontos que muda de uma página para a outra (aceita-se 0 a 6).
+  O motor ganhou quatro ganchos genéricos, usados pelo Inter e livres para os outros:
+  `opcoes` (valores permitidos do campo), `registrosExtras` (tipos 2 e 3 opcionais, lidos e
+  validados mas não montados pela tela), `regrasDetalhe` (regras entre campos: DV, valor
+  mínimo, multa/juros dependentes) e `vazioZeros` (texto que o manual manda zerar). `exemploFn`
+  do campo calcula o exemplo por título — o nosso número do segundo título precisa de DV próprio.
+  **Não confirmado:** a ligação entre os códigos do detalhe do retorno (02/03/06/07) e a
+  numeração "ocorrência 01–04" do trailer do retorno; por isso o gerador grava esse trailer zerado
+  e não há conferência de totais nele.
 - **Ícone do banco na UI** (`ui.js`, `bankIconHtml`): um ícone **neutro** de banco, igual
   para todos. **Não há logo de banco no repositório** (nov/2026): os 3 que apareciam na tela
   e a biblioteca de 205 SVGs saíram, por serem marca registrada de terceiro. O que identifica
@@ -445,7 +459,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 
 Entregue e funcionando:
 
-- Validador CNAB 400 (Bradesco, Itaú e BMP), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
+- Validador CNAB 400 (Bradesco, Itaú, BMP e Inter), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
 - CNAB 240: conferência de estrutura (lotes, tipos de registro, trailers) e página de referência dos padrões 240 e 400.
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.

@@ -104,7 +104,10 @@ export function padField(value, def) {
     v = v.replace(/\D/g, "");
     return v.padStart(size, "0").slice(-size);
   }
-  // alfanumérico: caixa alta, espaços à direita, trunca
+  // alfanumérico: caixa alta, espaços à direita, trunca. Exceção declarada
+  // pelo layout (`vazioZeros`): campo de texto que o manual manda preencher
+  // com zeros quando a empresa não define valor (ex.: número de controle).
+  if (v === "" && def.vazioZeros) return "0".repeat(size);
   v = v.toUpperCase();
   return v.padEnd(size, " ").slice(0, size);
 }

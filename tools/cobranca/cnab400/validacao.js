@@ -121,6 +121,10 @@ export function validarLinhas(linhas, config, opcoes = {}) {
     if (tipo === "0") { registro = "header"; defs = config.headerFields; }
     else if (tipo === "1") { registro = "detalhe"; defs = config.detalheFields; }
     else if (tipo === "9" && config.trailerFields) { registro = "trailer"; defs = config.trailerFields; }
+    /* Layouts com outros tipos de registro (ex.: tipos 2 e 3 opcionais da
+       remessa do Inter) declaram `registrosExtras: { "2": { nome, fields } }`;
+       eles têm os campos conferidos como o detalhe, sem entrar na contagem. */
+    else if (config.registrosExtras?.[tipo]) { registro = "extra"; defs = config.registrosExtras[tipo].fields; }
 
     if (!registro) {
       adiciona("aviso", n, `Linha ${n}: registro tipo "${tipo}" não é descrito neste layout, então o conteúdo dele não foi conferido.`);
@@ -135,9 +139,11 @@ export function validarLinhas(linhas, config, opcoes = {}) {
     } else if (registro === "detalhe") {
       if (!viuHeader && idx > 0) adiciona("aviso", n, `Linha ${n}: título antes do Header.`);
       if (viuTrailer) adiciona("aviso", n, `Linha ${n}: título depois do Trailer — o Trailer deveria ser a última linha.`);
-    } else {
+    } else if (registro === "trailer") {
       if (viuTrailer) adiciona("aviso", n, `Linha ${n}: há mais de um registro Trailer no arquivo.`);
       viuTrailer = true;
+    } else if (viuTrailer) {
+      adiciona("aviso", n, `Linha ${n}: registro ${config.registrosExtras[tipo].nome} depois do Trailer.`);
     }
 
     /* Campo a campo. */
@@ -157,6 +163,13 @@ export function validarLinhas(linhas, config, opcoes = {}) {
       }
       if (def.fixo !== undefined) continue;
 
+      /* Valores permitidos declarados pelo layout (`opcoes`). Campo em
+         branco ou zerado não é reportado (ver cabeçalho do arquivo). */
+      if (def.opcoes && dado && !/^0+$/.test(dado) && !def.opcoes.includes(dado)) {
+        adiciona("erro", n, `${onde}: veio ${mostrar(bruto)}, e o layout aceita só ${def.opcoes.map((o) => `"${o}"`).join(", ")}.`, def);
+        continue;
+      }
+
       if (def.type === "N") {
         if (def.fmt === "valorVirgula") {
           if (dado && !/^[\d.,\s]+$/.test(dado)) adiciona("erro", n, `${onde}: valor com caractere que não é número: ${mostrar(bruto)}.`, def);
@@ -170,6 +183,19 @@ export function validarLinhas(linhas, config, opcoes = {}) {
       } else if (def.type === "A") {
         if (/[\x00-\x08\x0b-\x1f\x7f]/.test(bruto)) adiciona("erro", n, `${onde}: contém caractere de controle (invisível), que o banco não aceita.`, def);
         else if (ACHA_NAO_ASCII.test(bruto)) adiciona("aviso", n, `${onde}: contém acento ou caractere especial ${mostrar(bruto)}. Os manuais pedem maiúsculas e sem acento, e o banco pode rejeitar.`, def, "acento");
+      }
+    }
+
+    /* Regras entre campos do mesmo detalhe, declaradas pelo banco em
+       `regrasDetalhe`: cada uma recebe { campos (texto cru por chave), linha }
+       e devolve uma lista de { nivel, mensagem, campo? }. */
+    if (registro === "detalhe" && config.regrasDetalhe) {
+      const campos = Object.fromEntries(defs.map((d) => [d.key, fld(texto, d)]));
+      for (const regra of config.regrasDetalhe) {
+        for (const r of regra({ campos, linha: n }) || []) {
+          const def = r.campo ? defs.find((d) => d.key === r.campo) : null;
+          adiciona(r.nivel, n, `Linha ${n}: ${r.mensagem}`, def || undefined, r.codigo);
+        }
       }
     }
 

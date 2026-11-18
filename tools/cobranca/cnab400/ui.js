@@ -15,6 +15,7 @@
 import { BANKS } from "./banks/registry.js";
 import { parseArquivo, gerarArquivo } from "./engine.js";
 import { lerEValidar, validarValor, validarLinhas } from "./validacao.js";
+import { gerarNome, gerarCpf, gerarValorAleatorio, formatarNumeroBr } from "../../../assets/js/fake-data-br.js";
 
 let currentBank = null; // { code, nome, config }
 let currentDirecao = "retorno"; // "remessa" | "retorno"
@@ -35,9 +36,17 @@ export function initUI() {
     bankSelect.appendChild(opt);
   });
 
+  // Abre já pronto para montar um arquivo: primeiro banco, remessa e o modo
+  // Gerar. Quem quer só conferir um arquivo troca para "Validar" com um clique.
+  if (BANKS.length) {
+    currentBank = BANKS[0];
+    currentDirecao = "remessa";
+    currentMode = "generator";
+    bankSelect.value = currentBank.code;
+  }
+
   bankSelect.addEventListener("change", () => {
     currentBank = BANKS.find(b => b.code === bankSelect.value) || null;
-    currentMode = "reader";
     lastParsedData = null;
     syncControls();
     renderArea();
@@ -335,7 +344,7 @@ function editAndRegenerate() {
 // ao importar um arquivo direto na tela de Gerar. Devolve a quantidade de
 // títulos preenchidos.
 function preencherGeradorComDados(data) {
-  const headerContainer = document.querySelector(".form-grid");
+  const headerContainer = document.getElementById("genHeader");
   if (headerContainer && data.header) {
     headerContainer.querySelectorAll("[data-k]").forEach(el => {
       preencherCampoComDadoLido(el, fieldDef(el.dataset.k, "header"), data.header[el.dataset.k]);
@@ -475,25 +484,45 @@ function detalheFieldInputHtml(key) {
   </div>`;
 }
 
+// Separa os campos do formulário em obrigatórios (sempre à vista) e opcionais
+// (recolhidos), para a pessoa ver só o que precisa digitar para montar o arquivo.
+function separarCampos(chaves, kind) {
+  const obrigatorios = chaves.filter(k => fieldDef(k, kind)?.obrigatorio);
+  const opcionais = chaves.filter(k => !fieldDef(k, kind)?.obrigatorio);
+  return { obrigatorios, opcionais };
+}
+
+function opcionaisHtml(htmls, classeGrade) {
+  if (!htmls.length) return "";
+  return `<details class="opcionais">
+    <summary>Campos opcionais (${htmls.length})</summary>
+    <div class="${classeGrade}">${htmls.join("")}</div>
+  </details>`;
+}
+
 function generatorViewHtml() {
   const cfg = direcaoConfig();
-  const headerFields = (cfg.formFields?.header || []).map(headerFieldInputHtml).join("");
+  const { obrigatorios, opcionais } = separarCampos(cfg.formFields?.header || [], "header");
+  const headerFields =
+    `<div class="form-grid">${obrigatorios.map(headerFieldInputHtml).join("")}</div>` +
+    opcionaisHtml(opcionais.map(headerFieldInputHtml), "form-grid");
   return `
     <h2>Gerar ${directionLabel().toLowerCase()} — ${escHtml(currentBank.nome)}</h2>
-    <p class="hint">Preencha o cabeçalho e adicione um ou mais títulos. Campos com <span class="req-mark">*</span> são obrigatórios. Use o "?" ao lado de cada campo para ver posição, tamanho e exemplo.</p>
+    <p class="hint">Digite os campos obrigatórios (<span class="req-mark">*</span>) do cabeçalho e de cada título; os opcionais ficam recolhidos. Sem tempo? "Preencher com exemplo" completa o que falta com dados fictícios. O "?" ao lado de cada campo mostra posição, tamanho e exemplo.</p>
 
     <div class="drop-zone" id="genDropZone">
       <i class="fa-solid fa-file-arrow-up"></i> Já tem um arquivo .REM/.RET? Arraste ou clique para importar e editar os campos abaixo
       <input type="file" id="genFileInput" class="hidden" accept=".ret,.rem,.txt">
     </div>
 
-    <div class="form-grid">${headerFields}</div>
+    <div id="genHeader">${headerFields}</div>
 
     <h3 class="det-title">Títulos</h3>
     <div id="detRows"></div>
     <button type="button" class="btn-arriba btn-outline-arriba" id="btnAddRow"><i class="fa-solid fa-plus me-2"></i>Adicionar título</button>
 
     <div class="actions" style="margin-top:18px">
+      <button type="button" class="btn-arriba btn-outline-arriba" id="btnExemplo"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Preencher com exemplo</button>
       <button type="button" class="btn-arriba btn-red-arriba" id="btnGenerate"><i class="fa-solid fa-gears me-2"></i>Gerar e validar</button>
       <button type="button" class="btn-arriba btn-dark-arriba" id="btnDownload" disabled><i class="fa-solid fa-download me-2"></i>Baixar arquivo</button>
     </div>
@@ -508,8 +537,9 @@ function addDetRow() {
   const cfg = direcaoConfig();
   const row = document.createElement("div");
   row.className = "det-row";
-  const inputs = (cfg.formFields?.detalhe || []).map(detalheFieldInputHtml).join("");
-  row.innerHTML = `${inputs}<button type="button" class="det-remove" title="Remover"><i class="fa-solid fa-trash"></i></button>`;
+  const { obrigatorios, opcionais } = separarCampos(cfg.formFields?.detalhe || [], "detalhe");
+  const inputs = obrigatorios.map(detalheFieldInputHtml).join("");
+  row.innerHTML = `${inputs}<button type="button" class="det-remove" title="Remover" aria-label="Remover título"><i class="fa-solid fa-trash"></i></button>${opcionaisHtml(opcionais.map(detalheFieldInputHtml), "opc-grade")}`;
   row.querySelector(".det-remove").addEventListener("click", () => row.remove());
   wrap.appendChild(row);
 }
@@ -542,7 +572,7 @@ function validarObrigatorios(container, kind) {
 }
 
 function collectGenerator() {
-  const header = collectFields(document.querySelector(".form-grid"), "header");
+  const header = collectFields(document.getElementById("genHeader"), "header");
   const detalhes = [...document.querySelectorAll("#detRows .det-row")].map(row => collectFields(row, "detalhe"));
   return { header, detalhes };
 }
@@ -569,7 +599,11 @@ function validarFormulario(container, kind, rotuloLinha) {
     const nome = def.nome || def.key;
     for (const a of achados) problemas.push({ nivel: a.nivel, texto: `${rotuloLinha}, ${nome}: ${a.mensagem}` });
     const erro = achados.find(a => a.nivel === "erro");
-    if (erro) { el.classList.add("field-invalid"); el.setAttribute("aria-invalid", "true"); }
+    if (erro) {
+      el.classList.add("field-invalid");
+      el.setAttribute("aria-invalid", "true");
+      el.closest("details")?.setAttribute("open", ""); // erro em campo opcional recolhido não pode ficar escondido
+    }
     const nota = document.createElement("div");
     nota.className = "field-erro" + (erro ? "" : " aviso");
     nota.textContent = achados.map(a => a.mensagem).join(" ");
@@ -590,8 +624,41 @@ function mostrarProblemasDoGerador(erros, avisos) {
     lista(`${avisos.length} ${avisos.length === 1 ? "aviso" : "avisos"}`, avisos);
 }
 
+// Completa com dados FICTÍCIOS o que a pessoa ainda não digitou — só os campos
+// obrigatórios (e o tipo de inscrição, que precisa combinar com o documento).
+// O que já está digitado nunca é sobrescrito.
+function preencherExemplo() {
+  const hoje = new Date();
+  const iso = d => d.toISOString().slice(0, 10);
+  const maisDias = n => { const d = new Date(hoje); d.setDate(d.getDate() + n); return iso(d); };
+  const semAcento = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+
+  const preencher = (container, kind, indice) => {
+    container.querySelectorAll("[data-k]").forEach(el => {
+      const def = fieldDef(el.dataset.k, kind);
+      if (!def || el.value.trim()) return;
+      if (!def.obrigatorio && def.key !== "codInscPagador") return;
+      const tam = def.fim - def.ini + 1;
+      let valor = def.exemplo ?? "";
+      if (def.fmt === "data") valor = /vencimento/i.test(def.key) ? maisDias(30 + indice) : iso(hoje);
+      else if (def.fmt === "valor") valor = formatarNumeroBr(gerarValorAleatorio(50, 2000));
+      else if (def.key === "nomePagador") valor = semAcento(gerarNome()).slice(0, tam);
+      else if (def.key === "numInscPagador") valor = gerarCpf();
+      else if (def.key === "codInscPagador") valor = "01"; // 01 = CPF, o documento gerado acima
+      else if (def.key === "nossoNumero" && /^\d+$/.test(valor)) {
+        valor = String(BigInt(valor) + BigInt(indice)).padStart(valor.length, "0"); // um número por título
+      }
+      el.value = valor;
+    });
+  };
+
+  preencher(document.getElementById("genHeader"), "header", 0);
+  [...document.querySelectorAll("#detRows .det-row")].forEach((row, i) => preencher(row, "detalhe", i));
+  setMsg("genMsg", 'Campos obrigatórios completados com dados fictícios. Confira, ajuste o que quiser e clique em "Gerar e validar".', "ok");
+}
+
 function runGenerate() {
-  const headerContainer = document.querySelector(".form-grid");
+  const headerContainer = document.getElementById("genHeader");
   const rows = [...document.querySelectorAll("#detRows .det-row")];
   const preview = document.getElementById("genPreview");
 
@@ -752,6 +819,7 @@ function wireViewEvents() {
       addDetRow();
       wireHelpButtons(document.getElementById("detRows"));
     });
+    document.getElementById("btnExemplo").addEventListener("click", preencherExemplo);
     document.getElementById("btnGenerate").addEventListener("click", runGenerate);
     document.getElementById("btnDownload").addEventListener("click", downloadFile);
     addDetRow(); // primeira linha

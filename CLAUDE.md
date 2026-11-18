@@ -201,6 +201,15 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     não vira erro. **Não estão implementados** (dependem do manual do banco, que a sessão não
     conseguiu abrir): dígito verificador do nosso número, tabelas de espécie e instrução, e
     qualquer regra de CNAB 240. Estão em `tasks/backlog.md` e `tasks/decisoes-pendentes.md`.
+- **Modo Gerar do CNAB (nov/2026):** a tela **abre pronta** — primeiro banco, remessa e modo
+  Gerar já escolhidos (Validar é um clique). O formulário mostra só os campos **obrigatórios**
+  (`obrigatorio: true` na declaração do campo); os opcionais ficam em "Campos opcionais" e o bloco
+  **abre sozinho** se um deles tiver erro. "Preencher com exemplo" completa **só o que falta**,
+  com dado **fictício** (nome e CPF de `assets/js/fake-data-br.js`, datas relativas a hoje, um
+  nosso número por título) e nunca sobrescreve o que foi digitado. O `exemplo` de cada campo
+  nos layouts também é fictício: um nome de empresa e um CNPJ que vieram de um manual foram
+  trocados. A validação já achou um conflito real nos dados (Bradesco retorno, "Carteira": 1
+  posição declarada, exemplo de 2 dígitos) — está em `tasks/backlog.md`.
 - **Ícone do banco na UI** (`ui.js`, `bankIconHtml`): um ícone **neutro** de banco, igual
   para todos. **Não há logo de banco no repositório** (nov/2026): os 3 que apareciam na tela
   e a biblioteca de 205 SVGs saíram, por serem marca registrada de terceiro. O que identifica

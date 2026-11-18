@@ -250,23 +250,10 @@ repositório próprio via `git subtree`.
 
 ---
 
-## 🙋 Manuais de CNAB: liberar o acesso e dizer o que é "a página"
+## ✅ Manuais de CNAB — recebidos em 18/11/2026
 
-A validação de conteúdo do CNAB 400 foi feita (ver `CLAUDE.md`), mas a pesquisa das regras de
-cada banco ficou **parcial**: a rede da sessão bloqueia os sites dos bancos e só entraram
-resumos de busca — nenhuma regra foi preenchida de memória.
-
-**O que trava:** dígito verificador do nosso número, tabelas de espécie e instrução por banco e
-qualquer coisa de CNAB 240 (estrutura de lotes e segmentos P/Q/R/S/T/U).
-
-1. **Liberar os domínios** em *Network access* do ambiente (menu da nuvem no título da sessão →
-   Edit → Allowed domains; <https://code.claude.com/docs/en/cloud-environments#network-access>):
-   `download.itau.com.br`, `www.bb.com.br`, `www.sicredi.com.br`, `cms.santander.com.br`,
-   `www.banrisul.com.br`, `qive.com.br`, `cms-assets-p.c6bank.com.br`, `febraban.org.br`,
-   `tdn.totvs.com`.
-2. ~~Dizer o que é "a página" pedida~~ — respondido em 18/11/2026: **as duas**, para CNAB 240 e
-   400. Feitas: conferência de estrutura do 240 e página de referência. Falta o que depende dos
-   manuais (acima): campos de dentro dos segmentos e o modo "gerar" do 240.
-
-O trabalho que não depende disso segue pelo que está no `tasks/backlog.md`.
-
+O dono enviou os manuais que a rede da sessão não alcançava: Inter CNAB 400 (cobrança, v2.2) e CNAB 240
+(pagamentos, v1.10), Santander cobrança CNAB 240 (H7815 v8.1), as planilhas validadoras do Bradesco e do BMP
+e um PDF de CNAB 444. **Usados:** Inter 400 e Santander 240 (layout, validação, geração).
+**Falta ler/usar:** Inter 240 pagamentos (págs. 7–35), CNAB 444 e as planilhas do Bradesco — ver `backlog.md`.
+A pergunta "o que é a página" foi respondida ("as duas": ferramenta e referência) e está feita.

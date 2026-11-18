@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Confere a estrutura de um arquivo CNAB 240: tamanho das linhas, lotes, tipos de registro e totais dos trailers, direto no navegador." />
+  <meta name="description" content="Confere um arquivo CNAB 240 (estrutura, lotes, segmentos e campos) e gera arquivos de teste, direto no navegador." />
 
-  <title>Conferir a estrutura de um arquivo CNAB 240 - Arriba Platform</title>
+  <title>Validar e gerar arquivo CNAB 240 - Arriba Platform</title>
   <link rel="icon" href="/assets/icons/favicon.ico" sizes="16x16 32x32 48x48 64x64" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
 
@@ -16,6 +16,24 @@
   <style>
     /* Link do Bootstrap é azul fixo e reprova sobre a areia; tinta do projeto. */
     main a:not(.btn-arriba) { color: var(--rw-red-ink); }
+    .grade-campos { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px 14px; margin-bottom: 12px; }
+    .campo-gerador label { font-size: .86rem; margin-bottom: 4px; }
+    .dica-campo { color: var(--muted); font-size: .76rem; line-height: 1.35; margin-top: 3px; }
+    .req-mark { color: var(--danger-ink); font-weight: 900; }
+    .erro-campo { color: var(--danger-ink); font-size: .8rem; line-height: 1.35; margin-top: 3px; font-weight: 700; }
+    .erro-campo.aviso { color: var(--warn-ink); }
+    .field-invalid { border-color: var(--rw-danger) !important; }
+    .secao-gerador { margin: 18px 0 8px; }
+    .secao-gerador h3 { font-size: 1.05rem; margin-bottom: 10px; }
+    .titulo-cartao { border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 12px; background: var(--surface-soft); }
+    .titulo-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .titulo-segmento { font-size: .92rem; font-weight: 800; margin: 10px 0 8px; }
+    .opcionais > summary { cursor: pointer; font-weight: 800; font-size: .88rem; padding: 6px 0; }
+    .opcionais > summary:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+    .btn-dark-arriba { background: var(--rw-dark); color: var(--rw-on-dark); }
+    .btn-dark-arriba:hover { background: var(--rw-dark-2); color: var(--rw-on-dark); }
+    .btn-dark-arriba:disabled { background: var(--surface-soft); color: var(--muted); border-color: var(--line-strong); cursor: not-allowed; }
+    .modos[hidden] { display: none; }
   </style>
 </head>
 
@@ -28,17 +46,50 @@
   <section class="hero">
     <div class="container-page">
       <span class="kicker">Arquivo bancário · Padrão CNAB 240</span>
-      <h1>Conferir a estrutura de um arquivo CNAB 240</h1>
+      <h1>Validar e gerar arquivo CNAB 240</h1>
       <p>
-        Cole o conteúdo ou envie um arquivo <strong>.REM/.RET/.TXT</strong> de 240 posições. A tela confere
-        o tamanho das linhas, a ordem dos registros (arquivo → lotes → detalhes), os números de lote e os
-        totais dos trailers. Tudo no navegador; nada é enviado a servidor.
+        Cole o conteúdo ou envie um arquivo <strong>.REM/.RET/.TXT</strong> de 240 posições. A tela confere o
+        tamanho das linhas, a ordem dos registros (arquivo → lotes → detalhes), os totais dos trailers e, com um
+        layout de banco escolhido, <strong>os campos de cada segmento</strong>. Também monta um arquivo de teste
+        a partir dos campos obrigatórios. Tudo no navegador; nada é enviado a servidor.
       </p>
     </div>
   </section>
 
   <main class="container-page section">
     <section class="panel card-section">
+      <h2>Layout</h2>
+      <p class="descricao">
+        Sem escolher um layout de banco, a tela confere só a estrutura, que vale para qualquer banco. Com o layout do
+        Santander (cobrança), confere também os campos de cada segmento e permite gerar um arquivo de teste.
+      </p>
+      <div class="campo-linha">
+        <div class="campo">
+          <label for="layout240">Layout</label>
+          <select id="layout240" class="form-select">
+            <option value="">Qualquer banco — só a estrutura</option>
+          </select>
+        </div>
+        <div class="campo estreito">
+          <label for="direcao240">Direção</label>
+          <select id="direcao240" class="form-select" disabled>
+            <option value="remessa">Remessa (empresa → banco)</option>
+            <option value="retorno">Retorno (banco → empresa)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modos" role="group" aria-label="O que você quer fazer" id="modos240" hidden style="margin-top:16px;margin-bottom:0">
+        <button type="button" class="modo" data-modo="conferir" aria-pressed="true">Conferir arquivo</button>
+        <button type="button" class="modo" data-modo="gerar" aria-pressed="false">Gerar arquivo</button>
+      </div>
+    </section>
+
+    <section class="panel card-section hidden" id="painelGerar">
+      <h2>Gerar arquivo de teste</h2>
+      <div id="geradorRaiz"></div>
+    </section>
+
+    <section class="panel card-section" id="painelConferir">
       <h2>Arquivo</h2>
       <p class="descricao">
         Dica: o arquivo é lido como texto Latin-1, o formato de troca dos bancos. Para conferir um arquivo do
@@ -80,10 +131,10 @@
     </section>
 
     <section class="panel card-section">
-      <h2>O que esta tela confere — e o que não confere</h2>
+      <h2>O que esta tela confere</h2>
       <div class="grade-2">
         <div>
-          <h3>Confere</h3>
+          <h3>Em qualquer banco (estrutura)</h3>
           <ul class="descricao">
             <li>Todas as linhas com 240 caracteres.</li>
             <li>Código do banco (posições 1–3) e lote (4–7) numéricos.</li>
@@ -94,16 +145,19 @@
           </ul>
         </div>
         <div>
-          <h3>Não confere</h3>
+          <h3>Com o layout do Santander (cobrança)</h3>
           <ul class="descricao">
-            <li>Os campos <strong>dentro</strong> de cada segmento (valores, datas, nosso número, ocorrências): cada banco adapta o layout, e sem o manual do banco qualquer regra ali seria palpite.</li>
-            <li>Dígito verificador do nosso número e tabelas de códigos por banco.</li>
-            <li>Não há modo "gerar" para o 240 pelo mesmo motivo; o <a href="../cnab400/cnab400.html">CNAB 400</a> gera arquivo para três bancos.</li>
+            <li>Os campos de cada registro: tipo (número ou texto), datas DDMMAAAA, valores fixos e tabelas de códigos.</li>
+            <li>Regras do manual: vencimento, juros, desconto, abatimento, CPF/CNPJ do pagador, endereço e UF.</li>
+            <li>Segmento P seguido de Q na remessa; T seguido de U no retorno.</li>
+            <li>Gerar arquivo: segmentos P e Q (remessa) ou T e U (retorno), com lote e trailers calculados.</li>
           </ul>
         </div>
       </div>
       <p class="nota">
-        Veja o que cada padrão define e as fontes consultadas em
+        O layout do Santander vem do manual H7815 v8.1 (jun/2024), sem arquivo real para comparar: a prova é o exemplo do próprio manual e a ida e volta
+        (gerar → ler). Os layouts de outros bancos, e o tratamento dos segmentos R, S e Y na tela de geração, ainda não estão
+        aqui. Veja o que cada padrão define em
         <a href="../../../pages/docs/padroes-cnab.html">Padrões CNAB 240 e 400: o que cada um define</a>.
       </p>
     </section>

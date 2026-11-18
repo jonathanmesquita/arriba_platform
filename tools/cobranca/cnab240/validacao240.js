@@ -28,6 +28,9 @@
 
 "use strict";
 
+import { fld } from "../cnab400/engine.js";
+import { conferirCampos } from "../cnab400/validacao.js";
+
 export const TAMANHO_240 = 240;
 
 const TIPOS = {
@@ -51,7 +54,7 @@ export function dividirLinhas240(texto) {
     .filter((l) => l.length > 0);
 }
 
-export function analisar240(texto) {
+export function analisar240(texto, { layout = null, direcao = "remessa" } = {}) {
   const linhas = dividirLinhas240(texto);
   const problemas = [];
   const add = (nivel, linha, mensagem) => problemas.push({ nivel, linha, mensagem });
@@ -148,7 +151,7 @@ export function analisar240(texto) {
       } else if (Number(declarado) !== loteAberto.registros) {
         // Aviso, não erro: a contagem inclui header e trailer do lote no padrão
         // FEBRABAN, mas alguns bancos contam diferente e o manual do banco manda.
-        add("aviso", n, `Linha ${n}: o Trailer do lote ${loteAberto.numero} declara ${Number(declarado)} registros e o lote tem ${loteAberto.registros} (contando o Header e o Trailer do lote).`);
+        add(layout?.qtdRegistrosLoteExato ? "erro" : "aviso", n, `Linha ${n}: o Trailer do lote ${loteAberto.numero} declara ${Number(declarado)} registros e o lote tem ${loteAberto.registros} (contando o Header e o Trailer do lote)${layout?.qtdRegistrosLoteExato ? " — o manual (nota 37) diz que esse erro rejeita o lote inteiro" : ""}.`);
       }
       loteAberto = null;
     }
@@ -191,8 +194,94 @@ export function analisar240(texto) {
   if (bancos.size > 1) add("aviso", 1, `O arquivo mistura mais de um código de banco (posições 1–3): ${[...bancos].join(", ")}.`);
   resultado.banco = bancos.size === 1 ? [...bancos][0] : "";
 
-  problemas.sort((a, b) => a.linha - b.linha);
+  if (layout) conferirConteudo(linhas, layout, direcao, problemas);
+
+  problemas.sort((a, b) => a.linha - b.linha || (a.nivel === b.nivel ? 0 : a.nivel === "erro" ? -1 : 1));
   resultado.erros = problemas.filter((p) => p.nivel === "erro");
   resultado.avisos = problemas.filter((p) => p.nivel === "aviso");
   return resultado;
+}
+
+
+/* ---------------------------------------------------------------------
+   Conteúdo dos registros, contra o layout de um banco (segunda passada).
+
+   Cada linha usa a lista de campos do seu registro: tipo 0, 1, 5 e 9 têm uma
+   lista cada; o detalhe (tipo 3) escolhe pelo segmento (posição 14) e, para
+   S e Y, pelo discriminador (S: posição 18; Y: posições 18–19). Os campos são
+   conferidos por `conferirCampos` — a mesma função do CNAB 400 — e as regras
+   entre campos e a ordem dos segmentos vêm do próprio layout.
+   --------------------------------------------------------------------- */
+export function chaveDoSegmento(linha240) {
+  const seg = linha240.charAt(13);
+  if (seg === "Y") return `Y${linha240.slice(17, 19)}`;
+  if (seg === "S") return `S${linha240.charAt(17)}`;
+  return seg;
+}
+
+function conferirConteudo(linhas, layout, direcao, problemas) {
+  const L = layout[direcao];
+  const add = (nivel, linha, mensagem) => problemas.push({ nivel, linha, mensagem });
+  const porTipo = { "0": L.headerArquivo, "1": L.headerLote, "5": L.trailerLote, "9": L.trailerArquivo };
+  const campoDe = (defs, chave) => defs.find((d) => d.key === chave);
+
+  let numInscricaoBeneficiario = "";
+  let esperadoLote = 1;
+  let pendente = null; // { linha, proximo, nivel, chave }
+
+  const fechaPendente = () => {
+    if (!pendente) return;
+    add(pendente.nivel, pendente.linha, `Linha ${pendente.linha}: o segmento ${pendente.chave} não é seguido do segmento ${pendente.proximo}, que o manual manda enviar junto (nota 13).`);
+    pendente = null;
+  };
+
+  linhas.forEach((texto, idx) => {
+    const n = idx + 1;
+    if (texto.length !== TAMANHO_240) return;
+    const tipo = texto.charAt(7);
+    if (!(tipo in TIPOS)) return;
+
+    let defs = porTipo[tipo];
+    let chave = null;
+    if (tipo === "3") {
+      chave = chaveDoSegmento(texto);
+      defs = L.segmentos[chave];
+      if (!defs) {
+        add("aviso", n, `Linha ${n}: o segmento "${chave}" (posição 14) não consta no layout ${L === layout.remessa ? "da remessa" : "do retorno"} de ${layout.nome}; o conteúdo da linha não foi conferido.`);
+        return;
+      }
+    }
+    if (!defs) return;
+
+    problemas.push(...conferirCampos(texto, defs, "detalhe", n));
+
+    if (tipo === "1") {
+      fechaPendente();
+      const nl = fld(texto, campoDe(defs, "lote")).trim();
+      if (/^\d+$/.test(nl) && Number(nl) !== esperadoLote) add("aviso", n, `Linha ${n}: o número do lote é ${Number(nl)}, e o esperado é ${esperadoLote} (nota 1: 0001 no primeiro, crescente nos demais).`);
+      esperadoLote = (/^\d+$/.test(nl) ? Number(nl) : esperadoLote) + 1;
+      const ni = campoDe(defs, "numInscricao");
+      numInscricaoBeneficiario = ni ? fld(texto, ni) : "";
+    }
+
+    if (tipo === "3") {
+      const campos = Object.fromEntries(defs.map((d) => [d.key, fld(texto, d)]));
+      const par = L.pares?.[chave];
+      const esperadoAtual = pendente;
+      // O segmento que chegou fecha o par pendente; qualquer outro deixa o par sem o seu segundo registro.
+      if (esperadoAtual && esperadoAtual.proximo !== chave) fechaPendente();
+      else if (esperadoAtual) pendente = null;
+      if (par && (!par.quandoMovimento || par.quandoMovimento.includes(String(campos.codMovimento).trim()))) {
+        pendente = { linha: n, proximo: par.proximo, nivel: par.nivel, chave };
+      }
+      for (const regra of L.regras?.[chave] || []) {
+        for (const r of regra({ campos, linha: n, contexto: { numInscricaoBeneficiario } }) || []) {
+          const def = r.campo ? campoDe(defs, r.campo) : null;
+          problemas.push({ nivel: r.nivel, linha: n, mensagem: `Linha ${n}: ${r.mensagem}`, ...(def ? { campo: def.key, ini: def.ini, fim: def.fim } : {}) });
+        }
+      }
+    }
+
+    if (tipo === "5" || tipo === "9") fechaPendente();
+  });
 }

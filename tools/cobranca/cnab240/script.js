@@ -2,6 +2,13 @@
    resultado. A lógica fica em validacao240.js (com teste); aqui só DOM.
    Conteúdo do arquivo entra por textContent, nunca innerHTML. */
 import { analisar240, NOME_TIPO, TAMANHO_240 } from "./validacao240.js";
+import { santander240 } from "./layouts/santander.js";
+import { montarGerador } from "./gerador-ui.js";
+
+/* Layouts de banco disponíveis. Banco novo = um arquivo em layouts/ e uma linha aqui. */
+const LAYOUTS = [santander240];
+const layoutAtual = () => LAYOUTS.find((l) => l.code === $("layout240").value) || null;
+const direcaoAtual = () => $("direcao240").value;
 
 const $ = (id) => document.getElementById(id);
 
@@ -58,6 +65,7 @@ function tabelaLotes(lotes) {
 
 function mostrar(r) {
   $("resultado240").classList.remove("hidden");
+  $("resultado240").dataset.temResultado = "1";
 
   const selos = $("selos240");
   selos.replaceChildren();
@@ -69,6 +77,8 @@ function mostrar(r) {
   const par = (rot, val) => { dados.appendChild(el("dt", { texto: rot })); dados.appendChild(el("dd", { texto: val })); };
   par("Linhas", String(r.totalLinhas));
   par("Banco (posições 1–3)", r.banco || "não identificado");
+  const layoutUsado = layoutAtual();
+  par("Conferido contra", layoutUsado ? `${layoutUsado.nome}, ${direcaoAtual() === "remessa" ? "remessa" : "retorno"}` : "estrutura geral (sem layout de banco)");
   par("Lotes", String(r.lotes.length));
   par("Registros por tipo", Object.entries(r.porTipo).map(([t, q]) => `${NOME_TIPO[t] || `tipo ${t}`}: ${q}`).join(" · "));
   $("resumo240").replaceChildren(dados);
@@ -77,6 +87,10 @@ function mostrar(r) {
   listas.replaceChildren();
   if (r.erros.length) listas.appendChild(lista("Erros — o arquivo está errado nestes pontos", "erro", r.erros));
   if (r.avisos.length) listas.appendChild(lista("Avisos — provável problema; confira com o manual do banco", "aviso", r.avisos));
+  if (r.erros.length + r.avisos.length > 0 && layoutAtual()) {
+    // A linha onde o problema está, para quem vai procurar no arquivo.
+    listas.appendChild(el("p", { classe: "dica", texto: "Cada mensagem começa pelo número da linha do arquivo." }));
+  }
   $("lotes240").replaceChildren(el("h3", { texto: "Lotes", classe: "descricao" }), tabelaLotes(r.lotes));
 }
 
@@ -84,7 +98,8 @@ function conferir() {
   const texto = $("texto240").value;
   if (!texto.trim()) { setStatus("Cole o conteúdo ou envie um arquivo.", "erro"); $("resultado240").classList.add("hidden"); return; }
   try {
-    const r = analisar240(texto);
+    const layout = layoutAtual();
+    const r = analisar240(texto, { layout, direcao: direcaoAtual() });
     mostrar(r);
     setStatus(r.erros.length ? `Conferido: ${r.erros.length} erro(s) de estrutura.` : "Conferido: nenhum erro de estrutura.", r.erros.length ? "erro" : "ok");
   } catch (e) {
@@ -115,6 +130,33 @@ function exemploEstrutural() {
     linha({ lote: "9999", tipo: 9, qtdLotes: 1, qtdRegistros: 6 }),
   ].join("\n");
 }
+
+for (const l of LAYOUTS) $("layout240").appendChild(el("option", { texto: `${l.nome} (${l.code})`, attrs: { value: l.code } }));
+
+function atualizarModo(modo) {
+  const gerar = modo === "gerar" && Boolean(layoutAtual());
+  $("painelConferir").classList.toggle("hidden", gerar);
+  $("resultado240").classList.toggle("hidden", gerar || !$("resultado240").dataset.temResultado);
+  $("painelGerar").classList.toggle("hidden", !gerar);
+  document.querySelectorAll("#modos240 .modo").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === (gerar ? "gerar" : "conferir"))));
+  if (gerar) montarGerador($("geradorRaiz"), layoutAtual(), direcaoAtual());
+}
+
+function aoMudarLayout() {
+  const tem = Boolean(layoutAtual());
+  $("direcao240").disabled = !tem;
+  $("modos240").hidden = !tem;
+  $("resultado240").classList.add("hidden");
+  delete $("resultado240").dataset.temResultado;
+  atualizarModo("conferir");
+  setStatus("");
+}
+$("layout240").addEventListener("change", aoMudarLayout);
+$("direcao240").addEventListener("change", () => {
+  const modo = document.querySelector('#modos240 .modo[aria-pressed="true"]')?.dataset.modo || "conferir";
+  atualizarModo(modo);
+});
+document.querySelectorAll("#modos240 .modo").forEach((b) => b.addEventListener("click", () => atualizarModo(b.dataset.modo)));
 
 $("btnValidar240").addEventListener("click", conferir);
 $("btnLimpar240").addEventListener("click", () => {

@@ -80,6 +80,27 @@ export function formatData8(valor) {
   return `${y}${m}${d}`;
 }
 
+// "DDMMAAAA" -> "DD/MM/AAAA". É o formato de data do CNAB 240 (ano com 4 dígitos).
+export function parseDataDMA(raw) {
+  if (!raw || !/^\d{8}$/.test(raw) || raw === "00000000") return "";
+  const dd = raw.slice(0, 2), mm = raw.slice(2, 4), yyyy = raw.slice(4, 8);
+  if (+dd < 1 || +dd > 31 || +mm < 1 || +mm > 12) return raw;
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+// "AAAA-MM-DD" (input date) OU "DD/MM/AAAA" (saída do parseDataDMA) -> "DDMMAAAA".
+// Vazio devolve "" para o padField decidir (campo N vira zeros).
+export function formatDataDMA(valor) {
+  const v = String(valor || "").trim();
+  if (!v) return "";
+  if (v.includes("/")) {
+    const [d, m, y] = v.split("/");
+    return `${d}${m}${y}`;
+  }
+  const [y, m, d] = v.split("-");
+  return `${d}${m}${y}`;
+}
+
 // "000000003533,77" -> 3533.77. O REFIN grava o valor com virgula dentro
 // de um campo alfanumerico, diferente do PEFIN (numerico, 2 decimais
 // implicitas). Confirmado nas amostras reais das duas planilhas.
@@ -115,10 +136,14 @@ export function padField(value, def) {
 // Resolve o valor "bruto" de um campo antes do padding: aplica fixo/fmt.
 function resolveFieldValue(rawValue, def) {
   if (def.fixo !== undefined) return def.fixo;
+  // `padrao`: o que o gerador grava quando ninguém informou o campo (sem travar a leitura,
+  // como o `fixo` faz — ex.: código do banco no trailer de lote, que pode ser 033, 353 ou 008).
+  if ((rawValue === undefined || rawValue === "") && def.padrao !== undefined) return def.padrao;
   if (def.fmt === "valor") return formatValor(rawValue, def.fim - def.ini + 1);
   if (def.fmt === "valorVirgula") return formatValorVirgula(rawValue, def.fim - def.ini + 1);
   if (def.fmt === "data") return formatData(rawValue);
   if (def.fmt === "data8") return formatData8(rawValue);
+  if (def.fmt === "dataDMA") return formatDataDMA(rawValue);
   return rawValue;
 }
 
@@ -149,6 +174,7 @@ function parseRegistro(line, fieldDefs) {
     else if (def.fmt === "valorVirgula") obj[def.key] = parseValorVirgula(raw);
     else if (def.fmt === "data") obj[def.key] = parseData(raw);
     else if (def.fmt === "data8") obj[def.key] = parseData8(raw);
+    else if (def.fmt === "dataDMA") obj[def.key] = parseDataDMA(raw);
     else obj[def.key] = raw.trim();
   });
   return obj;

@@ -3,6 +3,7 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] CNAB 240 Santander (cobrança): layout por segmento a partir do manual H7815 v8.1, validação de campos e regras (notas 15, 17, 18, 21–23, 28, 29, 37), gerador de remessa (P/Q) e retorno (T/U) e tela com Conferir/Gerar; 29 testes ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 400: banco Inter (077), remessa (tipos 1, 2, 3) e retorno, a partir do manual v2.2 enviado pelo dono; DV do nosso número conferido com o exemplo do manual; 14 testes ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 240: conferência de estrutura (tamanho, lotes, tipos de registro, trailers) e página de referência dos padrões 240 e 400, com fontes; menu, busca e base do chat atualizados ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 400, modo Gerar mais direto: abre pronto (banco, remessa, Gerar), só os obrigatórios à vista, opcionais recolhidos, "Preencher com exemplo" fictício; exemplos de nome/CNPJ que vieram de manual trocados por dados inventados ✅ 2026-11-18 #area/ferramentas

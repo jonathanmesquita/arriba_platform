@@ -210,33 +210,30 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   nos layouts também é fictício: um nome de empresa e um CNPJ que vieram de um manual foram
   trocados. A validação já achou um conflito real nos dados (Bradesco retorno, "Carteira": 1
   posição declarada, exemplo de 2 dígitos) — está em `tasks/backlog.md`.
-- **CNAB 240** (`tools/cobranca/cnab240/`, nov/2026): confere só a **estrutura** — o que as
-  fontes consultadas confirmam: tamanho da linha (240), banco (1–3), lote (4–7), tipo de
-  registro (8: 0, 1, 3, 5, 9), sequencial no lote (9–13) e segmento (14) nos detalhes, e os
-  totais dos trailers (lote 18–23; arquivo 18–23 lotes e 24–29 registros, header e trailers
-  incluídos). A lógica é `validacao240.js` (sem DOM, `scripts/tests/cnab240.test.mjs`); a tela
-  só desenha. **Não há campo de dentro de segmento nem modo "gerar"**: cada banco adapta o layout
-  e os manuais não abriram a partir da sessão (rede), então qualquer posição ali seria palpite —
-  a tela diz isso. Quando os manuais forem lidos, o caminho é o mesmo do CNAB 400: um arquivo por
-  banco declarando os campos (`naoConfirmado` onde faltar fonte). **Trailer de lote que não fecha é
-  aviso, não erro** (a contagem inclui header e trailer do lote no padrão FEBRABAN, mas o manual do
-  banco manda). `pages/docs/padroes-cnab.html` é a página de referência: o que 240 e 400 definem,
-  com as fontes. **Atenção à premissa:** só o 240 é padrão FEBRABAN com estrutura comum; o 400 é
-  descrito banco a banco — por isso o projeto tem um layout de 400 *por banco*.
-- **Banco Inter no CNAB 400** (`banks/inter.js`, nov/2026): vem **só do manual** (v2.2, 26/08/2024,
-  enviado pelo dono) — sem arquivo real nem planilha de amostra, ao contrário do Bradesco e do
-  BMP. Por isso o que prova o layout é o **exemplo do próprio manual** (DV do nosso número:
-  `0001`+`110`+`0004309540` → 1, no teste), a ida e volta e as regras que o manual declara. O
-  manual tem **erros de "tamanho" em 3 itens** (a posição manda; o cabeçalho do arquivo lista
-  cada um) e uma lista de descontos que muda de uma página para a outra (aceita-se 0 a 6).
-  O motor ganhou quatro ganchos genéricos, usados pelo Inter e livres para os outros:
-  `opcoes` (valores permitidos do campo), `registrosExtras` (tipos 2 e 3 opcionais, lidos e
-  validados mas não montados pela tela), `regrasDetalhe` (regras entre campos: DV, valor
-  mínimo, multa/juros dependentes) e `vazioZeros` (texto que o manual manda zerar). `exemploFn`
-  do campo calcula o exemplo por título — o nosso número do segundo título precisa de DV próprio.
-  **Não confirmado:** a ligação entre os códigos do detalhe do retorno (02/03/06/07) e a
-  numeração "ocorrência 01–04" do trailer do retorno; por isso o gerador grava esse trailer zerado
-  e não há conferência de totais nele.
+- **CNAB 240** (`tools/cobranca/cnab240/`, nov/2026): duas camadas. **Estrutura**
+  (`validacao240.js`, vale para qualquer banco): tamanho da linha, banco (1–3), lote (4–7), tipo de
+  registro (8: 0, 1, 3, 5, 9), sequencial no lote (9–13), segmento (14) e totais dos trailers. **Layout de
+  banco** (`layouts/<banco>.js`, hoje **Santander — cobrança**, do manual H7815 v8.1 de jun/2024, enviado
+  pelo dono): cada registro (header de arquivo/lote, segmentos P, Q, R, S1, S2, Y03, Y53 na remessa;
+  T, U, Y03, Y04 no retorno; trailers) é uma lista de campos no formato do CNAB 400, e o **segmento
+  escolhe a lista** (letra da posição 14; discriminador na 18 para S e 18–19 para Y).
+  - **Prova do layout, sem arquivo real:** um teste confere que cada registro cobre as posições 1–240
+    **sem buraco nem sobreposição** (pegaria transcrição errada), os dois exemplos de DV do manual
+    (nota 15, módulo 11) e a ida e volta gerar → ler.
+  - A conferência de campo é a **mesma função do CNAB 400** (`conferirCampos`, exportada de
+    `cnab400/validacao.js`); as regras entre campos, com a nota do manual na mensagem, ficam em
+    `layouts/santander-regras.js`. **Quem manda é o manual:** o que ele só *recomenda* (DV do nosso número)
+    é aviso; o que ele diz que o banco rejeita (CPF/CNPJ do pagador inválido, vencimento 11111111/99999999,
+    quantidade de registros do lote — nota 37) é erro. Datas do 240 são **DDMMAAAA** (`fmt: "dataDMA"`).
+  - **Gerador** (`gerar240.js` + `gerador-ui.js`): P+Q (remessa) ou T+U (retorno) por título; calcula
+    número do lote, sequencial, qtd de registros do lote e totais do arquivo; confere o arquivo gerado
+    com o mesmo validador. Segmentos R, S e Y são lidos e validados, mas a tela não os monta. O trailer
+    de lote do retorno (totais por tipo de cobrança) sai zerado: o manual não diz como se ligam aos movimentos.
+  - `assets/js/validar-documentos.js` (CPF/CNPJ numéricos) é módulo do site, com teste.
+  - **Banco novo no 240:** um arquivo em `layouts/` + uma linha em `LAYOUTS` (`script.js`). Os manuais do
+    Inter (pagamentos, CNAB 240) e a planilha/PDF de CNAB 444 já foram enviados e **ainda não foram lidos**.
+  - `pages/docs/padroes-cnab.html` é a referência: o que 240 e 400 definem, com as fontes. **Premissa:** só o
+    240 é padrão FEBRABAN com estrutura comum; o 400 é descrito banco a banco.
 - **Ícone do banco na UI** (`ui.js`, `bankIconHtml`): um ícone **neutro** de banco, igual
   para todos. **Não há logo de banco no repositório** (nov/2026): os 3 que apareciam na tela
   e a biblioteca de 205 SVGs saíram, por serem marca registrada de terceiro. O que identifica
@@ -460,7 +457,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 Entregue e funcionando:
 
 - Validador CNAB 400 (Bradesco, Itaú, BMP e Inter), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
-- CNAB 240: conferência de estrutura (lotes, tipos de registro, trailers) e página de referência dos padrões 240 e 400.
+- CNAB 240: conferência de estrutura (qualquer banco), layout do Santander (cobrança) com validação de campos e geração, e página de referência dos padrões 240 e 400.
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.
 - Rede e diagnóstico: "Meu IP, navegador e sistema" e "Conferir DNS e e-mail de um domínio"

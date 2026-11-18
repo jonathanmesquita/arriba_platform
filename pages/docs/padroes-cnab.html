@@ -52,7 +52,7 @@
             <tr><th scope="row">Quem define</th><td>Padrão FEBRABAN; cada banco publica o seu manual com adaptações</td><td>Cada banco publica o seu layout; não há um padrão único</td></tr>
             <tr><th scope="row">Organização</th><td>Arquivo → lotes → registros de detalhe em segmentos (P, Q, R, S, T, U…)</td><td>Header, registros de detalhe (um título por registro) e trailer</td></tr>
             <tr><th scope="row">Onde aparece</th><td>Cobrança, pagamentos a fornecedores, folha de pagamento, DDA</td><td>Cobrança (remessa e retorno de boletos)</td></tr>
-            <tr><th scope="row">Neste site</th><td><a href="../../tools/cobranca/cnab240/cnab240.html">Confere a estrutura</a></td><td><a href="../../tools/cobranca/cnab400/cnab400.html">Valida campo a campo e gera</a> (Bradesco, Itaú, BMP e Inter)</td></tr>
+            <tr><th scope="row">Neste site</th><td><a href="../../tools/cobranca/cnab240/cnab240.html">Confere a estrutura (qualquer banco) e os campos do Santander; gera arquivo de teste</a></td><td><a href="../../tools/cobranca/cnab400/cnab400.html">Valida campo a campo e gera</a> (Bradesco, Itaú, BMP e Inter)</td></tr>
           </tbody>
         </table>
       </div>
@@ -122,17 +122,17 @@
         <div>
           <h3>CNAB 240 (qualquer banco)</h3>
           <ul>
-            <li>Tamanho de todas as linhas.</li>
-            <li>Ordem: arquivo → lotes → detalhes → trailers, e número do lote.</li>
-            <li>Sequencial e segmento dos detalhes.</li>
-            <li>Totais do Trailer de lote e do Trailer de arquivo.</li>
+            <li>Em qualquer banco: tamanho das linhas, ordem arquivo → lotes → detalhes → trailers, número do lote, sequencial e segmento, totais dos trailers.</li>
+            <li>Santander (cobrança): os campos de cada segmento (P, Q, R, S, Y na remessa; T, U, Y no retorno), datas DDMMAAAA, tabelas de códigos e as regras do manual (vencimento, juros, desconto, CPF/CNPJ do pagador).</li>
+            <li>Gerar arquivo de teste: remessa (P e Q) e retorno (T e U), com lote e trailers calculados.</li>
           </ul>
         </div>
       </div>
       <p class="nota">
-        <strong>Ainda não conferido, por falta do manual de cada banco:</strong> dígito verificador do
-        nosso número, tabelas de espécie e de instrução, e os campos de dentro dos segmentos do
-        CNAB 240. Gerar arquivo CNAB 240 depende dessa mesma informação.
+        <strong>Ainda não conferido, por falta do manual de cada banco:</strong> os campos de dentro dos
+        segmentos do CNAB 240 dos outros bancos (o layout do Santander veio do manual H7815 v8.1, de jun/2024,
+        e não foi comparado com arquivo real de produção) e o dígito verificador do nosso número nos demais
+        bancos do CNAB 400.
       </p>
     </section>
 

@@ -41,13 +41,15 @@ function diasNoMes(mes, ano) {
 /* DDMMAA, com o mesmo pivô de século da leitura (parseData): até 70 é
    20xx, depois é 19xx. Zeros e branco significam "sem data" e não são erro
    aqui — quem cobra data preenchida é a regra de campo obrigatório. */
-export function dataValida(raw, { anoComQuatroDigitos = false } = {}) {
+export function dataValida(raw, { anoComQuatroDigitos = false, formato = "" } = {}) {
   const t = String(raw ?? "").trim();
   if (!t || /^0+$/.test(t)) return true;
-  const tam = anoComQuatroDigitos ? 8 : 6;
+  const dma = formato === "DDMMAAAA";
+  const tam = anoComQuatroDigitos || dma ? 8 : 6;
   if (!new RegExp(`^\\d{${tam}}$`).test(t)) return false;
   let dia; let mes; let ano;
-  if (anoComQuatroDigitos) { ano = +t.slice(0, 4); mes = +t.slice(4, 6); dia = +t.slice(6, 8); }
+  if (dma) { dia = +t.slice(0, 2); mes = +t.slice(2, 4); ano = +t.slice(4, 8); }
+  else if (anoComQuatroDigitos) { ano = +t.slice(0, 4); mes = +t.slice(4, 6); dia = +t.slice(6, 8); }
   else {
     dia = +t.slice(0, 2); mes = +t.slice(2, 4);
     const aa = +t.slice(4, 6);
@@ -84,6 +86,63 @@ const ACHA_NAO_ASCII = /[^\x20-\x7e]/;
 
 function formatarReais(valor) {
   return valor.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ---------------------------------------------------------------------
+   Conferência campo a campo de UMA linha, contra a lista de campos do seu
+   registro. Compartilhada com o CNAB 240 (que escolhe a lista pelo tipo e
+   pelo segmento da linha). `registro` = "header" | "detalhe" | "trailer" |
+   "extra"; no header o valor fixo é conferido pelo parseHeader (CNAB 400) e
+   não é repetido aqui.
+   --------------------------------------------------------------------- */
+export function conferirCampos(texto, defs, registro, n, { conferirFixoNoHeader = false } = {}) {
+  const problemas = [];
+  const adiciona = (nivel, linha, mensagem, def, codigo) =>
+    problemas.push({ nivel, linha, mensagem, ...(codigo ? { codigo } : {}), ...(def ? { campo: def.key, ini: def.ini, fim: def.fim } : {}) });
+
+  for (const def of defs) {
+    const bruto = fld(texto, def);
+    const dado = bruto.trim();
+    const onde = `Linha ${n}, "${rotuloDe(def)}" (posições ${posicao(def)})`;
+
+    /* Valor fixo do layout. */
+    if (def.fixo !== undefined && (registro !== "header" || conferirFixoNoHeader)) {
+      if (dado.toUpperCase() !== String(def.fixo).trim().toUpperCase()) {
+        adiciona("erro", n, `${onde}: veio ${mostrar(bruto)}, o layout fixa ${mostrar(def.fixo)}.`, def);
+      }
+      continue;
+    }
+    if (def.fixo !== undefined) continue;
+
+    /* Valores permitidos declarados pelo layout (`opcoes`). Campo em
+       branco ou zerado não é reportado (ver cabeçalho do arquivo). */
+    if (def.opcoes && dado && !/^0+$/.test(dado) && !def.opcoes.includes(dado)) {
+      adiciona("erro", n, `${onde}: veio ${mostrar(bruto)}, e o layout aceita só ${def.opcoes.map((o) => `"${o}"`).join(", ")}.`, def);
+      continue;
+    }
+    /* Tabela de códigos (`tabela`): fora dela é aviso — o banco acrescenta códigos. */
+    if (def.tabela && dado && !(dado in def.tabela)) {
+      adiciona("aviso", n, `${onde}: o código ${mostrar(bruto)} não consta na tabela deste layout (pode ser um código novo do banco ou um erro).`, def);
+    }
+
+    if (def.type === "N") {
+      if (def.fmt === "valorVirgula") {
+        if (dado && !/^[\d.,\s]+$/.test(dado)) adiciona("erro", n, `${onde}: valor com caractere que não é número: ${mostrar(bruto)}.`, def);
+      } else if (dado && /\D/.test(dado)) {
+        adiciona("erro", n, `${onde}: campo numérico com caractere que não é dígito: ${mostrar(bruto)}.`, def);
+      } else if (def.fmt === "data" && !dataValida(dado)) {
+        adiciona("erro", n, `${onde}: data impossível ${mostrar(bruto)} (formato DDMMAA).`, def);
+      } else if (def.fmt === "data8" && !dataValida(dado, { anoComQuatroDigitos: true })) {
+        adiciona("erro", n, `${onde}: data impossível ${mostrar(bruto)} (formato AAAAMMDD).`, def);
+      } else if (def.fmt === "dataDMA" && !dataValida(dado, { formato: "DDMMAAAA" })) {
+        adiciona("erro", n, `${onde}: data impossível ${mostrar(bruto)} (formato DDMMAAAA).`, def);
+      }
+    } else if (def.type === "A") {
+      if (/[\x00-\x08\x0b-\x1f\x7f]/.test(bruto)) adiciona("erro", n, `${onde}: contém caractere de controle (invisível), que o banco não aceita.`, def);
+      else if (ACHA_NAO_ASCII.test(bruto)) adiciona("aviso", n, `${onde}: contém acento ou caractere especial ${mostrar(bruto)}. Os manuais pedem maiúsculas e sem acento, e o banco pode rejeitar.`, def, "acento");
+    }
+  }
+  return problemas;
 }
 
 /* ---------------------------------------------------------------------
@@ -147,44 +206,7 @@ export function validarLinhas(linhas, config, opcoes = {}) {
     }
 
     /* Campo a campo. */
-    for (const def of defs) {
-      const bruto = fld(texto, def);
-      const dado = bruto.trim();
-      const onde = `Linha ${n}, "${rotuloDe(def)}" (posições ${posicao(def)})`;
-
-      /* Valor fixo do layout. O Header já é conferido pelo parseHeader (e
-         aparece como "Header inválido"); repetir aqui duplicaria a
-         mensagem, então só detalhe e trailer entram. */
-      if (def.fixo !== undefined && registro !== "header") {
-        if (dado.toUpperCase() !== String(def.fixo).trim().toUpperCase()) {
-          adiciona("erro", n, `${onde}: veio ${mostrar(bruto)}, o layout fixa ${mostrar(def.fixo)}.`, def);
-        }
-        continue;
-      }
-      if (def.fixo !== undefined) continue;
-
-      /* Valores permitidos declarados pelo layout (`opcoes`). Campo em
-         branco ou zerado não é reportado (ver cabeçalho do arquivo). */
-      if (def.opcoes && dado && !/^0+$/.test(dado) && !def.opcoes.includes(dado)) {
-        adiciona("erro", n, `${onde}: veio ${mostrar(bruto)}, e o layout aceita só ${def.opcoes.map((o) => `"${o}"`).join(", ")}.`, def);
-        continue;
-      }
-
-      if (def.type === "N") {
-        if (def.fmt === "valorVirgula") {
-          if (dado && !/^[\d.,\s]+$/.test(dado)) adiciona("erro", n, `${onde}: valor com caractere que não é número: ${mostrar(bruto)}.`, def);
-        } else if (dado && /\D/.test(dado)) {
-          adiciona("erro", n, `${onde}: campo numérico com caractere que não é dígito: ${mostrar(bruto)}.`, def);
-        } else if (def.fmt === "data" && !dataValida(dado)) {
-          adiciona("erro", n, `${onde}: data impossível ${mostrar(bruto)} (formato DDMMAA).`, def);
-        } else if (def.fmt === "data8" && !dataValida(dado, { anoComQuatroDigitos: true })) {
-          adiciona("erro", n, `${onde}: data impossível ${mostrar(bruto)} (formato AAAAMMDD).`, def);
-        }
-      } else if (def.type === "A") {
-        if (/[\x00-\x08\x0b-\x1f\x7f]/.test(bruto)) adiciona("erro", n, `${onde}: contém caractere de controle (invisível), que o banco não aceita.`, def);
-        else if (ACHA_NAO_ASCII.test(bruto)) adiciona("aviso", n, `${onde}: contém acento ou caractere especial ${mostrar(bruto)}. Os manuais pedem maiúsculas e sem acento, e o banco pode rejeitar.`, def, "acento");
-      }
-    }
+    problemas.push(...conferirCampos(texto, defs, registro, n));
 
     /* Regras entre campos do mesmo detalhe, declaradas pelo banco em
        `regrasDetalhe`: cada uma recebe { campos (texto cru por chave), linha }
@@ -267,6 +289,14 @@ export function validarValor(def, valor, { obrigatorioVazio = true } = {}) {
     return saida;
   }
 
+  if (def.opcoes && !def.opcoes.includes(texto)) {
+    saida.push({ nivel: "erro", mensagem: `${mostrar(texto)} não é um valor aceito: o layout aceita só ${def.opcoes.map((o) => `"${o}"`).join(", ")}.` });
+    return saida;
+  }
+  if (def.tabela && !(texto in def.tabela)) {
+    saida.push({ nivel: "aviso", mensagem: `O código ${mostrar(texto)} não consta na tabela deste layout (pode ser um código novo do banco).` });
+  }
+
   if (def.fmt === "valor") {
     const n = paraNumero(valor);
     if (!Number.isFinite(n)) saida.push({ nivel: "erro", mensagem: `${mostrar(texto)} não é um valor em reais.` });
@@ -291,7 +321,7 @@ export function validarValor(def, valor, { obrigatorioVazio = true } = {}) {
     return saida;
   }
 
-  if (def.fmt === "data" || def.fmt === "data8") {
+  if (def.fmt === "data" || def.fmt === "data8" || def.fmt === "dataDMA") {
     /* O formulário usa <input type="date"> (AAAA-MM-DD, sempre calendário
        válido), mas um arquivo importado pode trazer DD/MM/AAAA. */
     let ano; let mes; let dia;

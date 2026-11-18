@@ -168,7 +168,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 ## Gotchas específicos
 
 - **Validador CNAB 400** (`tools/cobranca/cnab400/`): motor genérico multi-banco
-  (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú, BMP e Inter), com leitor (`parseArquivo`)
+  (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú, BMP, Inter e Paulista/FIDC com 444 posições), com leitor (`parseArquivo`)
   e gerador (`gerarArquivo`); a UI tem modo "Validar" e modo "Gerar", baixando `.REM`/`.RET`.
   Posições do manual são **1-indexadas e inclusivas**; `slice()` é 0-indexado exclusivo →
   usar `slice(ini-1, fim)`. O motor **não assume 400 posições** (`config.tamanhoRegistro`) e
@@ -208,8 +208,9 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   com dado **fictício** (nome e CPF de `assets/js/fake-data-br.js`, datas relativas a hoje, um
   nosso número por título) e nunca sobrescreve o que foi digitado. O `exemplo` de cada campo
   nos layouts também é fictício: um nome de empresa e um CNPJ que vieram de um manual foram
-  trocados. A validação já achou um conflito real nos dados (Bradesco retorno, "Carteira": 1
-  posição declarada, exemplo de 2 dígitos) — está em `tasks/backlog.md`.
+  trocados. A validação achou um conflito real nos dados (Bradesco retorno, "Carteira": 1
+  posição declarada, exemplo de 2 dígitos); as planilhas do Bradesco enviadas depois confirmaram a
+  posição única e o exemplo real "9" — o exemplo foi corrigido para isso.
 - **CNAB 240** (`tools/cobranca/cnab240/`, nov/2026): duas camadas. **Estrutura**
   (`validacao240.js`, vale para qualquer banco): tamanho da linha, banco (1–3), lote (4–7), tipo de
   registro (8: 0, 1, 3, 5, 9), sequencial no lote (9–13), segmento (14) e totais dos trailers. **Layout de
@@ -234,6 +235,17 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     Inter (pagamentos, CNAB 240) e a planilha/PDF de CNAB 444 já foram enviados e **ainda não foram lidos**.
   - `pages/docs/padroes-cnab.html` é a referência: o que 240 e 400 definem, com as fontes. **Premissa:** só o
     240 é padrão FEBRABAN com estrutura comum; o 400 é descrito banco a banco.
+- **CNAB 444 — Paulista/FIDC** (`banks/paulista.js`, nov/2026): manual de junho/2019 do Banco
+  Paulista (611) para FIDC, **só remessa** (entrada de títulos e instruções), registro de **444
+  posições** (`tamanhoRegistro: 444`; sequencial em 439–444, chave da nota fiscal em 395–438). Banco
+  com uma direção só **não declara `retorno`** — a tela desabilita a direção que falta
+  (`ajustarDirecao()` em `ui.js`). Itens do manual que dizem "Branco" mas têm tipo 9(n) foram tratados
+  como branco; nota fiscal e chave são obrigatórias só na espécie 01 (duplicata), por `regrasDetalhe`. Não
+  há arquivo real: prova = cobertura das 444 posições sem buraco nem sobreposição + ida e volta.
+- **Bradesco 400 conferido contra as planilhas validadoras** (nov/2026): as duas planilhas (remessa e
+  retorno, 3 abas cada) bateram **campo a campo, por posição**, com `banks/bradesco.js` — 6 de 6
+  abas, nenhuma divergência. As amostras embutidas nas planilhas têm nome e documento de empresa
+  real e **não entram no repositório** (nem como exemplo).
 - **Ícone do banco na UI** (`ui.js`, `bankIconHtml`): um ícone **neutro** de banco, igual
   para todos. **Não há logo de banco no repositório** (nov/2026): os 3 que apareciam na tela
   e a biblioteca de 205 SVGs saíram, por serem marca registrada de terceiro. O que identifica
@@ -456,7 +468,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 
 Entregue e funcionando:
 
-- Validador CNAB 400 (Bradesco, Itaú, BMP e Inter), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
+- Validador CNAB 400 (Bradesco, Itaú, BMP, Inter e o CNAB 444 do Paulista/FIDC), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
 - CNAB 240: conferência de estrutura (qualquer banco), layout do Santander (cobrança) com validação de campos e geração, e página de referência dos padrões 240 e 400.
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.

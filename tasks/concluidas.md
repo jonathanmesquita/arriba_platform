@@ -3,6 +3,8 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Planilhas do Bradesco (remessa e retorno) comparadas campo a campo com `banks/bradesco.js`: 6 de 6 abas batem; o conflito da "Carteira" (retorno, posição 108) se resolveu — 1 posição, exemplo real "9" ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 444 (Paulista/FIDC, 611): remessa a partir do manual de jun/2019; tela passou a aceitar banco de uma direção só ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 240 Santander (cobrança): layout por segmento a partir do manual H7815 v8.1, validação de campos e regras (notas 15, 17, 18, 21–23, 28, 29, 37), gerador de remessa (P/Q) e retorno (T/U) e tela com Conferir/Gerar; 29 testes ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 400: banco Inter (077), remessa (tipos 1, 2, 3) e retorno, a partir do manual v2.2 enviado pelo dono; DV do nosso número conferido com o exemplo do manual; 14 testes ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 240: conferência de estrutura (tamanho, lotes, tipos de registro, trailers) e página de referência dos padrões 240 e 400, com fontes; menu, busca e base do chat atualizados ✅ 2026-11-18 #area/ferramentas

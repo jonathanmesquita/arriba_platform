@@ -165,7 +165,7 @@ const menuData = {
    As palavras-chave são escritas SEM acento de propósito: normalizeSearch
    tira o acento dos dois lados (ver .claude/rules/idioma-ptbr.md). */
 export const searchItems = [
-    ["Arquivo bancário (CNAB 400)", "cnab 400 arquivo bancario banco multi banco bradesco 237 itau 341 bmp 274 inter 077 retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo posicional", "tools/cobranca/cnab400/cnab400.html"],
+    ["Arquivo bancário (CNAB 400)", "cnab 400 arquivo bancario banco multi banco bradesco 237 itau 341 bmp 274 inter 077 paulista 611 fidc 444 retorno remessa boleto ocorrencia liquidacao gerador leitor validador parser arquivo posicional", "tools/cobranca/cnab400/cnab400.html"],
     ["Arquivo bancário (CNAB 240)", "cnab 240 arquivo bancario febraban lote segmento header trailer remessa retorno cobranca pagamento folha dda estrutura validador conferir linhas 240 posicoes santander 033 gerar gerador boleto segmento p q", "tools/cobranca/cnab240/cnab240.html"],
     ["Padrões CNAB 240 e 400 (referência)", "cnab 240 400 padrao febraban diferenca tamanho linha lote segmento tipo registro header trailer layout banco regras preenchimento fontes manual", "pages/docs/padroes-cnab.html", true],
     ["Validador de CSV", "csv validador validar arquivo delimitador ponto e virgula cabecalho coluna layout importacao erro linha duplicada cpf cnpj invalido data valor decimal aspas rfc 4180 schema estrutura planilha", "tools/dados/csv-validator/csv-validator.html"],

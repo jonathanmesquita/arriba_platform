@@ -44,9 +44,11 @@ export function initUI() {
     currentMode = "generator";
     bankSelect.value = currentBank.code;
   }
+  ajustarDirecao();
 
   bankSelect.addEventListener("change", () => {
     currentBank = BANKS.find(b => b.code === bankSelect.value) || null;
+    ajustarDirecao();
     lastParsedData = null;
     syncControls();
     renderArea();
@@ -67,6 +69,16 @@ export function initUI() {
 
   syncControls();
   renderArea();
+}
+
+/* Nem todo banco tem as duas direções (o layout do Paulista, por exemplo, é só
+   remessa): a direção sem layout fica desabilitada e, se era a escolhida, a
+   tela passa para a que existe. */
+function ajustarDirecao() {
+  if (!currentBank) return;
+  const tem = (d) => Boolean(currentBank.config[d]);
+  if (!tem(currentDirecao)) currentDirecao = tem("remessa") ? "remessa" : "retorno";
+  document.querySelectorAll("#direcaoSelect option").forEach(o => { o.disabled = !tem(o.value); });
 }
 
 function setMode(mode) {

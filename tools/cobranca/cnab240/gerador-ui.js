@@ -238,7 +238,7 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
     const preencher = (container, defs, indice) => {
       for (const e of campos(container)) {
         const def = defDe(defs, e.dataset.k);
-        if (!def || e.value.trim() || !def.obrigatorio) continue;
+        if (!def || e.value.trim() || !(def.obrigatorio || def.exemploPreenche)) continue;
         let v = def.exemplo ?? "";
         if (def.exemploFn) v = def.exemploFn(indice);
         else if (def.fmt === "dataDMA") v = /vencimento/i.test(def.key) ? maisDias(30 + indice) : iso(hoje);

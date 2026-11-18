@@ -123,15 +123,15 @@
           <h3>CNAB 240 (qualquer banco)</h3>
           <ul>
             <li>Em qualquer banco: tamanho das linhas, ordem arquivo → lotes → detalhes → trailers, número do lote, sequencial e segmento, totais dos trailers.</li>
-            <li>Santander (cobrança): os campos de cada segmento (P, Q, R, S, Y na remessa; T, U, Y no retorno), datas DDMMAAAA, tabelas de códigos e as regras do manual (vencimento, juros, desconto, CPF/CNPJ do pagador).</li>
-            <li>Gerar arquivo de teste: remessa (P e Q) e retorno (T e U), com lote e trailers calculados.</li>
+            <li>Santander (cobrança): os campos de cada segmento (P, Q, R, S, Y na remessa; T, U, Y no retorno), datas DDMMAAAA, tabelas de códigos e as regras do manual (vencimento, juros, desconto, CPF/CNPJ do pagador). Inter (pagamentos): segmentos A, B, J, J-52 e O, escolhidos pelo tipo do lote.</li>
+            <li>Gerar arquivo de teste: Santander (remessa P/Q e retorno T/U) e Inter (um lote de TED, Pix, boletos, QR Code ou tributos), com lote e trailers calculados.</li>
           </ul>
         </div>
       </div>
       <p class="nota">
         <strong>Ainda não conferido, por falta do manual de cada banco:</strong> os campos de dentro dos
-        segmentos do CNAB 240 dos outros bancos (o layout do Santander veio do manual H7815 v8.1, de jun/2024,
-        e não foi comparado com arquivo real de produção) e o dígito verificador do nosso número nos demais
+        segmentos do CNAB 240 dos outros bancos (os layouts do Santander (manual H7815 v8.1, jun/2024) e do Inter (pagamentos, v1.10, ago/2024)
+        vieram dos manuais e não foram comparados com arquivo real de produção) e o dígito verificador do nosso número nos demais
         bancos do CNAB 400.
       </p>
     </section>

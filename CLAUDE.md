@@ -231,8 +231,23 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     com o mesmo validador. Segmentos R, S e Y são lidos e validados, mas a tela não os monta. O trailer
     de lote do retorno (totais por tipo de cobrança) sai zerado: o manual não diz como se ligam aos movimentos.
   - `assets/js/validar-documentos.js` (CPF/CNPJ numéricos) é módulo do site, com teste.
-  - **Banco novo no 240:** um arquivo em `layouts/` + uma linha em `LAYOUTS` (`script.js`). Os manuais do
-    Inter (pagamentos, CNAB 240) e a planilha/PDF de CNAB 444 já foram enviados e **ainda não foram lidos**.
+  - **Banco novo no 240:** um arquivo em `layouts/` + uma linha em `LAYOUTS` (`script.js`).
+  - **Inter — pagamentos** (`layouts/inter-pagamentos.js`, manual v1.10 de 23/08/2024): o arquivo tem
+    **lotes de tipos diferentes** e o conteúdo de um segmento depende do tipo do lote (o A da TED e o
+    do Pix têm campos diferentes). O tipo vem da **forma de lançamento** do header de lote (posições
+    12–13: 01/03 TED, 45 Pix, 30/31 boletos, 47 QR Code Pix, 11/80/81 tributos) — `L.lotes` +
+    `L.loteDaForma`; o validador escolhe a lista de segmentos por lote. O gerador trabalha com **um
+    tipo de lote por vez**: `variantePagamento()` devolve um layout só daquele tipo, e a tela mostra o
+    seletor "Tipo de lote". J-52 e J-52 Pix têm a mesma identificação (52); o Pix é reconhecido por
+    ter a URL/chave a partir da posição 132 (no J-52 comum 132–187 é branco). Campos de ocorrência
+    (231–240) guardam até 5 códigos de 2 caracteres, conferidos como **lista** (`listaDeCodigos`).
+    **Limites declarados:** o retorno usa os mesmos segmentos (o manual só define código de remessa 1,
+    então ele não é conferido no retorno); o segmento C (opcional na TED) é citado mas não descrito,
+    então é lido como "segmento não descrito"; as formas 80/81 (ISS) foram ligadas ao lote de
+    tributos sem segmento próprio no manual; o DV do código de barras não está no manual e não é
+    conferido; a regra "forma de iniciação 05 exige os dados bancários do favorecido" cruza dois
+    registros (A e B) e só o lado do B é conferido. Sem arquivo real: prova = cobertura das 240
+    posições de cada registro, ida e volta por tipo de lote e um arquivo com dois tipos de lote.
   - `pages/docs/padroes-cnab.html` é a referência: o que 240 e 400 definem, com as fontes. **Premissa:** só o
     240 é padrão FEBRABAN com estrutura comum; o 400 é descrito banco a banco.
 - **CNAB 444 — Paulista/FIDC** (`banks/paulista.js`, nov/2026): manual de junho/2019 do Banco
@@ -469,7 +484,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 Entregue e funcionando:
 
 - Validador CNAB 400 (Bradesco, Itaú, BMP, Inter e o CNAB 444 do Paulista/FIDC), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
-- CNAB 240: conferência de estrutura (qualquer banco), layout do Santander (cobrança) com validação de campos e geração, e página de referência dos padrões 240 e 400.
+- CNAB 240: conferência de estrutura (qualquer banco), layouts do Santander (cobrança) e do Inter (pagamentos) com validação de campos e geração, e página de referência dos padrões 240 e 400.
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.
 - Rede e diagnóstico: "Meu IP, navegador e sistema" e "Conferir DNS e e-mail de um domínio"

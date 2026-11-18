@@ -23,7 +23,7 @@
 import { buildLine } from "../cnab400/engine.js";
 import { TAMANHO_240 } from "./validacao240.js";
 
-const ORDEM_SEGMENTOS = { remessa: ["P", "Q", "R", "S1", "S2", "Y03", "Y53"], retorno: ["T", "U", "Y03", "Y04"] };
+const ORDEM_PADRAO = { remessa: ["P", "Q", "R", "S1", "S2", "Y03", "Y53"], retorno: ["T", "U", "Y03", "Y04"] };
 
 export function gerarArquivo240(layout, direcao, dados) {
   const L = layout[direcao];
@@ -35,12 +35,14 @@ export function gerarArquivo240(layout, direcao, dados) {
   linhas.push(buildLine(L.headerLote, { ...lote, lote: numeroLote }, TAMANHO_240));
 
   let seq = 0;
+  let soma = 0;
   for (const titulo of titulos) {
     let movimento = null;
-    for (const chave of ORDEM_SEGMENTOS[direcao]) {
+    for (const chave of L.ordem || ORDEM_PADRAO[direcao]) {
       const valores = titulo[chave];
       if (!valores || !L.segmentos[chave]) continue;
       seq += 1;
+      if (L.somaCampo?.[chave]) soma += Number(valores[L.somaCampo[chave]]) || 0;
       movimento = valores.codMovimento || movimento;
       linhas.push(buildLine(L.segmentos[chave], {
         ...valores,
@@ -51,7 +53,7 @@ export function gerarArquivo240(layout, direcao, dados) {
     }
   }
 
-  linhas.push(buildLine(L.trailerLote, { lote: numeroLote, qtdRegistros: seq + 2 }, TAMANHO_240));
+  linhas.push(buildLine(L.trailerLote, { lote: numeroLote, qtdRegistros: seq + 2, somatoriaValores: soma }, TAMANHO_240));
   linhas.push(buildLine(L.trailerArquivo, { qtdLotes: 1, qtdRegistros: linhas.length + 1 }, TAMANHO_240));
   return linhas;
 }

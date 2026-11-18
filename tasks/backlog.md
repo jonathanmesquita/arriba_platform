@@ -33,9 +33,10 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
   - Contexto: o manual do Inter não liga os códigos do detalhe (02 aberto, 03 erro, 06 pago, 07 cancelado) à numeração do trailer; hoje o gerador grava o trailer do retorno zerado. Os registros tipo 2 (mensagens, descontos 2 e 3) e tipo 3 (e-mail e beneficiário final) são lidos e validados, mas a tela só monta o tipo 1
   - Local: `tools/cobranca/cnab400/banks/inter.js` (`RETORNO_TRAILER_FIELDS`, comentário do cabeçalho)
   - Ação: perguntar ao banco ou achar um arquivo de retorno real; depois ligar `trailerConferencia` e o gerador
-- [ ] CNAB 240: layout do Inter (pagamentos: TED, Pix, J, J-52, O) — manual já enviado, ainda não lido 📅 2026-11-18 🔺 alta #area/ferramentas #esforco/g 🤖
-  - Contexto: `Manual_CNAB240_Pagamentos.pdf` (Inter, v1.10, 23/08/2024, 35 páginas) foi enviado; só as páginas 1–6 (estrutura e regras gerais) foram lidas. O Santander cobrança (já feito) é o modelo: um arquivo em `tools/cobranca/cnab240/layouts/` e uma linha em `LAYOUTS` (`script.js`)
-  - Ação: ler as páginas 7–35, declarar header/trailers, segmentos A, B, J, J-52, O e as notas; o validador já escolhe os campos pelo segmento (pode precisar de discriminador para o J-52)
+- [ ] CNAB 240 Inter pagamentos: segmento C, retorno e regras que cruzam registros 📅 2026-11-18 🔽 baixa #area/ferramentas #esforco/m 🤖
+  - Contexto: o manual cita o segmento C (opcional na TED) mas não traz o layout; o código de remessa do header só é definido como "1", então o retorno não é conferido nesse campo; a forma de iniciação 05 do Pix (no B) exige os dados bancários do favorecido no A, e só o lado B é conferido; formas 80/81 (ISS) sem segmento próprio no manual; DV do código de barras fora do manual
+  - Local: `tools/cobranca/cnab240/layouts/inter-pagamentos.js` (cabeçalho do arquivo lista cada limite)
+  - Ação: perguntar ao banco/obter arquivo de retorno real; depois ligar o que faltar
 - [ ] CNAB 240 Santander: montar os segmentos R, S e Y na tela de geração e conferir os totais do trailer de lote do retorno 📅 2026-11-18 🔽 baixa #area/ferramentas #esforco/m 🤖
   - Contexto: R, S1, S2, Y03 e Y53 (remessa) e Y03/Y04 (retorno) são lidos e validados, mas o formulário só monta P/Q e T/U; o manual não diz como os totais por tipo de cobrança do trailer de lote do retorno se ligam aos movimentos, então saem zerados
   - Local: `tools/cobranca/cnab240/layouts/santander.js` (`formulario`), `gerar240.js`

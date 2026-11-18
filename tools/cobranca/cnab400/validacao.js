@@ -125,6 +125,19 @@ export function conferirCampos(texto, defs, registro, n, { conferirFixoNoHeader 
       adiciona("aviso", n, `${onde}: o código ${mostrar(bruto)} não consta na tabela deste layout (pode ser um código novo do banco ou um erro).`, def);
     }
 
+    /* Campo que guarda VÁRIOS códigos de tamanho fixo (ex.: 5 ocorrências de 2 caracteres):
+       cada pedaço não vazio tem de constar na tabela — fora dela é aviso. */
+    if (def.listaDeCodigos && dado) {
+      const { tamanho: t, tabela } = def.listaDeCodigos;
+      const desconhecidos = [];
+      for (let i = 0; i < bruto.length; i += t) {
+        const cod = bruto.slice(i, i + t).trim();
+        if (cod && !(cod in tabela)) desconhecidos.push(cod);
+      }
+      if (desconhecidos.length) adiciona("aviso", n, `${onde}: ${desconhecidos.length === 1 ? "o código" : "os códigos"} ${desconhecidos.map((c) => `"${c}"`).join(", ")} não ${desconhecidos.length === 1 ? "consta" : "constam"} na tabela de ocorrências deste layout.`, def);
+      continue;
+    }
+
     if (def.type === "N") {
       if (def.fmt === "valorVirgula") {
         if (dado && !/^[\d.,\s]+$/.test(dado)) adiciona("erro", n, `${onde}: valor com caractere que não é número: ${mostrar(bruto)}.`, def);

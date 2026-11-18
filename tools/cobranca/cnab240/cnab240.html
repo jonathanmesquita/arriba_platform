@@ -61,7 +61,7 @@
       <h2>Layout</h2>
       <p class="descricao">
         Sem escolher um layout de banco, a tela confere só a estrutura, que vale para qualquer banco. Com o layout do
-        Santander (cobrança), confere também os campos de cada segmento e permite gerar um arquivo de teste.
+        Santander (cobrança) ou do Inter (pagamentos), confere também os campos de cada segmento e permite gerar um arquivo de teste.
       </p>
       <div class="campo-linha">
         <div class="campo">
@@ -76,6 +76,13 @@
             <option value="remessa">Remessa (empresa → banco)</option>
             <option value="retorno">Retorno (banco → empresa)</option>
           </select>
+        </div>
+      </div>
+      <div class="campo-linha" id="campoTipoLote240" hidden style="margin-top:12px">
+        <div class="campo">
+          <label for="tipoLote240">Tipo de lote (para gerar)</label>
+          <select id="tipoLote240" class="form-select"></select>
+          <p class="dica">Este layout tem lotes de tipos diferentes, e o conteúdo dos segmentos muda de um para outro. Para conferir um arquivo, não precisa escolher: o tipo vem do header de cada lote.</p>
         </div>
       </div>
       <div class="modos" role="group" aria-label="O que você quer fazer" id="modos240" hidden style="margin-top:16px;margin-bottom:0">
@@ -145,19 +152,19 @@
           </ul>
         </div>
         <div>
-          <h3>Com o layout do Santander (cobrança)</h3>
+          <h3>Com o layout do Santander (cobrança) ou do Inter (pagamentos)</h3>
           <ul class="descricao">
             <li>Os campos de cada registro: tipo (número ou texto), datas DDMMAAAA, valores fixos e tabelas de códigos.</li>
             <li>Regras do manual: vencimento, juros, desconto, abatimento, CPF/CNPJ do pagador, endereço e UF.</li>
-            <li>Segmento P seguido de Q na remessa; T seguido de U no retorno.</li>
-            <li>Gerar arquivo: segmentos P e Q (remessa) ou T e U (retorno), com lote e trailers calculados.</li>
+            <li>Santander: segmento P seguido de Q na remessa; T seguido de U no retorno. Inter: A seguido de B (TED e Pix), J seguido de J-52 (boletos e QR Code), O (tributos); o tipo do lote vem da forma de lançamento do header.</li>
+            <li>Gerar arquivo: Santander, segmentos P e Q (remessa) ou T e U (retorno); Inter, um lote de um dos cinco tipos. Lote e trailers são calculados.</li>
           </ul>
         </div>
       </div>
       <p class="nota">
-        O layout do Santander vem do manual H7815 v8.1 (jun/2024), sem arquivo real para comparar: a prova é o exemplo do próprio manual e a ida e volta
-        (gerar → ler). Os layouts de outros bancos, e o tratamento dos segmentos R, S e Y na tela de geração, ainda não estão
-        aqui. Veja o que cada padrão define em
+        Os layouts vêm dos manuais do Santander (H7815 v8.1, jun/2024) e do Inter (pagamentos, v1.10, ago/2024), sem arquivo real para comparar: a prova
+        é a cobertura das 240 posições de cada registro, os exemplos dos próprios manuais e a ida e volta (gerar → ler). Os segmentos R, S e Y do Santander
+        e o segmento C do Inter são lidos, mas a tela de geração não os monta. Veja o que cada padrão define em
         <a href="../../../pages/docs/padroes-cnab.html">Padrões CNAB 240 e 400: o que cada um define</a>.
       </p>
     </section>

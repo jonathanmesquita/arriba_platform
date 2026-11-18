@@ -51,7 +51,7 @@ export const KNOWLEDGE_BASE = [
     caminhoTela: "Ferramentas › Validar arquivos › Arquivo bancário (CNAB 240)",
     resumo:
       "Confere a estrutura de um arquivo de 240 posições (tamanho das linhas, lotes, detalhes e totais dos " +
-      "trailers) em qualquer banco e, com o layout do Santander (cobrança), os campos de cada segmento. " +
+      "trailers) em qualquer banco e, com o layout do Santander (cobrança) ou do Inter (pagamentos), os campos de cada segmento. " +
       "Também gera um arquivo de teste. O processamento é 100% no navegador.",
     passos: [
       "Escolha o layout (ou deixe 'Qualquer banco') e a direção.",

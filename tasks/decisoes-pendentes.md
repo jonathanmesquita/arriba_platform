@@ -250,10 +250,10 @@ repositório próprio via `git subtree`.
 
 ---
 
-## ✅ Manuais de CNAB — recebidos em 18/11/2026
+## ✅ Manuais de CNAB — recebidos e usados (18/11/2026)
 
-O dono enviou os manuais que a rede da sessão não alcançava: Inter CNAB 400 (cobrança, v2.2) e CNAB 240
-(pagamentos, v1.10), Santander cobrança CNAB 240 (H7815 v8.1), as planilhas validadoras do Bradesco e do BMP
-e um PDF de CNAB 444. **Usados:** Inter 400 e Santander 240 (layout, validação, geração).
-**Falta ler/usar:** Inter 240 pagamentos (págs. 7–35), CNAB 444 e as planilhas do Bradesco — ver `backlog.md`.
-A pergunta "o que é a página" foi respondida ("as duas": ferramenta e referência) e está feita.
+O dono enviou os manuais que a rede da sessão não alcançava, e todos foram lidos e usados: Inter CNAB 400
+(cobrança, v2.2), Inter CNAB 240 (pagamentos, v1.10), Santander cobrança CNAB 240 (H7815 v8.1), as planilhas
+validadoras do Bradesco (batem 6 de 6 abas com `banks/bradesco.js`) e do BMP, e o CNAB 444 (era o layout de
+remessa do Banco Paulista/FIDC). O que cada layout não resolve está no cabeçalho do arquivo dele e em `backlog.md`.
+Segue valendo: **todo layout daqui vem de manual, sem arquivo real de produção para comparar.**

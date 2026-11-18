@@ -3,10 +3,11 @@
    Conteúdo do arquivo entra por textContent, nunca innerHTML. */
 import { analisar240, NOME_TIPO, TAMANHO_240 } from "./validacao240.js";
 import { santander240 } from "./layouts/santander.js";
+import { inter240, variantePagamento } from "./layouts/inter-pagamentos.js";
 import { montarGerador } from "./gerador-ui.js";
 
 /* Layouts de banco disponíveis. Banco novo = um arquivo em layouts/ e uma linha aqui. */
-const LAYOUTS = [santander240];
+const LAYOUTS = [santander240, inter240];
 const layoutAtual = () => LAYOUTS.find((l) => l.code === $("layout240").value) || null;
 const direcaoAtual = () => $("direcao240").value;
 
@@ -138,12 +139,26 @@ function atualizarModo(modo) {
   $("painelConferir").classList.toggle("hidden", gerar);
   $("resultado240").classList.toggle("hidden", gerar || !$("resultado240").dataset.temResultado);
   $("painelGerar").classList.toggle("hidden", !gerar);
-  document.querySelectorAll("#modos240 .modo").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === (gerar ? "gerar" : "conferir"))));
-  if (gerar) montarGerador($("geradorRaiz"), layoutAtual(), direcaoAtual());
+  $("tipoLote240").addEventListener("change", () => atualizarModo("gerar"));
+document.querySelectorAll("#modos240 .modo").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === (gerar ? "gerar" : "conferir"))));
+  if (gerar) {
+    const l = layoutAtual();
+    const layoutDoGerador = l.variantes ? variantePagamento(l, direcaoAtual(), $("tipoLote240").value) : l;
+    montarGerador($("geradorRaiz"), layoutDoGerador, direcaoAtual());
+  }
+}
+
+function montarTiposDeLote() {
+  const l = layoutAtual();
+  const sel = $("tipoLote240");
+  sel.replaceChildren();
+  (l?.variantes || []).forEach((v) => sel.appendChild(el("option", { texto: v.nome, attrs: { value: v.id } })));
+  $("campoTipoLote240").hidden = !l?.variantes;
 }
 
 function aoMudarLayout() {
   const tem = Boolean(layoutAtual());
+  montarTiposDeLote();
   $("direcao240").disabled = !tem;
   $("modos240").hidden = !tem;
   $("resultado240").classList.add("hidden");

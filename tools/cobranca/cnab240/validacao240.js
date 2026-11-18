@@ -228,6 +228,12 @@ function conferirConteudo(linhas, layout, direcao, problemas) {
   let numInscricaoBeneficiario = "";
   let esperadoLote = 1;
   let pendente = null; // { linha, proximo, nivel, chave }
+  /* Layouts com lotes de tipos diferentes (`L.lotes`, ex.: Inter pagamentos): o tipo vem da
+     forma de lançamento do header de lote e decide quais segmentos valem. `somaLote` acumula o
+     valor dos pagamentos para conferir a "somatória dos valores" do trailer. */
+  let loteAtual = null;
+  let somaLote = 0;
+  let loteSemTipo = false;
 
   const fechaPendente = () => {
     if (!pendente) return;
@@ -244,9 +250,20 @@ function conferirConteudo(linhas, layout, direcao, problemas) {
     let defs = porTipo[tipo];
     let chave = null;
     if (tipo === "3") {
-      chave = chaveDoSegmento(texto);
-      defs = L.segmentos[chave];
+      if (L.lotes) {
+        if (!loteAtual) {
+          if (!loteSemTipo) add("aviso", n, `Linha ${n}: o tipo do lote não foi reconhecido pela forma de lançamento do header, então os segmentos deste lote não foram conferidos.`);
+          loteSemTipo = true;
+          return;
+        }
+        chave = loteAtual.resolver(texto);
+        defs = chave ? loteAtual.segmentos[chave] : null;
+      } else {
+        chave = chaveDoSegmento(texto);
+        defs = L.segmentos[chave];
+      }
       if (!defs) {
+        chave = chave || chaveDoSegmento(texto);
         add("aviso", n, `Linha ${n}: o segmento "${chave}" (posição 14) não consta no layout ${L === layout.remessa ? "da remessa" : "do retorno"} de ${layout.nome}; o conteúdo da linha não foi conferido.`);
         return;
       }
@@ -257,6 +274,13 @@ function conferirConteudo(linhas, layout, direcao, problemas) {
 
     if (tipo === "1") {
       fechaPendente();
+      somaLote = 0;
+      loteSemTipo = false;
+      if (L.lotes) {
+        const forma = fld(texto, campoDe(defs, "formaLancamento")).trim();
+        loteAtual = L.lotes[L.loteDaForma[forma]] || null;
+        if (!loteAtual) add("aviso", n, `Linha ${n}: a forma de lançamento "${forma}" não consta no layout de ${layout.nome}; os segmentos do lote não serão conferidos.`);
+      }
       const nl = fld(texto, campoDe(defs, "lote")).trim();
       if (/^\d+$/.test(nl) && Number(nl) !== esperadoLote) add("aviso", n, `Linha ${n}: o número do lote é ${Number(nl)}, e o esperado é ${esperadoLote} (nota 1: 0001 no primeiro, crescente nos demais).`);
       esperadoLote = (/^\d+$/.test(nl) ? Number(nl) : esperadoLote) + 1;
@@ -266,7 +290,8 @@ function conferirConteudo(linhas, layout, direcao, problemas) {
 
     if (tipo === "3") {
       const campos = Object.fromEntries(defs.map((d) => [d.key, fld(texto, d)]));
-      const par = L.pares?.[chave];
+      const fonte = loteAtual || L;
+      const par = fonte.pares?.[chave];
       const esperadoAtual = pendente;
       // O segmento que chegou fecha o par pendente; qualquer outro deixa o par sem o seu segundo registro.
       if (esperadoAtual && esperadoAtual.proximo !== chave) fechaPendente();
@@ -274,7 +299,11 @@ function conferirConteudo(linhas, layout, direcao, problemas) {
       if (par && (!par.quandoMovimento || par.quandoMovimento.includes(String(campos.codMovimento).trim()))) {
         pendente = { linha: n, proximo: par.proximo, nivel: par.nivel, chave };
       }
-      for (const regra of L.regras?.[chave] || []) {
+      if (loteAtual?.somaCampo?.[chave]) {
+        const v = campos[loteAtual.somaCampo[chave]];
+        if (/^\d+$/.test(String(v).trim())) somaLote += Number(String(v).trim());
+      }
+      for (const regra of fonte.regras?.[chave] || []) {
         for (const r of regra({ campos, linha: n, contexto: { numInscricaoBeneficiario } }) || []) {
           const def = r.campo ? campoDe(defs, r.campo) : null;
           problemas.push({ nivel: r.nivel, linha: n, mensagem: `Linha ${n}: ${r.mensagem}`, ...(def ? { campo: def.key, ini: def.ini, fim: def.fim } : {}) });
@@ -282,6 +311,12 @@ function conferirConteudo(linhas, layout, direcao, problemas) {
       }
     }
 
+    if (tipo === "5" && loteAtual) {
+      const decl = fld(texto, campoDe(defs, "somatoriaValores")).trim();
+      if (/^\d+$/.test(decl) && Number(decl) !== somaLote) {
+        add("aviso", n, `Linha ${n}: a somatória dos valores do trailer (${decl.replace(/^0+(?=\d)/, "")} centavos) não bate com a soma dos valores de pagamento dos detalhes do lote (${somaLote} centavos).`);
+      }
+    }
     if (tipo === "5" || tipo === "9") fechaPendente();
   });
 }

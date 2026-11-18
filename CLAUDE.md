@@ -201,6 +201,14 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     não vira erro. **Não estão implementados** (dependem do manual do banco, que a sessão não
     conseguiu abrir): dígito verificador do nosso número, tabelas de espécie e instrução, e
     qualquer regra de CNAB 240. Estão em `tasks/backlog.md` e `tasks/decisoes-pendentes.md`.
+- **UX de validação dos geradores CNAB (nov/2026):** `tools/cobranca/validacao-ux.js` + `validacao-ux.css`
+  são a fonte única de **como** o erro aparece, nos geradores 400 e 240 (só DOM; **o que** é erro continua
+  sendo de `validarValor`). A mensagem vai logo abaixo do campo (`aria-describedby`, ícone ✕/⚠ por CSS, não
+  só cor); o resumo lista cada problema como botão "ir ao campo →" (abre o bloco recolhido, rola e foca);
+  corrigido o campo (evento `change`), mensagem e item do resumo somem; o contador mostra "X de Y obrigatórios".
+  Texto digitado entra por `textContent`. Gerador novo reusa o módulo — não escrever `.erro-campo` à mão.
+  "Como preencher" do 400 é um `<dialog>` (`showModal`, Esc e clique fora fecham) com um **cartão por campo**:
+  a versão anterior era uma tabela de 6 colunas num painel lateral e obrigava a rolar de lado.
 - **Modo Gerar do CNAB (nov/2026):** a tela **abre pronta** — primeiro banco, remessa e modo
   Gerar já escolhidos (Validar é um clique). O formulário mostra só os campos **obrigatórios**
   (`obrigatorio: true` na declaração do campo); os opcionais ficam em "Campos opcionais" e o bloco

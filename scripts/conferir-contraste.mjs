@@ -199,6 +199,29 @@ const ESTADOS = [
     }
   },
   {
+    /* CNAB 400: a janela "Como preencher" (selos obrigatório/opcional, campo de busca) e o
+       gerador com o resumo de erros, a mensagem junto de cada campo e o contador só existem
+       depois do clique. Gerar vazio → todos os obrigatórios em erro. */
+    pagina: "tools/cobranca/cnab400/cnab400.html", nome: "CNAB 400: como preencher aberto", abrir: async (p) => {
+      await p.click("#btnComoPreencher");
+      await p.waitForSelector("#helpPanel[open]");
+    }
+  },
+  {
+    pagina: "tools/cobranca/cnab400/cnab400.html", nome: "CNAB 400: gerar com erros por campo", abrir: async (p) => {
+      await p.click("#btnGenerate");
+      await p.waitForSelector("#genProblemas li");
+    }
+  },
+  {
+    pagina: "tools/cobranca/cnab240/cnab240.html", nome: "CNAB 240: gerar vazio, resumo de erros", abrir: async (p) => {
+      await p.selectOption("#layout240", "033");
+      await p.click('#modos240 [data-modo="gerar"]');
+      await p.click("#geradorRaiz .btn-red-arriba");
+      await p.waitForSelector(".resumo-validacao li");
+    }
+  },
+  {
     pagina: "tools/cobranca/cnab240/cnab240.html", nome: "CNAB 240: conferência com erros e avisos", abrir: async (p) => {
       await p.selectOption("#layout240", "033");
       await p.fill("#texto240", [

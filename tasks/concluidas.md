@@ -3,6 +3,7 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] CNAB 400 e 240, UX do gerador: "Como preencher" virou uma janela centralizada (cartão por campo, selo obrigatório/opcional, busca e filtro "só os obrigatórios") no lugar da tabela larga; validação com mensagem junto do campo, resumo com atalho "ir ao campo", correção ao vivo e contador de obrigatórios, num módulo único (`tools/cobranca/validacao-ux.js`); contraste conferido nos dois temas ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 240 Inter (pagamentos): layout do manual v1.10 com cinco tipos de lote (TED, Pix, boletos, QR Code Pix, tributos), validação por tipo de lote, gerador e seletor na tela; 27 testes ✅ 2026-11-18 #area/ferramentas
 - [x] Planilhas do Bradesco (remessa e retorno) comparadas campo a campo com `banks/bradesco.js`: 6 de 6 abas batem; o conflito da "Carteira" (retorno, posição 108) se resolveu — 1 posição, exemplo real "9" ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 444 (Paulista/FIDC, 611): remessa a partir do manual de jun/2019; tela passou a aceitar banco de uma direção só ✅ 2026-11-18 #area/ferramentas

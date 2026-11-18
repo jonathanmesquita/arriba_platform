@@ -5,6 +5,7 @@ import { gerarNome, gerarCpf, gerarValorAleatorio, formatarNumeroBr } from "../.
 import { validarValor } from "../cnab400/validacao.js";
 import { gerarArquivo240 } from "./gerar240.js";
 import { analisar240 } from "./validacao240.js";
+import { mostrarMensagem, limparMensagem, irParaCampo, mostrarResumo, atualizarProgresso } from "../validacao-ux.js";
 
 const el = (tag, { texto, classe, attrs } = {}, filhos = []) => {
   const n = document.createElement(tag);
@@ -88,7 +89,7 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
     const cartao = el("div", { classe: "titulo-cartao" });
     const topo = el("div", { classe: "titulo-topo" }, [el("strong", { texto: `Título ${n}` })]);
     const remover = el("button", { classe: "btn-arriba btn-outline-arriba btn-pequeno", texto: "Remover", attrs: { type: "button" } });
-    remover.addEventListener("click", () => cartao.remove());
+    remover.addEventListener("click", () => { cartao.remove(); atualizarProgressoGerador(); });
     topo.appendChild(remover);
     cartao.appendChild(topo);
     for (const [seg, chaves] of Object.entries(form.titulo)) {
@@ -101,7 +102,9 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
   }
 
   const mensagem = el("p", { classe: "status-linha", attrs: { role: "status" } });
-  const problemas = el("div", { classe: "resultados" });
+  const problemas = el("div", { attrs: { hidden: "" } });
+  const progresso = el("div", { classe: "progresso-obrigatorios" });
+  let resumo = null;
   const previa = el("pre", { classe: "caixa-codigo hidden", attrs: { tabindex: "0", "aria-label": "Prévia do arquivo gerado" } });
   const btnAdd = el("button", { classe: "btn-arriba btn-outline-arriba", attrs: { type: "button" } }, [el("i", { classe: "fa-solid fa-plus", attrs: { "aria-hidden": "true" } }), document.createTextNode("Adicionar título")]);
   const btnExemplo = el("button", { classe: "btn-arriba btn-outline-arriba", attrs: { type: "button" } }, [el("i", { classe: "fa-solid fa-wand-magic-sparkles", attrs: { "aria-hidden": "true" } }), document.createTextNode("Preencher com exemplo")]);
@@ -113,6 +116,7 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
     secao("Arquivo", caixaArquivo),
     secao("Lote", caixaLote),
     secao("Títulos", el("div", {}, [listaTitulos, btnAdd])),
+    progresso,
     el("div", { classe: "acoes" }, [btnExemplo, btnGerar, btnBaixar]),
     mensagem, problemas, previa,
   );
@@ -122,9 +126,20 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
   const campos = (container) => [...container.querySelectorAll("[data-k]")];
   const defDe = (defs, k) => defs.find((d) => d.key === k);
 
+  // Cada campo pertence a um bloco (arquivo, lote ou segmento de um título): é dele que sai a definição.
+  function defDoCampo(e) {
+    if (caixaArquivo.contains(e)) return defDe(L.headerArquivo, e.dataset.k);
+    if (caixaLote.contains(e)) return defDe(L.headerLote, e.dataset.k);
+    const bloco = e.closest("[data-segmento]");
+    return bloco ? defDe(defsDoTitulo(bloco.dataset.segmento), e.dataset.k) : null;
+  }
+
   function limpar() {
-    raiz.querySelectorAll(".erro-campo").forEach((n) => n.remove());
-    raiz.querySelectorAll("[aria-invalid]").forEach((n) => { n.removeAttribute("aria-invalid"); n.classList.remove("field-invalid"); });
+    campos(raiz).forEach(limparMensagem);
+  }
+
+  function atualizarProgressoGerador() {
+    atualizarProgresso(progresso, campos(raiz).map((e) => ({ el: e, obrigatorio: Boolean(defDoCampo(e)?.obrigatorio) })));
   }
 
   function validarContainer(container, defs, rotulo) {
@@ -133,18 +148,26 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
       const def = defDe(defs, e.dataset.k);
       if (!def) continue;
       const achados = validarValor(def, e.value);
-      if (!achados.length) continue;
-      const erro = achados.find((a) => a.nivel === "erro");
-      for (const a of achados) saida.push({ nivel: a.nivel, texto: `${rotulo}, ${def.nome}: ${a.mensagem}` });
-      if (erro) {
-        e.classList.add("field-invalid");
-        e.setAttribute("aria-invalid", "true");
-        e.closest("details")?.setAttribute("open", "");
-      }
-      e.insertAdjacentElement("afterend", el("div", { texto: achados.map((a) => a.mensagem).join(" "), classe: `erro-campo${erro ? "" : " aviso"}` }));
+      mostrarMensagem(e, achados);
+      if (achados.some((a) => a.nivel === "erro")) e.closest("details")?.setAttribute("open", "");
+      for (const a of achados) saida.push({ nivel: a.nivel, onde: `${rotulo} · ${def.nome}`, texto: a.mensagem, el: e });
     }
     return saida;
   }
+
+  // Ao sair de um campo alterado ele é conferido na hora; corrigido, a mensagem e o item do resumo somem.
+  raiz.addEventListener("change", (ev) => {
+    const e = ev.target;
+    if (!e.matches?.("[data-k]")) return;
+    const def = defDoCampo(e);
+    if (def) {
+      const achados = validarValor(def, e.value);
+      mostrarMensagem(e, achados);
+      if (!achados.some((a) => a.nivel === "erro")) resumo?.remover(e);
+    }
+    atualizarProgressoGerador();
+  });
+  raiz.addEventListener("input", (ev) => { if (ev.target.matches?.("[data-k]")) atualizarProgressoGerador(); });
 
   function valores(container, defs) {
     const v = {};
@@ -164,16 +187,9 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
     return { arquivo: valores(caixaArquivo, L.headerArquivo), lote: valores(caixaLote, L.headerLote), titulos };
   }
 
-  function mostrarProblemas(erros, avisos, tituloErros) {
-    problemas.replaceChildren();
-    const lista = (titulo, itens, tipo) => {
-      if (!itens.length) return;
-      const ul = el("ul");
-      itens.forEach((t) => ul.appendChild(el("li", { texto: t })));
-      problemas.appendChild(el("div", { classe: "item", attrs: { "data-tipo": tipo } }, [el("div", { classe: "item-topo" }, [el("span", { classe: "item-nome", texto: titulo })]), ul]));
-    };
-    lista(tituloErros || `${erros.length} ${erros.length === 1 ? "erro" : "erros"}`, erros, "erro");
-    lista(`${avisos.length} ${avisos.length === 1 ? "aviso" : "avisos"}`, avisos, "aviso");
+  function mostrarProblemas(itens) {
+    problemas.className = "";
+    resumo = mostrarResumo(problemas, itens);
   }
 
   function gerar() {
@@ -192,15 +208,15 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
       }
     });
     // Obrigatório vazio: validarValor já cobra; este erro só explica o que fazer.
-    const erros = todos.filter((p) => p.nivel === "erro").map((p) => p.texto);
-    const avisos = todos.filter((p) => p.nivel === "aviso").map((p) => p.texto);
-    if (!listaTitulos.children.length) erros.push("Adicione ao menos um título.");
+    if (!listaTitulos.children.length) todos.push({ nivel: "erro", onde: "Títulos", texto: "Adicione ao menos um título." });
+    const erros = todos.filter((p) => p.nivel === "erro");
 
     if (erros.length) {
-      mostrarProblemas(erros, avisos, `${erros.length} ${erros.length === 1 ? "erro" : "erros"} — o arquivo não foi gerado`);
-      mensagem.textContent = `Corrija os campos destacados (${erros.length} ${erros.length === 1 ? "erro" : "erros"}) para gerar o arquivo.`;
+      mostrarProblemas(todos);
+      mensagem.textContent = `Falta corrigir ${erros.length} ${erros.length === 1 ? "campo" : "campos"} para gerar o arquivo.${erros[0].el ? " Levei você ao primeiro." : ""}`;
       mensagem.dataset.tipo = "erro";
       aoMudarEstado?.();
+      if (erros[0].el) irParaCampo(erros[0].el);
       return;
     }
 
@@ -208,8 +224,12 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
     // Autoverificação: o arquivo gerado passa pelo mesmo validador da leitura.
     const r = analisar240(linhas.join("\r\n"), { layout, direcao });
     const errosArquivo = r.erros.map((p) => p.mensagem);
-    const avisosArquivo = r.avisos.filter((p) => p.codigo !== "acento").map((p) => p.mensagem);
-    mostrarProblemas(errosArquivo, [...avisos, ...avisosArquivo]);
+    const doArquivo = (p, nivel) => ({ nivel, onde: p.linha ? `Arquivo gerado, linha ${p.linha}` : "Arquivo gerado", texto: p.mensagem.replace(/^Linha \d+: /, "") });
+    mostrarProblemas([
+      ...r.erros.map((p) => doArquivo(p, "erro")),
+      ...todos,
+      ...r.avisos.filter((p) => p.codigo !== "acento").map((p) => doArquivo(p, "aviso")),
+    ]);
     previa.textContent = linhas.join("\n");
     previa.classList.remove("hidden");
 
@@ -254,11 +274,15 @@ export function montarGerador(raiz, layout, direcao, { aoMudarEstado } = {}) {
     [...listaTitulos.children].forEach((cartao, i) => {
       for (const bloco of cartao.querySelectorAll("[data-segmento]")) preencher(bloco, defsDoTitulo(bloco.dataset.segmento), i);
     });
+    campos(raiz).forEach(limparMensagem);
+    problemas.hidden = true;
+    atualizarProgressoGerador();
     mensagem.textContent = 'Campos obrigatórios completados com dados fictícios. Confira, ajuste o que quiser e clique em "Gerar e conferir".';
     mensagem.dataset.tipo = "ok";
   }
 
-  btnAdd.addEventListener("click", novoTitulo);
+  btnAdd.addEventListener("click", () => { novoTitulo(); atualizarProgressoGerador(); });
+  atualizarProgressoGerador();
   btnExemplo.addEventListener("click", exemplo);
   btnGerar.addEventListener("click", gerar);
   btnBaixar.addEventListener("click", baixar);

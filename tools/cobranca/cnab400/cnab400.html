@@ -142,10 +142,16 @@
     .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
     .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
     .btn-red-arriba:hover { background: var(--red-ink, var(--rw-red-ink)); color: var(--rw-on-primary); }
-    .btn-red-arriba:disabled { background: var(--muted); cursor: not-allowed; }
-    .btn-dark-arriba { background: var(--dark); color: #fff; }
-    .btn-dark-arriba:hover { background: #000; color: #fff; }
-    .btn-dark-arriba:disabled { background: var(--muted); cursor: not-allowed; }
+    /* Botão escuro: superfície fixa e o texto fixo que a acompanha (nos dois temas). */
+    .btn-dark-arriba { background: var(--rw-dark); color: var(--rw-on-dark); }
+    .btn-dark-arriba:hover { background: var(--rw-dark-2); color: var(--rw-on-dark); }
+    /* Desabilitado: contorno e texto apagados, por token — branco sobre cinza-médio
+       reprovava no tema escuro (2,66) e o botão aparece já na abertura da tela. */
+    .btn-red-arriba:disabled,
+    .btn-dark-arriba:disabled {
+      background: var(--surface-soft); color: var(--muted);
+      border-color: var(--line-strong); cursor: not-allowed;
+    }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
     .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
 

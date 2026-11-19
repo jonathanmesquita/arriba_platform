@@ -1,0 +1,38 @@
+/* Validação de formulário — estilo compartilhado pelos geradores de CNAB (400 e 240).
+   Só tokens do projeto. A situação nunca é só cor: erro e aviso têm ícone de texto. */
+
+.erro-campo { color: var(--danger-ink); font-size: .8rem; line-height: 1.35; margin-top: 4px; font-weight: 700; }
+.erro-campo::before { content: "✕ "; }
+.erro-campo.aviso { color: var(--warn-ink); }
+.erro-campo.aviso::before { content: "⚠ "; }
+.field-invalid { border-color: var(--rw-danger) !important; box-shadow: 0 0 0 .18rem rgb(from var(--rw-danger) r g b / .2) !important; }
+
+/* Resumo no fim do formulário: cada item leva ao campo. */
+.resumo-validacao {
+  margin-top: 14px; padding: 12px 14px; background: var(--surface);
+  border: 1px solid var(--line); border-left: 5px solid var(--rw-danger); border-radius: 9px;
+}
+.resumo-validacao.so-avisos { border-left-color: var(--rw-warn); }
+.resumo-validacao.ok { border-left-color: var(--rw-ok); }
+.resumo-validacao h4 { font-size: .98rem; font-weight: 800; margin: 0 0 4px; }
+.resumo-validacao p { margin: 0; color: var(--muted); font-size: .86rem; }
+.resumo-validacao ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.resumo-validacao li button {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  background: var(--surface-soft); color: var(--ink); border: 1px solid var(--line); border-radius: 7px;
+  padding: 7px 10px; font-size: .86rem; line-height: 1.4;
+}
+.resumo-validacao li button:hover { border-color: var(--line-strong); }
+.resumo-validacao li button:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+.resumo-validacao li .onde { font-weight: 800; }
+.resumo-validacao li.aviso .onde::before { content: "⚠ "; }
+.resumo-validacao li.erro .onde::before { content: "✕ "; }
+.resumo-validacao li .vai { color: var(--rw-red-ink); font-size: .78rem; font-weight: 700; margin-left: 6px; white-space: nowrap; }
+.resumo-validacao .fixo-info { margin-top: 8px; font-size: .8rem; color: var(--muted); }
+
+/* Progresso dos campos obrigatórios. */
+.progresso-obrigatorios { display: flex; align-items: center; gap: 10px; margin: 14px 0 0; font-size: .86rem; color: var(--muted); }
+.progresso-obrigatorios .barra { flex: 1 1 120px; max-width: 260px; height: 7px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.progresso-obrigatorios .barra > span { display: block; height: 100%; background: var(--rw-ok); transition: width .2s; }
+.progresso-obrigatorios strong { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .progresso-obrigatorios .barra > span { transition: none; } }

@@ -25,6 +25,25 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 
 ## Ferramentas
 
+- [ ] CNAB: conferir o dígito verificador do CPF/CNPJ do pagador na leitura e no gerador 📅 2026-11-17 🔽 baixa #area/ferramentas #esforco/p 🤖
+  - Contexto: o algoritmo do CPF/CNPJ é público e já está testado em `assets/js/fake-data-br.js`; hoje o CNAB só confere tamanho e se é dígito (`validacao.js`)
+  - Local: `tools/cobranca/cnab400/validacao.js` (`validarValor`, `validarLinhas`), campo `numInscPagador`
+  - Ação: validar só quando `codInscPagador` indica CPF (01) ou CNPJ (02); aviso, não erro, enquanto o tipo não for confirmado no manual de cada banco
+- [ ] CNAB Inter 400: confirmar a numeração "ocorrência 01–04" do trailer do retorno e montar tipos 2 e 3 na tela 📅 2026-11-18 🔽 baixa #area/ferramentas #esforco/m 🤖
+  - Contexto: o manual do Inter não liga os códigos do detalhe (02 aberto, 03 erro, 06 pago, 07 cancelado) à numeração do trailer; hoje o gerador grava o trailer do retorno zerado. Os registros tipo 2 (mensagens, descontos 2 e 3) e tipo 3 (e-mail e beneficiário final) são lidos e validados, mas a tela só monta o tipo 1
+  - Local: `tools/cobranca/cnab400/banks/inter.js` (`RETORNO_TRAILER_FIELDS`, comentário do cabeçalho)
+  - Ação: perguntar ao banco ou achar um arquivo de retorno real; depois ligar `trailerConferencia` e o gerador
+- [ ] CNAB 240 Inter pagamentos: segmento C, retorno e regras que cruzam registros 📅 2026-11-18 🔽 baixa #area/ferramentas #esforco/m 🤖
+  - Contexto: o manual cita o segmento C (opcional na TED) mas não traz o layout; o código de remessa do header só é definido como "1", então o retorno não é conferido nesse campo; a forma de iniciação 05 do Pix (no B) exige os dados bancários do favorecido no A, e só o lado B é conferido; formas 80/81 (ISS) sem segmento próprio no manual; DV do código de barras fora do manual
+  - Local: `tools/cobranca/cnab240/layouts/inter-pagamentos.js` (cabeçalho do arquivo lista cada limite)
+  - Ação: perguntar ao banco/obter arquivo de retorno real; depois ligar o que faltar
+- [ ] CNAB 240 Santander: montar os segmentos R, S e Y na tela de geração e conferir os totais do trailer de lote do retorno 📅 2026-11-18 🔽 baixa #area/ferramentas #esforco/m 🤖
+  - Contexto: R, S1, S2, Y03 e Y53 (remessa) e Y03/Y04 (retorno) são lidos e validados, mas o formulário só monta P/Q e T/U; o manual não diz como os totais por tipo de cobrança do trailer de lote do retorno se ligam aos movimentos, então saem zerados
+  - Local: `tools/cobranca/cnab240/layouts/santander.js` (`formulario`), `gerar240.js`
+- [ ] CNAB: dígito verificador do nosso número, tabelas de espécie/instrução por banco e validador de CNAB 240 📅 2026-11-17 🔺 alta #area/ferramentas #esforco/g 🤖
+  - Contexto: precisa do manual de cada banco; a sessão não abriu os PDFs (rede) e não preencheu de memória
+  - Ação: ver `tasks/decisoes-pendentes.md` ("Manuais de CNAB") — destravar o acesso e então implementar item a item, marcando `naoConfirmado` o que não achar na fonte
+
 - [ ] Mais bancos no validador CNAB 400 📅 2026-10-01 🔽 baixa #area/ferramentas #esforco/g
   - Contexto: a arquitetura já suporta (criar `banks/<banco>.js` e registrar no registry).
   - Local: `tools/cobranca/cnab400/banks/`

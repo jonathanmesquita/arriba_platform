@@ -14,6 +14,9 @@
 
 import { BANKS } from "./banks/registry.js";
 import { parseArquivo, gerarArquivo } from "./engine.js";
+import { lerEValidar, validarValor, validarLinhas } from "./validacao.js";
+import { mostrarMensagem, limparMensagem, irParaCampo, mostrarResumo, atualizarProgresso } from "../validacao-ux.js";
+import { gerarNome, gerarCpf, gerarValorAleatorio, formatarNumeroBr } from "../../../assets/js/fake-data-br.js";
 
 let currentBank = null; // { code, nome, config }
 let currentDirecao = "retorno"; // "remessa" | "retorno"
@@ -34,9 +37,19 @@ export function initUI() {
     bankSelect.appendChild(opt);
   });
 
+  // Abre já pronto para montar um arquivo: primeiro banco, remessa e o modo
+  // Gerar. Quem quer só conferir um arquivo troca para "Validar" com um clique.
+  if (BANKS.length) {
+    currentBank = BANKS[0];
+    currentDirecao = "remessa";
+    currentMode = "generator";
+    bankSelect.value = currentBank.code;
+  }
+  ajustarDirecao();
+
   bankSelect.addEventListener("change", () => {
     currentBank = BANKS.find(b => b.code === bankSelect.value) || null;
-    currentMode = "reader";
+    ajustarDirecao();
     lastParsedData = null;
     syncControls();
     renderArea();
@@ -53,10 +66,23 @@ export function initUI() {
   document.getElementById("btnModeGenerator").addEventListener("click", () => setMode("generator"));
   document.getElementById("btnComoPreencher").addEventListener("click", openHelpPanel);
   document.getElementById("helpPanelClose").addEventListener("click", closeHelpPanel);
-  document.getElementById("helpPanelBackdrop").addEventListener("click", closeHelpPanel);
+  const janela = document.getElementById("helpPanel");
+  janela.addEventListener("click", e => { if (e.target === janela) closeHelpPanel(); }); // clique fora do cartão
+  document.getElementById("helpFiltro").addEventListener("input", filtrarAjuda);
+  document.getElementById("helpSoObrig").addEventListener("change", filtrarAjuda);
 
   syncControls();
   renderArea();
+}
+
+/* Nem todo banco tem as duas direções (o layout do Paulista, por exemplo, é só
+   remessa): a direção sem layout fica desabilitada e, se era a escolhida, a
+   tela passa para a que existe. */
+function ajustarDirecao() {
+  if (!currentBank) return;
+  const tem = (d) => Boolean(currentBank.config[d]);
+  if (!tem(currentDirecao)) currentDirecao = tem("remessa") ? "remessa" : "retorno";
+  document.querySelectorAll("#direcaoSelect option").forEach(o => { o.disabled = !tem(o.value); });
 }
 
 function setMode(mode) {
@@ -219,7 +245,7 @@ function runParse() {
   }
 
   try {
-    const data = parseArquivo(text, direcaoConfig());
+    const data = lerEValidar(text, direcaoConfig(), { direcao: currentDirecao });
     lastParsedData = data;
 
     document.getElementById("chipLines").textContent = data.totalLinhas;
@@ -233,34 +259,48 @@ function runParse() {
     renderTitulos(data.titulos);
     document.getElementById("readerResult").classList.remove("hidden");
 
-    const msg = hValid
-      ? `Arquivo lido: ${data.titulos.length} título(s) extraído(s).`
-      : "Header inválido — " + data.header._erros.join("; ");
-    setMsg("readerMsg", msg, hValid ? "ok" : "error");
+    const nErros = data.erros.length;
+    let msg;
+    let tipo;
+    if (!hValid) { msg = "Header inválido — " + data.header._erros.join("; "); tipo = "error"; }
+    else if (nErros) {
+      msg = `Arquivo lido, mas com ${nErros} ${nErros === 1 ? "erro" : "erros"} de conteúdo: ${data.titulos.length} título(s) extraído(s).`;
+      tipo = "error";
+    } else {
+      msg = `Arquivo lido: ${data.titulos.length} título(s) extraído(s), sem erros de conteúdo.`;
+      tipo = "ok";
+    }
+    setMsg("readerMsg", msg, tipo);
 
     // Avisos ganham bloco próprio, e TODOS aparecem: antes ficavam
     // espremidos na mesma linha da mensagem, cortados nos 3 primeiros, e
     // só apareciam quando o header era válido — ou seja, num arquivo com
     // header ruim os problemas de estrutura ficavam invisíveis.
-    renderAvisos(data.avisos);
+    renderAvisos(data.avisos, data.problemas);
   } catch (err) {
     lastParsedData = null;
     setMsg("readerMsg", "Erro ao processar: " + err.message, "error");
   }
 }
 
-function renderAvisos(avisos = []) {
+// Mostra tudo o que a leitura encontrou, em duas listas: erros (o conteúdo
+// está objetivamente errado) e avisos (provável problema ou estrutura).
+function renderAvisos(avisosEstrutura = [], problemas = []) {
   const box = document.getElementById("readerAvisos");
   if (!box) return;
-  if (!avisos.length) {
+  const erros = problemas.filter(p => p.nivel === "erro").map(p => p.mensagem);
+  const avisos = [...avisosEstrutura, ...problemas.filter(p => p.nivel === "aviso").map(p => p.mensagem)];
+  if (!erros.length && !avisos.length) {
     box.classList.add("hidden");
     box.innerHTML = "";
     return;
   }
+  const lista = (titulo, itens) => itens.length
+    ? `<strong>${titulo}</strong><ul>${itens.map(a => `<li>${escHtml(a)}</li>`).join("")}</ul>` : "";
   box.classList.remove("hidden");
-  box.innerHTML = `
-    <strong>⚠️ ${avisos.length} ${avisos.length === 1 ? "aviso de estrutura" : "avisos de estrutura"}</strong>
-    <ul>${avisos.map(a => `<li>${escHtml(a)}</li>`).join("")}</ul>`;
+  box.innerHTML =
+    lista(`${erros.length} ${erros.length === 1 ? "erro" : "erros"} de conteúdo`, erros) +
+    lista(`${avisos.length} ${avisos.length === 1 ? "aviso" : "avisos"}`, avisos);
 }
 
 function renderTitulos(titulos) {
@@ -320,7 +360,7 @@ function editAndRegenerate() {
 // ao importar um arquivo direto na tela de Gerar. Devolve a quantidade de
 // títulos preenchidos.
 function preencherGeradorComDados(data) {
-  const headerContainer = document.querySelector(".form-grid");
+  const headerContainer = document.getElementById("genHeader");
   if (headerContainer && data.header) {
     headerContainer.querySelectorAll("[data-k]").forEach(el => {
       preencherCampoComDadoLido(el, fieldDef(el.dataset.k, "header"), data.header[el.dataset.k]);
@@ -460,30 +500,52 @@ function detalheFieldInputHtml(key) {
   </div>`;
 }
 
+// Separa os campos do formulário em obrigatórios (sempre à vista) e opcionais
+// (recolhidos), para a pessoa ver só o que precisa digitar para montar o arquivo.
+function separarCampos(chaves, kind) {
+  const obrigatorios = chaves.filter(k => fieldDef(k, kind)?.obrigatorio);
+  const opcionais = chaves.filter(k => !fieldDef(k, kind)?.obrigatorio);
+  return { obrigatorios, opcionais };
+}
+
+function opcionaisHtml(htmls, classeGrade) {
+  if (!htmls.length) return "";
+  return `<details class="opcionais">
+    <summary>Campos opcionais (${htmls.length})</summary>
+    <div class="${classeGrade}">${htmls.join("")}</div>
+  </details>`;
+}
+
 function generatorViewHtml() {
   const cfg = direcaoConfig();
-  const headerFields = (cfg.formFields?.header || []).map(headerFieldInputHtml).join("");
+  const { obrigatorios, opcionais } = separarCampos(cfg.formFields?.header || [], "header");
+  const headerFields =
+    `<div class="form-grid">${obrigatorios.map(headerFieldInputHtml).join("")}</div>` +
+    opcionaisHtml(opcionais.map(headerFieldInputHtml), "form-grid");
   return `
     <h2>Gerar ${directionLabel().toLowerCase()} — ${escHtml(currentBank.nome)}</h2>
-    <p class="hint">Preencha o cabeçalho e adicione um ou mais títulos. Campos com <span class="req-mark">*</span> são obrigatórios. Use o "?" ao lado de cada campo para ver posição, tamanho e exemplo.</p>
+    <p class="hint">Digite os campos obrigatórios (<span class="req-mark">*</span>) do cabeçalho e de cada título; os opcionais ficam recolhidos. Sem tempo? "Preencher com exemplo" completa o que falta com dados fictícios. O "?" ao lado de cada campo mostra posição, tamanho e exemplo.</p>
 
     <div class="drop-zone" id="genDropZone">
       <i class="fa-solid fa-file-arrow-up"></i> Já tem um arquivo .REM/.RET? Arraste ou clique para importar e editar os campos abaixo
       <input type="file" id="genFileInput" class="hidden" accept=".ret,.rem,.txt">
     </div>
 
-    <div class="form-grid">${headerFields}</div>
+    <div id="genHeader">${headerFields}</div>
 
     <h3 class="det-title">Títulos</h3>
     <div id="detRows"></div>
     <button type="button" class="btn-arriba btn-outline-arriba" id="btnAddRow"><i class="fa-solid fa-plus me-2"></i>Adicionar título</button>
 
-    <div class="actions" style="margin-top:18px">
+    <div id="genProgresso" class="progresso-obrigatorios"></div>
+    <div class="actions" style="margin-top:12px">
+      <button type="button" class="btn-arriba btn-outline-arriba" id="btnExemplo"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Preencher com exemplo</button>
       <button type="button" class="btn-arriba btn-red-arriba" id="btnGenerate"><i class="fa-solid fa-gears me-2"></i>Gerar e validar</button>
       <button type="button" class="btn-arriba btn-dark-arriba" id="btnDownload" disabled><i class="fa-solid fa-download me-2"></i>Baixar arquivo</button>
     </div>
 
-    <div class="validation-msg" id="genMsg">Preencha os campos e gere o arquivo, ou importe um arquivo acima para editar.</div>
+    <div class="validation-msg" id="genMsg" role="status" aria-live="polite">Preencha os campos e gere o arquivo, ou importe um arquivo acima para editar.</div>
+    <div class="hidden" id="genProblemas"></div>
     <pre class="gen-preview hidden" id="genPreview"></pre>`;
 }
 
@@ -492,10 +554,12 @@ function addDetRow() {
   const cfg = direcaoConfig();
   const row = document.createElement("div");
   row.className = "det-row";
-  const inputs = (cfg.formFields?.detalhe || []).map(detalheFieldInputHtml).join("");
-  row.innerHTML = `${inputs}<button type="button" class="det-remove" title="Remover"><i class="fa-solid fa-trash"></i></button>`;
-  row.querySelector(".det-remove").addEventListener("click", () => row.remove());
+  const { obrigatorios, opcionais } = separarCampos(cfg.formFields?.detalhe || [], "detalhe");
+  const inputs = obrigatorios.map(detalheFieldInputHtml).join("");
+  row.innerHTML = `${inputs}<button type="button" class="det-remove" title="Remover" aria-label="Remover título"><i class="fa-solid fa-trash"></i></button>${opcionaisHtml(opcionais.map(detalheFieldInputHtml), "opc-grade")}`;
+  row.querySelector(".det-remove").addEventListener("click", () => { row.remove(); atualizarProgressoGerador(); });
   wrap.appendChild(row);
+  atualizarProgressoGerador();
 }
 
 function parseMoneyInput(raw) {
@@ -512,48 +576,163 @@ function collectFields(container, kind) {
   return values;
 }
 
-// Marca em vermelho os campos obrigatórios vazios; devolve true se tudo ok.
-function validarObrigatorios(container, kind) {
-  let ok = true;
-  container.querySelectorAll("[data-k]").forEach(el => {
-    const def = fieldDef(el.dataset.k, kind);
-    const vazio = !String(el.value || "").trim();
-    const invalido = Boolean(def?.obrigatorio) && vazio;
-    el.classList.toggle("field-invalid", invalido);
-    if (invalido) ok = false;
-  });
-  return ok;
-}
-
 function collectGenerator() {
-  const header = collectFields(document.querySelector(".form-grid"), "header");
+  const header = collectFields(document.getElementById("genHeader"), "header");
   const detalhes = [...document.querySelectorAll("#detRows .det-row")].map(row => collectFields(row, "detalhe"));
   return { header, detalhes };
 }
 
+// Valida o que está digitado ANTES de gerar. O gerador completa e corta sem
+// avisar (letra some, número perde os dígitos da esquerda, texto é cortado),
+// então a conferência olha o texto bruto do campo, não o valor já tratado.
+/* Validação do gerador: a mensagem aparece junto do campo, o resumo no fim do formulário leva
+   a cada campo, e ao corrigir um campo a mensagem e o item do resumo somem sozinhos
+   (ver ../validacao-ux.js). A regra de o que é erro é de validacao.js. */
+let resumoGerador = null;
+
+const tipoDoCampo = el => (el.closest(".det-row") ? "detalhe" : "header");
+
+function validarFormulario(container, kind, rotuloLinha) {
+  const itens = [];
+  container.querySelectorAll("[data-k]").forEach(el => {
+    const def = fieldDef(el.dataset.k, kind);
+    if (!def) return;
+    const achados = validarValor(def, el.value);
+    mostrarMensagem(el, achados);
+    if (!achados.length) return;
+    // erro em campo opcional recolhido não pode ficar escondido
+    if (achados.some(a => a.nivel === "erro")) el.closest("details")?.setAttribute("open", "");
+    for (const a of achados) itens.push({ nivel: a.nivel, onde: `${rotuloLinha} · ${def.nome || def.key}`, texto: a.mensagem, el });
+  });
+  return itens;
+}
+
+function mostrarProblemasDoGerador(itens) {
+  const box = document.getElementById("genProblemas");
+  if (!box) return;
+  box.classList.remove("validation-msg", "warn", "hidden");
+  resumoGerador = mostrarResumo(box, itens);
+}
+
+function atualizarProgressoGerador() {
+  const caixa = document.getElementById("genProgresso");
+  if (!caixa || !currentBank) return;
+  const campos = [];
+  document.querySelectorAll("#genHeader [data-k], #detRows [data-k]").forEach(el => {
+    const def = fieldDef(el.dataset.k, tipoDoCampo(el));
+    if (def) campos.push({ el, obrigatorio: Boolean(def.obrigatorio) });
+  });
+  atualizarProgresso(caixa, campos);
+}
+
+// Ao sair de um campo alterado, ele é conferido na hora — sem esperar o botão "Gerar".
+function aoAlterarCampo(e) {
+  const el = e.target;
+  if (!el.matches?.("[data-k]") || !currentBank) return;
+  if (e.type === "input") { atualizarProgressoGerador(); return; }
+  const def = fieldDef(el.dataset.k, tipoDoCampo(el));
+  if (!def) return;
+  const achados = validarValor(def, el.value);
+  mostrarMensagem(el, achados);
+  if (!achados.some(a => a.nivel === "erro")) resumoGerador?.remover(el);
+  atualizarProgressoGerador();
+}
+
+// Completa com dados FICTÍCIOS o que a pessoa ainda não digitou — só os campos
+// obrigatórios (e o tipo de inscrição, que precisa combinar com o documento).
+// O que já está digitado nunca é sobrescrito.
+function preencherExemplo() {
+  const hoje = new Date();
+  const iso = d => d.toISOString().slice(0, 10);
+  const maisDias = n => { const d = new Date(hoje); d.setDate(d.getDate() + n); return iso(d); };
+  const semAcento = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+
+  const preencher = (container, kind, indice) => {
+    container.querySelectorAll("[data-k]").forEach(el => {
+      const def = fieldDef(el.dataset.k, kind);
+      if (!def || el.value.trim()) return;
+      if (!def.obrigatorio && def.key !== "codInscPagador") return;
+      const tam = def.fim - def.ini + 1;
+      let valor = def.exemplo ?? "";
+      if (def.fmt === "data") valor = /vencimento/i.test(def.key) ? maisDias(30 + indice) : iso(hoje);
+      else if (def.fmt === "valor") valor = formatarNumeroBr(gerarValorAleatorio(50, 2000));
+      else if (def.key === "nomePagador") valor = semAcento(gerarNome()).slice(0, tam);
+      else if (def.key === "numInscPagador") valor = gerarCpf();
+      else if (def.key === "codInscPagador") valor = "01"; // 01 = CPF, o documento gerado acima
+      else if (def.exemploFn) valor = def.exemploFn(indice); // exemplo que depende do título (ex.: com dígito verificador)
+      else if (def.key === "nossoNumero" && /^\d+$/.test(valor)) {
+        valor = String(BigInt(valor) + BigInt(indice)).padStart(valor.length, "0"); // um número por título
+      }
+      el.value = valor;
+    });
+  };
+
+  preencher(document.getElementById("genHeader"), "header", 0);
+  [...document.querySelectorAll("#detRows .det-row")].forEach((row, i) => preencher(row, "detalhe", i));
+  document.querySelectorAll("#genHeader [data-k], #detRows [data-k]").forEach(limparMensagem);
+  document.getElementById("genProblemas")?.classList.add("hidden");
+  atualizarProgressoGerador();
+  setMsg("genMsg", 'Campos obrigatórios completados com dados fictícios. Confira, ajuste o que quiser e clique em "Gerar e validar".', "ok");
+}
+
 function runGenerate() {
-  const headerContainer = document.querySelector(".form-grid");
+  const headerContainer = document.getElementById("genHeader");
   const rows = [...document.querySelectorAll("#detRows .det-row")];
-
-  const headerOk = validarObrigatorios(headerContainer, "header");
-  const rowsOk = rows.every(row => validarObrigatorios(row, "detalhe"));
-
-  if (!rows.length) { setMsg("genMsg", "Adicione ao menos um título.", "error"); return; }
-  if (!headerOk || !rowsOk) { setMsg("genMsg", "Preencha os campos obrigatórios destacados em vermelho.", "error"); return; }
-
-  const { header, detalhes } = collectGenerator();
-  const linhas = gerarArquivo(direcaoConfig(), { header, detalhes });
-  const allOk = linhas.every(l => l.length === 400);
   const preview = document.getElementById("genPreview");
+
+  const bloquear = () => {
+    lastGeneratedLines = null;
+    document.getElementById("btnDownload").disabled = true;
+    preview.classList.add("hidden");
+  };
+
+  if (!rows.length) { bloquear(); setMsg("genMsg", "Adicione ao menos um título.", "error"); return; }
+
+  const itens = [
+    ...validarFormulario(headerContainer, "header", "Cabeçalho"),
+    ...rows.flatMap((row, i) => validarFormulario(row, "detalhe", `Título ${i + 1}`)),
+  ];
+  const erros = itens.filter(p => p.nivel === "erro");
+
+  if (erros.length) {
+    bloquear();
+    mostrarProblemasDoGerador(itens);
+    setMsg("genMsg", `Falta corrigir ${erros.length} ${erros.length === 1 ? "campo" : "campos"} para gerar o arquivo. Levei você ao primeiro.`, "error");
+    irParaCampo(erros[0].el);
+    return;
+  }
+
+  const cfg = direcaoConfig();
+  const { header, detalhes } = collectGenerator();
+  const linhas = gerarArquivo(cfg, { header, detalhes });
+  const tamanho = cfg.tamanhoRegistro || 400;
+  const allOk = linhas.every(l => l.length === tamanho);
+
+  // Autoverificação: o arquivo gerado passa pelas mesmas regras da leitura.
+  // Se aparecer erro aqui, o defeito é do gerador/layout, não de quem digitou.
+  const doArquivo = validarLinhas(linhas, cfg, { direcao: currentDirecao });
+  const errosArquivo = doArquivo.filter(p => p.nivel === "erro");
+  // Acento já foi avisado pelo formulário, junto do campo: não repetir.
+  const avisosArquivo = doArquivo.filter(p => p.nivel === "aviso" && p.codigo !== "acento");
+  mostrarProblemasDoGerador([
+    ...errosArquivo.map(p => ({ nivel: "erro", onde: `Arquivo gerado, linha ${p.linha}`, texto: p.mensagem.replace(/^Linha \d+(, "[^"]*" \(posições [\d–]+\))?: /, "") })),
+    ...itens,
+    ...avisosArquivo.map(p => ({ nivel: "aviso", onde: `Arquivo gerado, linha ${p.linha}`, texto: p.mensagem.replace(/^Linha \d+(, "[^"]*" \(posições [\d–]+\))?: /, "") })),
+  ]);
+
   preview.textContent = linhas.join("\n");
   preview.classList.remove("hidden");
+
+  const bom = allOk && !errosArquivo.length;
   setMsg(
     "genMsg",
-    `Arquivo gerado: ${linhas.length} linha(s). Comprimento das linhas: ${allOk ? "todas com 400 ✓" : "DIVERGENTE ✗"}.`,
-    allOk ? "ok" : "error"
+    bom
+      ? `Arquivo gerado: ${linhas.length} linha(s), todas com ${tamanho} posições, e conferido pelas mesmas regras da leitura: sem erros.`
+      : `Arquivo gerado com problema: ${allOk ? "" : "linhas com tamanho divergente; "}${errosArquivo.length} erro(s) na conferência. Download bloqueado.`,
+    bom ? "ok" : "error"
   );
-  lastGeneratedLines = allOk ? linhas : null;
-  document.getElementById("btnDownload").disabled = !allOk;
+  lastGeneratedLines = bom ? linhas : null;
+  document.getElementById("btnDownload").disabled = !bom;
 }
 
 function downloadFile() {
@@ -594,43 +773,65 @@ function wireHelpButtons(root) {
   });
 }
 
+/* "Como preencher": janela centralizada, um cartão por campo, com busca e filtro
+   "só os obrigatórios". Substitui a tabela larga que obrigava a rolar de lado. */
+function cartaoDeCampo(def) {
+  const tam = def.fim - def.ini + 1;
+  const onde = def.ini === def.fim ? `posição ${def.ini}` : `posições ${def.ini}–${def.fim}`;
+  const busca = `${def.nome || def.key} ${def.ajuda || ""}`.toLowerCase();
+  return `
+    <div class="help-campo" data-obrig="${def.obrigatorio ? 1 : 0}" data-busca="${escHtml(busca)}">
+      <div class="help-campo-topo">
+        <strong>${escHtml(def.nome || def.key)}</strong>
+        <span class="help-selo ${def.obrigatorio ? "obrig" : "opc"}">${def.obrigatorio ? "Obrigatório" : "Opcional"}</span>
+        <span class="help-onde">${onde} · ${tam} ${tam === 1 ? "caractere" : "caracteres"}</span>
+      </div>
+      ${def.ajuda ? `<p>${escHtml(def.ajuda)}</p>` : ""}
+      ${def.exemplo ? `<p class="help-exemplo">Exemplo: <code>${escHtml(def.exemplo)}</code></p>` : ""}
+    </div>`;
+}
+
 function openHelpPanel() {
   if (!currentBank) return;
   const cfg = direcaoConfig();
-  const panel = document.getElementById("helpPanelBody");
-  const rows = [];
-  ["header", "detalhe"].forEach(kind => {
-    (cfg.formFields?.[kind] || []).forEach(key => {
-      const def = fieldDef(key, kind);
-      if (!def) return;
-      rows.push(`
-        <tr>
-          <td>${escHtml(def.nome || def.key)}</td>
-          <td>${def.ini}–${def.fim}</td>
-          <td>${def.fim - def.ini + 1}</td>
-          <td>${def.obrigatorio ? '<span class="pill bad">Sim</span>' : '<span class="pill warn">Não</span>'}</td>
-          <td>${escHtml(def.ajuda || "—")}</td>
-          <td>${escHtml(def.exemplo || "—")}</td>
-        </tr>`);
-    });
+  const secoes = [
+    ["header", "Cabeçalho do arquivo", "Preenchido uma vez, no começo do arquivo."],
+    ["detalhe", "Cada título", "Repetido para cada título (linha de detalhe) do arquivo."],
+  ];
+  const html = secoes.map(([kind, titulo, sub]) => {
+    const cartoes = (cfg.formFields?.[kind] || []).map(k => fieldDef(k, kind)).filter(Boolean).map(cartaoDeCampo);
+    return cartoes.length ? `<section class="help-secao"><h3>${titulo}</h3><p>${sub}</p>${cartoes.join("")}</section>` : "";
+  }).join("");
+
+  document.getElementById("helpPanelTitulo").textContent = `${currentBank.nome} — ${directionLabel()}`;
+  document.getElementById("helpPanelBody").innerHTML = html + '<p class="help-vazio hidden" id="helpVazio">Nenhum campo encontrado. Tente outra palavra ou desmarque “Só os obrigatórios”.</p>';
+  document.getElementById("helpFiltro").value = "";
+  document.getElementById("helpSoObrig").checked = false;
+  filtrarAjuda();
+
+  const dlg = document.getElementById("helpPanel");
+  if (typeof dlg.showModal === "function") { if (!dlg.open) dlg.showModal(); }
+  else dlg.setAttribute("open", "");
+}
+
+function filtrarAjuda() {
+  const termo = document.getElementById("helpFiltro").value.trim().toLowerCase();
+  const soObrig = document.getElementById("helpSoObrig").checked;
+  let visiveis = 0;
+  document.querySelectorAll("#helpPanelBody .help-campo").forEach(c => {
+    const mostra = (!soObrig || c.dataset.obrig === "1") && (!termo || c.dataset.busca.includes(termo));
+    c.hidden = !mostra;
+    if (mostra) visiveis++;
   });
-
-  panel.innerHTML = `
-    <h3>${escHtml(currentBank.nome)} — ${directionLabel()}</h3>
-    <div class="table-wrap">
-      <table class="cnab-table">
-        <thead><tr><th>Campo</th><th>Posição</th><th>Tamanho</th><th>Obrigatório</th><th>Ajuda</th><th>Exemplo</th></tr></thead>
-        <tbody>${rows.join("")}</tbody>
-      </table>
-    </div>`;
-
-  document.getElementById("helpPanel").classList.remove("hidden");
-  document.getElementById("helpPanelBackdrop").classList.remove("hidden");
+  document.querySelectorAll("#helpPanelBody .help-secao").forEach(sec => {
+    sec.hidden = !sec.querySelector(".help-campo:not([hidden])");
+  });
+  document.getElementById("helpVazio")?.classList.toggle("hidden", visiveis > 0);
 }
 
 function closeHelpPanel() {
-  document.getElementById("helpPanel").classList.add("hidden");
-  document.getElementById("helpPanelBackdrop").classList.add("hidden");
+  const dlg = document.getElementById("helpPanel");
+  if (typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open");
 }
 
 /* ---------------------------------------------------------------------
@@ -657,9 +858,13 @@ function wireViewEvents() {
       addDetRow();
       wireHelpButtons(document.getElementById("detRows"));
     });
+    document.getElementById("btnExemplo").addEventListener("click", preencherExemplo);
+    area.addEventListener("change", aoAlterarCampo);
+    area.addEventListener("input", aoAlterarCampo);
     document.getElementById("btnGenerate").addEventListener("click", runGenerate);
     document.getElementById("btnDownload").addEventListener("click", downloadFile);
     addDetRow(); // primeira linha
+    atualizarProgressoGerador();
   }
   wireHelpButtons(area);
 }

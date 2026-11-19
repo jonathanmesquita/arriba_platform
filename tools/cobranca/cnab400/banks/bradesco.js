@@ -82,7 +82,7 @@ const RETORNO_DETALHE_FIELDS = [
   { ini: 105, fim: 105, key: "indRateio",       nome: "Indicador de Rateio Crédito",type: "A" },
   { ini: 106, fim: 107, key: "zeros3",          nome: "Zeros",                      type: "N" },
   { ini: 108, fim: 108, key: "carteira",        nome: "Carteira",                   type: "N",
-    obrigatorio: true, ajuda: "Código da carteira de cobrança. 1 posição numérica.", exemplo: "09" },
+    obrigatorio: true, ajuda: "Código da carteira de cobrança. 1 posição numérica.", exemplo: "9" },
   { ini: 109, fim: 110, key: "ocorrencia",      nome: "Identificação de Ocorrência",type: "N",
     obrigatorio: true, ajuda: "Código do status devolvido pelo banco (ex.: 06 = Liquidação Normal). Ver tabela de ocorrências.", exemplo: "06" },
   { ini: 111, fim: 116, key: "dataOcorrencia",  nome: "Data Ocorrência no Banco",   type: "N", fmt: "data" },
@@ -216,11 +216,9 @@ const MOTIVOS_RETORNO = {
 /* =====================================================================
    REMESSA
 
-   DETALHE verificado campo a campo contra a linha real de teste:
-   100000000000000000000099001220001213400000000000000000502782350000...
-   (nossoNumero=00005027823, dac=5, ocorrencia=01, dataVencimento=15/03/2026,
-   valorTitulo=128623,80, tipo+numInscPagador=0208981215000142,
-   nomePagador="TPR TRANSPORTES E LOGISTICA"). Os "brancoRemN" cobrem
+   DETALHE verificado campo a campo contra uma linha real de teste (os valores
+   dessa linha não ficam aqui: eram de um registro real, e o exemplo do projeto
+   é sempre fictício). Os "brancoRemN" cobrem
    faixas sem confirmação (não sabemos o campo real ali — não inventamos
    nome/semântica para essas posições).
    ===================================================================== */
@@ -293,11 +291,11 @@ const REMESSA_DETALHE_FIELDS = [
   { ini: 193, fim: 205, key: "valorIOF",           nome: "Valor do IOF",                           type: "N", fmt: "valor" },
   { ini: 206, fim: 218, key: "valorAbatimento",    nome: "Valor do Abatimento a Conceder/Cancelar", type: "N", fmt: "valor" },
   { ini: 219, fim: 220, key: "codInscPagador",     nome: "Tipo de Inscrição do Pagador",           type: "N",
-    ajuda: "01 = CPF do pagador, 02 = CNPJ do pagador.", exemplo: "02" },
+    ajuda: "01 = CPF do pagador, 02 = CNPJ do pagador.", exemplo: "01" },
   { ini: 221, fim: 234, key: "numInscPagador",     nome: "Nº de Inscrição do Pagador",             type: "N",
-    obrigatorio: true, ajuda: "CPF ou CNPJ do pagador, sem pontuação. Zeros à esquerda; 14 posições.", exemplo: "08981215000142" },
+    obrigatorio: true, ajuda: "CPF ou CNPJ do pagador, sem pontuação. Zeros à esquerda; 14 posições.", exemplo: "31076450288" },
   { ini: 235, fim: 274, key: "nomePagador",        nome: "Nome do Pagador",                        type: "A",
-    obrigatorio: true, ajuda: "Nome do sacado/pagador. Espaços à direita; 40 posições.", exemplo: "TPR TRANSPORTES E LOGISTICA" },
+    obrigatorio: true, ajuda: "Nome do sacado/pagador. Espaços à direita; 40 posições.", exemplo: "MARIA APARECIDA DA SILVA" },
   { ini: 275, fim: 314, key: "logradouro",         nome: "Endereço Completo do Pagador",           type: "A",
     ajuda: "Rua, número e complemento do pagador. Espaços à direita; 40 posições.", exemplo: "RUA PORTO ALEGRE S N" },
   { ini: 315, fim: 326, key: "mensagem1",          nome: "1ª Mensagem",                            type: "A" },

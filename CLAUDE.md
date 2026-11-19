@@ -168,7 +168,7 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 ## Gotchas específicos
 
 - **Validador CNAB 400** (`tools/cobranca/cnab400/`): motor genérico multi-banco
-  (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú e BMP), com leitor (`parseArquivo`)
+  (`engine.js` + `banks/<banco>.js`, hoje Bradesco, Itaú, BMP, Inter e Paulista/FIDC com 444 posições), com leitor (`parseArquivo`)
   e gerador (`gerarArquivo`); a UI tem modo "Validar" e modo "Gerar", baixando `.REM`/`.RET`.
   Posições do manual são **1-indexadas e inclusivas**; `slice()` é 0-indexado exclusivo →
   usar `slice(ini-1, fim)`. O motor **não assume 400 posições** (`config.tamanhoRegistro`) e
@@ -180,6 +180,95 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   não existe — é o que pega arquivo truncado ou editado à mão. Opt-in por banco via
   `config.trailerConferencia`. O valor esperado sai da mesma regra da geração
   (`trailerTotalFn`/`trailerTotalKey`), para validação e geração não divergirem.
+- **Validação de conteúdo do CNAB** (`validacao.js`, nov/2026): até então o motor **lia** e
+  **gerava**, mas não dizia quando o conteúdo estava errado — 33 de 48 defeitos plantados
+  (letra no valor, data 99/99/99, sequencial repetido…) passavam sem nenhum aviso, e o gerador
+  gravava dado errado em silêncio (`padField` tira a letra, perde os dígitos da esquerda e
+  corta o texto). Agora há dois lados, sem DOM e com testes (`scripts/tests/cnab400-validacao.test.mjs`):
+  - **Leitura:** `lerEValidar(texto, config, { direcao })` = `parseArquivo` + `problemas`
+    estruturados (`nivel`, `linha`, `campo`, posições, `mensagem`). `avisos` (strings do motor)
+    continua como estava. **Erro** é o que é certo: letra em campo numérico, data impossível,
+    campo `fixo` diferente no detalhe/trailer, caractere de controle. **Aviso** é o provável:
+    sequencial fora de ordem, ocorrência fora da tabela, tipo de registro não descrito, acento,
+    nosso número repetido (**só na remessa** — no retorno o mesmo título repete de verdade).
+  - **Geração:** `validarValor`/`validarDados` olham o **texto digitado**, antes do `padField`
+    (que já esconde o problema). A tela marca o campo, escreve o motivo embaixo dele, **bloqueia
+    o download com erro** e, depois de gerar, passa o arquivo pelas mesmas regras da leitura
+    (autoverificação: erro ali é defeito do layout, não de quem digitou). Pontuação de CPF/CEP
+    é tolerada; ano fora de 1971–2070 em DDMMAA é erro (leria outro século).
+  - **Campo numérico em branco não é reportado** de propósito: não há fonte confirmando se cada
+    layout quer zeros ou brancos. A regra do projeto continua — o que não se confirma em fonte
+    não vira erro. **Não estão implementados** (dependem do manual do banco, que a sessão não
+    conseguiu abrir): dígito verificador do nosso número, tabelas de espécie e instrução, e
+    qualquer regra de CNAB 240. Estão em `tasks/backlog.md` e `tasks/decisoes-pendentes.md`.
+- **UX de validação dos geradores CNAB (nov/2026):** `tools/cobranca/validacao-ux.js` + `validacao-ux.css`
+  são a fonte única de **como** o erro aparece, nos geradores 400 e 240 (só DOM; **o que** é erro continua
+  sendo de `validarValor`). A mensagem vai logo abaixo do campo (`aria-describedby`, ícone ✕/⚠ por CSS, não
+  só cor); o resumo lista cada problema como botão "ir ao campo →" (abre o bloco recolhido, rola e foca);
+  corrigido o campo (evento `change`), mensagem e item do resumo somem; o contador mostra "X de Y obrigatórios".
+  Texto digitado entra por `textContent`. Gerador novo reusa o módulo — não escrever `.erro-campo` à mão.
+  "Como preencher" do 400 é um `<dialog>` (`showModal`, Esc e clique fora fecham) com um **cartão por campo**:
+  a versão anterior era uma tabela de 6 colunas num painel lateral e obrigava a rolar de lado.
+- **Modo Gerar do CNAB (nov/2026):** a tela **abre pronta** — primeiro banco, remessa e modo
+  Gerar já escolhidos (Validar é um clique). O formulário mostra só os campos **obrigatórios**
+  (`obrigatorio: true` na declaração do campo); os opcionais ficam em "Campos opcionais" e o bloco
+  **abre sozinho** se um deles tiver erro. "Preencher com exemplo" completa **só o que falta**,
+  com dado **fictício** (nome e CPF de `assets/js/fake-data-br.js`, datas relativas a hoje, um
+  nosso número por título) e nunca sobrescreve o que foi digitado. O `exemplo` de cada campo
+  nos layouts também é fictício: um nome de empresa e um CNPJ que vieram de um manual foram
+  trocados. A validação achou um conflito real nos dados (Bradesco retorno, "Carteira": 1
+  posição declarada, exemplo de 2 dígitos); as planilhas do Bradesco enviadas depois confirmaram a
+  posição única e o exemplo real "9" — o exemplo foi corrigido para isso.
+- **CNAB 240** (`tools/cobranca/cnab240/`, nov/2026): duas camadas. **Estrutura**
+  (`validacao240.js`, vale para qualquer banco): tamanho da linha, banco (1–3), lote (4–7), tipo de
+  registro (8: 0, 1, 3, 5, 9), sequencial no lote (9–13), segmento (14) e totais dos trailers. **Layout de
+  banco** (`layouts/<banco>.js`, hoje **Santander — cobrança**, do manual H7815 v8.1 de jun/2024, enviado
+  pelo dono): cada registro (header de arquivo/lote, segmentos P, Q, R, S1, S2, Y03, Y53 na remessa;
+  T, U, Y03, Y04 no retorno; trailers) é uma lista de campos no formato do CNAB 400, e o **segmento
+  escolhe a lista** (letra da posição 14; discriminador na 18 para S e 18–19 para Y).
+  - **Prova do layout, sem arquivo real:** um teste confere que cada registro cobre as posições 1–240
+    **sem buraco nem sobreposição** (pegaria transcrição errada), os dois exemplos de DV do manual
+    (nota 15, módulo 11) e a ida e volta gerar → ler.
+  - A conferência de campo é a **mesma função do CNAB 400** (`conferirCampos`, exportada de
+    `cnab400/validacao.js`); as regras entre campos, com a nota do manual na mensagem, ficam em
+    `layouts/santander-regras.js`. **Quem manda é o manual:** o que ele só *recomenda* (DV do nosso número)
+    é aviso; o que ele diz que o banco rejeita (CPF/CNPJ do pagador inválido, vencimento 11111111/99999999,
+    quantidade de registros do lote — nota 37) é erro. Datas do 240 são **DDMMAAAA** (`fmt: "dataDMA"`).
+  - **Gerador** (`gerar240.js` + `gerador-ui.js`): P+Q (remessa) ou T+U (retorno) por título; calcula
+    número do lote, sequencial, qtd de registros do lote e totais do arquivo; confere o arquivo gerado
+    com o mesmo validador. Segmentos R, S e Y são lidos e validados, mas a tela não os monta. O trailer
+    de lote do retorno (totais por tipo de cobrança) sai zerado: o manual não diz como se ligam aos movimentos.
+  - `assets/js/validar-documentos.js` (CPF/CNPJ numéricos) é módulo do site, com teste.
+  - **Banco novo no 240:** um arquivo em `layouts/` + uma linha em `LAYOUTS` (`script.js`).
+  - **Inter — pagamentos** (`layouts/inter-pagamentos.js`, manual v1.10 de 23/08/2024): o arquivo tem
+    **lotes de tipos diferentes** e o conteúdo de um segmento depende do tipo do lote (o A da TED e o
+    do Pix têm campos diferentes). O tipo vem da **forma de lançamento** do header de lote (posições
+    12–13: 01/03 TED, 45 Pix, 30/31 boletos, 47 QR Code Pix, 11/80/81 tributos) — `L.lotes` +
+    `L.loteDaForma`; o validador escolhe a lista de segmentos por lote. O gerador trabalha com **um
+    tipo de lote por vez**: `variantePagamento()` devolve um layout só daquele tipo, e a tela mostra o
+    seletor "Tipo de lote". J-52 e J-52 Pix têm a mesma identificação (52); o Pix é reconhecido por
+    ter a URL/chave a partir da posição 132 (no J-52 comum 132–187 é branco). Campos de ocorrência
+    (231–240) guardam até 5 códigos de 2 caracteres, conferidos como **lista** (`listaDeCodigos`).
+    **Limites declarados:** o retorno usa os mesmos segmentos (o manual só define código de remessa 1,
+    então ele não é conferido no retorno); o segmento C (opcional na TED) é citado mas não descrito,
+    então é lido como "segmento não descrito"; as formas 80/81 (ISS) foram ligadas ao lote de
+    tributos sem segmento próprio no manual; o DV do código de barras não está no manual e não é
+    conferido; a regra "forma de iniciação 05 exige os dados bancários do favorecido" cruza dois
+    registros (A e B) e só o lado do B é conferido. Sem arquivo real: prova = cobertura das 240
+    posições de cada registro, ida e volta por tipo de lote e um arquivo com dois tipos de lote.
+  - `pages/docs/padroes-cnab.html` é a referência: o que 240 e 400 definem, com as fontes. **Premissa:** só o
+    240 é padrão FEBRABAN com estrutura comum; o 400 é descrito banco a banco.
+- **CNAB 444 — Paulista/FIDC** (`banks/paulista.js`, nov/2026): manual de junho/2019 do Banco
+  Paulista (611) para FIDC, **só remessa** (entrada de títulos e instruções), registro de **444
+  posições** (`tamanhoRegistro: 444`; sequencial em 439–444, chave da nota fiscal em 395–438). Banco
+  com uma direção só **não declara `retorno`** — a tela desabilita a direção que falta
+  (`ajustarDirecao()` em `ui.js`). Itens do manual que dizem "Branco" mas têm tipo 9(n) foram tratados
+  como branco; nota fiscal e chave são obrigatórias só na espécie 01 (duplicata), por `regrasDetalhe`. Não
+  há arquivo real: prova = cobertura das 444 posições sem buraco nem sobreposição + ida e volta.
+- **Bradesco 400 conferido contra as planilhas validadoras** (nov/2026): as duas planilhas (remessa e
+  retorno, 3 abas cada) bateram **campo a campo, por posição**, com `banks/bradesco.js` — 6 de 6
+  abas, nenhuma divergência. As amostras embutidas nas planilhas têm nome e documento de empresa
+  real e **não entram no repositório** (nem como exemplo).
 - **Ícone do banco na UI** (`ui.js`, `bankIconHtml`): um ícone **neutro** de banco, igual
   para todos. **Não há logo de banco no repositório** (nov/2026): os 3 que apareciam na tela
   e a biblioteca de 205 SVGs saíram, por serem marca registrada de terceiro. O que identifica
@@ -402,7 +491,8 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
 
 Entregue e funcionando:
 
-- Validador CNAB 400 (Bradesco, Itaú e BMP), validar e gerar, com conferência de trailer.
+- Validador CNAB 400 (Bradesco, Itaú, BMP, Inter e o CNAB 444 do Paulista/FIDC), validar e gerar, com conferência de trailer e validação de conteúdo (campo a campo, na leitura e antes de gerar).
+- CNAB 240: conferência de estrutura (qualquer banco), layouts do Santander (cobrança) e do Inter (pagamentos) com validação de campos e geração, e página de referência dos padrões 240 e 400.
 - Validador de CSV e gerador de CSV compartilhando a mesma fonte de layouts.
 - Utilitários de dados: JSON, hash, CSV↔JSON, Base64→PDF, decodificador universal.
 - Rede e diagnóstico: "Meu IP, navegador e sistema" e "Conferir DNS e e-mail de um domínio"

@@ -11,6 +11,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
   <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../validacao-ux.css">
 
   <style>
     * { box-sizing: border-box; }
@@ -142,10 +143,16 @@
     .btn-arriba { min-height: 43px; border-radius: 5px; border: 1px solid transparent; padding: 9px 16px; font-weight: 900; cursor: pointer; }
     .btn-red-arriba { background: var(--red); color: var(--rw-on-primary); }
     .btn-red-arriba:hover { background: var(--red-ink, var(--rw-red-ink)); color: var(--rw-on-primary); }
-    .btn-red-arriba:disabled { background: var(--muted); cursor: not-allowed; }
-    .btn-dark-arriba { background: var(--dark); color: #fff; }
-    .btn-dark-arriba:hover { background: #000; color: #fff; }
-    .btn-dark-arriba:disabled { background: var(--muted); cursor: not-allowed; }
+    /* Botão escuro: superfície fixa e o texto fixo que a acompanha (nos dois temas). */
+    .btn-dark-arriba { background: var(--rw-dark); color: var(--rw-on-dark); }
+    .btn-dark-arriba:hover { background: var(--rw-dark-2); color: var(--rw-on-dark); }
+    /* Desabilitado: contorno e texto apagados, por token — branco sobre cinza-médio
+       reprovava no tema escuro (2,66) e o botão aparece já na abertura da tela. */
+    .btn-red-arriba:disabled,
+    .btn-dark-arriba:disabled {
+      background: var(--surface-soft); color: var(--muted);
+      border-color: var(--line-strong); cursor: not-allowed;
+    }
     .btn-light-arriba { background: var(--surface-soft); color: var(--ink); }
     .btn-outline-arriba { background: transparent; border: 1px solid var(--dark); color: var(--ink); }
 
@@ -193,17 +200,38 @@
     .pill.warn { background: rgba(181,129,0,.16); color: var(--warn-ink); }
     .pill.bad { background: rgba(220,53,69,.14); color: var(--danger-ink); }
 
+    .opcionais { margin: 0 0 16px; }
+    .opcionais > summary {
+      cursor: pointer; font-weight: 800; font-size: .88rem; padding: 6px 0; color: var(--ink);
+    }
+    .opcionais > summary:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+    .opcionais[open] > summary { margin-bottom: 8px; }
+    .det-row .opcionais { grid-column: 1 / -1; margin: 0; }
+    .opc-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+
     .det-title { font-size: 1.05rem; font-weight: 800; margin: 20px 0 10px; }
     .det-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 40px;
-      gap: 8px; align-items: end;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px 12px; align-items: start;
       border: 1px solid var(--line); border-radius: 10px;
       padding: 12px; margin-bottom: 10px; background: var(--surface-soft);
     }
-    .det-row label { font-size: .76rem; margin-bottom: 3px; }
+    .det-row > div { position: relative; min-width: 0; }
+    /* Rótulo de até três linhas, com o * e o ? no fluxo do texto: a altura mínima mantém os campos alinhados entre si. */
+    .det-row label { display: block; min-height: 3.6em; font-size: .76rem; margin-bottom: 3px; line-height: 1.2; }
     .det-row .form-control, .det-row .form-select { min-height: 38px; font-size: .82rem; }
-    .det-remove { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger-ink); }
+    /* A ajuda do campo flutua sobre a linha, em vez de empurrar os outros campos. */
+    .det-row .field-help-box {
+      position: absolute; z-index: 20; left: 0; top: calc(100% - 2px);
+      width: max(100%, 250px); max-width: 80vw; margin: 0;
+      background: var(--surface); border: 1px solid var(--line-strong); border-left: 4px solid var(--gold);
+      box-shadow: var(--shadow);
+    }
+    .det-row > div:nth-last-child(-n+3) .field-help-box { left: auto; right: 0; }
+    /* Uma coluna só (celular): não há campo ao lado para alinhar, então o rótulo não reserva altura. */
+    @media (max-width: 520px) { .det-row label { min-height: 0; } }
+    .det-remove { width: 40px; justify-self: end; align-self: end; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; height: 38px; cursor: pointer; color: var(--danger-ink); }
 
     .gen-preview {
       background: #101010; color: #f3f3f3; border-radius: 8px; padding: 16px; margin-top: 16px;
@@ -232,23 +260,45 @@
       color: var(--ink); font-size: .82rem; line-height: 1.5;
     }
 
-    .field-invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 .18rem rgba(220, 53, 69, .16) !important; }
 
-    .help-panel-backdrop {
-      position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 90;
+    /* "Como preencher": janela centralizada, um cartão por campo, sem rolagem lateral. */
+    dialog.help-modal {
+      width: min(780px, 94vw); max-height: 88vh; padding: 0; overflow: hidden;
+      border: 1px solid var(--line-strong); border-radius: 14px;
+      background: var(--surface); color: var(--ink); box-shadow: 0 24px 70px rgba(0, 0, 0, .35);
     }
-    .help-panel {
-      position: fixed; top: 0; right: 0; bottom: 0; z-index: 91;
-      width: min(720px, 92vw); background: var(--surface);
-      box-shadow: -18px 0 48px rgba(0, 0, 0, .18);
-      padding: 26px 24px; overflow-y: auto;
+    dialog.help-modal::backdrop { background: rgba(0, 0, 0, .55); }
+    .help-modal-card { display: flex; flex-direction: column; max-height: 88vh; }
+    .help-modal-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 22px 12px; }
+    .help-modal-topo h2 { font-size: 1.25rem; font-weight: 800; margin: 0 0 4px; }
+    .help-modal-topo p { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.5; }
+    .help-modal-fechar {
+      flex: none; width: 40px; height: 40px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--line-strong); background: var(--surface-soft); color: var(--ink);
     }
-    .help-panel h3 { font-size: 1.2rem; font-weight: 800; margin: 0 0 14px; }
-    .help-panel-close {
-      position: absolute; top: 18px; right: 18px;
-      width: 34px; height: 34px; border-radius: 999px;
-      border: 1px solid var(--line); background: var(--surface-soft);
-      cursor: pointer; color: var(--ink);
+    .help-modal-fechar:hover { background: var(--surface); }
+    .help-modal-passos { margin: 0; padding: 0 22px 12px 42px; color: var(--ink); font-size: .9rem; line-height: 1.55; }
+    .help-modal-filtros { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 10px 22px 12px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface-soft); }
+    .help-modal-filtros input[type="search"] { flex: 1 1 220px; min-height: 40px; }
+    .help-modal-filtros label { margin: 0; font-weight: 700; font-size: .9rem; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+    .help-modal-corpo { overflow-y: auto; padding: 8px 22px 22px; }
+    .help-secao { margin-top: 16px; }
+    .help-secao h3 { font-size: 1rem; font-weight: 800; margin: 0 0 4px; }
+    .help-secao > p { margin: 0 0 10px; color: var(--muted); font-size: .86rem; }
+    .help-campo { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; background: var(--surface); }
+    .help-campo-topo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+    .help-campo-topo strong { font-size: .96rem; }
+    .help-selo { font-size: .74rem; font-weight: 800; border: 1px solid var(--line-strong); border-radius: 999px; padding: 1px 9px; white-space: nowrap; }
+    .help-selo.obrig { color: var(--danger-ink); border-color: var(--rw-danger); }
+    .help-selo.opc { color: var(--muted); }
+    .help-onde { margin-left: auto; color: var(--muted); font-size: .8rem; white-space: nowrap; }
+    .help-campo p { margin: 6px 0 0; font-size: .88rem; line-height: 1.5; }
+    .help-campo .help-exemplo code { background: var(--surface-soft); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; color: var(--ink); }
+    .help-vazio { text-align: center; color: var(--muted); padding: 24px 0; }
+    @media (max-width: 520px) {
+      .help-onde { margin-left: 0; width: 100%; }
+      .help-modal-topo, .help-modal-corpo, .help-modal-filtros { padding-left: 14px; padding-right: 14px; }
+      .help-modal-passos { padding-left: 32px; padding-right: 14px; }
     }
 
     .hidden { display: none !important; }
@@ -323,13 +373,29 @@
     </main>
   </div>
 
-  <div class="help-panel-backdrop hidden" id="helpPanelBackdrop"></div>
-  <aside class="help-panel hidden" id="helpPanel" aria-label="Como preencher">
-    <button type="button" class="help-panel-close" id="helpPanelClose" aria-label="Fechar">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <div id="helpPanelBody"></div>
-  </aside>
+  <dialog class="help-modal" id="helpPanel" aria-labelledby="helpPanelTitulo">
+    <div class="help-modal-card">
+      <div class="help-modal-topo">
+        <div>
+          <h2 id="helpPanelTitulo"></h2>
+          <p>Cada campo do arquivo: onde ele fica, quantos caracteres ocupa e como preencher.</p>
+        </div>
+        <button type="button" class="help-modal-fechar" id="helpPanelClose" aria-label="Fechar">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <ol class="help-modal-passos">
+        <li>Preencha primeiro os campos marcados como <strong>obrigatórios</strong>.</li>
+        <li>Os opcionais ficam recolhidos no formulário, em "Campos opcionais".</li>
+        <li>Ao gerar, cada erro aparece no campo e em uma lista com atalho.</li>
+      </ol>
+      <div class="help-modal-filtros">
+        <input type="search" class="form-control" id="helpFiltro" placeholder="Buscar um campo (ex.: vencimento, valor, nosso número)" aria-label="Buscar um campo">
+        <label for="helpSoObrig"><input type="checkbox" id="helpSoObrig"> Só os obrigatórios</label>
+      </div>
+      <div class="help-modal-corpo" id="helpPanelBody"></div>
+    </div>
+  </dialog>
 
   <script type="module">
     import { initUI } from "./ui.js";

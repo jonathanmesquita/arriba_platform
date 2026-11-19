@@ -184,6 +184,56 @@ const ESTADOS = [
     }
   },
   {
+    /* CNAB 240: o formulário do gerador, os erros por campo (vermelho, âmbar) e o arquivo
+       gerado só existem depois de escolher o layout e clicar. Vazio → todos os erros;
+       exemplo + 1 CPF errado → erro de conferência do arquivo gerado. */
+    pagina: "tools/cobranca/cnab240/cnab240.html", nome: "CNAB 240: gerar com erros e arquivo gerado", abrir: async (p) => {
+      await p.selectOption("#layout240", "033");
+      await p.click('#modos240 [data-modo="gerar"]');
+      await p.click("#geradorRaiz .btn-red-arriba");
+      await p.click('#geradorRaiz button:has-text("Preencher com exemplo")');
+      await p.fill('#geradorRaiz [id^="t1_Q_numInscPagador"]', "12345678900");
+      await p.fill('#geradorRaiz [id^="t1_Q_nomePagador"]', "JOÃO DA SILVA");
+      await p.click("#geradorRaiz .btn-red-arriba");
+      await p.waitForTimeout(150);
+    }
+  },
+  {
+    /* CNAB 400: a janela "Como preencher" (selos obrigatório/opcional, campo de busca) e o
+       gerador com o resumo de erros, a mensagem junto de cada campo e o contador só existem
+       depois do clique. Gerar vazio → todos os obrigatórios em erro. */
+    pagina: "tools/cobranca/cnab400/cnab400.html", nome: "CNAB 400: como preencher aberto", abrir: async (p) => {
+      await p.click("#btnComoPreencher");
+      await p.waitForSelector("#helpPanel[open]");
+    }
+  },
+  {
+    pagina: "tools/cobranca/cnab400/cnab400.html", nome: "CNAB 400: gerar com erros por campo", abrir: async (p) => {
+      await p.click("#btnGenerate");
+      await p.waitForSelector("#genProblemas li");
+    }
+  },
+  {
+    pagina: "tools/cobranca/cnab240/cnab240.html", nome: "CNAB 240: gerar vazio, resumo de erros", abrir: async (p) => {
+      await p.selectOption("#layout240", "033");
+      await p.click('#modos240 [data-modo="gerar"]');
+      await p.click("#geradorRaiz .btn-red-arriba");
+      await p.waitForSelector(".resumo-validacao li");
+    }
+  },
+  {
+    pagina: "tools/cobranca/cnab240/cnab240.html", nome: "CNAB 240: conferência com erros e avisos", abrir: async (p) => {
+      await p.selectOption("#layout240", "033");
+      await p.fill("#texto240", [
+        "0330000".padEnd(240, " "),
+        ("03300013" + "00001P").padEnd(240, " "),
+        "x".repeat(100),
+      ].join("\n"));
+      await p.click("#btnValidar240");
+      await p.waitForTimeout(150);
+    }
+  },
+  {
     /* Botão "Copiado" e a linha de estado em verde só existem depois do clique. */
     pagina: "tools/cobranca/massa-dados/massa-dados.html", nome: "dados copiados", abrir: async (p) => {
       await p.click("#btnCopy");

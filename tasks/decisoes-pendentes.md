@@ -247,3 +247,13 @@ site estático. Pode continuar aqui (com `.vercelignore` excluindo do deploy) ou
 repositório próprio via `git subtree`.
 
 - **Solução:** _(aqui ou repositório próprio)_
+
+---
+
+## ✅ Manuais de CNAB — recebidos e usados (18/11/2026)
+
+O dono enviou os manuais que a rede da sessão não alcançava, e todos foram lidos e usados: Inter CNAB 400
+(cobrança, v2.2), Inter CNAB 240 (pagamentos, v1.10), Santander cobrança CNAB 240 (H7815 v8.1), as planilhas
+validadoras do Bradesco (batem 6 de 6 abas com `banks/bradesco.js`) e do BMP, e o CNAB 444 (era o layout de
+remessa do Banco Paulista/FIDC). O que cada layout não resolve está no cabeçalho do arquivo dele e em `backlog.md`.
+Segue valendo: **todo layout daqui vem de manual, sem arquivo real de produção para comparar.**

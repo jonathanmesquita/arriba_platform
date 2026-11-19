@@ -3,6 +3,15 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] CNAB 400 e 240, UX do gerador: "Como preencher" virou uma janela centralizada (cartão por campo, selo obrigatório/opcional, busca e filtro "só os obrigatórios") no lugar da tabela larga; validação com mensagem junto do campo, resumo com atalho "ir ao campo", correção ao vivo e contador de obrigatórios, num módulo único (`tools/cobranca/validacao-ux.js`); contraste conferido nos dois temas ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 240 Inter (pagamentos): layout do manual v1.10 com cinco tipos de lote (TED, Pix, boletos, QR Code Pix, tributos), validação por tipo de lote, gerador e seletor na tela; 27 testes ✅ 2026-11-18 #area/ferramentas
+- [x] Planilhas do Bradesco (remessa e retorno) comparadas campo a campo com `banks/bradesco.js`: 6 de 6 abas batem; o conflito da "Carteira" (retorno, posição 108) se resolveu — 1 posição, exemplo real "9" ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 444 (Paulista/FIDC, 611): remessa a partir do manual de jun/2019; tela passou a aceitar banco de uma direção só ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 240 Santander (cobrança): layout por segmento a partir do manual H7815 v8.1, validação de campos e regras (notas 15, 17, 18, 21–23, 28, 29, 37), gerador de remessa (P/Q) e retorno (T/U) e tela com Conferir/Gerar; 29 testes ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 400: banco Inter (077), remessa (tipos 1, 2, 3) e retorno, a partir do manual v2.2 enviado pelo dono; DV do nosso número conferido com o exemplo do manual; 14 testes ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 240: conferência de estrutura (tamanho, lotes, tipos de registro, trailers) e página de referência dos padrões 240 e 400, com fontes; menu, busca e base do chat atualizados ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 400, modo Gerar mais direto: abre pronto (banco, remessa, Gerar), só os obrigatórios à vista, opcionais recolhidos, "Preencher com exemplo" fictício; exemplos de nome/CNPJ que vieram de manual trocados por dados inventados ✅ 2026-11-18 #area/ferramentas
+- [x] CNAB 400: validação de conteúdo na leitura (erros e avisos por linha e campo) e antes de gerar (campo marcado, download bloqueado com erro, arquivo gerado conferido pelas mesmas regras); 33 de 48 defeitos que passavam sem aviso agora são pegos, e 6 jeitos de o gerador gravar dado errado em silêncio viraram erro ✅ 2026-11-17 #area/ferramentas
 - [x] Gerador de dados fictícios revisado para uso rápido: gera sozinho, "Copiar" junto do resultado, menu com rótulos curtos, seletor no celular, opções lembradas, arquivo igual à tela; README da ferramenta reescrito ✅ 2026-11-13 #area/ferramentas
 - [x] Histórico do git recomeçado num repositório novo, com um commit único; o anterior foi renomeado pelo dono e uma cópia do histórico antigo foi entregue a ele. Nomes de cliente e de produto saíram também dos documentos ✅ 2026-11-13 #area/infra
 - [x] Dígito do RG conferido contra um gerador de referência (caso incluído nos testes) ✅ 2026-11-13 #area/ferramentas

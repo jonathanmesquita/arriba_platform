@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CNAB 240 e CNAB 400: tamanho da linha, organização do arquivo, quem define cada layout e o que este site confere, com as fontes consultadas." />
+
+  <title>Padrões CNAB 240 e 400: o que cada um define - Arriba Platform</title>
+  <link rel="icon" href="/assets/icons/favicon.ico" sizes="16x16 32x32 48x48 64x64" />
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../tools/rede/rede.css">
+  <style>
+    .container-page ul, .container-page ol { line-height: 1.6; max-width: 76ch; }
+    .tabela th, .tabela td { min-width: 120px; }
+    /* Link do Bootstrap é azul fixo e reprova sobre a areia; tinta do projeto. */
+    main a:not(.btn-arriba) { color: var(--rw-red-ink); }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="../../index.html" class="brand">ARRIBA</a>
+    <a href="../../index.html" class="back-link">← Voltar para o início</a>
+  </header>
+
+  <section class="hero">
+    <div class="container-page">
+      <span class="kicker">Referência · Arquivo bancário</span>
+      <h1>Padrões CNAB 240 e 400: o que cada um define</h1>
+      <p>
+        O nome CNAB vem do tamanho da linha do arquivo: <strong>240</strong> ou <strong>400</strong>
+        caracteres. O tamanho é o que os dois têm em comum — quem define o resto, e até onde o
+        layout é igual de um banco para outro, é diferente. Esta página junta o que as fontes
+        consultadas confirmam e diz o que este site confere com isso.
+      </p>
+    </div>
+  </section>
+
+  <main class="container-page section">
+
+    <section class="panel card-section">
+      <h2>Em resumo</h2>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead><tr><th scope="col"></th><th scope="col">CNAB 240</th><th scope="col">CNAB 400</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Linha</th><td>240 caracteres</td><td>400 caracteres</td></tr>
+            <tr><th scope="row">Quem define</th><td>Padrão FEBRABAN; cada banco publica o seu manual com adaptações</td><td>Cada banco publica o seu layout; não há um padrão único</td></tr>
+            <tr><th scope="row">Organização</th><td>Arquivo → lotes → registros de detalhe em segmentos (P, Q, R, S, T, U…)</td><td>Header, registros de detalhe (um título por registro) e trailer</td></tr>
+            <tr><th scope="row">Onde aparece</th><td>Cobrança, pagamentos a fornecedores, folha de pagamento, DDA</td><td>Cobrança (remessa e retorno de boletos)</td></tr>
+            <tr><th scope="row">Neste site</th><td><a href="../../tools/cobranca/cnab240/cnab240.html">Confere a estrutura (qualquer banco) e os campos do Santander; gera arquivo de teste</a></td><td><a href="../../tools/cobranca/cnab400/cnab400.html">Valida campo a campo e gera</a> (Bradesco, Itaú, BMP, Inter e, com 444 posições, o Paulista/FIDC)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="nota">
+        <strong>Uma precisão sobre "padrão FEBRABAN":</strong> nas fontes consultadas, o CNAB 240 é o
+        padrão com a estrutura comum (lotes e segmentos), mas o CNAB 400 é descrito banco a banco —
+        Itaú, Santander e Sicredi, por exemplo, publicam manuais de 400 posições diferentes entre si.
+        Por isso este site tem um layout de CNAB 400 <em>por banco</em>, e não um layout único.
+      </p>
+    </section>
+
+    <section class="panel card-section">
+      <h2>CNAB 240: a estrutura</h2>
+      <p class="descricao">
+        O arquivo é dividido em lotes. Cada linha começa com o código do banco, o número do lote e o
+        tipo de registro, e é pelo tipo que se sabe o que a linha é.
+      </p>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead><tr><th scope="col">Tipo (posição 8)</th><th scope="col">Registro</th><th scope="col">O que traz</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0</td><td>Header de arquivo</td><td>Abre o arquivo; lote <span class="mono">0000</span></td></tr>
+            <tr><td class="mono">1</td><td>Header de lote</td><td>Abre um lote de serviço</td></tr>
+            <tr><td class="mono">3</td><td>Detalhe</td><td>Um registro por segmento (letra na posição 14)</td></tr>
+            <tr><td class="mono">5</td><td>Trailer de lote</td><td>Fecha o lote; quantidade de registros do lote (posições 18–23)</td></tr>
+            <tr><td class="mono">9</td><td>Trailer de arquivo</td><td>Fecha o arquivo; quantidade de lotes (18–23) e de registros (24–29)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li>Posições <strong>1–3</strong>: código do banco. Posições <strong>4–7</strong>: lote de serviço.</li>
+        <li>No detalhe, posições <strong>9–13</strong>: número sequencial do registro no lote; posição <strong>14</strong>: código do segmento.</li>
+        <li>A quantidade de registros do Trailer de arquivo conta <strong>todas</strong> as linhas, com o Header e os Trailers.</li>
+      </ul>
+      <p class="nota">
+        <strong>O que fica de fora:</strong> o que há <em>dentro</em> de cada segmento (valores, datas,
+        nosso número, ocorrências) muda de banco para banco, e de um produto para outro (cobrança,
+        pagamento, folha). Esta página não os lista: sem o manual do banco, qualquer posição seria
+        palpite.
+      </p>
+    </section>
+
+    <section class="panel card-section">
+      <h2>Regras de preenchimento que aparecem nos manuais</h2>
+      <ul>
+        <li><strong>Campo numérico:</strong> alinhado à direita, com zeros à esquerda.</li>
+        <li><strong>Campo alfanumérico:</strong> alinhado à esquerda, com brancos à direita.</li>
+        <li><strong>Campo não usado:</strong> zerado (numérico) ou em branco (alfanumérico), conforme o manual do banco.</li>
+        <li><strong>Texto:</strong> maiúsculas e sem acento nem caractere especial (o Itaú pede isso expressamente).</li>
+        <li><strong>Notação dos manuais:</strong> <span class="mono">9</span> é numérico, <span class="mono">X</span> é alfanumérico e <span class="mono">V</span> marca a vírgula decimal implícita (por exemplo <span class="mono">9(11)V99</span>).</li>
+        <li><strong>Posições:</strong> os manuais contam a partir de 1 e incluem a posição final — "posições 18 a 23" são 6 caracteres.</li>
+      </ul>
+    </section>
+
+    <section class="panel card-section">
+      <h2>O que este site confere hoje</h2>
+      <div class="grade-2">
+        <div>
+          <h3>CNAB 400 (Bradesco, Itaú, BMP, Inter) e CNAB 444 (Paulista/FIDC)</h3>
+          <ul>
+            <li>Campo a campo: tipo (número ou texto), datas, valores, campos de valor fixo.</li>
+            <li>Sequencial, ocorrência fora da tabela, nosso número repetido na remessa.</li>
+            <li>Trailer: quantidade e valor total.</li>
+            <li>Gerar arquivo: campos obrigatórios, valores conferidos antes de gravar.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>CNAB 240 (qualquer banco)</h3>
+          <ul>
+            <li>Em qualquer banco: tamanho das linhas, ordem arquivo → lotes → detalhes → trailers, número do lote, sequencial e segmento, totais dos trailers.</li>
+            <li>Santander (cobrança): os campos de cada segmento (P, Q, R, S, Y na remessa; T, U, Y no retorno), datas DDMMAAAA, tabelas de códigos e as regras do manual (vencimento, juros, desconto, CPF/CNPJ do pagador). Inter (pagamentos): segmentos A, B, J, J-52 e O, escolhidos pelo tipo do lote.</li>
+            <li>Gerar arquivo de teste: Santander (remessa P/Q e retorno T/U) e Inter (um lote de TED, Pix, boletos, QR Code ou tributos), com lote e trailers calculados.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="nota">
+        <strong>Ainda não conferido, por falta do manual de cada banco:</strong> os campos de dentro dos
+        segmentos do CNAB 240 dos outros bancos (os layouts do Santander (manual H7815 v8.1, jun/2024) e do Inter (pagamentos, v1.10, ago/2024)
+        vieram dos manuais e não foram comparados com arquivo real de produção) e o dígito verificador do nosso número nos demais
+        bancos do CNAB 400.
+      </p>
+    </section>
+
+    <section class="panel card-section">
+      <h2>Fontes consultadas</h2>
+      <p class="descricao">
+        Conferido em 18/11/2026 nos trechos publicados destas fontes. Antes de integrar com um banco,
+        o manual dele é quem manda: os bancos adaptam o layout.
+      </p>
+      <ul>
+        <li><a href="https://qive.com.br/blog/cnab-240-cnab-400" rel="noopener">Qive — CNAB 240 e CNAB 400</a>: diferença entre os dois.</li>
+        <li><a href="https://download.itau.com.br/bankline/layout_cobranca_400bytes_cnab_itau.pdf" rel="noopener">Itaú — cobrança, 400 bytes</a> · <a href="https://cms.santander.com.br/sites/WPS/documentos/arq-layout-de-arquivos-download-cob400ptbr/24-08-05_132259_cobrancas_400_ptbr.pdf" rel="noopener">Santander — cobrança, 400</a> · <a href="https://www.sicredi.com.br/media/produtos/manual_cnab_400_2_1.pdf" rel="noopener">Sicredi — manual CNAB 400</a>: o layout de 400 é de cada banco.</li>
+        <li><a href="https://www.banrisul.com.br/bob/data/LeiauteBanrisulFebraban_pdr240_v103_10032021.pdf" rel="noopener">Banrisul — leiaute FEBRABAN 240</a> · <a href="https://cms.santander.com.br/sites/WPS/documentos/arq-layout-de-arquivos-download-cob240ptbr/25-06-13_130421_cnab-240-abril-2025-ptbr.pdf" rel="noopener">Santander — cobrança, 240</a>: tipos de registro, lotes e trailers.</li>
+        <li><a href="https://wiki.dtic.ifpr.edu.br/lib/exe/fetch.php/desenvolvimento:especificacoes:sigconcurso_old:casos_de_uso:importacao:leiaute_cnab240_cobranca.pdf" rel="noopener">IFPR — leiaute CNAB 240 de cobrança</a> · <a href="https://unicred.com.br/site/LayoutdeRetorno-de-Boletos-CNAB-240.pdf" rel="noopener">Unicred — retorno de boletos, 240</a> · <a href="https://comunidade-api.sejaefi.com.br/file/775328670784159744/1721143592198Especificacao_CNAB.pdf" rel="noopener">Efí — especificação CNAB</a>: sequencial no lote, segmento e totais dos trailers.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initThemeToggle } from "../../assets/js/theme.js";
+    initThemeToggle();
+  </script>
+</body>
+</html>

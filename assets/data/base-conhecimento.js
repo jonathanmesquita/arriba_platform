@@ -42,6 +42,32 @@ export const KNOWLEDGE_BASE = [
     linkManual: "/tools/cobranca/cnab400/cnab400.html"
   },
   {
+    id: "cnab-240-estrutura",
+    titulo: "Validar e gerar um arquivo CNAB 240",
+    produto: "Ferramentas",
+    categoria: "Arquivo bancário",
+    palavrasChave: ["cnab", "240", "febraban", "lote", "segmento", "trailer", "header", "remessa", "retorno"],
+    perguntaExemplo: "Como eu confiro se um arquivo CNAB 240 está bem formado?",
+    caminhoTela: "Ferramentas › Validar arquivos › Arquivo bancário (CNAB 240)",
+    resumo:
+      "Confere a estrutura de um arquivo de 240 posições (tamanho das linhas, lotes, detalhes e totais dos " +
+      "trailers) em qualquer banco e, com o layout do Santander (cobrança) ou do Inter (pagamentos), os campos de cada segmento. " +
+      "Também gera um arquivo de teste. O processamento é 100% no navegador.",
+    passos: [
+      "Escolha o layout (ou deixe 'Qualquer banco') e a direção.",
+      "Cole o conteúdo ou envie o arquivo .REM/.RET/.TXT e clique em 'Conferir estrutura'.",
+      "Leia os erros (certos) e os avisos (prováveis), cada um com a linha.",
+      "Para entender o que cada tipo de registro significa, abra a página de referência dos padrões CNAB."
+    ],
+    checklist: [
+      "Toda linha tem 240 caracteres",
+      "Primeira linha é o Header de arquivo e a última é o Trailer de arquivo",
+      "Cada lote tem Header, detalhes e Trailer, com o mesmo número de lote",
+      "Os totais do Trailer de arquivo (lotes e registros) fecham"
+    ],
+    linkManual: "/tools/cobranca/cnab240/cnab240.html"
+  },
+  {
     id: "csv-validar",
     titulo: "Conferir um arquivo CSV antes de importar",
     produto: "Ferramentas",

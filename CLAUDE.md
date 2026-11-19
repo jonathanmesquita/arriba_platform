@@ -70,7 +70,9 @@ cd scripts && npm install && npm run contraste
 O `scripts/package.json` existe **só** para essas conferências — o site continua sem build e
 sem dependência. Não mova nada dele para a raiz. **As duas rodam sozinhas em todo PR**
 (`.github/workflows/conferencias.yml`), junto com `node --check` em todo `.js` fora de
-`apps/`; o `arriba-api` tem o próprio workflow com os testes dele.
+`apps/` e os testes de servidor de cada app de `apps/` (um job por app, com o lockfile dele;
+nenhum precisa de banco nem de segredo — o do chat só roda `prisma generate` antes); o
+`arriba-api` tem o próprio workflow com os testes dele.
 
 ## Regra de ouro: fonte única
 

@@ -127,15 +127,17 @@ first admin user).
 arriba_platform/
 ├─ index.html                 # Home: menu, search and tool shortcuts
 ├─ tools/
-│  ├─ dados/                  # CSV validator, converters, decoder, web editor
-│  └─ cobranca/               # CNAB 400, CSV generator, test data, SQL tools
-├─ pages/                     # about, case studies, guides, lab
+│  ├─ cobranca/               # CNAB 400 and 240, CSV generator, test data, SQL tools, letter templates
+│  ├─ dados/                  # CSV/JSON validators, converters, decoder, web editor, API console
+│  └─ rede/                   # DNS and e-mail checker, device and IP info
+├─ pages/                     # about, case studies, guides, CNAB standards reference, admin
 ├─ apps/                      # standalone apps with their own backend (not deployed with the site)
 ├─ assets/
 │  ├─ css/tokens.css          # design tokens — the single source of colors
 │  ├─ js/navigation-v2.js     # menu + search index, in one place
 │  └─ data/                   # chat knowledge base, SQL sandbox schema
-├─ scripts/                   # changelog, commit hook, contrast audit
+├─ docs/                      # ARCHITECTURE.md and the home screenshot
+├─ scripts/                   # logic tests (node:test), contrast audit, changelog, commit hook
 └─ tasks/                     # the work queue: backlog, bugs, pending decisions
 ```
 

@@ -484,10 +484,11 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   de imagens de um site corporativo — nenhum era usado por página alguma. Imagem nova entra
   só se for feita para o projeto ou tiver licença que permita, e com a origem anotada.
   **O histórico do git recomeçou em 13/11/2026**, num repositório novo com o mesmo nome: o
-  primeiro commit é o estado daquele dia. O repositório anterior foi renomeado e guarda as
-  versões antigas — e nelas os arquivos removidos —, por isso precisa ficar **privado**
-  (ver `tasks/decisoes-pendentes.md`). Forçar o envio por cima da `main` não bastava: o
-  GitHub mantém os commits antigos presos a cada PR já aberto.
+  primeiro commit é o estado daquele dia. O repositório anterior foi renomeado, ficou
+  privado e **foi apagado pelo dono em 20/11/2026** — com ele saíram as versões antigas, os
+  25 PRs e os arquivos removidos que ainda viviam lá. Não há outra cópia desse histórico
+  no GitHub. Forçar o envio por cima da `main` não bastava: o GitHub mantém os commits
+  antigos presos a cada PR já aberto — por isso foi preciso um repositório novo.
 
 ## Estado atual
 

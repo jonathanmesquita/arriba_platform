@@ -222,7 +222,10 @@ its source.
 |---|---|---|
 | `arriba_platform` | Public | Frontend, tools, the two apps, documentation. Its history starts on 13 Nov 2026 |
 | `arriba-api` | Private | Backend. It is private because, besides generic engineering (auth, lookups, dashboard, AI), it still holds business-specific support material (help-desk integration and knowledge catalogs) that cannot be public |
-| `arriba_platform_antigo` | Private | History of the frontend before 13 Nov 2026, including files removed on purpose. Not used by production |
+
+The frontend's history before 13 Nov 2026 lived in a separate private repository
+(`arriba_platform_antigo`), which the owner deleted on 20 Nov 2026. It was not used by
+production, and no copy of that history remains on GitHub.
 
 ## Current Limitations
 

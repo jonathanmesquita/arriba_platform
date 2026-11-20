@@ -60,6 +60,10 @@ pelo dono (conferido na lista de repositórios no mesmo dia). É lá que ficam a
 antigas e os 25 PRs — e, neles, os manuais com nome de cliente e as imagens de terceiros
 removidos. Aqui não há PR nem commit anterior a essa data.
 
+**Atualização de 20/11:** o dono **apagou** o `arriba_platform_antigo`. As versões antigas, os
+25 PRs e o material removido deixaram de existir no GitHub; nada em produção dependia dele
+(a Vercel já seguia este repositório desde 16/11).
+
 
 ---
 
@@ -190,7 +194,16 @@ merge e do deploy no Render.
 
 ---
 
-## ⏳ Renovação do GitHub: o que fica à vista, o que é arquivado e o que é apagado
+## ✅ ~~Renovação do GitHub: o que fica à vista, o que é arquivado e o que é apagado~~
+
+**Resolvido em 20/11:** o README do perfil foi reescrito em inglês e publicado (o workflow da
+animação de contribuições, que usava a conta de outra pessoa, saiu junto). Em vez de arquivar,
+o dono **apagou** os exercícios de curso e os estudos antigos — inclusive `nexus2027`,
+`leitor-csv`, `DecodificacaoBase64`, `convertor-maiusculas-minusculas`,
+`challenge-amigo-secreto`, `cartao_mesquita`, o fork de Python e o `arriba_platform_antigo` —
+para manter só o trabalho novo daqui em diante. O catálogo do jm.dev.br deixou de citá-los no
+mesmo dia. Ficaram: `arriba_platform`, `arriba-api` (privado), `jm-portfolio`, `arriba-jump`,
+`jonathanmesquita` e os dois notebooks de análise de dados. O texto abaixo fica como registro.
 
 Pedido de 12/11: "renovar o GitHub, deixar os projetos novos de 2026 e atualizar os antigos".
 São 29 repositórios. A proposta abaixo é ponto de partida — **nada fora do `arriba_platform`
@@ -236,7 +249,7 @@ sessão precisa de permissão de escrita nesses dois repositórios.
 foi entregue ao dono na conversa e **não foi publicado** — ele revisa depois. Segue aberto:
 arquivar os exercícios de curso e publicar o README do perfil.
 
-- **Solução:** _(arquivar os exercícios? publicar o README do perfil?)_
+- **Solução:** README do perfil publicado; estudos antigos apagados pelo dono (20/11).
 
 ---
 

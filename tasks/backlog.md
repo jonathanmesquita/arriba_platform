@@ -4,6 +4,12 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 
 ## Qualidade do site
 
+- [ ] Política de conteúdo (CSP) completa: tirar script e estilo de dentro do HTML 📅 2026-11-20 🔽 baixa #area/site #esforco/g 🤖
+  - Contexto: `vercel.json` (nov/2026) já publica `nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS, `X-Frame-Options` e uma CSP só com `base-uri 'self'; frame-ancestors 'self'`. A parte que barra script injetado (`script-src` sem `'unsafe-inline'`) ainda não dá: 25 páginas têm `<script>` dentro do HTML, 24 têm `<style>` e 16 usam `style="…"`
+  - Armadilha: a moldura `srcdoc` do Editor Web **herda a CSP da página** — `script-src` fechado quebra o código de quem usa o editor. Resolver antes (servir o preview de outra origem, ou abrir exceção só nessa página)
+  - Origens que a regra completa precisa liberar: `cdn.jsdelivr.net` (script, estilo, fonte), `api.arriba.jm.dev.br`, `dns.google`, `cloudflare-dns.com`, `api.ipify.org`, `api64.ipify.org`, `api.openai.com`, `api.anthropic.com`, `generativelanguage.googleapis.com`, `http://localhost:11434` (Ollama), `placehold.co` (imagem); `blob:`/`data:` para a prévia de PDF
+  - Ação: mover cada `<script>`/`<style>` para arquivo, por página; depois subir a CSP em modo `Report-Only`, conferir o console nas telas da lista `ESTADOS` e só então ligar
+
 - [ ] Decidir o que fazer com `assets/icons/favicon_old.ico` 📅 2026-11-16 🔽 baixa #area/site #esforco/p 🤖
   - Contexto: é o ícone cinza anterior, renomeado pelo dono ao subir o novo; nenhuma página o referencia (conferido com grep)
   - Ação: apagar, se a cópia não for mais necessária — o git guarda o arquivo de qualquer forma

@@ -21,6 +21,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: vercel.json é JSON válido
+        run: node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8'))"
       - name: Sintaxe de todo JavaScript do site (fora de apps/)
         run: |
           falhas=0

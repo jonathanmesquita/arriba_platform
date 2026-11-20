@@ -462,6 +462,12 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
   de 1**: o lote vira uma mensagem só, então `{{nome}}` fica vazio quando há mais de um
   destinatário. `SMTP_MODO_TESTE=1` grava `.eml` em `dados/saida/` em vez de mandar pela
   rede — é como o fluxo é testado sem servidor.
+- **Cabeçalhos de segurança** (`vercel.json`, nov/2026): `nosniff`, `Referrer-Policy`,
+  `Permissions-Policy` (câmera, microfone, localização desligados), HSTS, `X-Frame-Options:
+  SAMEORIGIN` e uma CSP **mínima** (`base-uri 'self'; frame-ancestors 'self'`). A CSP que barra
+  script injetado ainda não entra: 25 páginas têm `<script>` dentro do HTML e o `srcdoc` do
+  Editor Web herda a CSP da página. O plano está em `tasks/backlog.md`. Ferramenta nova já nasce
+  sem script/estilo dentro do HTML, para não aumentar a conta.
 - **Integridade de CDN (SRI)**: toda tag de `cdn.jsdelivr`/`cdnjs` tem `integrity` +
   `crossorigin`. Ao adicionar biblioteca de CDN, **gerar o hash junto** — sem ele,
   comprometimento do CDN executa JS arbitrário em todas as páginas. O hash sai do pacote npm

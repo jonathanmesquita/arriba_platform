@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0;url=/#/pages/case-study/deploy-cloud.html">
     <title>Estudo de caso: deploy e DNS - Arriba Platform</title>
   <link rel="icon" href="/assets/icons/favicon.ico" sizes="16x16 32x32 48x48 64x64" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
@@ -14,7 +15,7 @@
         <div class="rw-container">
             <span class="rw-kicker">Estudo de caso</span>
             <h1>Deploy e DNS</h1>
-            <p>Transição do GitHub Pages para uma arquitetura com frontend, backend, domínio próprio e DNS controlado.</p>
+            <p>Do GitHub Pages para frontend na Vercel, API no Render, domínio próprio e DNS no Cloudflare — e uma armadilha que custou três dias.</p>
 
             <nav class="rw-pill-nav">
                 <a href="/pages/case-study/index.html" data-route>Todos os cases</a>
@@ -28,10 +29,23 @@
         <div class="rw-container">
             <div class="rw-card-grid rw-card-grid-4">
                 <div class="rw-product-card"><span>Domínio</span><h3>jm.dev.br</h3><p>Domínio profissional usado como vitrine técnica.</p></div>
-                <div class="rw-product-card"><span>Frontend</span><h3>Vercel</h3><p>Deploy rápido para interface estática e futura migração React.</p></div>
-                <div class="rw-product-card"><span>Backend</span><h3>Render</h3><p>Web Service Node.js acessível via api.jm.dev.br.</p></div>
+                <div class="rw-product-card"><span>Frontend</span><h3>Vercel</h3><p>Deploy a cada push na main, cabeçalhos de segurança no <code>vercel.json</code>, sem etapa de build.</p></div>
+                <div class="rw-product-card"><span>Backend</span><h3>Render</h3><p>Web Service Node.js em api.arriba.jm.dev.br, privado, com login por cookie HttpOnly.</p></div>
                 <div class="rw-product-card"><span>DNS</span><h3>Cloudflare</h3><p>Gerenciamento de registros A, CNAME e subdomínios.</p></div>
             </div>
+        </div>
+    </section>
+    <section class="rw-section">
+        <div class="rw-container rw-two-col">
+            <div>
+                <span class="rw-kicker">O que deu errado</span>
+                <h2>Publicou a versão velha, sem nenhum erro.</h2>
+                <p>Ao recomeçar o histórico num repositório novo e renomear o antigo, a integração da Vercel continuou ligada ao antigo: o vínculo é pelo número do repositório, não pelo nome. O site passou três dias publicando a versão de 13/11, e nada acusou erro.</p>
+            </div>
+            <ul class="rw-feature-list">
+                <li><strong>Sinal de que está certo:</strong> o commit em "Source" do deploy de produção é um da <code>main</code> do repositório atual.</li>
+                <li><strong>O que ficou:</strong> a regra escrita no repositório e um PR só para testar a religação.</li>
+            </ul>
         </div>
     </section>
 </main>

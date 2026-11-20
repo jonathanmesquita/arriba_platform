@@ -141,23 +141,6 @@ const menuData = {
                 ]
             }
         }
-    },
-    lab: {
-        label: "Laboratório",
-        children: {
-            experimentos: {
-                label: "Experimentos",
-                badge: "Em andamento",
-                title: "Laboratório",
-                description: "Ideias em estágio inicial — protótipos que ainda não viraram ferramenta.",
-                links: [
-                    ["IA aplicada", "pages/lab/ai/index.html", true],
-                    ["Portfólio em pixel art", "pages/lab/gamedev/index.html", true],
-                    ["Interface e performance", "pages/lab/experiments/index.html", true],
-                    ["Comportamento e UX", "pages/lab/index.html", true]
-                ]
-            }
-        }
     }
 };
 
@@ -191,7 +174,6 @@ export const searchItems = [
     ["Chatbot com IA (estudo de caso)", "chat chatbot ia assistente provedores base de conhecimento streaming", "pages/case-study/chatbot-ai.html", true],
     ["Deploy e DNS (estudo de caso)", "vercel render cloudflare dns deploy hospedagem dominio", "pages/case-study/deploy-cloud.html", true],
     ["Arquitetura do site (estudo de caso)", "case arquitetura decisoes site estatico tokens fonte unica", "pages/case-study/arriba-platform.html", true],
-    ["Portfólio em pixel art", "pixel art portfolio jogo gamedev", "pages/lab/gamedev/index.html", true],
 ];
 
 function normalizeSearch(value = "") {

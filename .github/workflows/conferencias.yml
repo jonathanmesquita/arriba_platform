@@ -32,6 +32,48 @@ jobs:
         working-directory: scripts
         run: node --test "tests/*.test.mjs"
 
+  # Os apps de apps/ têm build, dependências e lockfile próprios (npm
+  # workspaces server + web), então cada um roda no seu job. Os testes são
+  # de funções puras: nenhum precisa de banco, SMTP, rede ou segredo — por
+  # isso não há `env:` aqui. Node 22 cumpre o "engines >=20" dos dois.
+  app-chat-ia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/arriba-chat-ia
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/arriba-chat-ia/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      # O src/db.ts importa o client gerado; gerar não conecta em banco
+      # (o client é criado só no primeiro uso, ver o comentário em db.ts).
+      - name: Client do Prisma (mesmo passo do script de build)
+        run: npx --workspace=server prisma generate
+      - name: Testes do servidor
+        run: npm test
+
+  app-comunicados:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/comunicados
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/comunicados/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Testes do servidor
+        run: npm test
+
   contraste:
     runs-on: ubuntu-latest
     timeout-minutes: 15

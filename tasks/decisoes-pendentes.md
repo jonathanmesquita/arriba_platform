@@ -240,6 +240,42 @@ arquivar os exercícios de curso e publicar o README do perfil.
 
 ---
 
+## ⏳ Separar a API pública de portfólio da API operacional privada
+
+*(Separate public portfolio API from private operational API)* — registrado em 19/11/2026.
+
+**Status:** análise pendente. **Nenhuma migração de código acontece antes da decisão.**
+
+**Problema:** o `arriba-api` junta componentes de engenharia reaproveitáveis (login por
+cookie, consultas a APIs públicas, painel de chamadas, IA no servidor) com material
+operacional de um negócio específico (integração de help desk e catálogos de conhecimento).
+Por causa desse material, o repositório precisa ser privado, e o backend mais forte do
+projeto fica invisível no portfólio.
+
+**Objetivo:** desenhar uma API pública limpa, só com componentes genéricos e demonstráveis,
+mantendo o material específico do negócio no repositório privado.
+
+**Antes de implementar:**
+
+- inventariar as rotas (as de `/auth`, `/v1` e `/publico` × as de `/freshdesk` e `/support`);
+- inventariar dados e catálogos (`modules/knowledge/`, `modules/freshdesk/`);
+- classificar cada componente como genérico ou específico do negócio;
+- conferir dependências entre eles (imports, variáveis de ambiente, testes);
+- conferir o impacto em produção (Render, `api.arriba.jm.dev.br`, CORS e o login usado pelo site);
+- definir a estratégia de migração, que inclui **não levar histórico de git** com o material
+  privado para um repositório público.
+
+**Observado na auditoria de 19/11:** `routes/freshdesk.solutions.routes.patch.js` e
+`routes/freshdesk.solutions.routes.snippet.js` não são importados por nenhum arquivo. São
+candidatos a limpeza nessa mesma análise; não foram removidos.
+
+**O que trava:** a decisão de fazer (e quando). A arquitetura atual está em
+[`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+
+- **Solução:** _(pendente)_
+
+---
+
 ## ⏳ O app de chat continua neste repositório?
 
 `apps/arriba-chat-ia/` tem build, backend e banco próprios — é a única exceção à regra de

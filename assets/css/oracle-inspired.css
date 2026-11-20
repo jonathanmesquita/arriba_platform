@@ -196,7 +196,7 @@ body.dark-mode .rw-page-hero {
 .rw-product-card > span,
 .rw-showcase-card > span {
     display: inline-block;
-    color: var(--rw-red);
+    color: var(--rw-red-ink);
     text-transform: uppercase;
     letter-spacing: .18em;
     font-size: .78rem;
@@ -1036,4 +1036,29 @@ body.dark-mode .rw-footer {
     .rw-blog-card {
         grid-template-columns: 1fr;
     }
+}
+
+/* Atalhos entre as páginas de um grupo (estudos de caso). Antes não tinham regra: saíam como
+   link azul do Bootstrap, que dá 3,9:1 sobre a areia. A tinta da terracota passa nos dois temas. */
+.rw-pill-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.rw-pill-nav a {
+    display: inline-block;
+    padding: 7px 16px;
+    border: 1px solid var(--rw-line-strong);
+    border-radius: 999px;
+    color: var(--rw-red-ink);
+    font-weight: 800;
+    font-size: .92rem;
+    text-decoration: none;
+}
+
+.rw-pill-nav a:hover {
+    border-color: var(--rw-red-ink);
+    background: var(--surface-soft);
 }

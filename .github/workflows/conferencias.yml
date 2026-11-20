@@ -96,3 +96,6 @@ jobs:
       - name: Contraste nos dois temas (carregamento e estados abertos)
         working-directory: scripts
         run: npm run contraste
+      - name: Roteador (F5, voltar e link copiado nas páginas de pages/)
+        working-directory: scripts
+        run: npm run rotas

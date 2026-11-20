@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0;url=/#/pages/case-study/chatbot-ai.html">
     <title>Estudo de caso: chatbot com IA - Arriba Platform</title>
   <link rel="icon" href="/assets/icons/favicon.ico" sizes="16x16 32x32 48x48 64x64" />
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
@@ -14,7 +15,7 @@
         <div class="rw-container">
             <span class="rw-kicker">Estudo de caso</span>
             <h1>Chatbot com IA</h1>
-            <p>Assistente técnico com modos por assunto, integração com backend Node.js e fallback local.</p>
+            <p>Um assistente que responde primeiro pela base do próprio site e só usa IA externa quando a base não cobre — e nunca fica mudo.</p>
 
             <nav class="rw-pill-nav">
                 <a href="/pages/case-study/index.html" data-route>Todos os cases</a>
@@ -29,14 +30,14 @@
             <div>
                 <span class="rw-kicker">Fluxo</span>
                 <h2>IA útil mesmo quando a API falha.</h2>
-                <p>O frontend envia a mensagem e o modo selecionado para a API. O backend tenta responder com IA; se houver erro de quota, indisponibilidade ou falha externa, retorna uma resposta local útil.</p>
+                <p>A pergunta é buscada primeiro na base local, no navegador, sem rede nem chave. Se a base não cobre e o administrador ligou um provedor, a pergunta vai para ele; se falhar (cota, queda, chave inválida), volta para a base. Quando nada serve, o chat diz que não sabe e oferece um caminho, em vez de inventar.</p>
             </div>
 
             <ul class="rw-feature-list">
-                <li><strong>Modos:</strong> cobrança, SQL, DevOps e Geral.</li>
-                <li><strong>Frontend:</strong> JavaScript modular e UI persistente.</li>
-                <li><strong>Backend:</strong> Express + rota POST /chat.</li>
-                <li><strong>Fallback:</strong> base local com palavras-chave e respostas técnicas.</li>
+                <li><strong>Base local:</strong> busca por palavra (não por pedaço de texto), com testes de pergunta fora do assunto.</li>
+                <li><strong>Provedores:</strong> Ollama, OpenAI, Anthropic e Gemini; só o administrador configura, e a chave fica no navegador dele.</li>
+                <li><strong>IA do servidor:</strong> a API guarda a chave e atende visitantes, com limite por minuto e por dia. Vem desligada, e o chat avisa quando a pergunta puder sair do navegador.</li>
+                <li><strong>App completo:</strong> <code>apps/arriba-chat-ia</code> (Express, Postgres, streaming, auditoria e base de conhecimento com fonte citada), ainda não publicado.</li>
             </ul>
         </div>
     </section>

@@ -48,7 +48,7 @@
  *     o branco fixo sobre a terracota clara do tema escuro.
  * ===================================================================== */
 import { chromium } from "playwright";
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -67,6 +67,17 @@ function paginas(dir = RAIZ, achadas = []) {
     else if (nome.endsWith(".html")) achadas.push(relative(RAIZ, caminho).split(sep).join("/"));
   }
   return achadas.sort();
+}
+
+/** Trecho de pages/ (só o <main>): aberto direto ele redireciona para a home, que o
+ *  mostra com o estilo do site. A medição vai pela rota, que é como o visitante vê. */
+const ehTrecho = (caminho) => readFileSync(join(RAIZ, caminho), "utf8").includes('http-equiv="refresh"');
+
+async function abrirPagina(p, caminho) {
+  if (!ehTrecho(caminho)) { await p.goto(BASE + caminho, { waitUntil: "domcontentloaded" }); return; }
+  await p.goto(`${BASE}#/${caminho}`, { waitUntil: "domcontentloaded" });
+  // espera o roteador trocar a home pelo trecho
+  await p.waitForFunction(() => !document.querySelector("#appContent #tools-section") && document.querySelector("#appContent h1"), null, { timeout: 8000 });
 }
 
 const medir = (p) => p.evaluate(() => {
@@ -297,8 +308,14 @@ let limpas = 0;
 
 for (const caminho of lista) {
   for (const tema of ["claro", "escuro"]) {
-    await pagina.goto(BASE + caminho, { waitUntil: "domcontentloaded" });
-    if (tema === "escuro") await ativarEscuro(pagina);
+    try {
+      await abrirPagina(pagina, caminho);
+      if (tema === "escuro") await ativarEscuro(pagina);
+    } catch (erro) {
+      console.error(`não consegui abrir ${caminho} (${tema}): ${erro.message}`);
+      total += 1;
+      continue;
+    }
     await pagina.waitForTimeout(350);
 
     let achados = [];

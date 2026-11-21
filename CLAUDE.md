@@ -91,6 +91,20 @@ Estes recursos são definidos em **um lugar só**. Ao mudar, edite apenas a font
     domínio. Nome novo muda em quatro lugares: menu/busca aqui, `<title>`/kicker/`<h1>` da
     página, `caminhoTela` em `assets/data/base-conhecimento.js` e o README. **O caminho do
     arquivo não muda** — renomear pasta quebra link e import relativo.
+- **Páginas de `pages/` dentro da home** (`assets/js/router.js`): about, estudos de caso, guias,
+  downloads e labs são **trechos** (só o `<main>`, sem CSS) que a home busca e injeta em
+  `#appContent`. O endereço é `/#/pages/...` — **não** o do arquivo —, então F5, link copiado e
+  voltar funcionam; antes era `pushState` para o arquivo, e recarregar abria o HTML cru, sem estilo.
+  O endereço antigo de um trecho redireciona por `<meta http-equiv="refresh">` no `<head>` (trecho
+  novo precisa dela). Href dentro de trecho é **absoluto** (`/pages/...`): o roteador resolve na raiz,
+  mas o link aberto fora da home não. Página **completa** em `pages/` (com folha de estilo própria)
+  não é trecho: o roteador navega para ela normalmente. `npm run rotas` confere o fluxo e roda no CI;
+  a conferência de contraste mede os trechos **pela rota** (aberto direto, o trecho redireciona) —
+  foi assim que apareceram o azul do Bootstrap nos atalhos dos estudos de caso (`.rw-pill-nav`, que
+  não tinha regra) e o kicker em terracota pura sobre a areia, que ninguém media.
+- **Laboratório fora do menu** (nov/2026): as quatro páginas de `pages/lab/` dizem "área futura" e
+  não têm conteúdo; saíram do menu, da busca e da barra da home até haver o que mostrar. Os
+  arquivos ficam (ver `tasks/backlog.md`).
 - **Cores / design tokens:** `assets/css/tokens.css`. Paleta **boho tech / Deep Autumn**
   (out/2026): terracota, oliva, mostarda e areia. Define os tokens canônicos `--rw-*`, os
   aliases curtos (`--bg`, `--red`, ...) e os nomes `--cor-*`. Ferramentas devem **linkar

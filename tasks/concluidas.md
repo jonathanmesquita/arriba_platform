@@ -3,6 +3,7 @@
 Histórico append-only. O relato longo de cada entrega está no `CLAUDE.md` (Status por partes);
 aqui fica só o registro com data.
 
+- [x] Portfólio: roteador com endereço `/#/pages/...` (F5, link copiado e voltar funcionam; o endereço antigo redireciona), textos de Sobre e dos estudos de caso atualizados ao que existe hoje (inclui o caso do deploy que publicou versão velha), labs vazios fora do menu, `description` e Open Graph em 21 páginas, README com a árvore atual, `npm run rotas` no CI; contraste dos trechos passou a ser medido pela rota e achou 27 textos reprovados (kicker e atalhos), corrigidos ✅ 2026-11-20 #area/site
 - [x] CNAB 400 e 240, UX do gerador: "Como preencher" virou uma janela centralizada (cartão por campo, selo obrigatório/opcional, busca e filtro "só os obrigatórios") no lugar da tabela larga; validação com mensagem junto do campo, resumo com atalho "ir ao campo", correção ao vivo e contador de obrigatórios, num módulo único (`tools/cobranca/validacao-ux.js`); contraste conferido nos dois temas ✅ 2026-11-18 #area/ferramentas
 - [x] CNAB 240 Inter (pagamentos): layout do manual v1.10 com cinco tipos de lote (TED, Pix, boletos, QR Code Pix, tributos), validação por tipo de lote, gerador e seletor na tela; 27 testes ✅ 2026-11-18 #area/ferramentas
 - [x] Planilhas do Bradesco (remessa e retorno) comparadas campo a campo com `banks/bradesco.js`: 6 de 6 abas batem; o conflito da "Carteira" (retorno, posição 108) se resolveu — 1 posição, exemplo real "9" ✅ 2026-11-18 #area/ferramentas

@@ -60,8 +60,6 @@ Trabalho futuro já entendido. Formato em [README.md](README.md).
 - [ ] Laboratório: decidir entre dar conteúdo às quatro páginas ou apagá-las 📅 2026-11-20 🔽 baixa #area/site #esforco/m 🤖
   - Contexto: `pages/lab/**` (4 páginas) dizem "área futura" e "ideia inicial"; para quem avalia o portfólio parece projeto parado. Em 20/11 saíram do menu, da busca e da barra da home; os arquivos ficaram
   - Ação: ou cada lab ganha um experimento de verdade (o "Portfólio em pixel art" tem a ideia mais concreta), ou os arquivos são apagados (conferir com `grep` antes) e o histórico do git guarda
-- [ ] Mostrar as ferramentas no README: GIF do gerador de CNAB (preencher, erro, corrigir, baixar) e uma captura de cada ferramenta forte 📅 2026-11-20 🔼 média #area/site #esforco/p 🤖
-  - Contexto: o README só tem a captura da home; a melhor entrega do projeto (erro por campo no CNAB) não aparece
 - [ ] Teste de tela do gerador de CNAB (Playwright: gerar, ver o erro, corrigir, baixar) 📅 2026-11-20 🔼 média #area/qa #esforco/m 🤖
   - Contexto: os 159 testes cobrem só a lógica; a tela é conferida à mão. Dá para reaproveitar o que o `scripts/conferir-rotas.mjs` e o contraste já usam
 - [ ] `SECURITY.md`, Dependabot e modelo de issue/PR 📅 2026-11-20 🔽 baixa #area/infra #esforco/p 🤖

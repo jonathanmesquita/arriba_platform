@@ -32,6 +32,37 @@ Every tool on the site runs in the browser — no server in the middle, no data 
 
 ---
 
+## See it working
+
+The bank-file generator tells you **which field is wrong, next to the field**, while you type —
+instead of producing a file the bank will reject. Fill it in, break a value, fix it, download:
+
+<div align="center">
+  <img src="docs/img/cnab400-gerador.gif" alt="CNAB 400 generator: required fields flagged with a message under each one, a summary with shortcuts to every problem, a letter typed in a money field flagged on the spot, and the generated file checked by the same rules as the reader" width="820">
+</div>
+
+<br>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/img/cnab400-erros.webp" alt="CNAB 400 generator with one message under each missing required field"><br><sub><b>CNAB 400</b> — one message under each field, plus a summary that jumps to it</sub></td>
+    <td width="50%"><img src="docs/img/cnab400-como-preencher.webp" alt="CNAB 400 field guide: one card per field with position, size, help and example"><br><sub><b>Field guide</b> — position, size, help and an invented example for every field</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/img/cnab240-gerar.webp" alt="CNAB 240 generator: generated Santander remessa file checked with no errors"><br><sub><b>CNAB 240</b> — generated file, checked by the same rules as the reader</sub></td>
+    <td><img src="docs/img/csv-validador.webp" alt="CSV validator: summary, structure findings and a table of problems per line and column"><br><sub><b>CSV validator</b> — "is it well-formed?" apart from "is the content right?"</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/img/sql-playground.webp" alt="SQL playground: schema explorer, editor and result table, all running in the browser"><br><sub><b>SQL playground</b> — a database that runs entirely in the browser</sub></td>
+    <td><img src="docs/img/editor-web.webp" alt="Web editor with live preview in a sandboxed iframe"><br><sub><b>Web editor</b> — live preview in a sandboxed iframe</sub></td>
+  </tr>
+</table>
+
+<sub>Every name, document number and amount on screen is invented. Screenshots and the GIF are
+generated from the running site (see the note in <code>docs/img/</code>).</sub>
+
+---
+
 ## Why this exists
 
 I work in IT support, and a lot of that job is repetitive, error-prone manual work:

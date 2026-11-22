@@ -253,7 +253,48 @@ arquivar os exercícios de curso e publicar o README do perfil.
 
 ---
 
-## ⏳ Separar a API pública de portfólio da API operacional privada
+## ✅ ~~Separar a API pública de portfólio da API operacional privada~~
+
+*(Separate public portfolio API from private operational API)* — registrada em 19/11/2026.
+
+**Decidido em 22/11/2026: manter o `arriba-api` como está** — privado, sem separação e sem
+migração de código. O repositório continua sendo o que alimenta `api.arriba.jm.dev.br`.
+
+**Por quê:** o dono escolheu a opção A depois da análise abaixo. O portfólio já apresenta o
+Arriba Platform e diz que a API é privada, o que é coerente com a regra do Projects Master
+("não tornar público enquanto existir material operacional específico"). Separar custa um
+repositório novo e uma troca de repositório no Render, e o ganho é só de vitrine.
+
+**Análise de 22/11 (só leitura, nada foi alterado):**
+
+| Área | Linhas | Menções a empresa/produto | Testes |
+|---|---|---|---|
+| Genérico: `modules/auth`, `validacao`, `consulta`, `ia`, `painel` e as rotas `/auth`, `/v1`, `/publico`, `/v1/painel` | ~2.800 | 1 | 6 arquivos, 70 testes |
+| Operacional: `modules/freshdesk`, `routes/freshdesk.routes.js` | ~3.100 | muitas | nenhum |
+| Operacional: `modules/knowledge` (catálogos) | ~10.000 | 1.365 (Freshdesk, PH3A, Datacob) | nenhum |
+
+- O acoplamento entre as duas metades é **uma linha**: `criarApp.js:89`
+  (`app.use(createFreshdeskRouter())`). O genérico não importa o operacional e vice-versa.
+- O site só usa `/auth/*`, `/v1/*` e `/publico/chat`, mais o painel. Nada do Freshdesk.
+- Sem segredo no histórico: nenhum padrão de chave de provedor, token de sessão, JWT ou hash
+  de 64 caracteres em todos os commits; nenhum `.env` commitado.
+- Os 71 testes do `arriba-api` passam (um pula por precisar de `TEST_DATABASE_URL`).
+
+**Se a decisão for reaberta — opção B, guardada:** repositório público **novo, com histórico
+novo**, contendo só o genérico (auth, validação, consulta, IA, painel, scripts e os 6 testes);
+o `arriba-api` privado fica com o operacional. Reescrever o histórico do repositório atual
+**não funciona**: o GitHub mantém os commits antigos presos aos PRs (mesma lição do
+repositório do site). Antes de tornar público: tirar o fallback do segredo (item no
+`backlog.md`), as variáveis `FRESHDESK_*` do `.env.example`, a seção "Pontos de entrevista"
+do README e a descrição "support copilot" do `package.json`. A troca do repositório no Render
+é o passo de risco (a ligação é por número do repositório, como na Vercel) e é do dono; o
+privado atual fica intacto até a validação em produção. Quando valeria reabrir: se aparecer
+uma vaga que peça ver o backend, ou se o material operacional deixar de existir.
+
+- **Solução:** manter como está (opção A), 22/11/2026. O que não era decisão virou item em
+  `backlog.md`: o fallback do segredo da sessão e o código morto do Freshdesk.
+
+<details><summary>Registro original (19/11)</summary>
 
 *(Separate public portfolio API from private operational API)* — registrado em 19/11/2026.
 
@@ -286,6 +327,8 @@ candidatos a limpeza nessa mesma análise; não foram removidos.
 [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
 
 - **Solução:** _(pendente)_
+
+</details>
 
 ---
 

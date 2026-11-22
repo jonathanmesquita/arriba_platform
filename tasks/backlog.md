@@ -143,6 +143,16 @@ APIs públicas e gratuitas, depois integração com IA. A primeira fase está no
     `POST /v1/ia/conversar` com a chave, pelo Postman; (3) `IA_CHAT_PUBLICO=true` no Render;
     (4) `CHAT_PUBLICO_LIGADO = true` em `assets/js/arriba-api.js`. O quadro "IA do servidor"
     em `pages/admin/configurar-chat.html` mostra o que falta.
+- [ ] `arriba-api`: o segredo da sessão não pode cair para o do webhook do Freshdesk 📅 2026-11-22 🔽 baixa #area/infra #esforco/p 🤖
+  - Contexto: em `modules/auth/auth.js:36` (`getSecret`), sem `ARRIBA_JWT_SECRET` nem `SESSION_SECRET`, o cookie de sessão é assinado com `FRESHDESK_WEBHOOK_SECRET`. O `.env.example` traz um marcador `troque…` nos dois campos: quem copiar o exemplo sem trocar assina a sessão com um valor conhecido. Em produção a variável é exigida (sem segredo, nenhuma sessão é criada), por isso o risco hoje é baixo
+  - Local: repositório `arriba-api`, `modules/auth/auth.js`, `.env.example`, `tests/azure.test.js:214`
+  - Ação: tirar o `FRESHDESK_WEBHOOK_SECRET` da lista de `getSecret`, com um teste que mostre que ele não assina sessão; ajustar o teste que apaga essa variável
+  - Achado na análise de 22/11 (decisão de manter a API como está)
+- [ ] `arriba-api`: apagar o código morto do Freshdesk 📅 2026-11-22 🔽 baixa #area/infra #esforco/p 🤖
+  - Contexto: `routes/freshdesk.solutions.routes.patch.js` e `routes/freshdesk.solutions.routes.snippet.js` não são importados por nenhum arquivo (conferido com grep) e usam `require` num projeto ESM, então nem rodariam
+  - Local: repositório `arriba-api`, `routes/`
+  - Ação: apagar os dois; `npm test` antes e depois. O git guarda os arquivos
+
 ## Do status de nov/2026
 
 Itens do documento de status do dono que viram trabalho. Os que contradizem decisões já
